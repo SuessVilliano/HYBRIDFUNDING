@@ -45,10 +45,17 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         </div>
 
         <div className="space-y-4 mb-6">
-          <div className="flex justify-between items-center">
-            <span className="text-[#B8B8D0]">Profit Target</span>
-            <span className="text-white font-semibold">{profitTarget}%</span>
-          </div>
+          {profitTarget > 0 ? (
+            <div className="flex justify-between items-center">
+              <span className="text-[#B8B8D0]">Profit Target</span>
+              <span className="text-white font-semibold">{profitTarget}%</span>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center">
+              <span className="text-[#B8B8D0]">Funding Type</span>
+              <span className="text-accent font-semibold">Instant</span>
+            </div>
+          )}
           <div className="flex justify-between items-center">
             <span className="text-[#B8B8D0]">Max Drawdown</span>
             <span className="text-white font-semibold">{maxDrawdown}%</span>
