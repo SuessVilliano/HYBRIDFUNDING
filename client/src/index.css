@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 266 75% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 180 100% 50%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 180 100% 50%;
+    --accent-foreground: 240 10% 3.9%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 180 100% 50%;
+    --radius: 0.5rem;
+
+    /* Custom cyber theme colors */
+    --dark-bg: 240 30% 8%;
+    --dark-surface: 240 23% 14%;
+    --text-primary: 0 0% 100%;
+    --text-secondary: 240 20% 77%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-[#0F0F1A] text-white;
+  }
+
+  /* Scrollbar customization */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-[#0F0F1A];
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/50 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary;
+  }
+}
+
+/* Custom classes for the cyberpunk theme */
+@layer components {
+  .glassmorphism {
+    @apply bg-[rgba(26,26,46,0.6)] backdrop-blur-md border border-white/10;
+  }
+
+  .neon-border {
+    position: relative;
+  }
+
+  .neon-border::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    @apply border border-secondary/50 rounded-[inherit] shadow-[0_0_8px_rgba(0,255,255,0.5)] pointer-events-none;
+  }
+
+  .neon-text-accent {
+    @apply text-secondary shadow-[0_0_5px_rgba(0,255,255,0.7)];
+  }
+
+  .neon-text-primary {
+    @apply text-primary shadow-[0_0_5px_rgba(138,43,226,0.7)];
+  }
+
+  .glow-on-hover {
+    @apply transition-all duration-300;
+  }
+
+  .glow-on-hover:hover {
+    @apply shadow-[0_0_10px_rgba(0,255,255,0.7),0_0_20px_rgba(0,255,255,0.4)];
+  }
+
+  .glow-on-hover-primary:hover {
+    @apply shadow-[0_0_10px_rgba(138,43,226,0.7),0_0_20px_rgba(138,43,226,0.4)];
+  }
+
+  .grid-pattern {
+    background-image: radial-gradient(rgba(138, 43, 226, 0.3) 1px, transparent 1px), 
+                    radial-gradient(rgba(0, 255, 255, 0.2) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
+  }
+
+  .cyberpunk-bg {
+    background: linear-gradient(45deg, rgba(15, 15, 26, 0.95), rgba(26, 26, 46, 0.95)),
+              linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(0, 255, 255, 0.1));
+  }
+
+  .cyber-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+  }
+
+  .nav-link {
+    @apply relative transition-all duration-300;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-[-2px] left-0 w-0 h-[2px] bg-secondary transition-all duration-300;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply w-full;
+  }
+
+  .nav-link:hover {
+    @apply text-secondary shadow-[0_0_5px_rgba(0,255,255,0.7)];
+  }
+
+  .page-transition {
+    @apply animate-[fadeIn_0.5s_ease-in-out];
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
