@@ -70,15 +70,14 @@ export class DatabaseStorage implements IStorage {
 
   // Challenge product methods
   async getAllChallengeProducts(): Promise<ChallengeProduct[]> {
-    return await db.select().from(challengeProducts).where(eq(challengeProducts.isActive, true));
+    return await db.select().from(challengeProducts);
   }
 
   async getChallengeProductsByAssetClass(assetClass: string): Promise<ChallengeProduct[]> {
     return await db
       .select()
       .from(challengeProducts)
-      .where(eq(challengeProducts.assetClass, assetClass as any))
-      .where(eq(challengeProducts.isActive, true));
+      .where(eq(challengeProducts.assetClass, assetClass as any));
   }
 
   async getChallengeProduct(id: number): Promise<ChallengeProduct | undefined> {
