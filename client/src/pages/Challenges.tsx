@@ -247,6 +247,8 @@ const Challenges = () => {
                 label={challenge.label}
                 bestValue={challenge.bestValue}
                 delay={challenge.delay}
+                assetClass={selectedAssetClass}
+                challengeType={selectedChallengeType}
               />
             ))}
           </div>
