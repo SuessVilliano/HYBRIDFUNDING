@@ -144,6 +144,17 @@ const Footer = () => {
         <div className="mt-12 pt-8 border-t border-accent/10 text-center">
           <p className="text-[#B8B8D0]">&copy; {new Date().getFullYear()} Hybrid Funding LLC. All rights reserved.</p>
         </div>
+        
+        {/* Chat Widget */}
+        <div dangerouslySetInnerHTML={{ __html: `
+          <script>(function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://api.anychat.one/widget/854ec014-677b-3467-be78-23cbdb44e178?r=' + encodeURIComponent(window.location);
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'contactus-jssdk'));</script>
+        `}} />
       </div>
     </footer>
   );
