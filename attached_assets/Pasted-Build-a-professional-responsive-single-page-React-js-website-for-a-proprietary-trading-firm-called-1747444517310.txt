@@ -1,0 +1,105 @@
+Build a professional, responsive, single-page React.js website for a proprietary trading firm called **Hybrid Funding**.
+
+The site must include routing (React Router), Tailwind CSS for styling, and follow a cyberpunk visual theme using:
+- Primary color: #8A2BE2 (Cyberpunk Purple)
+- Accent color: #00FFFF (Aqua Blue)
+- Dark background with neon-glow UI elements
+
+This website should feel futuristic and premium — it must not look flat or generic.
+
+---
+
+### The website should include the following **pages** and content:
+
+1. **Home Page**:
+   - Hero section: "Empowering Traders. Funding Potential."
+   - CTA button: “Choose Your Challenge”
+   - Description of the prop firm: “Hybrid Funding is a modern prop firm built by traders, for traders. Our mission is to fund talent and democratize capital access.”
+   - Quick summary of features:
+     - Fast funding
+     - Fair rules
+     - Affiliate opportunities
+     - Community empowerment
+
+2. **Challenges Page**:
+   - A grid layout displaying challenge tiers:
+     - 5K ($49), 10K ($89), 25K ($139), 50K ($199), 100K ($299), 200K ($499)
+   - For each challenge, show:
+     - Profit Target (%)
+     - Max Drawdown (%)
+     - Entry Fee
+     - Purchase button that links to an external checkout page (e.g., `https://client.hybridfunding.club/checkout/5k`)
+   - Label a challenge like “Best Value” for marketing purposes
+   - Add a small FAQ section at the bottom of the page
+
+3. **About Page**:
+   - State that Hybrid Funding is based in Delaware and focused on HUBZone and underserved community development
+   - Mention it is operated by real traders and partners who value financial education and performance-based opportunity
+   - Include line: “Founded by Delaware natives and alumni of Caravel Academy.”
+
+4. **Affiliate Program Page**:
+   - Explain: “Earn commissions by referring new traders to Hybrid Funding. Up to 20% per signup. Weekly payouts.”
+   - Add list of features:
+     - Trackable affiliate links
+     - Private dashboard access
+     - No cap on earnings
+   - Include CTA: “Apply to Join” linking to a Google Form
+
+5. **Trader Portal Page**:
+   - Instructions:
+     - "After purchase, you'll receive login credentials by email."
+     - "If not received in 30 minutes, check spam or contact support@hybridfunding.club"
+   - Login button linking to `https://client.hybridfunding.club/login`
+   - Do **not** mention any white-label providers or 3rd party services — it should look like everything is owned by Hybrid Funding
+
+6. **Contact Page**:
+   - Basic contact form: Name, Email, Message
+   - Display support email: support@hybridfunding.club
+   - Include Telegram or Discord icons as placeholders
+
+7. **Terms & Policies Page**:
+   - Placeholder text for:
+     - Refund Policy
+     - Evaluation Terms
+     - KYC Requirements
+     - Risk Disclosure
+   - Mention: “By using Hybrid Funding, you agree to our trading rules and evaluation terms.”
+
+8. **Thank You Page**:
+   - Message: “Thank you for your purchase! You’ll receive your login credentials shortly.”
+   - CTA to access the portal
+   - Support contact reminder
+
+---
+
+### **Global Layout Features**:
+
+- Responsive navigation bar with links to all pages
+- Sticky header with glow-on-hover nav items
+- Animated sections (e.g., use AOS or Framer Motion for smooth entrance effects)
+- Footer with copyright, slogan, and social icons
+- Mobile-first responsive layout
+- Include light glassmorphism for cards and modals
+
+---
+
+### **Project Requirements**:
+
+- Use React Router to handle all pages
+- Tailwind CSS must be configured properly
+- Include a `components/` folder for Navbar, Footer, and ChallengeCard
+- Include a `pages/` folder for each of the listed pages
+- Ensure the design reflects a futuristic/cyber-fintech aesthetic
+- Use dummy data/images and functional buttons with placeholder links
+
+---
+
+### Output:
+
+Scaffold the full React project file structure with:
+- `src/` (with `components/`, `pages/`, `App.jsx`, `main.jsx`, `index.css`)
+- `public/` (with `index.html`)
+- `tailwind.config.js`
+- `.replit` with correct `npm start` config
+
+Make it immediately runnable inside Replit with no upload or zip required.
