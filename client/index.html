@@ -22,5 +22,16 @@
     <script type="module" src="/src/main.tsx"></script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+    
+    <!-- Chat Widget -->
+    <script>
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://api.anychat.one/widget/854ec014-677b-3467-be78-23cbdb44e178?r=' + encodeURIComponent(window.location);
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'contactus-jssdk'));
+    </script>
   </body>
 </html>
