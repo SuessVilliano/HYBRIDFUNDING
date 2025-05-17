@@ -13,86 +13,97 @@ const Challenges = () => {
   const challengeData = {
     forex: {
       "one-step": [
-        { tier: "5K", price: 49, profitTarget: 8, maxDrawdown: 8, label: "Starter", bestValue: false, delay: 0 },
-        { tier: "10K", price: 89, profitTarget: 8, maxDrawdown: 8, label: "Popular", bestValue: false, delay: 1 },
-        { tier: "25K", price: 139, profitTarget: 8, maxDrawdown: 8, label: "Recommended", bestValue: true, delay: 2 },
-        { tier: "50K", price: 199, profitTarget: 8, maxDrawdown: 8, label: "Advanced", bestValue: false, delay: 3 },
-        { tier: "100K", price: 299, profitTarget: 8, maxDrawdown: 8, label: "Professional", bestValue: false, delay: 4 },
-        { tier: "200K", price: 499, profitTarget: 8, maxDrawdown: 8, label: "Expert", bestValue: false, delay: 5 }
+        { tier: "5K", price: 42.50, profitTarget: 10, maxDrawdown: 6, label: "Starter", bestValue: false, delay: 0 },
+        { tier: "10K", price: 85, profitTarget: 10, maxDrawdown: 6, label: "Popular", bestValue: false, delay: 1 },
+        { tier: "25K", price: 212.50, profitTarget: 10, maxDrawdown: 6, label: "Recommended", bestValue: true, delay: 2 },
+        { tier: "50K", price: 425, profitTarget: 10, maxDrawdown: 6, label: "Advanced", bestValue: false, delay: 3 },
+        { tier: "100K", price: 850, profitTarget: 10, maxDrawdown: 6, label: "Professional", bestValue: false, delay: 4 },
+        { tier: "200K", price: 1700, profitTarget: 10, maxDrawdown: 6, label: "Expert", bestValue: false, delay: 5 },
+        { tier: "250K", price: 2125, profitTarget: 10, maxDrawdown: 6, label: "Elite", bestValue: false, delay: 6 },
+        { tier: "500K", price: 4250, profitTarget: 10, maxDrawdown: 6, label: "Master", bestValue: false, delay: 7 }
       ],
       "two-step": [
-        { tier: "5K", price: 59, profitTarget: 6, maxDrawdown: 10, label: "Starter", bestValue: false, delay: 0 },
-        { tier: "10K", price: 99, profitTarget: 6, maxDrawdown: 10, label: "Popular", bestValue: false, delay: 1 },
-        { tier: "25K", price: 149, profitTarget: 6, maxDrawdown: 10, label: "Recommended", bestValue: true, delay: 2 },
-        { tier: "50K", price: 209, profitTarget: 6, maxDrawdown: 10, label: "Advanced", bestValue: false, delay: 3 },
-        { tier: "100K", price: 309, profitTarget: 6, maxDrawdown: 10, label: "Professional", bestValue: false, delay: 4 },
-        { tier: "200K", price: 519, profitTarget: 6, maxDrawdown: 10, label: "Expert", bestValue: false, delay: 5 }
+        { tier: "5K", price: 60, profitTarget: 10, maxDrawdown: 8, label: "Starter", bestValue: false, delay: 0 },
+        { tier: "10K", price: 110, profitTarget: 10, maxDrawdown: 8, label: "Popular", bestValue: false, delay: 1 },
+        { tier: "25K", price: 250, profitTarget: 10, maxDrawdown: 8, label: "Recommended", bestValue: true, delay: 2 },
+        { tier: "50K", price: 345, profitTarget: 10, maxDrawdown: 8, label: "Advanced", bestValue: false, delay: 3 },
+        { tier: "100K", price: 525, profitTarget: 10, maxDrawdown: 8, label: "Professional", bestValue: false, delay: 4 },
+        { tier: "200K", price: 1000, profitTarget: 10, maxDrawdown: 8, label: "Expert", bestValue: false, delay: 5 },
+        { tier: "250K", price: 1225, profitTarget: 10, maxDrawdown: 8, label: "Elite", bestValue: false, delay: 6 },
+        { tier: "500K", price: 2400, profitTarget: 10, maxDrawdown: 8, label: "Master", bestValue: false, delay: 7 }
       ],
       "three-step": [
-        { tier: "5K", price: 69, profitTarget: 4, maxDrawdown: 12, label: "Starter", bestValue: false, delay: 0 },
-        { tier: "10K", price: 109, profitTarget: 4, maxDrawdown: 12, label: "Popular", bestValue: false, delay: 1 },
-        { tier: "25K", price: 159, profitTarget: 4, maxDrawdown: 12, label: "Recommended", bestValue: true, delay: 2 },
-        { tier: "50K", price: 219, profitTarget: 4, maxDrawdown: 12, label: "Advanced", bestValue: false, delay: 3 },
-        { tier: "100K", price: 329, profitTarget: 4, maxDrawdown: 12, label: "Professional", bestValue: false, delay: 4 }
+        { tier: "5K", price: 42, profitTarget: 5, maxDrawdown: 5, label: "Starter", bestValue: false, delay: 0 },
+        { tier: "10K", price: 77, profitTarget: 5, maxDrawdown: 5, label: "Popular", bestValue: false, delay: 1 },
+        { tier: "25K", price: 175, profitTarget: 5, maxDrawdown: 5, label: "Recommended", bestValue: true, delay: 2 },
+        { tier: "50K", price: 242, profitTarget: 5, maxDrawdown: 5, label: "Advanced", bestValue: false, delay: 3 },
+        { tier: "100K", price: 368, profitTarget: 5, maxDrawdown: 5, label: "Professional", bestValue: false, delay: 4 },
+        { tier: "200K", price: 700, profitTarget: 5, maxDrawdown: 5, label: "Expert", bestValue: false, delay: 5 },
+        { tier: "250K", price: 858, profitTarget: 5, maxDrawdown: 5, label: "Elite", bestValue: false, delay: 6 },
+        { tier: "500K", price: 1932, profitTarget: 5, maxDrawdown: 5, label: "Master", bestValue: false, delay: 7 }
       ],
       "instant": [
-        { tier: "5K", price: 119, profitTarget: 0, maxDrawdown: 5, label: "Instant", bestValue: false, delay: 0 },
-        { tier: "10K", price: 189, profitTarget: 0, maxDrawdown: 5, label: "Instant", bestValue: false, delay: 1 },
-        { tier: "25K", price: 289, profitTarget: 0, maxDrawdown: 5, label: "Instant", bestValue: true, delay: 2 },
-        { tier: "50K", price: 389, profitTarget: 0, maxDrawdown: 5, label: "Instant", bestValue: false, delay: 3 }
+        { tier: "5K", price: 200, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 0 },
+        { tier: "10K", price: 400, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 1 },
+        { tier: "25K", price: 1125, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: true, delay: 2 },
+        { tier: "50K", price: 2500, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 3 },
+        { tier: "100K", price: 5000, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 4 }
       ]
     },
     crypto: {
       "one-step": [
-        { tier: "5K", price: 59, profitTarget: 10, maxDrawdown: 10, label: "Starter", bestValue: false, delay: 0 },
-        { tier: "10K", price: 99, profitTarget: 10, maxDrawdown: 10, label: "Popular", bestValue: false, delay: 1 },
-        { tier: "25K", price: 149, profitTarget: 10, maxDrawdown: 10, label: "Recommended", bestValue: true, delay: 2 },
-        { tier: "50K", price: 219, profitTarget: 10, maxDrawdown: 10, label: "Advanced", bestValue: false, delay: 3 },
-        { tier: "100K", price: 329, profitTarget: 10, maxDrawdown: 10, label: "Professional", bestValue: false, delay: 4 }
+        { tier: "5K", price: 45, profitTarget: 9, maxDrawdown: 6, label: "Starter", bestValue: false, delay: 0 },
+        { tier: "10K", price: 95, profitTarget: 9, maxDrawdown: 6, label: "Popular", bestValue: false, delay: 1 },
+        { tier: "25K", price: 250, profitTarget: 9, maxDrawdown: 6, label: "Recommended", bestValue: true, delay: 2 },
+        { tier: "50K", price: 525, profitTarget: 9, maxDrawdown: 6, label: "Advanced", bestValue: false, delay: 3 },
+        { tier: "100K", price: 1050, profitTarget: 9, maxDrawdown: 6, label: "Professional", bestValue: false, delay: 4 },
+        { tier: "200K", price: 2150, profitTarget: 9, maxDrawdown: 6, label: "Expert", bestValue: false, delay: 5 }
       ],
       "two-step": [
-        { tier: "5K", price: 69, profitTarget: 7, maxDrawdown: 12, label: "Starter", bestValue: false, delay: 0 },
-        { tier: "10K", price: 109, profitTarget: 7, maxDrawdown: 12, label: "Popular", bestValue: false, delay: 1 },
-        { tier: "25K", price: 159, profitTarget: 7, maxDrawdown: 12, label: "Recommended", bestValue: true, delay: 2 },
-        { tier: "50K", price: 229, profitTarget: 7, maxDrawdown: 12, label: "Advanced", bestValue: false, delay: 3 }
+        { tier: "5K", price: 35, profitTarget: 6, maxDrawdown: 9, label: "Starter", bestValue: false, delay: 0 },
+        { tier: "10K", price: 80, profitTarget: 6, maxDrawdown: 9, label: "Popular", bestValue: false, delay: 1 },
+        { tier: "25K", price: 210, profitTarget: 6, maxDrawdown: 9, label: "Recommended", bestValue: true, delay: 2 },
+        { tier: "50K", price: 430, profitTarget: 6, maxDrawdown: 9, label: "Advanced", bestValue: false, delay: 3 },
+        { tier: "100K", price: 900, profitTarget: 6, maxDrawdown: 9, label: "Professional", bestValue: false, delay: 4 },
+        { tier: "200K", price: 2000, profitTarget: 6, maxDrawdown: 9, label: "Expert", bestValue: false, delay: 5 }
       ],
       "three-step": [
-        { tier: "5K", price: 79, profitTarget: 5, maxDrawdown: 15, label: "Starter", bestValue: false, delay: 0 },
-        { tier: "10K", price: 129, profitTarget: 5, maxDrawdown: 15, label: "Popular", bestValue: false, delay: 1 },
-        { tier: "25K", price: 179, profitTarget: 5, maxDrawdown: 15, label: "Recommended", bestValue: true, delay: 2 }
+        { tier: "5K", price: 30, profitTarget: 5, maxDrawdown: 9, label: "Starter", bestValue: false, delay: 0 },
+        { tier: "10K", price: 70, profitTarget: 5, maxDrawdown: 9, label: "Popular", bestValue: false, delay: 1 },
+        { tier: "25K", price: 190, profitTarget: 5, maxDrawdown: 9, label: "Recommended", bestValue: true, delay: 2 },
+        { tier: "50K", price: 390, profitTarget: 5, maxDrawdown: 9, label: "Advanced", bestValue: false, delay: 3 },
+        { tier: "100K", price: 800, profitTarget: 5, maxDrawdown: 9, label: "Professional", bestValue: false, delay: 4 }
       ],
       "instant": [
-        { tier: "5K", price: 129, profitTarget: 0, maxDrawdown: 7, label: "Instant", bestValue: false, delay: 0 },
-        { tier: "10K", price: 199, profitTarget: 0, maxDrawdown: 7, label: "Instant", bestValue: false, delay: 1 },
-        { tier: "25K", price: 299, profitTarget: 0, maxDrawdown: 7, label: "Instant", bestValue: true, delay: 2 }
+        { tier: "5K", price: 190, profitTarget: 0, maxDrawdown: 7, label: "Instant", bestValue: false, delay: 0 },
+        { tier: "10K", price: 380, profitTarget: 0, maxDrawdown: 7, label: "Instant", bestValue: false, delay: 1 },
+        { tier: "25K", price: 950, profitTarget: 0, maxDrawdown: 7, label: "Instant", bestValue: true, delay: 2 },
+        { tier: "50K", price: 1900, profitTarget: 0, maxDrawdown: 7, label: "Instant", bestValue: false, delay: 3 }
       ]
     },
     futures: {
       "one-step": [
-        { tier: "5K", price: 54, profitTarget: 9, maxDrawdown: 9, label: "Starter", bestValue: false, delay: 0 },
-        { tier: "10K", price: 94, profitTarget: 9, maxDrawdown: 9, label: "Popular", bestValue: false, delay: 1 },
-        { tier: "25K", price: 144, profitTarget: 9, maxDrawdown: 9, label: "Recommended", bestValue: true, delay: 2 },
-        { tier: "50K", price: 209, profitTarget: 9, maxDrawdown: 9, label: "Advanced", bestValue: false, delay: 3 },
-        { tier: "100K", price: 309, profitTarget: 9, maxDrawdown: 9, label: "Professional", bestValue: false, delay: 4 },
-        { tier: "200K", price: 509, profitTarget: 9, maxDrawdown: 9, label: "Expert", bestValue: false, delay: 5 }
+        { tier: "25K", price: 285, profitTarget: 8, maxDrawdown: 10, label: "Recommended", bestValue: true, delay: 0 },
+        { tier: "50K", price: 570, profitTarget: 8, maxDrawdown: 10, label: "Advanced", bestValue: false, delay: 1 },
+        { tier: "100K", price: 1085, profitTarget: 8, maxDrawdown: 10, label: "Professional", bestValue: false, delay: 2 },
+        { tier: "150K", price: 1735, profitTarget: 8, maxDrawdown: 10, label: "Expert", bestValue: false, delay: 3 }
       ],
       "two-step": [
-        { tier: "5K", price: 64, profitTarget: 6.5, maxDrawdown: 11, label: "Starter", bestValue: false, delay: 0 },
-        { tier: "10K", price: 104, profitTarget: 6.5, maxDrawdown: 11, label: "Popular", bestValue: false, delay: 1 },
-        { tier: "25K", price: 154, profitTarget: 6.5, maxDrawdown: 11, label: "Recommended", bestValue: true, delay: 2 },
-        { tier: "50K", price: 219, profitTarget: 6.5, maxDrawdown: 11, label: "Advanced", bestValue: false, delay: 3 },
-        { tier: "100K", price: 319, profitTarget: 6.5, maxDrawdown: 11, label: "Professional", bestValue: false, delay: 4 }
+        { tier: "25K", price: 250, profitTarget: 7, maxDrawdown: 12, label: "Recommended", bestValue: true, delay: 0 },
+        { tier: "50K", price: 500, profitTarget: 7, maxDrawdown: 12, label: "Advanced", bestValue: false, delay: 1 },
+        { tier: "100K", price: 950, profitTarget: 7, maxDrawdown: 12, label: "Professional", bestValue: false, delay: 2 },
+        { tier: "150K", price: 1500, profitTarget: 7, maxDrawdown: 12, label: "Expert", bestValue: false, delay: 3 }
       ],
       "three-step": [
-        { tier: "5K", price: 74, profitTarget: 4.5, maxDrawdown: 13, label: "Starter", bestValue: false, delay: 0 },
-        { tier: "10K", price: 114, profitTarget: 4.5, maxDrawdown: 13, label: "Popular", bestValue: false, delay: 1 },
-        { tier: "25K", price: 164, profitTarget: 4.5, maxDrawdown: 13, label: "Recommended", bestValue: true, delay: 2 },
-        { tier: "50K", price: 229, profitTarget: 4.5, maxDrawdown: 13, label: "Advanced", bestValue: false, delay: 3 }
+        { tier: "25K", price: 220, profitTarget: 5, maxDrawdown: 15, label: "Recommended", bestValue: true, delay: 0 },
+        { tier: "50K", price: 440, profitTarget: 5, maxDrawdown: 15, label: "Advanced", bestValue: false, delay: 1 },
+        { tier: "100K", price: 875, profitTarget: 5, maxDrawdown: 15, label: "Professional", bestValue: false, delay: 2 },
+        { tier: "150K", price: 1400, profitTarget: 5, maxDrawdown: 15, label: "Expert", bestValue: false, delay: 3 }
       ],
       "instant": [
-        { tier: "5K", price: 124, profitTarget: 0, maxDrawdown: 6, label: "Instant", bestValue: false, delay: 0 },
-        { tier: "10K", price: 194, profitTarget: 0, maxDrawdown: 6, label: "Instant", bestValue: false, delay: 1 },
-        { tier: "25K", price: 294, profitTarget: 0, maxDrawdown: 6, label: "Instant", bestValue: true, delay: 2 }
+        { tier: "25K", price: 875, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: true, delay: 0 },
+        { tier: "50K", price: 1750, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 1 },
+        { tier: "100K", price: 3500, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 2 }
       ]
     }
   };

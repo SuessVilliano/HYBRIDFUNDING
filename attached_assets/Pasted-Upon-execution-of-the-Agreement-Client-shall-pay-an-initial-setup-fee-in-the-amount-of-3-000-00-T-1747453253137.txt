@@ -1,0 +1,357 @@
+Upon execution of the Agreement, Client shall pay an initial setup fee in the amount of $3,000.00
+(Three Thousand U.S. Dollars and Zero Cents).
+
+ONE PHASE PROGRAM – FX and CFD Products
+Client shall receive 30% of the retail price, subject to the following minimum retail pricing:
+Plan Sizes Minimum Suggested Retail Pricing Minimum Amount to be Received by
+
+Technology
+Provider (Base Rate)
+
+$5,000 $42.50 $29.75
+$10,000 $85 $59.50
+$25,000 $212.50 $148.75
+$50,000 $425 $297.50
+$100,000 $850 $595
+$200,000 $1,700 $1,190
+$250,000 $2,125 $1,487.50
+$500,000 $4,250 $2,975
+Client may elect to offer pricing below the Minimum Suggested Retail Pricing, but, in no
+case, shall the Minimum Amount to be Received by Technology Provided be less than the
+amount listed above. Client shall receive 30% of the revenue generated from the sale of Add-
+Ons.
+ONE Phase Program: TRADING RULES : FX and CFD products
+
+Rule Area Assessment Funded Notes
+Profit Target 10% - Funded Account has no
+
+limit
+
+Daily Loss Limit 5% 5% Equity-based, limit set by
+prior day balance (Hard
+Breach)
+
+Max Drawdown 6% 6% Equity-based, trailing
+account balance high
+water mark, locks in at
+starting account balance
+(Hard Breach)
+Inactivity Period 30 Days 30 Days Must place trade (Hard
+
+Breach)
+
+CONFIDENTIAL Prop Account LLC White Label Agreement
+Leverage 1:20 1:20
+Flat for Weekend Yes Yes All positions closed on
+Friday 3:45pm (Soft
+Breach)
+Max Time - - No Max Time
+requirements
+
+TWO PHASE PROGRAM – FX and CFD Products
+Client shall receive 30% of the retail price, subject to the following minimum retail pricing:
+Plan Sizes Minimum Suggested Retail Pricing Minimum Amount to be Received by
+
+Technology
+Provider (Base Rate)
+
+$5,000 $60 $42
+$10,000 $110 $77
+$25,000 $250 $175
+$50,000 $345 $241.50
+$100,000 $525 $367.50
+$200,000 $1,000 $700
+$250,000 $1,225 $857.50
+$500,000 $2,400 $1,680
+
+CONFIDENTIAL Prop Account LLC White Label Agreement
+
+Client may elect to offer pricing below the Minimum Suggested Retail Pricing, but, in no case, shall the
+Minimum Amount to be Received by Technology Provided be less than the amount listed above. Client
+shall receive 30% of the revenue generated from the sale of Add-Ons.
+TWO Phase Program: TRADING RULES : FX and CFD products
+
+Rule Area Step 1 Step 2 Funded Notes
+Profit Target 10% 5% - Funded account
+has no profit limit
+Daily Loss Limit 4% 4% 4% Equity-based,
+based on prior day
+balance (Hard
+Breach)
+
+Max Drawdown 8% 8% 8% Equity-based, does
+not trail (Hard
+Breach)
+Inactivity Period 30 Days 30 Days 30 Days Must place trade
+(Hard Breach)
+
+Leverage 1:30 1:30 1:30
+Flat for Weekend Yes Yes Yes All positions closed
+on Friday 3:45pm
+(Soft Breach)
+Max Time - - - No Max time
+requirements
+
+THREE PHASE PROGRAM – FX and CFD Products
+Client shall receive 30% of the retail price, subject to the following minimum retail pricing:
+
+Plan Sizes Minimum Suggested Retail Pricing Minimum Amount to be Received by
+
+Technology
+Provider (Base Rate)
+
+$5,000 $42 $29.40
+$10,000 $77 $53.90
+$25,000 $175 $122.50
+$50,000 $241.50 $169.05
+$100,000 $367.50 $257.25
+$200,000 $700 $490.00
+$250,000 $857.50 $600.25
+$500,000 $1932 $1352.40
+
+CONFIDENTIAL Prop Account LLC White Label Agreement
+Client may elect to offer pricing below the Minimum Suggested Retail Pricing, but, in no case, shall
+the Minimum Amount to be Received by Technology Provided be less than the amount listed
+above. Client shall receive 30% of the revenue generated from the sale of Add-Ons.
+
+THREE Phase Program: TRADING RULES : FX and CFD products
+Rule Area Step 1 Step 2 Step 3 Funded Notes
+Profit Target 5% 5% 5% - Funded
+account has no
+profit
+limit
+
+Daily Loss
+Limit
+
+- - - - There is no
+daily loss
+
+Max
+Drawdown
+
+5% 5% 5% 5% Equity-based,
+does not trail
+(Hard Breach)
+
+Leverage 1:20 1:20 1:20 1:20
+Inactivity
+Period
+
+30 Days 30 Days 30 Days 30 Days Must place
+trade (Hard
+Breach)
+
+Flat for
+Weekend
+
+Yes Yes Yes Yes All positions
+closed on
+Friday 3:45pm
+(Soft
+Breach)
+Max Time - - - - No Max Time
+requirements
+
+ADD-ONS (AVAILABLE AT PURCHASE FOR ALL 1/2/3 PHASE PLANS):
+Hold Over Weekend (10% Cost) – Point-of-Sale add-on that disables “Flat for Weekend” requirement;
+this allows traders to keep positions open over the weekend. Only crypto can be traded over the
+weekend.
+Profit Share Increased to 90% (20% Cost) – Point-of-Sale add-on that increases a trader’s potential
+profit share for funded accounts to 90% (up from the standard 75%) of the profit.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Crypto Only Plans
+ONE PHASE PROGRAM – Crypto Only Plans
+Plan Sizes Minimum Suggested Retail Pricing Minimum Amount to be Received by
+
+Technology
+Provider (Base Rate)
+
+$5,000 $45.00 $31.50
+$10,000 $95.00 $66.50
+
+CONFIDENTIAL Prop Account LLC White Label Agreement
+$25,000 250.00 $175.00
+$50,000 $525.00 $367.50
+$100,000 $1,050.00 $735.00
+$200,000 $2,150.00 $1,505.00
+Client may elect to offer pricing below the Minimum Suggested Retail Pricing, but, in no case, shall the
+Minimum Amount to be Received by Technology Provided be less than the amount listed above. Note:
+There are no add-ons for Crypto Only plans.
+One Phase Program: TRADING RULES : Crypto Only
+Rule Area Assessment Funded Notes
+Profit Target 9% N/A Funded Account has no
+
+limit
+
+Max Drawdown 6% 6% Equity-based, does not
+
+trail (Breach)
+Inactivity Period 30 Days 30 Days Must place trade
+(Breach)
+
+Leverage 5:1 for BTC, ETH
+2:1 for others
+
+5:1 for BTC, ETH
+2:1 for others
+
+Daily Cap Limit +/-3% +/-3% See below for
+calculation
+
+Profit Share
+Percentage
+
+N/A 90%
+
+Max Time - - No Max Time
+requirements
+
+TWO PHASE PROGRAM – Crypto Only Plans
+Plan Sizes Minimum Suggested Retail Pricing Minimum Amount to be Received by
+
+Technology
+Provider (Base Rate)
+
+$5,000 $35.00 $24.50
+$10,000 $80.00 $56.00
+$25,000 $210.00 $147.00
+$50,000 $430.00 $301.00
+$100,000 $900.00 $630.00
+$200,000 $2,000.00 $1,400.00
+Client may elect to offer pricing below the Minimum Suggested Retail Pricing, but, in no case, shall
+the Minimum Amount to be Received by Technology Provided be less than the amount listed
+above. Client shall receive 30% of the revenue generated from the sale of Add-Ons.
+
+CONFIDENTIAL Prop Account LLC White Label Agreement
+
+Two Phase Program: TRADING RULES : Crypto Only
+Rule Area Step 1 Step 2 Funded Notes
+Profit Target 6% 9% N/A Funded Account has
+
+no limit
+
+Max Drawdown 9% 9% 9% Equity-based, does not
+
+trail (Breach)
+Inactivity Period 30 Days 30 Days 30 Days Must place trade
+(Breach)
+
+Leverage 5:1 for BTC,
+ETH
+2:1 for
+others
+
+5:1 for BTC,
+ETH
+2:1 for others
+
+5:1 for BTC,
+ETH
+2:1 for others
+
+Daily Cap Limit +/-3% +/-3% +/-3% See below for
+calculation
+
+Profit Share
+Percentage
+
+N/A N/A 90%
+
+Max Time - - No Max Time
+requirements
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Instant Funded Plans – FX and CFD products
+Client shall receive 15% of the retail price, subject to the following minimum retail pricing:
+Plan Sizes Minimum Suggested Retail Pricing Minimum Amount to be Received by
+
+Technology
+Provider (Base Rate)
+
+$5,000 $200.00 $170.00
+$10,000 $400.00 $340.00
+$25,000 $1,125.00 $956.00
+$50,000 $2,500.00 $2125.00
+$100,000 $5,000.00 $4250.00
+Client may elect to offer pricing below the Minimum Suggested Retail Pricing, but, in no case, shall
+the Minimum Amount to be Received by Technology Provided be less than the amount listed
+above. Client shall receive 15% of the revenue generated from the sale of Add-Ons.
+
+CONFIDENTIAL Prop Account LLC White Label Agreement
+
+Instant Funded Program: TRADING RULES : Instant Funding
+
+Rule Area Instant Funded Notes
+Profit Target N/A Instant Funded account has no profit limit
+Daily Loss Limit 5% Equity-based, limit set by prior day balance
+
+(Hard Breach)
+
+Max Drawdown 8% Equity-based, trailing account balance high
+water mark, locks in at starting account balance
+(Hard Breach). Account locks at starting
+balance at payout.
+
+Leverage 1:50
+Inactivity Period 30 Days Must place trade (Hard Breach)
+Flat for Weekend Yes All positions closed on Friday 3:45pm unless
+Weekend Hold add-on is purchased
+
+Withdrawal Minimums
+and Delays
+
+- Greater of 1% of initial balance or $100. First
+withdrawal at any time, then once every 30 days.
+Profit Split 80% Can increase to 90% with purchase of add-on
+ADD-ONS (AVAILABLE AT PURCHASE FOR ALL INSTANT FUNDED PLANS):
+Hold Over Weekend (10% Cost) – Point-of-Sale add-on that disables “Flat for Weekend” requirement;
+this allows traders to keep positions open over the weekend. Only crypto can be traded over the
+weekend.
+Profit Share Increased to 90% (20% Cost) – Point-of-Sale add-on that increases a trader’s potential
+profit share for funded accounts to 90% (up from the standard 75%) of the profit.
+
+CONFIDENTIAL Prop Account LLC White Label Agreement
+
+FUTURES PLANS
+Client shall receive 30% of the retail price, subject to the following minimum retail pricing:
+
+Plan Sizes Minimum Suggested Retail
+
+Pricing
+
+Minimum Amount to be Received
+by Technology Provider (Base
+Rate)
+$25,000 $285.00 $199.50
+$50,000 $570.00 $399.00
+$100,000 $1,085.00 $759.50
+$150,000 $1,735.00 $1,214.50
+
+Client may elect to offer pricing below the Minimum Suggested Retail Pricing, but, in no case, shall the
+Minimum Amount to be Received by Technology Provided be less than the amount listed above.
+
+Please note that all Sim Futures plans include a consistency requirement that traders must follow. The
+consistency score ensures traders achieve their profit targets through steady, consistent trading rather
+than relying on a few lucky trades. It encourages disciplined trading behavior and discourages risky or
+&quot;YOLO&quot; style trading.
+The consistency score is calculated using the following formula:
+Consistency Score (%) = (Best Trading Day PnL / Total PnL) x 100
+ A lower consistency score indicates profits are evenly distributed across multiple trading
+days, reflecting more consistent trading behavior.
+ A higher consistency score suggests profits are concentrated within fewer trading days,
+indicating less consistency.
+For example, a consistency requirement of 25% typically means you cannot reach your entire profit
+target or request a withdrawal in fewer than four trading days (since 100% ÷ 25% = 4).
+You must meet the consistency requirement to advance to the next phase or to become eligible for
+withdrawals.
+
+Examples:
+•On a 100k account, say the profit target is $8k for example. If you make $2k for each of 4 days, you
+would be meeting the consistency rule (best day of 2k / total pnl of 8k = 25%).
+•On a 100k account, say the profit target is $8k for example. If you make $3k, $1k, $2k, $2k across 4
+days, you would be violating the consistency rule (best day of 3k / total pnl of 8k = 37.5%). In order to
+hit the profit target now, the account must reach a total profit of best day ($3k) / consistency (25%) =
+$12k, while keep the &quot;best day&quot; at or below $3k.
