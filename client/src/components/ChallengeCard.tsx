@@ -96,7 +96,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
           <div className="space-y-4 mb-6">
             {profitTarget > 0 ? (
               <div className="flex justify-between items-center">
-                <span className="text-[#B8B8D0]">Profit Target</span>
+                <span className="text-[#B8B8D0]">Equity Growth Target</span>
                 <span className="text-white font-semibold">{profitTarget}%</span>
               </div>
             ) : (
@@ -152,7 +152,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
               </div>
               {profitTarget > 0 ? (
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[#B8B8D0]">Profit Target</span>
+                  <span className="text-[#B8B8D0]">Equity Growth Target</span>
                   <span className="text-white font-semibold">{profitTarget}%</span>
                 </div>
               ) : null}

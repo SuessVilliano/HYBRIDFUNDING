@@ -19,15 +19,27 @@ const Terms = () => {
     {
       title: "KYC Requirements",
       content: [
-        "To receive payouts, all funded traders must complete our KYC (Know Your Customer) verification process.",
-        "This includes providing a valid ID, proof of address, and any additional documentation as required by regulatory compliance."
+        "For standard evaluation programs (One-Step, Two-Step, Three-Step), you must complete KYC verification before receiving your funded account.",
+        "For Instant Funding accounts, you can begin trading immediately, but must complete KYC verification before requesting any withdrawals.",
+        "The KYC process includes providing a valid government-issued ID, proof of address dated within the last 3 months, and any additional documentation required by regulatory compliance.",
+        "If you do not pass the KYC process when requesting a withdrawal, the withdrawal will be rejected, and your account may be closed."
       ]
     },
     {
       title: "Risk Disclosure",
       content: [
         "Trading financial instruments involves substantial risk of loss and is not suitable for all investors.",
-        "Past performance is not indicative of future results, and you should never trade with capital you cannot afford to lose."
+        "Past performance is not indicative of future results, and you should never trade with capital you cannot afford to lose.",
+        "The gains distribution from funded trading is based on account performance and is not guaranteed.",
+        "Funded accounts use notional funding, which means the equity in your account may differ from the nominal account size that establishes your initial account value and level of trading."
+      ]
+    },
+    {
+      title: "Geographic Restrictions",
+      content: [
+        "Subject to compliance with applicable laws and regulations, traders from all countries, excluding OFAC-listed countries, can participate in our program.",
+        "We reserve the right to limit participation from any region at our discretion based on regulatory requirements or risk management policies.",
+        "You must be at least 18 years of age, or the applicable minimum legal age in your country, to participate in our funding program."
       ]
     }
   ];

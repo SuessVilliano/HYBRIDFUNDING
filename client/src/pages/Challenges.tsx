@@ -110,39 +110,43 @@ const Challenges = () => {
 
   // Challenge type descriptions
   const challengeTypeDescriptions = {
-    "one-step": "Complete a single phase evaluation with higher profit targets and tighter risk controls. Best for experienced traders.",
-    "two-step": "A balanced two-phase evaluation with moderate targets and slightly relaxed drawdown limits. Popular option for most traders.",
-    "three-step": "Three-phase evaluation with lower profit targets per phase and more flexible drawdown limits. Great for developing traders.",
-    "instant": "Skip the evaluation and get funded instantly. Higher entry fee but immediate access to capital. Trading rules still apply post-funding."
+    "one-step": "A single phase evaluation with a 10% equity growth target and 6% maximum drawdown. Requires consistent trading discipline and strong risk management.",
+    "two-step": "A two-phase evaluation with 10% (Phase 1) and 5% (Phase 2) equity growth targets and 8% maximum drawdown. Provides a more structured path to funding.",
+    "three-step": "A three-phase evaluation with 5% equity growth target per phase and 5% maximum drawdown. Designed for methodical traders who prefer smaller, consistent gains.",
+    "instant": "Start trading with funded capital immediately. Trading rules apply with 8% maximum drawdown. KYC verification required before withdrawal. Higher entry fee with quicker access to trading."
   };
 
   // Asset class descriptions
   const assetClassDescriptions = {
-    "forex": "Trade major, minor and exotic currency pairs with flexible lot sizes and competitive spreads.",
-    "crypto": "Trade popular cryptocurrencies with leverage in a regulated environment.",
-    "futures": "Trade futures contracts across indices, commodities, and more."
+    "forex": "Trade major, minor and exotic currency pairs with up to 1:50 leverage. All positions must be closed by Friday 3:45pm EST unless you purchase the weekend holding add-on.",
+    "crypto": "Trade Bitcoin, Ethereum and other cryptocurrencies with up to 5:1 leverage for BTC/ETH and 2:1 for others. Trading available 24/7 including weekends.",
+    "futures": "Trade indices, commodities, and more with specific leverage ratios per instrument. Our risk management system enforces consistent trading discipline."
   };
 
   const faqs = [
     {
       question: "How does the evaluation work?",
-      answer: "Our evaluation measures your trading discipline, consistency, and profitability over a set period. You need to reach the profit target without violating the maximum drawdown rules. Different challenge types (1-step, 2-step, 3-step) offer varying levels of difficulty and flexibility."
+      answer: "Our evaluation measures your trading discipline and consistency. You need to reach the equity growth target without violating the maximum drawdown and daily loss limits. Each challenge type (1-step, 2-step, 3-step) has specific rules tailored to different trading styles."
     },
     {
       question: "What's the difference between challenge types?",
-      answer: "1-step challenges have a single phase with higher profit targets. 2-step and 3-step challenges break the evaluation into multiple phases with lower targets per phase, but the same overall objective. Instant funding skips the evaluation but comes with a higher entry fee."
+      answer: "The 1-step program has a 10% equity growth target with 6% maximum drawdown. The 2-step program requires 10% growth in Phase 1 and 5% in Phase 2 with 8% maximum drawdown. The 3-step program has 5% targets per phase with 5% maximum drawdown. Instant funding provides immediate access to trading capital with ongoing risk parameters."
     },
     {
-      question: "When do I get paid after passing?",
-      answer: "After passing the evaluation, you become eligible for your first payout 30 days later. Subsequent payouts occur bi-weekly."
+      question: "When can I withdraw gains after funding?",
+      answer: "You can request your first withdrawal at any time. Thereafter, you can request withdrawals every 30 days. The minimum withdrawal amount is the greater of $100 or 1% of the account's starting balance. Your maximum drawdown limit locks in at your starting balance after a withdrawal."
     },
     {
       question: "What happens if I violate the rules?",
-      answer: "If you violate the maximum drawdown or other rules during evaluation, your challenge will be terminated. In the funded phase, rule violations may result in account suspension or closure."
+      answer: "Rule violations are categorized as soft breaches or hard breaches. Soft breaches (like weekend positions) result in position closure but allow continued trading. Hard breaches (maximum drawdown, daily loss limit, or inactivity) will result in account termination. If your funded account is terminated with gains, you'll still receive your share of those gains."
     },
     {
       question: "What trading platforms do you support?",
-      answer: "We support multiple platforms including DXTrade, Match Trader, MetaTrader 5 (MT5), and cTrader to give you flexibility in your trading approach."
+      answer: "We support DXtrade, MatchTrader and cTrader platforms. Our technology is integrated with these platforms to monitor your trading performance in real-time."
+    },
+    {
+      question: "Do I need to complete KYC verification?",
+      answer: "For standard evaluation programs, you must complete KYC verification before receiving your funded account. For Instant Funding, you can begin trading immediately, but must complete KYC verification before requesting any withdrawals."
     }
   ];
 
