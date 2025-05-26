@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import FeatureCard from "@/components/FeatureCard";
-import { Zap, CheckCircle, Users, DollarSign } from "lucide-react";
+import { Zap, CheckCircle, Users, DollarSign, Calendar, BarChart3, BookOpen, Newspaper, Star, Quote } from "lucide-react";
 
 const Home = () => {
   return (
@@ -94,6 +94,196 @@ const Home = () => {
         >
           <Zap className="h-10 w-10 text-accent" />
         </motion.div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-to-br from-[#0B1426] to-[#1A1A2E]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <h2 className="font-['Orbitron'] text-3xl md:text-4xl font-bold text-white mb-4">
+              What Our <span className="text-accent neon-text-accent">Traders</span> Are Saying
+            </h2>
+            <p className="text-[#B8B8D0] max-w-2xl mx-auto">
+              Real success stories from traders who've transformed their careers with Hybrid Funding.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Testimonial 1 - Forex Trader */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="glassmorphism rounded-xl p-6 relative"
+            >
+              <Quote className="absolute top-4 left-4 h-8 w-8 text-accent opacity-30" />
+              <div className="pt-8">
+                <p className="text-[#B8B8D0] mb-6 italic">
+                  "Passing the Hybrid Funding 2-Step Challenge changed everything for me. I scaled to a $100K funded account in under 30 days, and within my first payout window, I made $8,400. Their support team, rule transparency, and roadmap to funding gave me total confidence to go full-time."
+                </p>
+                <div className="flex items-center space-x-2 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 text-accent fill-current" />
+                  ))}
+                </div>
+                <div className="border-t border-accent/20 pt-4">
+                  <p className="text-white font-semibold">Malik T.</p>
+                  <p className="text-[#B8B8D0] text-sm">Atlanta, GA | Full-Time Forex Trader</p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Testimonial 2 - Futures Trader */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="glassmorphism rounded-xl p-6 relative"
+            >
+              <Quote className="absolute top-4 left-4 h-8 w-8 text-accent opacity-30" />
+              <div className="pt-8">
+                <p className="text-[#B8B8D0] mb-6 italic">
+                  "The futures challenge was straightforward, and I loved the phase payouts. I got paid $2,500 during Phase 3 and eventually graduated to a $250K funded account. This model helped me go from trading small to managing real capital."
+                </p>
+                <div className="flex items-center space-x-2 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 text-accent fill-current" />
+                  ))}
+                </div>
+                <div className="border-t border-accent/20 pt-4">
+                  <p className="text-white font-semibold">Alicia R.</p>
+                  <p className="text-[#B8B8D0] text-sm">Chicago, IL | Funded Futures Trader</p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Testimonial 3 - Crypto Trader */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="glassmorphism rounded-xl p-6 relative"
+            >
+              <Quote className="absolute top-4 left-4 h-8 w-8 text-accent opacity-30" />
+              <div className="pt-8">
+                <p className="text-[#B8B8D0] mb-6 italic">
+                  "I chose Hybrid's Instant Funding model and was live the same day. I hit my first $5K withdrawal after just 12 trading days. It's rare to find a prop firm with this level of speed and trust."
+                </p>
+                <div className="flex items-center space-x-2 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 text-accent fill-current" />
+                  ))}
+                </div>
+                <div className="border-t border-accent/20 pt-4">
+                  <p className="text-white font-semibold">Devonte L.</p>
+                  <p className="text-[#B8B8D0] text-sm">Miami, FL | Crypto Day Trader</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trading Tools Section */}
+      <section className="py-20 bg-[#0B1426]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <h2 className="font-['Orbitron'] text-3xl md:text-4xl font-bold text-white mb-4">
+              Built-In Tools to Help You <span className="text-primary neon-text-primary">Win</span>
+            </h2>
+            <p className="text-[#B8B8D0] max-w-3xl mx-auto mb-8">
+              At Hybrid Funding, we believe serious traders deserve serious tools. Every trader gains access to professional-grade tools built directly into your trading experience—so you can focus on execution, not admin.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            {/* Economic Calendar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="glassmorphism rounded-xl p-6 text-center"
+            >
+              <Calendar className="h-12 w-12 text-accent mx-auto mb-4" />
+              <h3 className="text-white font-bold mb-3">Real-Time Economic Calendar</h3>
+              <p className="text-[#B8B8D0] text-sm">
+                Stay ahead of market-moving events with trade-impacting alerts and economic data releases.
+              </p>
+            </motion.div>
+
+            {/* Performance Dashboard */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="glassmorphism rounded-xl p-6 text-center"
+            >
+              <BarChart3 className="h-12 w-12 text-primary mx-auto mb-4" />
+              <h3 className="text-white font-bold mb-3">Performance Dashboards</h3>
+              <p className="text-[#B8B8D0] text-sm">
+                Track your P&L, drawdown, win rate, and consistency metrics in real-time with detailed analytics.
+              </p>
+            </motion.div>
+
+            {/* Trade Journal */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="glassmorphism rounded-xl p-6 text-center"
+            >
+              <BookOpen className="h-12 w-12 text-accent mx-auto mb-4" />
+              <h3 className="text-white font-bold mb-3">Integrated Trade Journals</h3>
+              <p className="text-[#B8B8D0] text-sm">
+                Analyze and refine your trading edge with built-in journaling tools and performance insights.
+              </p>
+            </motion.div>
+
+            {/* News Feed */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="glassmorphism rounded-xl p-6 text-center"
+            >
+              <Newspaper className="h-12 w-12 text-primary mx-auto mb-4" />
+              <h3 className="text-white font-bold mb-3">Market News Feed</h3>
+              <p className="text-[#B8B8D0] text-sm">
+                Keep updated on what moves the market with curated news and analysis from trusted sources.
+              </p>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="text-center"
+          >
+            <Link href="/trader-portal">
+              <a>
+                <Button 
+                  variant="neon" 
+                  size="lg" 
+                  rounded="full"
+                  className="font-['Orbitron'] font-semibold"
+                >
+                  Explore Tools
+                </Button>
+              </a>
+            </Link>
+          </motion.div>
+        </div>
       </section>
       
       {/* Features Summary */}
