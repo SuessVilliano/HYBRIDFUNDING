@@ -26,19 +26,22 @@ This comprehensive document combines all Hybrid Funding knowledge resources for 
 
 **About Hybrid Funding**
 
-Hybrid Funding is a proprietary trading firm that provides capital to skilled traders. The company uses a challenge-based evaluation system to identify disciplined and profitable traders, then funds successful candidates with trading capital and offers profit-sharing arrangements.
+Hybrid Funding is a next-generation proprietary trading firm that revolutionizes how traders access capital and compete in global markets. Based in Delaware and focused on HUBZone and underserved community development, we combine traditional funding programs with innovative competitive trading experiences through our TradeHouse Battles arena.
 
 **Vision and Mission**
 
-To create opportunities for talented traders worldwide by providing access to significant trading capital, cutting-edge technology, and education resources. We aim to help traders achieve financial independence through a partnership approach.
+To create opportunities for talented traders worldwide by providing access to significant trading capital, cutting-edge technology, and gamified competitive experiences. We aim to help traders achieve financial independence through multiple pathways - from traditional evaluation challenges to competitive battle arenas that make skill development engaging while maintaining professional trading standards.
 
 **Unique Selling Points**
 
+- Revolutionary TradeHouse Battles competitive trading arena
 - Flexible challenge options across multiple asset classes
 - Competitive profit splits (up to 90%)
 - Real funding with notional capital
 - Advanced trading platforms and real-time monitoring
 - Generous payout structures, particularly in our Futures program
+- Gamification elements that make trading education engaging
+- Real-time tournaments with exclusive rewards and funded accounts
 
 ---
 
@@ -369,6 +372,48 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
 
 - **Futures**: Market data fees included during evaluation phases; trader responsible for fees after Live Funded stage
 - **Required Attestation**: CME market data attestation required for futures trading (non-professional status)
+
+---
+
+## TradeHouse Battles
+
+### Overview
+
+TradeHouse Battles is Hybrid Funding's revolutionary competitive trading arena that gamifies the trading experience. This innovative platform allows traders to compete in real-time tournaments for exclusive rewards including funded accounts worth up to $100,000+.
+
+### How TradeHouse Battles Works
+
+1. **Choose Your Challenge**: Select from daily, weekly, or seasonal trading tournaments
+2. **Trade Live or Sim**: Earn points based on performance, discipline, and risk management
+3. **Climb Leaderboards**: Compete against traders worldwide in real-time
+4. **Win Exclusive Rewards**: Top performers earn funded accounts, coaching, and elite status
+
+### Available Tournaments
+
+- **Daily Battles**: Quick competitive sessions with smaller prize pools
+- **Weekly Tournaments**: More comprehensive competitions with significant rewards
+- **Seasonal Championships**: Major events with the largest prize pools and exclusive benefits
+
+### Exclusive Rewards
+
+- **Instant Funding Accounts**: Up to $100,000+ for top performers
+- **Private Coaching Sessions**: 1-on-1 mentorship with elite traders
+- **AI Trading Tools**: Access to exclusive automation bots and strategies
+- **Elite Status**: Featured spotlight with merch and marketing opportunities
+- **VIP Challenges**: Access to premium battle arenas and exclusive tournaments
+
+### Eligibility and Access
+
+- **General Access**: Basic battles available to all registered users
+- **Premium Access**: Full reward pools and VIP challenges require Hybrid Funding trader status
+- **Elite Tournaments**: Highest-tier competitions exclusive to funded traders
+
+### Integration with Funding Programs
+
+TradeHouse Battles seamlessly integrates with Hybrid Funding's evaluation programs:
+- Battle performance can demonstrate trading skill and discipline
+- Tournament wins can lead to expedited funding opportunities
+- Funded traders gain access to the most exclusive battle arenas
 
 ---
 

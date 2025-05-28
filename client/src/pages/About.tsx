@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, Trophy, Users, Zap, Target } from "lucide-react";
 
 const About = () => {
   const platforms = [
@@ -11,9 +11,33 @@ const About = () => {
 
   const coreValues = [
     "Integrity in all trader relations",
-    "Financial education as a cornerstone",
+    "Financial education as a cornerstone", 
     "Democratizing access to capital",
-    "Community empowerment"
+    "Community empowerment",
+    "Competitive excellence through gamification"
+  ];
+
+  const innovations = [
+    { 
+      icon: Trophy, 
+      title: "TradeHouse Battles", 
+      description: "Revolutionary competitive trading arena where traders battle in real-time tournaments for exclusive rewards and funded accounts."
+    },
+    { 
+      icon: Target, 
+      title: "Multi-Asset Challenges", 
+      description: "Comprehensive evaluation programs across Forex, Crypto, and Futures markets with flexible challenge types."
+    },
+    { 
+      icon: Users, 
+      title: "Community-Driven", 
+      description: "Building a supportive ecosystem where traders learn, compete, and grow together while accessing capital."
+    },
+    { 
+      icon: Zap, 
+      title: "Cutting-Edge Technology", 
+      description: "Advanced trading platforms with real-time monitoring, analytics, and professional-grade tools."
+    }
   ];
 
   return (
@@ -50,15 +74,15 @@ const About = () => {
               
               <div className="w-full md:w-2/3 space-y-6">
                 <p className="text-[#B8B8D0] leading-relaxed">
-                  Hybrid Funding is based in Delaware and focused on HUBZone and underserved community development. We are operated by real traders and partners who value financial education and performance-based opportunity.
+                  Hybrid Funding is a next-generation proprietary trading firm that revolutionizes how traders access capital and compete in global markets. Based in Delaware and focused on HUBZone and underserved community development, we combine traditional funding programs with innovative competitive trading experiences.
                 </p>
                 
                 <p className="text-[#B8B8D0] leading-relaxed">
-                  Our team consists of experienced traders, fintech professionals, and educational experts who understand the challenges of accessing trading capital. We've built Hybrid Funding to provide a fair, transparent, and achievable path to funded trading.
+                  We've pioneered the integration of competitive gaming elements into professional trading through our TradeHouse Battles arena, where traders compete in real-time tournaments for exclusive rewards including funded accounts worth up to $100,000+. This gamification approach makes skill development engaging while maintaining professional trading standards.
                 </p>
                 
                 <p className="text-[#B8B8D0] leading-relaxed">
-                  Founded by Delaware natives and alumni of Caravel Academy, Hybrid Funding combines cutting-edge technology with a deep understanding of what traders need to succeed.
+                  Our team consists of experienced traders, fintech professionals, and educational experts who understand the challenges of accessing trading capital. Founded by Delaware natives and alumni of Caravel Academy, we've built Hybrid Funding to provide multiple pathways to success - from traditional evaluation challenges to competitive battle arenas.
                 </p>
                 
                 <div className="pt-6 border-t border-accent/20">
@@ -76,6 +100,50 @@ const About = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </motion.div>
+
+          {/* Our Innovations */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-16"
+          >
+            <div className="text-center mb-12">
+              <h3 className="font-['Orbitron'] text-3xl font-bold text-white mb-4">
+                Our <span className="text-primary neon-text-primary">Innovations</span>
+              </h3>
+              <p className="text-[#B8B8D0] max-w-2xl mx-auto">
+                Pioneering the future of prop trading through technology, competition, and community.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {innovations.map((innovation, index) => (
+                <motion.div
+                  key={index}
+                  className="glassmorphism rounded-xl p-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 * index + 0.3 }}
+                  whileHover={{ y: -5 }}
+                >
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                      <innovation.icon className="h-12 w-12 text-accent" />
+                    </div>
+                    <div>
+                      <h4 className="font-['Orbitron'] text-xl font-bold text-white mb-3">
+                        {innovation.title}
+                      </h4>
+                      <p className="text-[#B8B8D0] leading-relaxed">
+                        {innovation.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
           
