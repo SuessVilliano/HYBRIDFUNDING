@@ -1,0 +1,105 @@
+Perfect — here’s how we can frame this for both HybridFunding.co and Replit, so you get a clean embedded Battles experience that also drives conversions.
+
+⸻
+
+✅ Plan Overview
+
+On HybridFunding.co:
+	•	Add a new tab or nav link called “Battles”
+	•	Embed the tradehousebattles.replit.app app directly on a custom HTML page so users don’t have to leave your site
+	•	Below the embedded app, add a call to action encouraging visitors to join Hybrid Funding to participate and unlock premium rewards
+
+⸻
+
+🔧 Prompt for Replit (Embed-Optimized App Version)
+
+Paste this into Replit’s HTML/JS project or console to make it embed-friendly:
+
+<!-- EMBEDDED VERSION OF TRADEHOUSE BATTLES -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TradeHouse Battles | Hybrid Funding</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0c0c0c;
+    }
+    iframe {
+      border: none;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <iframe src="https://tradehousebattles.replit.app/" allowfullscreen></iframe>
+</body>
+</html>
+
+📌 Optional: Add a query param like ?embedded=true so the app can hide external navigation/buttons when embedded.
+
+⸻
+
+🧠 Content to Add on HybridFunding.co (for the “Battles” Page)
+
+Here’s promo copy + content that explains the value of the TradeHouse Battles to your future traders:
+
+⸻
+
+🔥 Join the Battle. Prove You’re the Best. Get Funded.
+
+Welcome to TradeHouse Battles — the ultimate competitive trading arena built for serious traders.
+
+✅ Compete in real-time trading tournaments
+✅ Climb the leaderboard to win prizes, funded accounts, 1-on-1 mentorships, exclusive AI tools & strategies
+✅ Prove your edge publicly and earn your place as one of the best traders in the community
+
+🧠 Powered by Hybrid Funding, every battle is more than just a game — it’s your shot at turning skill into capital.
+
+👉 Only Hybrid Funding traders can access premium prize pools and VIP challenges.
+
+⸻
+
+🕹️ How It Works
+	1.	Choose your challenge — daily, weekly, or seasonal trading tournaments
+	2.	Trade live or in sim — earn points based on performance, discipline, and risk
+	3.	Win — top traders earn funded accounts, giveaways, merch, and more
+
+⸻
+
+🎁 Win These Exclusive Rewards
+	•	Instant funding accounts (up to $100,000+)
+	•	Private coaching sessions
+	•	Access to automation bots
+	•	Merch & marketing features (get spotlighted as a top trader!)
+
+⸻
+
+📍 Join Hybrid Funding Now to Unlock Full Access
+
+⸻
+
+✅ To-Do Summary:
+
+Action	Description
+🧩 Embed Replit App	Use provided HTML or wrap with <iframe> on Battles page
+📝 Add Copy	Use promo copy above to drive traffic from HybridFunding.co
+🔗 CTA Button	“Start Trading Battles” that links to the embedded app
+🧠 Optional	Add tracking to the embed URL (?ref=hybridfunding)
+
+
+⸻
+
+Would you like me to:
+	1.	Generate a fully built HTML page for the Battles tab?
+	2.	Design a web banner or button image to match your Hybrid Funding branding?
+	3.	Create an announcement post or email template for your community?
+
+Let me know what assets you want next and I’ll deliver.

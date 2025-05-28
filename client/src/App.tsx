@@ -16,6 +16,7 @@ import Contact from "@/pages/Contact";
 import Terms from "@/pages/Terms";
 import ThankYou from "@/pages/ThankYou";
 import FAQ from "@/pages/FAQ";
+import Battles from "@/pages/Battles";
 
 function AppRouter() {
   return (
@@ -30,6 +31,7 @@ function AppRouter() {
         <Route path="/terms" component={Terms} />
         <Route path="/thank-you" component={ThankYou} />
         <Route path="/faq" component={FAQ} />
+        <Route path="/battles" component={Battles} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

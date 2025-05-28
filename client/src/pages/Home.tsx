@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import FeatureCard from "@/components/FeatureCard";
-import { Zap, CheckCircle, Users, DollarSign, Calendar, BarChart3, BookOpen, Newspaper, Star, Quote } from "lucide-react";
+import { Zap, CheckCircle, Users, DollarSign, Calendar, BarChart3, BookOpen, Newspaper, Star, Quote, Trophy, Crown } from "lucide-react";
 
 const Home = () => {
   return (
@@ -283,6 +283,110 @@ const Home = () => {
               </a>
             </Link>
           </motion.div>
+        </div>
+      </section>
+
+      {/* TradeHouse Battles Highlight */}
+      <section className="py-20 bg-gradient-to-r from-primary/20 via-[#1A1A2E] to-accent/20 relative overflow-hidden">
+        <div className="absolute inset-0 grid-pattern opacity-10"></div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center justify-between">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="w-full lg:w-1/2 mb-10 lg:mb-0"
+            >
+              <div className="flex items-center mb-4">
+                <Crown className="h-8 w-8 text-accent mr-3" />
+                <span className="text-accent font-['Orbitron'] font-bold text-sm tracking-wider">NEW FEATURE</span>
+              </div>
+              
+              <h2 className="font-['Orbitron'] text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+                <span className="text-white">Enter the </span>
+                <span className="text-primary neon-text-primary">Battle</span><br />
+                <span className="text-accent neon-text-accent">Arena</span>
+              </h2>
+              
+              <p className="text-[#B8B8D0] text-lg mb-6">
+                Compete against traders worldwide in real-time tournaments. Climb leaderboards, win exclusive prizes, 
+                and earn funded accounts worth up to $100,000+. Every battle is your shot at proving you're elite.
+              </p>
+              
+              <div className="flex items-center space-x-6 mb-8">
+                <div className="flex items-center space-x-2">
+                  <Trophy className="h-5 w-5 text-primary" />
+                  <span className="text-white text-sm">Live Tournaments</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Star className="h-5 w-5 text-accent" />
+                  <span className="text-white text-sm">Exclusive Rewards</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  <span className="text-white text-sm">Global Leaderboards</span>
+                </div>
+              </div>
+              
+              <Link href="/battles">
+                <a>
+                  <Button 
+                    variant="neon-filled" 
+                    size="xl" 
+                    rounded="full"
+                    className="font-['Orbitron'] shadow-glow-accent"
+                  >
+                    <Trophy className="mr-2 h-5 w-5" />
+                    JOIN THE BATTLE
+                  </Button>
+                </a>
+              </Link>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="w-full lg:w-1/2"
+            >
+              <div className="glassmorphism rounded-xl p-6 relative">
+                <div className="bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg p-4 mb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-white font-['Orbitron'] font-bold">LIVE BATTLE</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
+                      <span className="text-accent text-sm">LIVE</span>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-black/30 rounded p-3 text-center">
+                      <p className="text-accent text-xs mb-1">TOP TRADER</p>
+                      <p className="text-white font-bold">+$12,500</p>
+                      <p className="text-[#B8B8D0] text-xs">Alex_Trader</p>
+                    </div>
+                    <div className="bg-black/30 rounded p-3 text-center">
+                      <p className="text-primary text-xs mb-1">PRIZE POOL</p>
+                      <p className="text-white font-bold">$50K Fund</p>
+                      <p className="text-[#B8B8D0] text-xs">147 Traders</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-center space-x-4 text-sm">
+                  <div className="flex items-center space-x-2">
+                    <Trophy className="h-4 w-4 text-accent" />
+                    <span className="text-white">24 Active Battles</span>
+                  </div>
+                  <div className="h-4 w-px bg-white/20"></div>
+                  <div className="flex items-center space-x-2">
+                    <Crown className="h-4 w-4 text-primary" />
+                    <span className="text-white">Elite Rewards</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
       
