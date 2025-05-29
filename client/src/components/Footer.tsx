@@ -57,28 +57,28 @@ const Footer = () => {
             <h3 className="font-['Orbitron'] text-lg font-bold text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">Home</a>
+                <Link href="/" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Home
                 </Link>
               </li>
               <li>
-                <Link href="/challenges">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">Challenges</a>
+                <Link href="/challenges" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Challenges
                 </Link>
               </li>
               <li>
-                <Link href="/about">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">About</a>
+                <Link href="/about" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  About
                 </Link>
               </li>
               <li>
-                <Link href="/affiliate">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">Affiliate Program</a>
+                <Link href="/affiliate" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Affiliate Program
                 </Link>
               </li>
               <li>
-                <Link href="/contact">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">Contact</a>
+                <Link href="/contact" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Contact
                 </Link>
               </li>
             </ul>

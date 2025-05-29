@@ -126,12 +126,12 @@ const Affiliate = () => {
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="bg-[#0F0F1A]/50 p-4 rounded-lg">
                       <p className="text-[#B8B8D0] text-sm">Monthly Earnings</p>
-                      <p className="text-accent font-['Orbitron'] font-bold text-2xl">$1,247</p>
+                      <p className="text-accent font-['Orbitron'] font-bold text-2xl">$8,450</p>
                     </div>
                     
                     <div className="bg-[#0F0F1A]/50 p-4 rounded-lg">
                       <p className="text-[#B8B8D0] text-sm">Total Referrals</p>
-                      <p className="text-accent font-['Orbitron'] font-bold text-2xl">28</p>
+                      <p className="text-accent font-['Orbitron'] font-bold text-2xl">142</p>
                     </div>
                   </div>
                 </div>
