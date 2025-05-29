@@ -29,7 +29,7 @@ export function getCheckoutUrl(tier: string): string {
 }
 
 export function getSupportEmail(): string {
-  return 'support@hybridfunding.club';
+  return 'contact@hybridfunding.co';
 }
 
 export function getAffiliateEmail(): string {
