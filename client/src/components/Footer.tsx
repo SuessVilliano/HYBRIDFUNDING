@@ -88,28 +88,28 @@ const Footer = () => {
             <h3 className="font-['Orbitron'] text-lg font-bold text-white mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/terms">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">Terms & Conditions</a>
+                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/terms">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">Privacy Policy</a>
+                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">Refund Policy</a>
+                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Refund Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">KYC Requirements</a>
+                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  KYC Requirements
                 </Link>
               </li>
               <li>
-                <Link href="/terms">
-                  <a className="text-[#B8B8D0] hover:text-accent transition duration-200">Risk Disclosure</a>
+                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Risk Disclosure
                 </Link>
               </li>
             </ul>
