@@ -41,16 +41,14 @@ const Home = () => {
               </p>
               
               <Link href="/challenges">
-                <a>
-                  <Button 
-                    variant="neon-filled" 
-                    size="xl" 
-                    rounded="full"
-                    className="font-['Orbitron'] shadow-glow-accent"
-                  >
-                    CHOOSE YOUR CHALLENGE
-                  </Button>
-                </a>
+                <Button 
+                  variant="neon-filled" 
+                  size="xl" 
+                  rounded="full"
+                  className="font-['Orbitron'] shadow-glow-accent"
+                >
+                  CHOOSE YOUR CHALLENGE
+                </Button>
               </Link>
             </motion.div>
             

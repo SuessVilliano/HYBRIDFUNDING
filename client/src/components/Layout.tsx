@@ -10,7 +10,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar key="main-navbar" />
       <main className="flex-grow">{children}</main>
       <Footer />
       <EarlyAccessPopup delayInSeconds={5} />
