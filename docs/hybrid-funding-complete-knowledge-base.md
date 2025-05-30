@@ -415,6 +415,36 @@ TradeHouse Battles seamlessly integrates with Hybrid Funding's evaluation progra
 - Tournament wins can lead to expedited funding opportunities
 - Funded traders gain access to the most exclusive battle arenas
 
+### Platform Access
+
+TradeHouse Battles is accessible through:
+- **Primary Platform**: https://battles.hybridfunding.co
+- **Embedded Arena**: Available on the Hybrid Funding website battles page
+- **Mobile Responsive**: Optimized for all devices
+
+---
+
+## Contact Information
+
+### Primary Contact Details
+
+- **Main Support Email**: contact@hybridfunding.club
+- **Affiliate Inquiries**: affiliate@tradehybrid.club
+- **Business Hours**: 24/7 support available through dashboard
+- **Response Time**: Typically within 24 hours during business days
+
+### Legal and Compliance
+
+- **Terms and Conditions**: https://dashboardanalytix.com/client-terms-and-policies/
+- **Privacy Policy**: https://dashboardanalytix.com/client-terms-and-policies/
+- **Refund Policy**: https://dashboardanalytix.com/client-terms-and-policies/
+- **KYC Requirements**: https://dashboardanalytix.com/client-terms-and-policies/
+- **Risk Disclosure**: https://dashboardanalytix.com/client-terms-and-policies/
+
+### Important Disclaimer
+
+Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are provided by Prop Account, LLC and all assessment fees are paid to Prop Account, LLC. If you qualify for a Funded Account, you will be required to enter into a Trader Agreement with Prop Account LC. Neither Prop Account, LLC nor Prop Account LC provides any trading education or other services. All such services are provided by Hybrid Funding.
+
 ---
 
 ## Compliance and Regulations
