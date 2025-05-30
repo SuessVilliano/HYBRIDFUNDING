@@ -53,16 +53,14 @@ const Battles: React.FC = () => {
                   </Button>
                   
                   <Link href="/challenges">
-                    <a>
-                      <Button 
-                        variant="neon" 
-                        size="xl" 
-                        rounded="full"
-                        className="font-['Orbitron']"
-                      >
-                        Get Funded First
-                      </Button>
-                    </a>
+                    <Button 
+                      variant="neon" 
+                      size="xl" 
+                      rounded="full"
+                      className="font-['Orbitron']"
+                    >
+                      Get Funded First
+                    </Button>
                   </Link>
                 </div>
               </motion.div>
@@ -241,7 +239,7 @@ const Battles: React.FC = () => {
               
               <div className="relative" style={{ height: '550px' }}>
                 <iframe
-                  src="https://tradehousebattles.replit.app/?embedded=true&ref=hybridfunding"
+                  src="https://battles.hybridfunding.co/?embedded=true&ref=hybridfunding"
                   className="w-full h-full border-0"
                   title="TradeHouse Battles Arena"
                   allowFullScreen
