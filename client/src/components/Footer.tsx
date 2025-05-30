@@ -88,29 +88,54 @@ const Footer = () => {
             <h3 className="font-['Orbitron'] text-lg font-bold text-white mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                <a 
+                  href="https://dashboardanalytix.com/client-terms-and-policies/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[#B8B8D0] hover:text-accent transition duration-200"
+                >
                   Terms & Conditions
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                <a 
+                  href="https://dashboardanalytix.com/client-terms-and-policies/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[#B8B8D0] hover:text-accent transition duration-200"
+                >
                   Privacy Policy
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                <a 
+                  href="https://dashboardanalytix.com/client-terms-and-policies/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[#B8B8D0] hover:text-accent transition duration-200"
+                >
                   Refund Policy
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                <a 
+                  href="https://dashboardanalytix.com/client-terms-and-policies/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[#B8B8D0] hover:text-accent transition duration-200"
+                >
                   KYC Requirements
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="/terms" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                <a 
+                  href="https://dashboardanalytix.com/client-terms-and-policies/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[#B8B8D0] hover:text-accent transition duration-200"
+                >
                   Risk Disclosure
-                </Link>
+                </a>
               </li>
             </ul>
           </div>

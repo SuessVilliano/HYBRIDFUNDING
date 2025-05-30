@@ -269,16 +269,14 @@ const Home = () => {
             className="text-center"
           >
             <Link href="/trader-portal">
-              <a>
-                <Button 
-                  variant="neon" 
-                  size="lg" 
-                  rounded="full"
+              <Button 
+                variant="neon" 
+                size="lg" 
+                rounded="full"
                   className="font-['Orbitron'] font-semibold"
                 >
                   Explore Tools
                 </Button>
-              </a>
             </Link>
           </motion.div>
         </div>
@@ -327,17 +325,15 @@ const Home = () => {
               </div>
               
               <Link href="/battles">
-                <a>
-                  <Button 
-                    variant="neon-filled" 
-                    size="xl" 
-                    rounded="full"
-                    className="font-['Orbitron'] shadow-glow-accent"
-                  >
-                    <Trophy className="mr-2 h-5 w-5" />
-                    JOIN THE BATTLE
-                  </Button>
-                </a>
+                <Button 
+                  variant="neon-filled" 
+                  size="xl" 
+                  rounded="full"
+                  className="font-['Orbitron'] shadow-glow-accent"
+                >
+                  <Trophy className="mr-2 h-5 w-5" />
+                  JOIN THE BATTLE
+                </Button>
               </Link>
             </motion.div>
             
@@ -428,6 +424,30 @@ const Home = () => {
               description="Join a supportive community of traders on the path to financial freedom."
               delay={3}
             />
+          </div>
+        </div>
+      </section>
+
+      {/* Disclaimer Section */}
+      <section className="py-12 bg-[#0F0F1A]/80 border-t border-accent/20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <h3 className="font-['Orbitron'] text-xl font-bold text-white mb-6 text-center">
+              Important Disclaimer
+            </h3>
+            <div className="glassmorphism rounded-xl p-6">
+              <p className="text-[#B8B8D0] text-sm leading-relaxed text-center">
+                <strong className="text-white">DISCLAIMER:</strong> Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are provided by Prop Account, LLC and all assessment fees are paid to Prop Account, LLC. If you qualify for a Funded Account, you will be required to enter into a Trader Agreement with Prop Account LC. Neither Prop Account, LLC nor Prop Account LC provides any trading education or other services. All such services are provided by Hybrid Funding. For complete terms and conditions, please visit our{" "}
+                <a 
+                  href="https://dashboardanalytix.com/client-terms-and-policies/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-accent hover:text-primary transition-colors underline"
+                >
+                  Terms and Conditions
+                </a>.
+              </p>
+            </div>
           </div>
         </div>
       </section>
