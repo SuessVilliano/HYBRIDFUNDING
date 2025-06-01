@@ -205,7 +205,7 @@ const Battles: React.FC = () => {
           </div>
         </section>
 
-        {/* Embedded Battles Arena */}
+        {/* Launch Battles Arena */}
         <section id="battles-arena" className="py-20 bg-[#0B1426]">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
@@ -226,24 +226,45 @@ const Battles: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="glassmorphism rounded-xl overflow-hidden"
-              style={{ minHeight: '600px' }}
+              className="glassmorphism rounded-xl overflow-hidden max-w-4xl mx-auto"
             >
-              <div className="bg-gradient-to-r from-primary/20 to-accent/20 p-4 text-center border-b border-white/10">
-                <div className="flex items-center justify-center space-x-2">
-                  <Crown className="h-6 w-6 text-accent" />
-                  <h3 className="text-white font-['Orbitron'] font-bold">TRADEHOUSE BATTLES</h3>
-                  <Crown className="h-6 w-6 text-primary" />
+              <div className="bg-gradient-to-r from-primary/20 to-accent/20 p-6 text-center border-b border-white/10">
+                <div className="flex items-center justify-center space-x-2 mb-4">
+                  <Crown className="h-8 w-8 text-accent" />
+                  <h3 className="text-white font-['Orbitron'] font-bold text-2xl">TRADEHOUSE BATTLES</h3>
+                  <Crown className="h-8 w-8 text-primary" />
                 </div>
+                <p className="text-[#B8B8D0] mb-6">
+                  Experience the full arena on our dedicated platform with enhanced performance and all features unlocked.
+                </p>
               </div>
               
-              <div className="relative" style={{ height: '550px' }}>
-                <iframe
-                  src="https://battles.hybridfunding.co/?embedded=true&ref=hybridfunding"
-                  className="w-full h-full border-0"
-                  title="TradeHouse Battles Arena"
-                  allowFullScreen
-                />
+              <div className="p-12 text-center">
+                <div className="mb-8">
+                  <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                    <Trophy className="h-12 w-12 text-white" />
+                  </div>
+                  <h4 className="text-white font-bold text-xl mb-4">Ready to Battle?</h4>
+                  <p className="text-[#B8B8D0] mb-8">
+                    Click below to launch the full TradeHouse Battles platform and start competing for exclusive rewards.
+                  </p>
+                </div>
+
+                <Button 
+                  variant="neon-filled" 
+                  size="xl" 
+                  rounded="full"
+                  className="font-['Orbitron'] shadow-glow-primary mb-4"
+                  onClick={() => window.open('https://battles.hybridfunding.co', '_blank', 'noopener,noreferrer')}
+                >
+                  <Zap className="mr-2 h-6 w-6" />
+                  LAUNCH BATTLES ARENA
+                  <Trophy className="ml-2 h-6 w-6" />
+                </Button>
+
+                <p className="text-[#B8B8D0] text-sm">
+                  Opens in a new window for the best experience
+                </p>
               </div>
             </motion.div>
           </div>
