@@ -39,7 +39,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "What trading platforms do you support?",
-      answer: "We support DXtrade, MatchTrader and cTrader platforms. Our technology is integrated with these platforms to monitor your trading performance in real-time."
+      answer: "We support Rithmic, MatchTrader, DXtrade, and cTrader platforms. Our technology is integrated with these platforms to monitor your trading performance in real-time."
     },
     {
       question: "Are there any geographic restrictions?",

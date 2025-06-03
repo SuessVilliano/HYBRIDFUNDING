@@ -3,9 +3,9 @@ import { Check, Trophy, Users, Zap, Target } from "lucide-react";
 
 const About = () => {
   const platforms = [
+    { name: "Rithmic", description: "Professional futures platform" },
+    { name: "MatchTrader", description: "Advanced order types" },
     { name: "DXTrade", description: "Web-based solution" },
-    { name: "Match Trader", description: "Advanced order types" },
-    { name: "MT5", description: "Multi-asset platform" },
     { name: "cTrader", description: "For scalpers & algos" }
   ];
 
