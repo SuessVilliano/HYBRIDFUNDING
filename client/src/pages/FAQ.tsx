@@ -30,8 +30,8 @@ const FAQ: React.FC = () => {
       answer: "The standard profit split is typically 75-80% for traders. However, you can purchase a 90% profit split add-on (additional 20% cost) during checkout. The exact split may vary slightly between different asset classes and programs."
     },
     {
-      question: "How often can I withdraw profits?",
-      answer: "You can request your first withdrawal at any time. Thereafter, you can request withdrawals every 30 days. The minimum withdrawal amount is typically the greater of $100 or 1% of the account's starting balance."
+      question: "When can I withdraw gains after funding?",
+      answer: "You can request your first withdrawal at any time. Thereafter, you can request withdrawals every 30 days. The minimum withdrawal amount is the greater of $100 or 1% of the account's starting balance. Note: This withdrawal minimum only applies to Instant Funding plans."
     },
     {
       question: "What happens if I breach the rules?",

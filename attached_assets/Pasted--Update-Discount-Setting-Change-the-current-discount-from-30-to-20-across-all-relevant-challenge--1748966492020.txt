@@ -1,0 +1,1047 @@
+ Update Discount Setting
+
+Change the current discount from 30% to 20% across all relevant challenge pricing displays.
+
+2. Platform Adjustments
+
+Remove MT5 from all available platform options.
+
+
+3. Testimonials Section
+
+Remove placeholder testimonials we can hid this part from the site until we launch and get real ones. 
+
+
+5. Withdrawal Minimum Clarification
+
+Please clarify or highlight where the minimum withdrawal policy is defined in the current setup. We may have missed that logic.
+
+6. Max Drawdown Logic (1-Step & 3-Step)
+
+Update the trailing max drawdown logic for both the 1-Step and 3-Step programs based on the corrected values (details to follow).
+
+7. Product Table Logic
+
+Correct the logic and data flow for the challenge product comparison table to ensure values align with backend configurations. For instance there are no crypto instant funding. the logic is messed up and should strictly follow this documents. ONE STEP OVERVIEW
+April 2024
+
+This document contains...
+EXTERNAL: This section includes Trader FAQs
+• General Trading Rules
+• Funded Accounts Overview
+• Other General Questions
+TRADING RULES
+Rule Area Assessment Funded Notes
+Profit Target 10% - Funded Account has no
+
+limit
+
+Daily Loss Limit 5% 5% Equity-based, limit set by
+prior day balance (Hard
+Breach)
+
+Max Drawdown 6% 6% Equity-based, trailing
+account balance high
+water mark, locks in at
+starting account balance
+(Hard Breach)
+Inactivity Period 30 Days 30 Days Must place trade (Hard
+
+Breach)
+
+Leverage 1:20 1:20
+Flat for Weekend Yes Yes All positions closed on
+Friday 3:45pm (Soft
+Breach)
+Max Time - - No Max Time
+requirements
+
+ADD-ONS (AVAILABLE AT PURCHASE):
+Hold Over Weekend (10% Cost) – Point-of-Sale add-on that disables “Flat for Weekend” requirement;
+this allows traders to keep positions open over the weekend. Only crypto can be traded over the
+weekend.
+Profit Share Increased to 90% (20% Cost) – Point-of-Sale add-on that increases a trader’s potential
+profit share for funded accounts to 90% (up from the standard 75%) of the profit.
+
+TRADING RULES | FREQUENTLY ASKED QUESTIONS (FAQ):
+
+ONE STEP OVERVIEW
+April 2024
+
+What is the difference between a Hard Breach and Soft Breach rule?
+● Soft breach means that we will close all trades that have violated the rule. However, you can continue
+trading in your Assessment or Funded Account.
+● Hard breach means that you violated either the Daily Loss Limit or Max Trailing Drawdown rule. Both
+rules constitute a hard breach. In the event you have a hard breach, you will fail the Assessment or have
+your Funded Account taken away.
+How do you calculate the Daily Loss Limit?
+The Daily Loss Limit is the maximum your account can lose in any given day. Daily Loss Limit is calculated
+using the previous day balance which resets at 5 PM EST. The Daily Stop compounds with the increase in
+your account.
+Example: if your prior day's end of day balance (5pm EST) was $100,000, your account would violate the
+daily stop loss limit if your equity reached $95,000 during the day. If your floating equity is +$5,000 on a
+$100,000 account, your new- day (5pm EST) max loss is based on your balance from the previous day
+($100,000). So, your daily loss limit would still be $95,000.
+How do you calculate the Maximum Trailing Drawdown?
+The Maximum Trailing Drawdown is initially set at 6% and trails (using CLOSED BALANCE - NOT equity)
+your account until you have achieved a 6% return in your account. Once you have achieved a 6% return
+the Maximum Trailing Drawdown no longer trails and is permanently locked in at your starting balance.
+Example: If your starting balance is $100,000, you can drawdown to $94,000 before you would violate
+the Maximum Trailing Drawdown rule. Then for example let's say you take your account to $102,000 in
+CLOSED BALANCE. This is your new high-water mark, which would mean your new Maximum Trailing
+Drawdown would be $96,000. Next, let's say you take your account to $106,000 in CLOSED BALANCE,
+which would be your new high-water mark. At this point your Maximum Trailing Drawdown would be
+locked in at your starting balance of $100,000. So, regardless of how high your account goes, you would
+only breach this rule if your account drew back down to $100,000 (note, you can still violate the daily
+drawdown). For example, if you take your account to $170,000, as long as you do not drawdown more
+than 5% in any given day, you would only breach if your account equity reaches $100,000.
+
+Can I hold positions over the weekend?
+We require all trades to be closed by 3:45pm EST on Friday. Any trades left open after this time will
+automatically be closed. Note, this is only a soft breach and you will be able to continue trading once the
+markets reopen.
+
+What is 1 lot equal to on the Trading Platform?
+● Forex: 1 lot = $100k notional
+
+ONE STEP OVERVIEW
+April 2024
+
+● Index: 1 lot = 1 Contract
+Exceptions:
+SPX500: 1 lot = 10 contracts
+JPN225: 1 lot = 500 contracts
+● Cryptos: 1 lot = 1 coin
+● Silver: 1 lot = 5000 ounces
+● Gold: 1 lot = 100 ounces
+● Oil: 1 lot = 100 barrels
+
+Is there a breach for inactivity?
+Yes. We will consider you inactive and your account will be breached if you do not have any trading
+activity on your account for 30 consecutive days.
+
+FUNDED/LIVE ACCOUNTS | FREQUENTLY ASKED QUESTIONS (FAQ):
+How long does it take to receive my funded account?
+Upon passing your Assessment, you will receive an email with instructions on how to access and
+complete both your “Know Your Customer” verification and your “Trader Agreement”. Once both are
+completed and supporting documentation is provided, your Funded Account will be created, funded and
+issued to you typically within 24-48 business hours. You will receive a confirmation email once this
+account is being enabled.
+Once I pass the Assessment am I provided with a demo or funded account?
+Once you pass the Assessment, we provide you with a funded account, backed by our capital. The
+capital in your funded Account is notional and may not match the amount of capital on deposit with the
+Liquidity Provider. A Funded Account is notionally funded when actual funds in the account (i.e., the
+equity in a Funded Account represented by the amount of capital) differs from the nominal account size
+(i.e., the size of the Funded Account that establishes the initial account value and level of trading).
+Notional funds are the difference between nominal account size and actual capital in a Funded Account.
+Use of notional funding does not impact your trading conditions in any way.
+Do we manipulate the pricing or executions you receive in your funded account?
+No. We do not have any control over pricing from the liquidity provider or on the executions on your
+trades.
+Who is the counterparty to my trades?
+For purposes of managing risk and minimizing transaction costs, we may offset or negate market risk
+and act as the direct counterparty to certain trades initiated in the Account. Such trades are executed at
+
+ONE STEP OVERVIEW
+April 2024
+
+prices provided by arm’s length third parties. This framework is intended to ensure you receive real
+market execution on your trades, while simultaneously allowing us to manage risk dynamically by
+routing existing positions or future orders to third parties for execution as we deem appropriate. We
+
+believe that such real market execution and dynamic risk management would not be possible or as cost-
+effective if trades were executed in simulated accounts. Regardless of whether we act as counterparty
+
+to your trades, the gain or loss on your funded account is not calculated differently. However, when we
+act as the counterparty to your trades, there is an inherent potential conflict of interest because your
+trades do not result in net gain or loss to us, as your trades would if we were not the direct
+counterparty.
+Am I subject to any position limits?
+The maximum position that you may open is determined by your available margin. We reserve the right
+to increase the margin requirement, limit the number of open positions you may enter or maintain in
+the Funded Account at any time, and to revise in response to market conditions the drawdown levels at
+which trading in the funded account will be halted. We or the Liquidity Provider reserve the right to
+refuse to accept any order.
+What are the rules for the funded account?
+The rules for the funded account are exactly the same as your Assessment account. However, with a
+funded account, there is no profit target.
+If I have a hard breach in my funded account and there are gains in the account, do I forfeit those
+gains?
+If you have gains in your funded account at the time of a hard breach, you will still receive your portion
+of those gains.
+For example, if you have a $100,000 account and you grow that account to $110,000. Should you then
+have a hard breach we would close the account. Of the $10,000 in gains in your funded account, you
+would be paid your portion thereof.
+How do I withdraw the gains in my funded account?
+Traders can request a withdrawal of the gains in their funded account at any time in their trader
+dashboard, but no more frequently than once per thirty (30) days. So, if you make gain in your funded
+account, you can request a withdrawal. When you are ready to withdraw the gains from your funded
+account, click the Withdraw Profits button in your trader dashboard and enter the amount to withdraw.
+All such gains are distributed via the available outbound payment solutions offered from time to time.
+Once your withdrawal request is approved, we will pay the monies owed to you. We reserve the right to
+change the withdrawal methods and options at any time.
+When can I withdraw the gains in my funded account and how does that affect my Maximum Trailing
+Drawdown?
+Your first withdrawal can be requested at any time. Thereafter, you can request a withdrawal of the
+gains in your account every 30 days. When a withdrawal is approved, we will also withdraw our share of
+
+ONE STEP OVERVIEW
+April 2024
+
+the gains, and your max trailing drawdown will lock in at your starting balance. The trailing drawdown
+does not reset when you request a withdrawal. Example: You have taken an account from $100,000 to
+$120,000. You then request a withdrawal of $16,000. In this scenario, you will receive $12,000 and we
+would retain $4,000. This would also take the balance of the account down to $104,000, and your
+Maximum Trailing Drawdown is locked in at $100,000. So, you would have $4,000 maximum you could
+lose on the account before it would violate the Maximum Trailing Drawdown rule. If you take a full
+withdrawal of the gains in your Funded Account, the Maximum Trailing Drawdown will still lock in at the
+starting balance and will therefore result in the forfeiting of your Funded Account, as your balance will
+trigger the Maximum Trailing Drawdown breach rule.
+OTHER GENERAL QUESTIONS:
+Do I have to use one of your accounts for the Assessment or can I use my own?
+We have risk management software that is synced with the accounts we create. This allows us to
+analyze your performance in real time for achievements or rule violations. As such, you must use an
+account that we provide to you.
+What Countries are accepted?
+Subject to compliance with applicable laws and regulations, traders from all countries, excluding OFAC
+listed countries, can take part in our program, unless otherwise limited at the Company’s discretion.
+What is the minimum age I must be to be part of your program?
+You must be at least 18 years of age, or the applicable minimum legal age in your country, to purchase
+an assessment.
+Where do I track the progress of my account?
+Upon purchasing an Assessment, you will receive access to a trader dashboard where you can monitor
+your Assessment and Funded Accounts. The dashboard is updated every time we calculate metrics,
+which occurs roughly every 60 seconds. It is your responsibility to monitor your breach levels.
+What Platform can I trade on?
+Our technology is currently integrated with DXtrade, MatchTrader & cTrader platforms via GooeyTrade.
+What products can I trade?
+You can trade any products streamed by the Liquidity Provider into the available platforms, as such
+products may change from time to time. This includes FX pairs and CFD Indices, Commodities, Metals,
+and Cryptocurrencies.
+What is the leverage?
+
+ONE STEP OVERVIEW
+April 2024
+
+We offer up to 20:1 leverage on Forex and Metals, up to 10:1 leverage on Indices, up to 5:1 leverage on
+Oil and up to 2:1 leverage on Cryptocurrencies.
+
+What are the trading hours?
+Trading hours are generally set by the Liquidity Provider, unless set by our rules. We do not have any
+control over the trading hours. You can see the trading hours for each product by using the following
+methods:
+DXtrade – Right click symbol, select “Instrument Info”
+MatchTrader – Click symbol to expand, select “Info”
+cTrader – Navigate to Symbol Window, scroll down to see “Market Hours” for selected symbol
+
+Please note that holidays can have an impact on available trading hours.
+Additionally, pursuant to the no holding trades over the weekend rule, we close all open trades at
+3:45pm EST on Fridays.
+Please note if a holiday falls on a Friday and the markets are closed, the trader is responsible for closing
+positions before the markets close on the prior Thursday.
+Do your accounts charge commissions?
+Funded accounts receive the same pricing and commissions as charged by our Liquidity Provider to
+other, self-funded, retail trading accounts.
+Can I use an Automated Strategies?
+Subject to our policy on Prohibited Trading as described below, you can trade using an automated
+strategy.
+What is the policy on Prohibited Trading Activity?
+You are also prohibited from using any trading strategy that is expressly prohibited by the Company or
+the Liquidity Providers it uses. Such prohibited trading (“Prohibited Trading”) shall include, but not be
+limited to:
+● Exploiting errors or latency in the pricing and/or platform(s) provided by the Liquidity Provider
+● Utilizing non-public and/or insider information
+● Front-running of trades placed elsewhere
+● Trading in any way that jeopardizes the relationship that the Company has with a Liquidity Provider or
+may result in the canceling of trades
+● Trading in any way that creates regulatory issues for the Liquidity Provider
+● Utilizing any third-party strategy, off-the-shelf strategy or one marketed to pass challenge accounts
+
+ONE STEP OVERVIEW
+April 2024
+
+● Utilizing one strategy to pass an assessment and then utilizing a different strategy in a funded account,
+as determined by the Company in cooperation with Prop Account, LLC at their discretion
+
+● Attempting to arbitrage an assessment account with another account with the Company or any third-
+party company, as determined by the Company in its sole and absolute discretion.
+
+● If the Company detects that your trading constitutes Prohibited Trading, your participation in the
+program will be terminated and may include forfeiture of any fees paid to the Company. Additionally,
+and before any Trader shall receive a funded account, the trading activity of the Trader under these
+Terms and Conditions shall be reviewed by both the Company and the Liquidity Provider to determine
+whether such trading activity constitutes Prohibited Trading. In the case of Prohibited Trading, the
+Trader shall not receive a funded account.
+● Additionally, the Company reserves the right to disallow or block any Trader from participating in the
+program for any reason, in the Company’s sole and absolute discretion.
+To view all Prohibited Uses, please review our Terms and Conditions here,
+https://dashboardanalytix.com/client-terms-and-policies/?v=3acf83834396
+Can I trade during News Events?
+Trading within 3 minutes before or after a News Event is prohibited. If the Company determines that
+trading has, in fact, occurred during the News Event. Any traders identified as having trading during a
+News Event during the challenge phase are subject to having those trades removed, having the leverage
+on their account reduced or having their account breached altogether. The Company has sole and
+absolute discretion in determining what constitutes a News Event.
+How will I see the charge on my Statement?
+Charges come across in the name of dashboardanalytix.com.
+How are taxes handled?
+When trading a Funded Account for our firm, you are treated as an independent contractor. As a result,
+you are responsible for any and all taxes on your gains.
+How are affiliates credited?
+
+Affiliates are credited for referrals when a user creates an account using a link or discount code provided
+by the Affiliate.
+TWO STEP OVERVIEW
+April 2024
+
+This document contains...
+EXTERNAL: This section includes Trader FAQs
+• General Trading Rules
+• Funded Accounts Overview
+• Other General Questions
+TRADING RULES
+Rule Area Step 1 Step 2 Funded Notes
+Profit Target 10% 5% - Funded account
+has no profit limit
+Daily Loss Limit 4% 4% 4% Equity-based,
+based on prior day
+balance (Hard
+Breach)
+
+Max Drawdown 8% 8% 8% Equity-based, does
+not trail (Hard
+Breach)
+Inactivity Period 30 Days 30 Days 30 Days Must place trade
+(Hard Breach)
+
+Leverage 1:30 1:30 1:30
+Flat for Weekend Yes Yes Yes All positions closed
+on Friday 3:45pm
+(Soft Breach)
+Max Time - - - No Max time
+requirements
+
+ADD-ONS (AVAILABLE AT PURCHASE):
+Hold Over Weekend (10% Cost) – Point-of-Sale add-on that disables “Flat for Weekend” requirement;
+this allows traders to keep positions open over the weekend. Only crypto can be traded over the
+weekend.
+
+Profit Share Increased to 90% (20% Cost) – Point-of-Sale add-on that increases a trader’s potential
+profit share for funded accounts to 90% (up from the standard 75%) of the profit.
+TRADING RULES | FREQUENTLY ASKED QUESTIONS (FAQ):
+What is the difference between a Hard Breach and Soft Breach rule?
+
+TWO STEP OVERVIEW
+April 2024
+
+● Soft breach means that we will close all trades that have violated the rule. However, you can continue
+trading in your Assessment or Funded Account.
+● Hard breach means that you violated either the Daily Loss Limit or Max Drawdown rule. Both rules
+constitute a hard breach. In the event you have a hard breach, you will fail the Assessment or have your
+Funded Account taken away.
+How do you calculate the 4% Daily Loss Limit?
+The Daily Loss Limit is the maximum your account can lose in any given day. Daily Loss Limit is calculated
+using the previous day balance which resets at 5 PM EST. Daily Stop compounds with the increase in
+your account.
+Example: if your prior day's end of day balance (5pm EST) was $100,000, your account would violate the
+daily stop loss limit if your equity reached $96,000 during the day. If your floating equity is +$6,000 on a
+$100,000 account, your new- day (5pm EST) max loss is based on your balance from the previous day
+($100,000). So, your daily loss limit would still be $96,000.
+How do you calculate the 8% Max Drawdown?
+Maximum drawdown is the maximum your account can drawdown before you would hard breach your
+account. When you open the account, your Maximum Drawdown is set at 8% of your starting balance.
+This 8% is static and does not trail.
+
+Can I hold positions over the weekend?
+Positions on crypto can be held over the weekend. We require all trades on other assets to be closed by
+3:45pm EST on Friday. Any trades left open after this time will automatically be closed prior to market
+closing. Note, this is only a soft breach and you will be able to continue trading once the markets
+reopen.
+
+What is 1 lot equal to on the Trading Platform?
+● Forex - 1 lot = $100k notional
+● Index - 1 lot = 1 Contracts
+Exceptions:
+SPX500: 1 lot = 10 contracts
+JPN225: 1 lot = 500 contracts
+● Cryptos - 1 lot = 1 coin
+●
+● Silver - 1 lot = 5000 ounces
+● Gold - 1 lot = 100 ounces
+● Oil - 1 lot = 100 barrels
+
+TWO STEP OVERVIEW
+April 2024
+
+Is there a breach for inactivity?
+Yes. We will consider you inactive and your account will be breached if you do not have any trading
+activity on your account for 30 consecutive days.
+FUNDED ACCOUNTS | FREQUENTLY ASKED QUESTIONS (FAQ):
+How Long does it take to receive my funded account?
+Upon passing your Assessment, you will receive an email with instructions on how to access and
+complete both your “Know Your Customer” verification and your “Trader Agreement”. Once both are
+completed and supporting documentation is provided, your Funded Account will be created, funded and
+issued to you typically within 24-48 business hours. You will receive a confirmation email once this
+account is being enabled.
+Once I pass the Assessment am I provided with a demo or funded account?
+Once you pass the Assessment, we provide you with a funded account, backed by our capital.
+The capital in your funded Account is notional and may not match the amount of capital on
+deposit with the Liquidity Provider. A Funded Account is notionally funded when actual funds in
+the account (i.e., the equity in a Funded Account represented by the amount of capital) differs
+from the nominal account size (i.e., the size of the Funded Account that establishes the initial
+account value and level of trading). Notional funds are the difference between nominal account
+size and actual capital in a funded account.
+
+Use of notional funding does not impact your trading conditions in any way.
+Do we manipulate the pricing or executions you receive in your Funded Account?
+No. We do not have any control over pricing from the liquidity provider or on the executions on
+your trades.
+Who is the counterparty to my trades?
+For purposes of managing risk and minimizing transaction costs, we may offset or negate
+market risk and act as the direct counterparty to certain trades initiated in the Account. Such
+trades are executed at prices provided by arm’s length third parties. This framework is intended
+to ensure you receive real market execution on your trades, while simultaneously allowing us to
+manage risk dynamically by routing existing positions or future orders to third parties for
+execution as we deem appropriate. We believe that such real market execution and dynamic
+risk management would not be possible or as cost-effective if trades were executed in
+simulated accounts. Regardless of whether we act as counterparty to your trades, the gain or
+loss on your funded account is not calculated differently. However, when we act as the
+counterparty to your trades, there is an inherent potential conflict of interest because your
+
+TWO STEP OVERVIEW
+April 2024
+
+trades do not result in net gain or loss to us, as your trades would if we were not the direct
+counterparty.
+Am I subject to any position limits?
+The maximum position that you may open is determined by your available margin. We reserve the right
+to increase the margin requirement, limit the number of open positions you may enter or maintain in
+the Funded Account at any time, and to revise in response to market conditions the drawdown levels at
+which trading in the funded account will be halted. We or the Liquidity Provider reserve the right to
+refuse to accept any order.
+What are the rules for the funded account?
+The rules for the funded account are exactly the same as your Assessment account. However, with a
+funded account, there is no profit target.
+If I have a hard breach in my funded account and there are gains in the account, do I forfeit those
+gains?
+If you have gains in your funded account at the time of a hard breach, you will still receive your portion
+of those gains.
+For example, if you have a $100,000 account and you grow that account to $110,000. Should you then
+have a hard breach we would close the account. Of the $10,000 in gains in your funded account, you
+would be paid your portion thereof.
+How do I withdraw the gains in my funded account?
+Traders can request a withdrawal of the gains in their funded account at any time in their trader
+dashboard, but no more frequently than once per thirty (30) days. So, if you make gain in your funded
+account, you can request a withdrawal. When you are ready to withdraw the gains from your funded
+account, click the Withdraw Profits button in your trader dashboard and enter the amount to withdraw.
+All such gains are distributed via the available outbound payment solutions offered from time to time.
+Once your withdrawal request is approved, we will pay the monies owed to you. We reserve the right to
+change the withdrawal methods and options at any time.
+When can I withdraw the gains in my funded account and how does that affect my Maximum
+Drawdown?
+Your first withdrawal can be requested at any time. Thereafter, you can request a withdrawal of the
+gains in your account every 30 days. When a withdrawal is approved, we will also withdraw our share of
+the gains, and your max drawdown will lock in at your starting balance. The Maximum Drawdown does
+not reset when you request a withdrawal. Example: You have taken an account from $100,000 to
+$120,000. You then request a withdrawal of $16,000. In this scenario, you will receive $12,000 and we
+would retain $4,000. This would also take the balance of the account down to $104,000, and your
+Maximum Drawdown is locked in at $100,000. So, you would have $4,000 maximum you could lose on
+the account before it would violate the Maximum Drawdown rule. If you take a full withdrawal of the
+gains in your funded account, the Maximum Drawdown will still lock in at the starting balance and will
+
+TWO STEP OVERVIEW
+April 2024
+
+therefore result in the forfeiting of your Funded Account, as your balance will trigger the Maximum
+Drawdown breach rule.
+OTHER GENERAL QUESTIONS:
+Do I have to use one of your accounts for the Assessment or can I use my own?
+We have risk management software that is synced with the accounts we create. This allows us to
+analyze your performance in real time for achievements or rule violations. As such, you must use an
+account that we provide to you.
+What Countries are accepted?
+Subject to compliance with applicable laws and regulations, traders from all countries, excluding OFAC
+listed countries, can take part in our program, unless otherwise limited at the Company’s discretion.
+What is the minimum age I must be to be part of your program?
+You must be at least 18 years of age, or the applicable minimum legal age in your country, to purchase
+an assessment.
+Where do I track the progress of my account?
+Upon purchasing an Assessment, you will receive access to a trader dashboard where you can monitor
+your Assessment and Funded Accounts. The dashboard is updated every time we calculate metrics,
+which occurs roughly every 60 seconds. It is your responsibility to monitor your breach levels.
+What Platform can I trade on?
+Our technology is currently integrated with DXtrade, MatchTrader & cTrader platforms via GooeyTrade.
+What products can I trade?
+You can trade any products streamed by the Liquidity Provider into the available platforms, as
+such products may change from time to time. This includes FX pairs and CFD Indices,
+Commodities, Metals, and Cryptocurrencies.
+What is the leverage?
+We offer up to 20:1 leverage on Forex and Metals, up to 10:1 leverage on Indices, up to 5:1 leverage on
+Oil and up to 2:1 leverage on Cryptocurrencies.
+What are the trading hours?
+Trading hours are generally set by the Liquidity Provider, unless set by our rules. We do not
+have any control over the trading hours. You can see the trading hours for each product by
+using the following methods:
+
+TWO STEP OVERVIEW
+April 2024
+DXtrade – Right click symbol, select “Instrument Info”
+MatchTrader – Click symbol to expand, select “Info”
+cTrader – Navigate to Symbol Window, scroll down to see “Market Hours” for selected symbol
+Please note that holidays can have an impact on available trading hours.
+Additionally, pursuant to the no holding trades over the weekend rule, we close all open trades at
+3:45pm EST on Fridays.
+Please note that if a holiday falls on a Friday and the markets are closed, the trader is responsible for
+closing positions before the markets close on the prior Thursday.
+Do your accounts charge commissions?
+Funded accounts receive the same pricing and commissions as charged by our Liquidity Provider to
+other, self-funded, retail trading accounts.
+Can I use an automated strategy?
+Subject to our policy on Prohibited Trading as described below, you can trade using an automated
+strategy.
+What is the policy on Prohibited Trading Activity?
+You are also prohibited from using any trading strategy that is expressly prohibited by the Company or
+the Liquidity Providers it uses. Such prohibited trading (“Prohibited Trading”) shall include, but not be
+limited to:
+• Exploiting errors or latency in the pricing and/or platform(s) provided by the Liquidity Provider
+• Utilizing non-public and/or insider information
+• Front-running of trades placed elsewhere
+• Trading in any way that jeopardizes the relationship that the Company has with a Liquidity Provider or
+may result in the canceling of trades
+• Trading in any way that creates regulatory issues for the Liquidity Provider
+• Utilizing any third-party strategy, off-the-shelf strategy or one marketed to pass challenge accounts
+• Utilizing one strategy to pass an assessment and then utilizing a different strategy in a funded account,
+as determined by the Company in cooperation with Prop Account, LLC at their discretion
+
+• Attempting to arbitrage an assessment account with another account with the Company or any third-
+party company, as determined by the Company in its sole and absolute discretion.
+
+TWO STEP OVERVIEW
+April 2024
+
+If we detect that your trading constitutes Prohibited Trading, your participation in the program will be
+terminated and may include forfeiture of any fees paid to us. Additionally, and before you shall receive a
+funded account, the trading activity of the Trader under these Terms and Conditions shall be reviewed
+by us to determine whether such trading activity constitutes Prohibited Trading. In the case of
+Prohibited Trading, the Trader shall not receive a Funded Account.
+Additionally, we reserve the right to disallow or block You from participating in the program for any
+reason, in our sole and absolute discretion.
+To view all Prohibited Uses, please review our Terms and Conditions here,
+https://dashboardanalytix.com/client-terms-and-policies/?v=3acf83834396
+
+Can I trade during News Events?
+Trading within 3 minutes before or after a News Event is prohibited. If the Company determines that
+trading has, in fact, occurred during the News Event. Any traders identified as having trading during a
+News Event during the challenge phase are subject to having those trades removed, having the leverage
+on their account reduced or having their account breached altogether. The Company has sole and
+absolute discretion in determining what constitutes a News Event.
+
+How will I see the charge on my Statement?
+Charges come across in the name of Dashboardanalytix.com.
+How are taxes handled?
+When trading a Funded Account for our firm, you are treated as an independent contractor. As a result,
+you are responsible for any and all taxes on your gains.
+How are affiliates credited?
+Affiliates are credited for referrals when a user creates an account using a link or discount code provided
+by the Affiliate.
+THREE STEP OVERVIEW
+April 2024
+
+This document contains...
+EXTERNAL: This section includes Trader FAQs
+• General Trading Rules
+• Funded Accounts Overview
+• Other General Questions
+
+Trading Rules:
+
+Rule Area Step 1 Step 2 Step 3 Funded Notes
+Profit
+Target
+
+5% 5% 5% - Funded account
+has no profit
+limit
+
+Daily Loss
+Limit
+
+- - - - There is no daily
+
+loss
+
+Max
+Drawdown
+
+5% 5% 5% 5% Equity-based,
+does not trail
+(Hard Breach)
+
+Leverage 1:20 1:20 1:20 1:20
+Inactivity
+Period
+
+30 Days 30 Days 30 Days 30 Days Must place trade
+(Hard Breach)
+
+Flat for
+Weekend
+
+Yes Yes Yes Yes All positions
+closed on Friday
+3:45pm (Soft
+Breach)
+Max Time - - - - No Max Time
+requirements
+
+ADD-ONS (AVAILABLE AT PURCHASE):
+
+Hold Over Weekend (10% Cost) – Point-of-Sale add-on that disables “Flat for Weekend” requirement;
+this allows traders to keep positions open over the weekend. Only crypto can be traded over the
+weekend.
+Profit Share Increased to 90% (20% Cost) – Point-of-Sale add-on that increases a trader’s potential
+profit share for funded accounts to 90% (up from the standard 75%) of the profit.
+TRADING RULES | FREQUENTLY ASKED QUESTIONS (FAQ):
+
+THREE STEP OVERVIEW
+April 2024
+
+What is the difference between a Hard Breach and Soft Breach rule?
+• Soft breach means that we will close all trades that have violated the rule. However, you can
+continue trading in your Assessment or Funded Account.
+• Hard breach means that you violated either the Daily Loss Limit or Max Drawdown rule. Both rules
+constitute a hard breach. In the event you have a hard breach, you will fail the Assessment or have
+your Funded Account taken away.
+Is there a Daily Loss limit?
+The three-step program does not have a daily loss.
+How do you calculate the 5% Max Drawdown?
+Maximum drawdown is the maximum your account can drawdown before you would hard breach your
+account. When you open the account, your Maximum Drawdown is set at 5% of your starting balance.
+This 5% is static and does not trail.
+
+Can I hold positions over the weekend?
+Positions on crypto can be held over the weekend. We require all trades on other assets to be closed by
+3:45pm EST on Friday. Any trades left open after this time will automatically be closed prior to market
+closing. Note, this is only a soft breach and you will be able to continue trading once the markets
+reopen.
+What is 1 lot equal to on the Trading Platform?
+• Forex - 1 lot = $100k notional
+• Index - 1 lot = 1 Contracts
+• Exceptions:
+• SPX500: 1 lot = 10 contracts
+• JPN225: 1 lot = 500 contracts
+• Cryptos - 1 lot = 1 coin
+• Silver - 1 lot = 5000 ounces
+• Gold - 1 lot = 100 ounces
+• Oil - 1 lot = 100 barrels
+
+Is there a breach for inactivity?
+Yes. If you do not place a trade at least once every 30 days on your account, we will consider you
+inactive and your account will be breached.
+FUNDED ACCOUNTS | FREQUENTLY ASKED QUESTIONS (FAQ):
+How Long does it take to receive my Funded Account?
+
+THREE STEP OVERVIEW
+April 2024
+
+Upon passing your Assessment, you will receive an email with instructions on how to access and
+complete both your “Know Your Customer” verification and your “Trader Agreement”. Once both are
+completed and supporting documentation is provided, your Funded Account will be created, funded and
+issued to you typically within 24-48 business hours. You will receive a confirmation email once this
+account is being enabled.
+Once I pass the Assessment am I provided with a demo or funded account?
+Once you pass the Assessment, we provide you with a funded account, backed by our capital.
+The capital in your funded Account is notional and may not match the amount of capital on
+deposit with the Liquidity Provider. A Funded Account is notionally funded when actual funds in
+the account (i.e., the equity in a Funded Account represented by the amount of capital) differs
+from the nominal account size (i.e., the size of the Funded Account that establishes the initial
+account value and level of trading). Notional funds are the difference between nominal account
+size and actual capital in a Funded Account.
+Use of notional funding does not impact your trading conditions in any way.
+Do we manipulate the pricing or executions you receive in your Funded Account?
+No. We do not have any control over pricing from the liquidity provider or on the executions on
+your trades.
+Who is the counterparty to my trades?
+For purposes of managing risk and minimizing transaction costs, we may offset or negate
+market risk and act as the direct counterparty to certain trades initiated in the Account. Such
+trades are executed at prices provided by arm’s length third parties. This framework is intended
+to ensure you receive real market execution on your trades, while simultaneously allowing us to
+manage risk dynamically by routing existing positions or future orders to third parties for
+execution as we deem appropriate. We believe that such real market execution and dynamic
+risk management would not be possible or as cost-effective if trades were executed in
+simulated accounts. Regardless of whether we act as counterparty to your trades, the gain or
+loss on your funded account is not calculated differently. However, when we act as the
+counterparty to your trades, there is an inherent potential conflict of interest because your
+trades do not result in net gain or loss to us, as your trades would if we were not the direct
+counterparty.
+Am I subject to any position limits?
+The maximum position that you may open is determined by your available margin. We reserve the right
+to increase the margin requirement, limit the number of open positions you may enter or maintain in
+the Funded Account at any time, and to revise in response to market conditions the drawdown levels at
+which trading in the funded account will be halted. We or the Liquidity Provider reserve the right to
+refuse to accept any order.
+What are the rules for the funded account?
+
+THREE STEP OVERVIEW
+April 2024
+
+The rules for the funded account are exactly the same as your Assessment account. However, with a
+funded account, there is no profit target.
+If I have a hard breach in my funded account and there are gains in the account, do I forfeit those
+gains?
+If you have gains in your funded account at the time of a hard breach, you will still receive your portion
+of those gains.
+For example, if you have a $100,000 account and you grow that account to $110,000. Should you then
+have a hard breach we would close the account. Of the $10,000 in gains in your funded account, you
+would be paid your portion thereof.
+How do I withdraw the gains in my funded account?
+Traders can request a withdrawal of the gains in their funded account at any time in their trader
+dashboard, but no more frequently than once per thirty (30) days. So, if you make gain in your funded
+account, you can request a withdrawal. When you are ready to withdraw the gains from your funded
+account, click the Withdraw Profits button in your trader dashboard and enter the amount to withdraw.
+All such gains are distributed via the available outbound payment solutions offered from time to time.
+Once your withdrawal request is approved, we will pay the monies owed to you. We reserve the right to
+change the withdrawal methods and options at any time.
+When can I withdraw the gains in my funded account and how does that affect my Maximum
+Drawdown?
+Your first withdrawal can be requested at any time. Thereafter, you can request a withdrawal of the gains
+in your account every 30 days. When a withdrawal is approved, we will also withdraw our share of the
+gains, and your max drawdown will lock in at your starting balance. The Maximum Drawdown does not
+reset when you request a withdrawal. Example: You have taken an account from $100,000 to $120,000.
+You then request a withdrawal of $16,000. In this scenario, you will receive $12,000 and we would retain
+$4,000. This would also take the balance of the account down to $104,000, and your Maximum
+Drawdown is locked in at $100,000. So, you would have $4,000 maximum you could lose on the account
+before it would violate the Maximum Drawdown rule. If you take a full withdrawal of the gains in your
+Funded Account, the Maximum Drawdown will still lock in at the starting balance and will therefore
+result in the forfeiting of your Funded Account, as your balance will trigger the Maximum Drawdown
+breach rule.
+OTHER GENERAL QUESTIONS:
+Do I have to use one of your accounts for the Assessment or can I use my own?
+We have risk management software that is synced with the accounts we create. This allows us to
+analyze your performance in real time for achievements or rule violations. As such, you must use an
+account that we provide to you.
+What Countries are accepted?
+
+THREE STEP OVERVIEW
+April 2024
+
+Subject to compliance with applicable laws and regulations, traders from all countries, excluding OFAC
+listed countries, can take part in our program, unless otherwise limited at the Company’s discretion.
+What is the minimum age I must be to be part of your program?
+You must be at least 18 years of age, or the applicable minimum legal age in your country, to purchase
+an assessment.
+Where do I track the progress of my account?
+Upon purchasing an Assessment, you will receive access to a trader dashboard where you can monitor
+your Assessment and Funded Accounts. The dashboard is updated every time we calculate metrics,
+which occurs roughly every 60 seconds. It is your responsibility to monitor your breach levels.
+What Platform can I trade on?
+Our technology is currently integrated with DXtrade, MatchTrader & cTrader platforms via GooeyTrade.
+What products can I trade?
+You can trade any products streamed by the Liquidity Provider into the available platforms, as
+such products may change from time to time. This includes FX pairs and CFD Indices,
+Commodities, Metals, and Cryptocurrencies.
+What is the leverage?
+We offer up to 20:1 leverage on Forex and Metals, up to 10:1 leverage on Indices, up to 5:1 leverage on
+Oil and up to 2:1 leverage on Cryptocurrencies.
+What are the trading hours?
+Trading hours are generally set by the Liquidity Provider, unless set by our rules. We do not have any
+control over the trading hours. You can see the trading hours for each product by using the following
+methods:
+DXtrade – Right click symbol, select “Instrument Info”
+MatchTrader – Click symbol to expand, select “Info”
+cTrader – Navigate to Symbol Window, scroll down to see “Market Hours” for selected symbol
+Please note that holidays can have an impact on available trading hours.
+Additionally, pursuant to the no holding trades over the weekend rule, we close all open trades at
+3:45pm EST on Fridays.
+Please note that if a holiday falls on a Friday and the markets are closed, the trader is responsible for
+closing positions before the markets close on the prior Thursday.
+Do your accounts charge commissions?
+
+THREE STEP OVERVIEW
+April 2024
+
+Funded accounts receive the same pricing and commissions as charged by our Liquidity Provider to
+other, self-funded, retail trading accounts.
+Can I use an automated strategy?
+Subject to our policy on Prohibited Trading as described below, you can trade using an automated
+strategy.
+What is the policy on Prohibited Trading Activity?
+You are also prohibited from using any trading strategy that is expressly prohibited by the Company or
+the Liquidity Providers it uses. Such prohibited trading (“Prohibited Trading”) shall include, but not be
+limited to:
+• Exploiting errors or latency in the pricing and/or platform(s) provided by the Liquidity Provider
+• Utilizing non-public and/or insider information
+• Front-running of trades placed elsewhere
+• Trading in any way that jeopardizes the relationship that the Company has with a Liquidity
+Provider or may result in the canceling of trades
+• Trading in any way that creates regulatory issues for the Liquidity Provider
+• Utilizing any third-party strategy, off-the-shelf strategy or one marketed to pass challenge
+accounts
+• Utilizing one strategy to pass an assessment and then utilizing a different strategy in a funded
+account, as determined by the Company in cooperation with Prop Account, LLC at their
+discretion
+• Attempting to arbitrage an assessment account with another account with the Company or
+any third-party company, as determined by the Company in its sole and absolute discretion.
+If we detect that your trading constitutes Prohibited Trading, your participation in the program will be
+terminated and may include forfeiture of any fees paid to us. Additionally, and before you shall receive a
+funded account, the trading activity of the Trader under these Terms and Conditions shall be reviewed
+by us to determine whether such trading activity constitutes Prohibited Trading. In the case of
+Prohibited Trading, the Trader shall not receive a Funded Account.
+Additionally, we reserve the right to disallow or block You from participating in the program for any
+reason, in our sole and absolute discretion.
+To view all Prohibited Uses, please review our Terms and Conditions here,
+https://dashboardanalytix.com/client-terms-and-policies/?v=3acf83834396
+
+Can I trade during News Events?
+
+THREE STEP OVERVIEW
+April 2024
+
+Trading within 3 minutes before or after a News Event is prohibited. If the Company determines that
+trading has, in fact, occurred during the News Event. Any traders identified as having trading during a
+News Event during the challenge phase are subject to having those trades removed, having the leverage
+on their account reduced or having their account breached altogether. The Company has sole and
+absolute discretion in determining what constitutes a News Event.
+
+How will I see the charge on my Statement?
+Charges come across in the name of Dashboardanalytix.com.
+How are taxes handled?
+When trading a Funded Account for our firm, you are treated as an independent contractor. As a result,
+you are responsible for any and all taxes on your gains.
+How are affiliates credited?
+Affiliates are credited for referrals when a user creates an account using a link or discount code provided
+by the Affiliate.
+INSTANT FUNDING OVERVIEW
+
+March 2025
+
+This document contains…
+EXTERNAL: This section includes Trader FAQs
+• General Trading Rules
+• Instant Funded Accounts Overview
+• Other General Questions
+Trading Rules:
+Rule Area Instant Funded Notes
+Profit Target N/A Instant Funded account has no profit limit
+Daily Loss Limit 5% Equity-based, limit set by prior day balance (Hard
+
+Breach)
+
+Max Drawdown 8% Equity-based, trailing account balance high water
+mark, locks in at starting account balance (Hard
+Breach). Account locks at starting balance at
+payout.
+
+Leverage 1:50
+Inactivity Period 30 Days Must place trade (Hard Breach)
+Flat for Weekend Yes All positions closed on Friday 3:45pm unless
+Weekend Hold add-on is purchased
+Max Time - No Max Time requirements
+Profit Split 80% Can increase to 90% with purchase of add-on
+
+ADD-ONS (AVAILABLE AT PURCHASE):
+Hold Over Weekend (10% Cost) – Point-of-Sale add-on that disables “Flat for Weekend” requirement; this allows traders to keep
+positions open over the weekend.
+Profit Share Increased to 90% (20% Cost) – Point-of-Sale add-on that increases a trader’s potential profit share for funded
+accounts to 90% (up from the standard 80%) of the profit.
+TRADING RULES | FREQUENTLY ASKED QUESTIONS (FAQ):
+What is the difference between a Hard Breach and Soft Breach rule?
+ Soft breach means that we will close all trades that have violated the rule. However, you can continue trading in your
+Instant Funded Account.
+ Hard breach means that you violated the Daily Loss Limit or Max Drawdown rule, or Inactivity rule. These rules
+constitute a hard breach. In the event you have a hard breach, you will have your Funded Account taken away.
+
+INSTANT FUNDING OVERVIEW
+
+March 2025
+
+How do you calculate the Daily Loss Limit?
+The Daily Loss Limit is the maximum amount your account can lose on any given day. The Daily Loss Limit is calculated using the
+previous day balance which resets at 5 PM EST. The Daily Loss Limit compounds with the increase in your account. Example: if
+your prior day&#39;s end of day balance (5pm EST) was $100,000, your account would violate the daily stop loss limit if your equity
+reached $95,000 during the day. If your floating equity is +$5,000 on a $100,000 account, your new- day (5pm EST) daily loss is
+based on your balance from the previous day ($100,000). So, your daily loss limit would still be $95,000.
+How do you calculate the Maximum Trailing Drawdown?
+The Maximum Trailing Drawdown is initially set at 8% and trails (using CLOSED BALANCE - NOT equity) your account until you
+have achieved a 8% return in your account. Once you have achieved an 8% return, the Maximum Trailing Drawdown no longer
+trails and is permanently locked in at your starting balance. Example: If your starting balance is $100,000, you can drawdown to
+$92,000 before you would violate the Maximum Trailing Drawdown rule. Then for example let&#39;s say you take your account to
+$102,000 in CLOSED BALANCE. This is your new high-water mark, which would mean your new Maximum Trailing Drawdown
+would be $94,000. Next, let&#39;s say you take your account to $106,000 in CLOSED BALANCE, which would be your new high-water
+mark. At this point your Maximum Trailing Drawdown would be locked in at your starting balance of $100,000. So, regardless of
+how high your account goes, you would only breach this rule if your account drew back down to $100,000 (note, you could still
+violate the daily drawdown). For example, if you take your account to $170,000, as long as you do not drawdown more than 5%
+in any given day, you would only breach if your account equity reaches $100,000.
+Can I hold positions over the weekend?
+We require all trades to be closed by 3:45 PM EST on the last trading day of the week, typically Friday. However, in cases where
+markets close early or are not open on a Friday, it is the trader’s responsibility to ensure all trades are closed before the weekend
+based on the adjusted market schedule. Any trades left open after this time will be automatically closed. Note, this is considered
+a soft breach, and you will be able to continue trading once the markets reopen.
+What is 1 lot equal to on the Trading Platform?
+● Forex - 1 lot = $100k notional
+● Index: 1 lot = 1 Contract
+Exceptions:
+SPX500: 1 lot = 10 contracts
+JPN225: 1 lot = 500 contracts
+● Cryptos: 1 lot = 1 coin
+● Silver: 1 lot = 5000 ounces
+● Gold: 1 lot = 100 ounces
+● Oil: 1 lot = 100 barrels
+Is there a breach for inactivity?
+Yes. If you do not place a trade at least once every 30 days on your account, we will consider you inactive and your account will
+be breached.
+
+INSTANT FUNDING ACCOUNTS | FREQUENTLY ASKED QUESTIONS (FAQ):
+What is the Instant Funding Plan?  
+The Instant Funding Plan allows traders to start with a fully funded account without needing to complete an assessment phase.
+
+INSTANT FUNDING OVERVIEW
+
+March 2025
+How Long does it take to receive my Instant Funded Account?
+Upon completion of payment, we provide you with an Instant Funding account, backed by our capital. You will receive an email
+with instructions on how to access this account on the platform you chose at checkout.
+The capital in your Funded Account is notional and may not match the amount of capital on deposit with the Broker. A Funded
+Account is notionally funded when actual funds in the account (i.e., the equity in a Funded Account represented by the amount
+of capital) differs from the nominal account size (i.e., the size of the Funded Account that establishes the initial account value and
+level of trading). Notional funds are the difference between nominal account size and actual capital in a Funded Account.
+Use of notional funding does not change the trading level or that the account may trade in any manner differently than if
+notional funds were not used. In particular, the same conditions and rules applicable to a soft breach, hard breach, Daily Loss
+Limit, Max Trailing Drawdown and position limits apply.
+Do I need to complete KYC or sign a trader contract to start trading in an Instant Funding Plan?  
+A Trading contract and KYC are both required, however, to start trading using our Instant Funding Plan, these steps won’t need to
+be completed until you request a withdrawal. 
+What happens if I do not pass KYC?  
+If you do not pass the KYC process when requesting a withdrawal, the withdrawal will be rejected, and your account will be
+closed. We encourage you to ensure you can meet KYC requirements before opting for the Instant Funding Plan. 
+Do we manipulate the pricing or executions you receive in your Instant Funded Account?
+No. We operate at an arm&#39;s length with the Broker. All market pricing and trade executions are provided by the Broker and are
+not changed or modified by us. Additionally, we do not markup transaction costs established by the Broker through adjusting bid-
+offer spreads, markups/markdowns, commission charges or swaps.
+Who is the counterparty to my trades?
+For the purposes of managing risk and minimizing transaction costs, we may offset or negate market risk and act as the direct
+counterparty to certain trades initiated in the Account. Such trades are executed at prices provided by the Broker. This
+framework is intended to ensure you receive real market execution on your trades, while simultaneously allowing us to manage
+risk dynamically by routing existing positions or future orders to third parties for execution as we deem appropriate. We believe
+that such real market execution and dynamic risk management would not be possible or cost-effective if trades were executed in
+simulated accounts. Regardless of whether we act as counterparty to your trades, the gain or loss on your Funded Account is not
+calculated differently. However, when we act as the counterparty to your trades, there is an inherent potential conflict of
+interest because your trades do not result in net gain or loss to us, as your trades would if we were not the direct counterparty.
+Am I subject to any position limits?
+The maximum position that you may open is determined by your available margin. We reserve the right to increase the margin
+requirement, limit the number of open positions you may enter or maintain in the Funded Account at any time, and to revise in
+response to market conditions the drawdown levels at which trading in the funded account will be halted. We or the Liquidity
+Provider reserve the right to refuse to accept any order.
+If I have a hard breach in my Funded Account and there are gains in the account, do I forfeit those gains?
+If you have gains in your Funded Account at the time of a hard breach, you will still receive your portion of those gains.
+
+INSTANT FUNDING OVERVIEW
+
+March 2025
+
+For example, if you have a $100,000 account and you grow that account to $110,000. Should you then have a hard breach we
+would close the account. Of the $10,000 in gains in your Funded Account, you would be paid your portion thereof.
+How do I withdraw the gains in my Funded Account?
+Traders can request a withdrawal of the profits in their funded account through their trader dashboard at any time. However,
+withdrawals are limited to one request every 30 days. The minimum withdrawal amount is the greater of $100 or 1% of the
+account&#39;s starting balance. When a withdrawal is approved, we will also withdraw our share of the gains, and your max trailing
+drawdown will lock in at your starting balance. The trailing drawdown does not reset when you request a withdrawal. Example:
+You have taken an account from $100,000 to $120,000. You then request a withdrawal of $16,000. In this scenario, you will
+receive $12,800 and we would retain $3200. This would also take the balance of the account down to $104,000, and your
+Maximum Trailing Drawdown is locked in at $100,000. So, you would have $4,000 maximum you could lose on the account
+before it would violate the Maximum Trailing Drawdown rule. If you take a full withdrawal of the gains in your Funded Account,
+the Maximum Trailing Drawdown will lock in at the starting balance and trigger the Maximum Trailing Drawdown breach rule,
+resulting in the forfeiture of your Funded Account.
+
+OTHER GENERAL QUESTIONS:
+What Countries are accepted?
+Subject to compliance with applicable laws and regulations, traders from all countries, excluding OFAC listed countries, can take
+part in our program, unless otherwise limited at the Company’s discretion.
+What is the minimum age I must be to be part of your program?
+You must be at least 18 years of age, or the applicable minimum legal age in your country, to purchase an Instant Funding
+account.
+Where do I track the progress of my account?
+Upon purchasing an Instant Funding Plan, you will receive access to a trader dashboard where you can monitor your Instant
+Funded Account. The dashboard is updated in near real time as we calculate your account metrics. It is your responsibility to
+monitor your breach levels.
+What Platform can I trade on?
+Our technology is currently integrated with DXtrade, MatchTrader &amp; cTrader.
+How many Instant Funded Accounts may I have active at one time?
+A maximum of $190,000 in active Instant Funding plans per person is permitted, consisting of up to one of each plan size
+What products can I trade?
+You can trade any products offered by the Broker, as such products may change from time to time. This includes FX pairs and CFD
+Indices, Metals, and Cryptocurrencies.
+
+What is the leverage?
+
+INSTANT FUNDING OVERVIEW
+
+March 2025
+
+We offer up to 50:1 leverage on Forex and Metals, up to 10:1 leverage on Indices, up to 5:1 leverage on Oils and up to 2:1
+leverage on Cryptocurrencies.
+What are the trading hours?
+Trading hours are generally set by the Liquidity Provider, unless set by our rules. We do not have any control over the trading
+hours. You can see the trading hours for each product by using the following methods:
+DXtrade – Right click symbol, select “Instrument Info”
+MatchTrader – Click symbol to expand, select “Info”
+cTrader – Navigate to Symbol Window, scroll down to see “Market Hours” for selected symbol
+Please note that holidays can have an impact on available trading hours.
+Additionally, pursuant to the no holding trades over the weekend rule, we will attempt to close all open trades at 3:45pm EST on
+Fridays. Traders are responsible for ensuring all open positions are closed (unless Weekend Hold add-on has been purchased)
+Do your accounts charge commissions?
+Instant Funded Accounts receive the same pricing and commissions as charged by our Liquidity Provider to other, self-funded,
+retail trading accounts.
+Can I use an Automated Strategy?
+Subject to our policy on Prohibited Trading as described below, you can trade using an automated strategy.
+What is the policy on Prohibited Trading Activity?
+&quot;You are also prohibited from using any trading strategy that is expressly prohibited by the Company or the Liquidity Providers it
+uses. Such prohibited trading (“Prohibited Trading”) shall include, but not be limited to:
+● Exploiting errors or latency in the pricing and/or platform(s) provided by the Liquidity Provider
+● Utilizing non-public and/or insider information
+● Front running of trades placed elsewhere
+● Trading in any way that jeopardizes the relationship that the Company has with a Liquidity Provider or may result in the
+canceling of trades
+● Trading in any way that creates regulatory issues for the Liquidity Provider
+● Utilizing any third-party strategy, off-the-shelf strategy or one marketed to pass challenge accounts
+● Attempting to arbitrage a funded account with another account with the Company or any third-party company, as determined
+by the Company in its sole and absolute discretion.
+●Opening a position within 3 minutes before or after a News Event is prohibited. Any traders identified as having opened a
+position during a News Event are subject to having that position closed and the associated P&amp;L removed from their account,
+having the leverage on their account reduced or having their account breached altogether. The Company has sole and absolute
+discretion in determining what constitutes a News Event. This rule is intended to protect the integrity of our program and is not
+meant to penalize traders who inadvertently trade through a news event.
+●No Gambling Permitted: When participating in trading on both Challenge and Instant Funded Accounts, traders are expected to
+adhere to responsible risk management practices. This includes carefully considering the risks associated with position size, trade
+duration, and hedging strategies. Taking excessive risks, such as utilizing maximum leverage to open large positions with the
+hope of reaching profit targets through a single price movement, is strictly prohibited. Please refer to the Terms and Conditions
+for the full Prohibition of Gambling Practices language.
+● If the Company detects that your trading constitutes Prohibited Trading, your participation in the program will be terminated
+and may include forfeiture of any fees paid to the Company. Additionally, and before any Trader shall receive a funded account,
+the trading activity of the Trader under these Terms and Conditions shall be reviewed by both the Company and the Liquidity
+
+INSTANT FUNDING OVERVIEW
+
+March 2025
+
+Provider to determine whether such trading activity constitutes Prohibited Trading. In the case of Prohibited Trading, the Trader
+shall not receive a funded account.
+● Additionally, the Company reserves the right to disallow or block any Trader from participating in the program for any reason,
+in the Company’s sole and absolute discretion.
+To view all Prohibited Uses, please review our Terms and Conditions here, https://dashboardanalytix.com/client-terms-and-
+policies/
+Can I trade during News Events?
+Opening a position within 3 minutes before or after a News Event is prohibited. Any traders identified as having opened a
+position during a News Event are subject to having that position closed and the associated P&amp;L removed from their account,
+having the leverage on their account reduced or having their account breached altogether. The Company has sole and absolute
+discretion in determining what constitutes a News Event. This rule is intended to protect the integrity of our program and is not
+meant to penalize traders who inadvertently trade through a news event.
+How will I see the charge on my Statement?
+Charges come across in the name of Dashboardanalytix.com.
+How are taxes handled?
+When trading a Funded Account for our firm, you are treated as an independent contractor. As a result, you are responsible for
+any and all taxes on your gains.
+How are affiliates credited?
+Affiliates are credited for referrals when a user creates an account using a link or discount code provided by the Affiliate.
+
+Those are all the programs 
