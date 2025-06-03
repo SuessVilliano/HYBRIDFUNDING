@@ -67,7 +67,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "How is the maximum drawdown calculated for Forex?",
-      answer: "For One-Step and Three-Step programs, the maximum drawdown is a static percentage (6% and 5% respectively) of your starting balance. For Two-Step, it's a static 8%. For Instant Funding, the 8% maximum drawdown trails using your closed balance until you achieve an 8% return, at which point it locks at your starting balance."
+      answer: "For One-Step and Three-Step programs, the maximum drawdown trails using your closed balance until you achieve a 6% return (One-Step) or 5% return (Three-Step), at which point it locks at your starting balance. For Two-Step, it's a static 8%. For Instant Funding, the 8% maximum drawdown trails using your closed balance until you achieve an 8% return, at which point it locks at your starting balance."
     },
     {
       question: "Can I hold Forex positions over the weekend?",

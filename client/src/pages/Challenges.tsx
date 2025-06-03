@@ -9,6 +9,19 @@ const Challenges = () => {
   const [selectedAssetClass, setSelectedAssetClass] = useState("forex");
   const [selectedChallengeType, setSelectedChallengeType] = useState("one-step");
 
+  // Auto-redirect to first available challenge type when asset class changes
+  useEffect(() => {
+    const assetData = (challengeData as any)[selectedAssetClass];
+    if (assetData) {
+      const availableTypes = ["one-step", "two-step", "three-step", "instant"].filter(
+        type => assetData[type] && assetData[type].length > 0
+      );
+      if (availableTypes.length > 0 && !availableTypes.includes(selectedChallengeType)) {
+        setSelectedChallengeType(availableTypes[0]);
+      }
+    }
+  }, [selectedAssetClass, selectedChallengeType]);
+
   // Challenge data based on actual Hybrid Funding offerings per documentation
   const challengeData = {
     forex: {
@@ -182,8 +195,12 @@ const Challenges = () => {
 
   const faqs = getFaqsByAssetClass();
 
-  // Get current challenges based on selections
-  const currentChallenges = challengeData[selectedAssetClass as keyof typeof challengeData][selectedChallengeType as keyof typeof challengeData[typeof selectedAssetClass]];
+  // Get current challenges based on selections - using type assertion to handle dynamic access
+  const currentChallenges = (() => {
+    const assetData = (challengeData as any)[selectedAssetClass];
+    if (!assetData) return [];
+    return assetData[selectedChallengeType] || [];
+  })();
 
   return (
     <section className="py-20 cyberpunk-bg page-transition">
@@ -248,23 +265,30 @@ const Challenges = () => {
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {Object.keys(challengeData[selectedAssetClass as keyof typeof challengeData]).map((type) => (
-              <motion.div 
-                key={type}
-                whileHover={{ y: -5 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Button 
-                  variant={selectedChallengeType === type ? "neon-filled" : "neon"}
-                  className="w-full font-['Orbitron'] font-semibold"
-                  onClick={() => setSelectedChallengeType(type)}
+            {["one-step", "two-step", "three-step", "instant"].map((type) => {
+              const assetData = (challengeData as any)[selectedAssetClass];
+              const isAvailable = assetData && assetData[type] && assetData[type].length > 0;
+              
+              return (
+                <motion.div 
+                  key={type}
+                  whileHover={isAvailable ? { y: -5 } : {}}
+                  transition={{ duration: 0.2 }}
                 >
-                  {type === "one-step" ? "1-STEP" : 
-                   type === "two-step" ? "2-STEP" : 
-                   type === "three-step" ? "3-STEP" : "INSTANT FUNDING"}
-                </Button>
-              </motion.div>
-            ))}
+                  <Button 
+                    variant={selectedChallengeType === type ? "neon-filled" : "neon"}
+                    className={`w-full font-['Orbitron'] font-semibold ${!isAvailable ? "opacity-50 cursor-not-allowed" : ""}`}
+                    onClick={() => isAvailable && setSelectedChallengeType(type)}
+                    disabled={!isAvailable}
+                  >
+                    {type === "one-step" ? "1-STEP" : 
+                     type === "two-step" ? "2-STEP" : 
+                     type === "three-step" ? "3-STEP" : "INSTANT FUNDING"}
+                    {!isAvailable && <span className="ml-2 text-xs">(N/A)</span>}
+                  </Button>
+                </motion.div>
+              );
+            })}
           </div>
           
           <div className="mt-4">
