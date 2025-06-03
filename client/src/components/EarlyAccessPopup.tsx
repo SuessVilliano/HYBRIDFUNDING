@@ -70,7 +70,7 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
               </h2>
               <div className="h-1 w-16 bg-accent mx-auto mb-4"></div>
               <p className="text-[#B8B8D0]">
-                Join our early access list for <span className="text-accent font-bold">30% off</span> your first challenge, 
+                Join our early access list for <span className="text-accent font-bold">20% off</span> your first challenge, 
                 exclusive perks, and early account access!
               </p>
             </div>
@@ -80,7 +80,7 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
                 <div className="bg-[#171728] p-4 rounded-lg text-white">
                   <ul className="space-y-2">
                     <li className="flex items-center">
-                      <span className="text-accent mr-2">✓</span> 30% off your first challenge
+                      <span className="text-accent mr-2">✓</span> 20% off your first challenge
                     </li>
                     <li className="flex items-center">
                       <span className="text-accent mr-2">✓</span> AI trade agent access

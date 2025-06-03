@@ -13,7 +13,7 @@ const Challenges = () => {
   useEffect(() => {
     const assetData = (challengeData as any)[selectedAssetClass];
     if (assetData) {
-      const availableTypes = ["one-step", "two-step", "three-step", "instant"].filter(
+      const availableTypes = ["one-step", "two-step", "three-step", "four-phase", "instant"].filter(
         type => assetData[type] && assetData[type].length > 0
       );
       if (availableTypes.length > 0 && !availableTypes.includes(selectedChallengeType)) {
@@ -71,12 +71,16 @@ const Challenges = () => {
       ]
     },
     futures: {
-      "one-step": [
-        { tier: "25K", price: 298, profitTarget: 9, maxDrawdown: 6, label: "Recommended", bestValue: true, delay: 0, hasTrailingDD: false },
-        { tier: "50K", price: 598, profitTarget: 9, maxDrawdown: 6, label: "Advanced", bestValue: false, delay: 1, hasTrailingDD: false },
-        { tier: "100K", price: 1098, profitTarget: 9, maxDrawdown: 6, label: "Professional", bestValue: false, delay: 2, hasTrailingDD: false },
-        { tier: "150K", price: 1758, profitTarget: 9, maxDrawdown: 6, label: "Expert", bestValue: false, delay: 3, hasTrailingDD: false }
-      ]
+      "four-phase": [
+        { tier: "25K", price: 298, profitTarget: 9, maxDrawdown: 5, label: "Recommended", bestValue: true, delay: 0, hasTrailingDD: true },
+        { tier: "50K", price: 598, profitTarget: 9, maxDrawdown: 5, label: "Advanced", bestValue: false, delay: 1, hasTrailingDD: true },
+        { tier: "100K", price: 1098, profitTarget: 9, maxDrawdown: 5, label: "Professional", bestValue: false, delay: 2, hasTrailingDD: true },
+        { tier: "150K", price: 1758, profitTarget: 9, maxDrawdown: 5, label: "Expert", bestValue: false, delay: 3, hasTrailingDD: true }
+      ],
+      "one-step": [],
+      "two-step": [],
+      "three-step": [],
+      "instant": []
     }
   };
 
@@ -85,6 +89,7 @@ const Challenges = () => {
     "one-step": "A single phase evaluation with a 10% equity growth target and 6% maximum drawdown. Requires consistent trading discipline and strong risk management.",
     "two-step": "A two-phase evaluation with 10% (Phase 1) and 5% (Phase 2) equity growth targets and 8% maximum drawdown. Provides a more structured path to funding.",
     "three-step": "A three-phase evaluation with 5% equity growth target per phase and 5% maximum drawdown. Designed for methodical traders who prefer smaller, consistent gains.",
+    "four-phase": "A four-phase evaluation with 9% equity growth target per phase and 5% maximum drawdown. Includes early payouts starting from Phase 1 and consistency requirements. Designed for futures trading with structured progression.",
     "instant": "Start trading with funded capital immediately. Trading rules apply with 8% maximum drawdown. KYC verification required before withdrawal. Higher entry fee with quicker access to trading."
   };
 
@@ -265,7 +270,7 @@ const Challenges = () => {
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {["one-step", "two-step", "three-step", "instant"].map((type) => {
+            {["one-step", "two-step", "three-step", "four-phase", "instant"].map((type) => {
               const assetData = (challengeData as any)[selectedAssetClass];
               const isAvailable = assetData && assetData[type] && assetData[type].length > 0;
               
@@ -283,7 +288,8 @@ const Challenges = () => {
                   >
                     {type === "one-step" ? "1-STEP" : 
                      type === "two-step" ? "2-STEP" : 
-                     type === "three-step" ? "3-STEP" : "INSTANT FUNDING"}
+                     type === "three-step" ? "3-STEP" : 
+                     type === "four-phase" ? "4-PHASE" : "INSTANT FUNDING"}
                     {!isAvailable && <span className="ml-2 text-xs">(N/A)</span>}
                   </Button>
                 </motion.div>

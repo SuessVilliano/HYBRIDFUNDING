@@ -1,0 +1,302 @@
+What is the Funded Futures Plan?
+The Funded Futures Plan offering is a performance-based futures trading program. Traders
+move through four phases, each with defined goals and payouts, before graduating into a Live
+Funded Futures account.
+
+Key Features of Funded Futures
+1. Early Payouts – Earn real payouts beginning with Phase 1. Continue earning additional
+and increasing payouts after completing each subsequent phase.
+2. Live Funded Transition – Advance through Phase 4 to unlock a Live Funded Futures
+account.
+3. Consistency Requirement** – A 25% cap on your best day’s profit supports steady,
+professional trading behavior. (see “What is the Consistency Requirement**?” below for
+more details).
+
+Plan Sizes
+
+$25,000 $50,000 $100,000 $150,000
+
+Plan Rules
+
+Profit Target per Phase 9% 9% 9% 9%
+Max Loss (trails on EOD balance) 5% 5% 5% 5%
+Consistency requirement** 25% 25% 25% 25%
+Maximum Time 60 Days 60 Days 60 Days 60 Days
+Exposure
+Limits
+Standard/Micro Contracts 1/15 contracts 3/30 contracts 6/60 contracts 9/90 contracts
+Inactivity
+Period
+Phases 1-4 14 days 14 days 14 days 14 days
+Live Funded 7 days 7 days 7 days 7 days
+Payout
+Phases
+Phase 1 Payout $500 $1,000 $2,000 $3,000
+Phase 2 Payout $750 $1,500 $3,000 $4,500
+Phase 3 Payout $750 $1,500 $3,000 $4,500
+Phase 4 Payout $1,500 $3,000 $6,000 $9,000
+Live
+Funded
+Account
+Account Size $3,000 $6,000 $12,000 $18,000
+Max Loss (Static) $1,500 $3,000 $6,000 $9,000
+Profit Split 90% 90% 90% 90%
+Maximum Time (Inactivity only) N/A N/A N/A N/A
+
+Your Path to Funding
+1. Phase 1 – Reach the profit target while following the consistency requirement and
+adhering to the Max Loss Limit.
+2. First Payout – Upon completing Phase 1, you're instantly eligible for your first payout.
+3. Phases 2–4 – Hit each target, maintain consistency, and avoid the Max Loss to receive
+additional payouts.
+4. Live Funded – After Phase 4, you’ll transition to a Live Funded account. There is no Max
+Time restriction at this phase (inactivity still applies). Once you achieve this phase you
+are responsible for all platform and data fees (deducted monthly from the account
+balance). As long as traders adhere to the rules as defined above and remain profitable,
+they can continue trading.
+
+TRADING RULES | FREQUENTLY ASKED QUESTIONS (FAQ):
+How do the phases work?
+Phase 1 begins once you purchase an account. Once you hit your profit target; while maintaining a 25%
+consistency, you will be able to request a payout and then advance to the next Phase. At each new
+Phase your account will begin with a fresh starting balance.
+When do I get the payout for each Phase?
+Once you complete a Phase and meet the 25% consistency rule you will be eligible to make a request for
+that Phase’s payout. You will not be able to advance to the next phase until the payout is requested and
+completed.
+What is the Consistency Requirement**?
+We have a Consistency Requirement to ensure traders aren't hitting profit targets through a few lucky
+trades. This promotes consistent behavior and punishes YOLO style trading. The calculation is: (best
+trading day PnL/Total PnL) x 100.
+A lower value means profits are generated more consistently across multiple trading days. A higher
+value means profits are concentrated on fewer trading days. For example, a consistency requirement of
+25% means you cannot achieve your entire profit target in less than 4 days (100% / 25% = 4).
+
+You must meet both the profit target and the consistency requirement — maintaining a consistency
+ratio at or below 25% — to hit your profit target, be eligible for a payout, and to advance to the next
+phase.
+•Example 1: On a $100k account with a profit target of $8,000, if you earn $2,000 per day over 4 days,
+you meet the consistency requirement. Your best day is $2,000, and total profit is $8,000 — resulting in
+a consistency ratio of 25% ($2,000 / $8,000).
+•Example 2: On a $100k account with a profit target of $8,000, if your profits across 4 days are $3,000,
+$1,000, $2,000, and $2,000, you violate the consistency requirement. Your best day is $3,000, and total
+profit is $8,000 — which gives a consistency ratio of 37.5% ($3,000 / $8,000). To meet the consistency
+requirement of 25%, you would now need to reach a total profit of $12,000 while keeping your best day
+at or below $3,000.
+
+Do I lose my account if I don’t meet the Consistency Requirement?
+No. But in order to complete the phase and be entitled to receive the payout, you will need to achieve
+both the profit target and the consistency requirement.
+What is a Profit Target?
+This is the predetermined profit amount you need to achieve in order to pass to the next phase of the
+program and be eligible to receive the payout.
+
+Is there a Daily Loss Limit?
+There is no specific Daily Loss Limit, but traders must always stay within the Max Trailing Loss.
+How do you calculate the Maximum Trailing Loss?
+The Maximum Trailing Loss for each phase trails using End of Day Balance. Example: If your starting
+balance is $100,000, and there is a 5% Max Trailing Loss, you can drawdown to $95,000 before you
+violate the Maximum Trailing Loss rule. Then for example let's say you take your end of day balance to
+$102,000. This is your new End of Day High-Water Mark, which would mean your new Maximum Trailing
+Loss would be $97,000. Once you generate a 5% return in the account, the Max Trailing Loss will lock at
+the starting balance (i.e. the Max Loss Limit will never increase above your starting balance). For the
+purpose of all calculations, the end of day is defined as 1600 CST.
+Can I reset my account if I lose it?
+No. You will need to purchase a new account if you breach it for any reason.
+Can I hold positions over the weekend?
+No. All positions must be closed and all open orders cancelled at 1510 CST each weekday.
+
+What is a Futures contract?
+A futures contract represents a standardized amount of an underlying asset. For example, one E-mini
+S&P 500 futures contract (ES) represents $50 times the index price, while one crude oil (CL) contract
+represents 1,000 barrels of oil. See the attached product table in Appendix A.
+How do I complete the CME market data attestation for Rithmic?
+You must complete the CME market data attestation using the R | Trader Pro desktop app—this cannot
+be done through mobile or web platforms. Once you've completed the attestation in R | Trader Pro,
+
+you'll be able to log in and trade through mobile or web apps. Please note: you must attest as a non-
+professional; we do not accept professional status in this program.
+
+What are the Market Data Fees?
+Market data fees cover the cost of accessing real-time price data from the exchanges. These fees are
+included in your purchase price during Phases 1 through 4. Once you reach the Live Funded Futures
+phase, any applicable market data or platform fees will be deducted from your account balance on a
+monthly basis.
+What is the 60 Day Maximum Time rule?
+Each Phase (1-4) has a maximum time limit of 60 calendar days. This means you must meet all the
+requirements for a given phase within 60 days of starting that phase.
+If you do not complete a phase within the 60-day window, your account will be deactivated, regardless
+of your progress or profit level at that point. You will need to purchase a new Futures plan to continue.
+The timer begins on the day you place your first trade and continues uninterrupted. There are no
+extensions or pauses.
+Please plan your trading accordingly to stay on track throughout all four phases.
+Is there a breach for inactivity in Phases 1-4
+For Phases 1-4, you must place an executed trade once every 14 days to retain the account.
+Is there a breach for inactivity in the Funded Account?
+If you reach the Live Funded account level, you must place an executed trade once every 7 days to retain
+the account.
+Can I pause the inactivity timer at any account Phase?
+No, unfortunately we cannot pause the inactivity timer at any account phase.
+Do I need to complete KYC or sign a trader contract to start trading in a Funded Futures Plan?
+You will be required to complete our Know Your Customer (KYC) program and sign our Trader
+Agreement prior to requesting a payout.
+
+What happens if I do not pass KYC?
+If you do not pass the KYC process, your account will be closed.
+Do we manipulate the pricing or executions you receive in your Funded Futures accounts?
+No. We operate at arm's lengths with the liquidity providers/Exchanges. All market pricing and trade
+executions are provided by third parties and are not changed or modified by us. Additionally, we do not
+markup transaction costs established through adjusting bid-offer spreads, markups/markdowns,
+commission charges or swaps.
+Who is the counterparty to my trades?
+During the simulated phases, trades are executed against the liquidity provided by your trading platform
+and are designed to closely mimic real-market pricing and execution. Once you receive your live funded
+account, the pricing and execution will come directly from the exchange(s) on which you trade.
+Am I subject to any position limits?
+The total number of contracts you can hold at one time is limited by both your account size and the
+exchange margin requirements for each product. Your account balance must be sufficient to cover the
+required margin for all open positions. Refer to Appendix A for a full breakdown of per-product margin
+requirements.
+If I have a breach in my Live Funded Account and there are gains in the account, do I forfeit those
+gains?
+If you have gains in your Live Funded Futures (Phase 5) account at the time of a breach, you will still
+receive your portion of those gains.
+How do I withdraw my Payout once I complete each Phase?
+If you achieve the profit target for your current phase and meet the consistency requirements, you’ll be
+eligible to request that phase’s payout. This payout must be completed before your account is upgraded
+to the next phase.
+
+How does the Live Funded account phase differ from Phase 1-4?
+The Live Funded Futures account operates under a different set of rules compared to Phases 1-4. Once
+you reach this level, the following changes apply:
+• Risk Parameters: The Max Loss is capped at 50% of your starting balance. There are no longer
+any profit targets, consistency rules, or time limits.
+• Inactivity Rule: You must place at least one executed trade every 7 calendar days to retain your
+account.
+• Live Market Conditions: You are now trading in a live environment, which means you may
+encounter real-market factors such as slippage, partial fills, and varying liquidity.
+• Profit Split: You no longer have a fixed payout and are eligible to keep 90% of your profits in the
+Live Funded Futures phase.
+
+OTHER GENERAL QUESTIONS:
+What Countries are accepted?
+Subject to compliance with applicable laws and regulations, traders from all countries, excluding OFAC
+listed countries, can take part in our program, unless otherwise limited at the Company’s discretion.
+What is the minimum age I must be to be part of your program?
+You must be at least 18 years of age, or the applicable minimum legal age in your country, to purchase a
+Funded Futures account.
+Where do I track the progress of my account?
+Upon purchasing a Funded Futures plan, you will receive access to a trader dashboard where you can
+monitor your Funded Futures account. The dashboard is updated in near real time as we calculate your
+account metrics. It is your responsibility to monitor your breach levels.
+What Platform can I trade on?
+When you purchase a Funded Futures plan, you'll receive credentials granting access to a Rithmic
+R|Trader account. We provide the R|Trader Pro desktop application (Windows only). To use Rithmic's
+Web and Mobile platforms, you must first complete the Market Data attestation by logging into
+R|Trader Pro desktop.
+These credentials can also connect you to Rithmic's data feed through supported third-party platforms
+like Quantower, MotiveWave, Bookmap, and others compatible with Rithmic.
+Please note: While we facilitate access to Rithmic's infrastructure, we do not offer user support for
+R|Trader, Rithmic, or any third-party platforms. For technical issues or platform-specific questions,
+please contact the respective technology provider directly.
+
+How many Funded Futures Accounts can I have active at once?
+You may only have one active Funded Futures account per starting tier size at a time. The allowed tiers
+are $25K, $50K, $100K, and $150K—meaning the maximum number of active accounts you can hold at
+once is four, one of each size. Altogether, the combined starting balances of your active accounts cannot
+exceed $325,000.
+
+What products can I trade?
+Traders are allowed to trade Futures products only in this program, listed on the following exchanges:
+CME, COMEX, NYMEX & CBOT. The full list of supported Futures products is listed in Appendix A of this
+document.
+Am I required to trade the front-month futures contract?
+Traders must trade the front-month contract for each product, as it has the highest liquidity and open
+interest. For example, in March, the correct contract for the ES E-Mini S&P 500 products is the March
+(H) contract—not July (N) or September (U). Trading out-month contracts is prohibited and may result in
+the loss of your account. Always ensure you're trading the active front-month listed on the exchange.
+To identify the most active front-month futures contracts, you can use CME Group's Product Slate,
+which provides detailed information on all available contracts, including their current front-month
+status. https://www.cmegroup.com/markets/products.html?
+
+What are the trading hours for Futures products?
+Trades can be placed starting at 1700 CST at the Globex Open and can be held until the 1510
+CST session close.
+What happens if I do not close the trade?
+Positions will be closed for you during regular trading days at 1510 CST. Trades cannot be held
+over weekends.
+Holiday Hour Trading:
+During holiday trading hours, auto-liquidation will not occur at the half-time market close, and the trader
+is responsible for closing the positions.
+• Please pay careful attention to market hours around holidays and shortened weeks.
+• Failure to close the positions before the market closes may result in the loss of the account
+whether it is a Funded Futures or Live Futures account.
+
+Do your accounts charge commissions?
+Funded Futures accounts receive the same pricing and commissions as charged by the Liquidity
+Provider/Exchanges to other, self-funded, retail trading accounts.
+Please see Appendix A for details on per instrument commission charges.
+Can I use an Automated Strategy?
+Subject to our policy on Prohibited Trading as described below, you can trade using an automated
+strategy.
+What is the policy on Prohibited Trading Activity?
+You are prohibited from using any trading strategy that is expressly prohibited by the Company or the
+Liquidity Providers it uses. Such prohibited trading (“Prohibited Trading”) shall include, but not be
+limited to:
+● Exploiting errors or latency in the pricing and/or platform(s) provided by the Liquidity
+Provider/Exchange
+● Utilizing non-public and/or insider information
+● Front running of trades placed elsewhere
+● Trading in any way that jeopardizes the relationship that the Company has with a Liquidity
+Provider/Exchange or may result in the canceling of trades
+● Trading in any way that creates regulatory issues for the Liquidity Provider/Exchange
+● Utilizing any third-party strategy, off-the-shelf strategy or one marketed to pass challenge accounts
+● Attempting to arbitrage a funded account with another account with the Company or any third-party
+company, as determined by the Company in its sole and absolute discretion.
+●No Gambling Permitted: When participating in trading on both Challenge and Instant Funded Accounts,
+traders are expected to adhere to responsible risk management practices. This includes carefully
+considering the risks associated with position size, trade duration, and hedging strategies. Taking
+excessive risks, such as utilizing maximum leverage to open large positions with the hope of reaching
+profit targets through a single price movement, is strictly prohibited. Please refer to the Terms and
+Conditions for the full Prohibition of Gambling Practices language.
+● If the Company detects that your trading constitutes Prohibited Trading, your participation in the
+program will be terminated and may include forfeiture of any fees paid to the Company. Additionally,
+and before any Trader shall receive a funded account, the trading activity of the Trader under these
+Terms and Conditions shall be reviewed by both the Company and the Liquidity Provider/Exchange to
+determine whether such trading activity constitutes Prohibited Trading. In the case of Prohibited Trading,
+the Trader shall not receive a funded account.
+● Compliance with CME Group Rules: All trading activities must adhere to CME Group's rules and
+regulations.
+● Additionally, the Company reserves the right to disallow or block any Trader from participating in the
+program for any reason, in the Company’s sole and absolute discretion.
+To view all Prohibited Uses, please review our Terms and Conditions here,
+https://dashboardanalytix.com/client-terms-and-policies/
+
+Can I trade during News Events?
+Our futures program does not prohibit trading during news events; however, traders must exercise
+heightened caution due to the increased volatility and reduced liquidity that often accompany such
+events.
+Traders are solely responsible for staying informed of scheduled economic news releases and managing
+their positions accordingly.
+How will I see charges on my Statement?
+Charges come across in the name of Dashboardanalytix.com.
+How are taxes handled?
+When trading an account for our firm, you are treated as an independent contractor. As a result, you are
+responsible for any and all taxes on your gains.
+
+How are affiliates credited?
+Affiliates are credited for referrals when a user creates an account using a link or discount code provided
+by the Affiliate.
+
+Appendix A
+
+E-mini S&P 500 - ES - CME Micro E-mini S&P 500 - MES - CME E-mini Nasdaq-100 - NQ - CME
+Micro E-mini Nasdaq-100 - MNQ - CME E-mini Dow Jones - YM - CBOT Micro E-mini Dow Jones -
+MYM - CBOT E-mini Russell 2000 - RTY - CME Micro E-mini Russell 2000 - M2K - CME Euro FX -
+6E - CME British Pound - 6B - CME Japanese Yen - 6J - CME Canadian Dollar - 6C - CME Swiss
+Franc - 6S - CME Australian Dollar - 6A - CME Crude Oil - CL - NYMEX Micro Crude Oil - MCL -
+NYMEX Natural Gas - NG - NYMEX Heating Oil - HO - NYMEX RBOB Gasoline - RB - NYMEX Gold
+- GC - COMEX Micro Gold - MGC - COMEX Silver - SI - COMEX Micro Silver - SIL - COMEX
+Platinum - PL - NYMEX Copper - HG - COMEX Corn - ZC - CBOT Soybeans - ZS - CBOT Soybean
+Meal - ZM - CBOT Soybean Oil - ZL - CBOT Wheat - ZW - CBOT Micro Bitcoin - MBT - CME Micro
+Ether - MET - CME
