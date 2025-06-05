@@ -25,7 +25,7 @@ export function scrollToElement(elementId: string): void {
 }
 
 export function getCheckoutUrl(tier: string): string {
-  return `https://client.hybridfunding.club/checkout/${tier.toLowerCase()}`;
+  return `https://hybridfundingdashboard.propaccount.com/en/challenges`;
 }
 
 export function getSupportEmail(): string {

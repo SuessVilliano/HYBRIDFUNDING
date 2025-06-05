@@ -48,10 +48,10 @@ const TraderPortal = () => {
                 variant="neon-filled"
                 size="xl"
                 rounded="full"
-                onClick={() => window.open("https://hybridfundingdashboard.propaccount.com/en/sign-in", "_blank")}
+                onClick={() => window.open("https://hybridfundingdashboard.propaccount.com/", "_blank")}
                 className="font-['Orbitron'] font-semibold shadow-glow-accent"
               >
-                LOGIN TO PORTAL
+                ACCESS DASHBOARD
               </Button>
             </motion.div>
             
