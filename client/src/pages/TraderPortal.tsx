@@ -48,7 +48,7 @@ const TraderPortal = () => {
                 variant="neon-filled"
                 size="xl"
                 rounded="full"
-                onClick={() => window.open("https://client.hybridfunding.club/login", "_blank")}
+                onClick={() => window.open("https://hybridfundingdashboard.propaccount.com/en/sign-in", "_blank")}
                 className="font-['Orbitron'] font-semibold shadow-glow-accent"
               >
                 LOGIN TO PORTAL
@@ -72,7 +72,7 @@ const TraderPortal = () => {
                   <div className="p-6 w-full">
                     <div className="bg-[#1A1A2E]/80 backdrop-blur-sm p-4 rounded-lg">
                       <p className="text-accent font-['Orbitron'] font-semibold">TRADING PLATFORM ACCESS</p>
-                      <p className="text-white text-sm">DXTrade • Match Trader • MT5 • cTrader</p>
+                      <p className="text-white text-sm">Rithmic • MatchTrader • DXTrade • cTrader</p>
                     </div>
                   </div>
                 </div>
