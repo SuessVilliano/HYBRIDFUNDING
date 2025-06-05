@@ -41,17 +41,10 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
 
   const handleCheckout = () => {
     setIsLoading(true);
-    // Simulate API interaction - this would connect to your backend payment processor
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Redirecting to payment provider",
-        description: "You'll be redirected to complete your purchase",
-      });
-      // Redirect to the payment provider
-      window.open(getCheckoutUrl(tier), "_blank");
-      setIsDialogOpen(false);
-    }, 1500);
+    // Redirect directly to the challenges page
+    window.open(getCheckoutUrl(tier), "_blank");
+    setIsDialogOpen(false);
+    setIsLoading(false);
   };
 
   const openCheckoutDialog = () => {
