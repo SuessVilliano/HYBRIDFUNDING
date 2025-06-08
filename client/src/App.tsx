@@ -5,6 +5,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { queryClient } from "./lib/queryClient";
 import Layout from "@/components/Layout";
 import NotFound from "@/pages/not-found";
+import PageTransition, { CyberpunkLoadingScreen } from "@/components/ui/page-transition";
+import { useState, useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
 
 // Pages
 import Home from "@/pages/Home";
@@ -21,27 +24,46 @@ import Battles from "@/pages/Battles";
 function AppRouter() {
   return (
     <Layout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/challenges" component={Challenges} />
-        <Route path="/about" component={About} />
-        <Route path="/affiliate" component={Affiliate} />
-        <Route path="/trader-portal" component={TraderPortal} />
-        <Route path="/contact" component={Contact} />
-        <Route path="/terms" component={Terms} />
-        <Route path="/thank-you" component={ThankYou} />
-        <Route path="/faq" component={FAQ} />
-        <Route path="/battles" component={Battles} />
-        <Route component={NotFound} />
-      </Switch>
+      <AnimatePresence mode="wait">
+        <Switch>
+          <Route path="/" component={() => <PageTransition><Home /></PageTransition>} />
+          <Route path="/challenges" component={() => <PageTransition><Challenges /></PageTransition>} />
+          <Route path="/about" component={() => <PageTransition><About /></PageTransition>} />
+          <Route path="/affiliate" component={() => <PageTransition><Affiliate /></PageTransition>} />
+          <Route path="/trader-portal" component={() => <PageTransition><TraderPortal /></PageTransition>} />
+          <Route path="/contact" component={() => <PageTransition><Contact /></PageTransition>} />
+          <Route path="/terms" component={() => <PageTransition><Terms /></PageTransition>} />
+          <Route path="/thank-you" component={() => <PageTransition><ThankYou /></PageTransition>} />
+          <Route path="/faq" component={() => <PageTransition><FAQ /></PageTransition>} />
+          <Route path="/battles" component={() => <PageTransition><Battles /></PageTransition>} />
+          <Route component={() => <PageTransition><NotFound /></PageTransition>} />
+        </Switch>
+      </AnimatePresence>
     </Layout>
   );
 }
 
 function App() {
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    // Show initial loading screen for 2.5 seconds on first visit
+    const hasVisited = localStorage.getItem("hybridFundingVisited");
+    if (!hasVisited) {
+      localStorage.setItem("hybridFundingVisited", "true");
+      setTimeout(() => {
+        setIsInitialLoading(false);
+      }, 2500);
+    } else {
+      // Skip loading for returning visitors
+      setIsInitialLoading(false);
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <CyberpunkLoadingScreen isLoading={isInitialLoading} />
         <Router>
           <AppRouter />
         </Router>

@@ -8,6 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import Loading from "@/components/ui/loading";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -120,7 +121,14 @@ const ContactForm = () => {
           disabled={isSubmitting}
           className="font-['Orbitron'] shadow-glow-accent"
         >
-          {isSubmitting ? "SENDING..." : "SEND MESSAGE"}
+          {isSubmitting ? (
+            <div className="flex items-center gap-3">
+              <Loading variant="dots" size="sm" text="" />
+              <span>TRANSMITTING...</span>
+            </div>
+          ) : (
+            "SEND MESSAGE"
+          )}
         </Button>
       </form>
     </Form>
