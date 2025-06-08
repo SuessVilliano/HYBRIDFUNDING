@@ -2,12 +2,31 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { getSupportEmail } from "@/lib/utils";
+import Loading from "@/components/ui/loading";
+import { useState } from "react";
 
 const TraderPortal = () => {
+  const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
+  const [isLoadingSupport, setIsLoadingSupport] = useState(false);
+
   const instructions = [
     "After purchase, you'll receive login credentials by email.",
     `If not received in 30 minutes, check spam or contact ${getSupportEmail()}`
   ];
+
+  const handleDashboardAccess = async () => {
+    setIsLoadingDashboard(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    window.open("https://hybridfundingdashboard.propaccount.com/", "_blank");
+    setIsLoadingDashboard(false);
+  };
+
+  const handleContactSupport = async () => {
+    setIsLoadingSupport(true);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    window.location.href = `mailto:${getSupportEmail()}`;
+    setIsLoadingSupport(false);
+  };
 
   return (
     <section className="py-20 cyberpunk-bg page-transition">
@@ -48,10 +67,18 @@ const TraderPortal = () => {
                 variant="neon-filled"
                 size="xl"
                 rounded="full"
-                onClick={() => window.open("https://hybridfundingdashboard.propaccount.com/", "_blank")}
+                onClick={handleDashboardAccess}
+                disabled={isLoadingDashboard}
                 className="font-['Orbitron'] font-semibold shadow-glow-accent"
               >
-                ACCESS DASHBOARD
+                {isLoadingDashboard ? (
+                  <div className="flex items-center gap-3">
+                    <Loading variant="matrix" size="sm" text="" />
+                    <span>CONNECTING TO PORTAL...</span>
+                  </div>
+                ) : (
+                  "ACCESS DASHBOARD"
+                )}
               </Button>
             </motion.div>
             

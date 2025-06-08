@@ -11,6 +11,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import Loading from "@/components/ui/loading";
 
 interface ChallengeCardProps {
   tier: string;
@@ -39,8 +40,12 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     setIsLoading(true);
+    
+    // Show loading animation for better UX
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
     // Redirect directly to the challenges page
     window.open(getCheckoutUrl(tier), "_blank");
     setIsDialogOpen(false);
@@ -182,7 +187,14 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
               className="font-semibold"
               disabled={isLoading}
             >
-              {isLoading ? "Processing..." : "Proceed to Payment"}
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <Loading variant="glitch" size="sm" text="" />
+                  <span>ACCESSING PORTAL...</span>
+                </div>
+              ) : (
+                "Proceed to Payment"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
