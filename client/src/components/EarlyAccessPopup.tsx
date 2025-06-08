@@ -13,6 +13,7 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Show popup after delay
@@ -33,10 +34,16 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
     localStorage.setItem("earlyAccessPopupShown", "true");
   };
 
-  const handleOpenForm = () => {
+  const handleOpenForm = async () => {
+    setIsLoading(true);
     setShowForm(true);
+    
+    // Show loading animation for better UX
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
     // Open the form in a new tab if embedded form doesn't work properly
     window.open("https://us.makeforms.co/9mwavgm/", "_blank");
+    setIsLoading(false);
   };
 
   return (
@@ -99,8 +106,16 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
                   variant="neon-filled" 
                   className="w-full py-3 font-semibold text-lg" 
                   onClick={handleOpenForm}
+                  disabled={isLoading}
                 >
-                  Join Early Access
+                  {isLoading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Loading variant="pulse" size="sm" text="" />
+                      <span>INITIALIZING ACCESS...</span>
+                    </div>
+                  ) : (
+                    "Join Early Access"
+                  )}
                 </Button>
               </div>
             ) : (

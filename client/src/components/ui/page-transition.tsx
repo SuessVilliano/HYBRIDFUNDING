@@ -224,7 +224,7 @@ export const CyberpunkLoadingScreen: React.FC<{ isLoading: boolean }> = ({ isLoa
           {/* Scanning line effect */}
           <motion.div
             className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/20 to-transparent h-2"
-            animate={{ y: [0, window.innerHeight, 0] }}
+            animate={{ y: [0, typeof window !== 'undefined' ? window.innerHeight : 800, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
           />
         </motion.div>
