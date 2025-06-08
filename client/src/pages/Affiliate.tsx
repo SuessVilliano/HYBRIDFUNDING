@@ -74,7 +74,7 @@ const Affiliate = () => {
                     variant="neon-filled"
                     size="xl"
                     rounded="full"
-                    onClick={() => window.open("https://forms.google.com/affiliate-signup", "_blank")}
+                    onClick={() => window.open("https://hybridfundingdashboard.propaccount.com/en/sign-in", "_blank")}
                     className="font-['Orbitron'] font-semibold shadow-glow-accent"
                   >
                     APPLY TO JOIN
