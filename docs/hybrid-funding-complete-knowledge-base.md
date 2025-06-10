@@ -473,8 +473,12 @@ Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are
 
 ### Program Structure
 
-- **Commission Rates**: Competitive rates based on referral volume
-- **Payment Schedule**: Monthly payments for qualified referrals
+- **Commission Tiers**:
+  - Tier 1: 5% commission (First 1-9 sales)
+  - Tier 2: 10% commission (10-49 sales)
+  - Tier 3: 15% commission (50-100 sales)
+  - Tier 4: 20% commission (100+ sales)
+- **Payment Schedule**: Weekly payments for qualified referrals
 - **Tracking**: Unique referral links and real-time performance dashboard
 
 ### Eligibility Requirements

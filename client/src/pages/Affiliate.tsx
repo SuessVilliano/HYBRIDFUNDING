@@ -22,9 +22,10 @@ const Affiliate = () => {
   ];
 
   const commissionTiers = [
-    { tier: "Tier 1", description: "Starting Level", percentage: "10%" },
-    { tier: "Tier 2", description: "After 50 referrals", percentage: "15%" },
-    { tier: "Tier 3", description: "After 200 referrals", percentage: "20%" }
+    { tier: "Tier 1", description: "First 1-9 sales", percentage: "5%" },
+    { tier: "Tier 2", description: "10-49 sales", percentage: "10%" },
+    { tier: "Tier 3", description: "50-100 sales", percentage: "15%" },
+    { tier: "Tier 4", description: "100+ sales", percentage: "20%" }
   ];
 
   return (
@@ -41,7 +42,7 @@ const Affiliate = () => {
               Affiliate <span className="text-accent neon-text-accent">Program</span>
             </h2>
             <p className="text-[#B8B8D0] max-w-2xl mx-auto">
-              Earn commissions by referring new traders to Hybrid Funding. Up to 20% per signup. Weekly payouts.
+              Earn commissions by referring new traders to Hybrid Funding. 5%-20% commission tiers. Weekly payouts.
             </p>
           </motion.div>
           
