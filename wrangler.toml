@@ -1,0 +1,9 @@
+# Name of your worker
+name = "rest-express"
+
+# The main entry point for your worker code
+# Your build log shows the server script is output to "dist/index.js"
+main = "dist/index.js"
+
+# Specifies the version of the Workers runtime
+compatibility_date = "2025-09-29"
