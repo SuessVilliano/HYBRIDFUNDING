@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import FeatureCard from "@/components/FeatureCard";
+import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 import { Zap, CheckCircle, Users, DollarSign, Calendar, BarChart3, BookOpen, Newspaper, Star, Quote, Trophy, Crown } from "lucide-react";
 
 const Home = () => {
@@ -95,6 +96,21 @@ const Home = () => {
       </section>
 
 
+
+      {/* A2P Compliant Opt-In Form Section */}
+      <section className="py-20 bg-gradient-to-b from-[#0B1426] to-[#1A1A2E]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <A2PCompliantOptInForm showResourceLinks={true} />
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
       {/* Trading Tools Section */}
       <section className="py-20 bg-[#0B1426]">
