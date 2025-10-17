@@ -29,7 +29,9 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
   };
 
   const handleSuccess = () => {
-    closePopup();
+    setTimeout(() => {
+      closePopup();
+    }, 1500);
   };
 
   return (
