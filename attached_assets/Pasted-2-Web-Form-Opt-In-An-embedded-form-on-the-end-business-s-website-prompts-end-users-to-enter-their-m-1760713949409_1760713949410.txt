@@ -1,0 +1,35 @@
+2. Web Form Opt-In
+An embedded form on the end business’s website prompts end-users to enter their mobile phone number and opt into the texting campaign.
+
+
+⚠️ Important Requirements for Web Form Opt-In:
+Opt-in checkbox MUST be selectable by end-user
+
+
+Opt-in checkbox MUSTinclude a disclaimer (consent message) such as:
+"I consent to receive sms notifications, alert from COMPANY NAME HERE. Message frequency varies. Message & data rates may apply. Text HELP to (XXX) XXX-XXX for assistance. You can reply STOP to unsubscribe at any time."
+
+
+Opt-in consent message and checkbox MUST be separated from Privacy Policy | Terms of Service and Promotional consent checkboxes. Promotional consent may be something like the following:
+"By checking this box I agree to receive occasional marketing messages from INSERT COMPANY NAME HERE."
+
+
+Opt-in disclaimer MUST have All CTA (Call to Action) disclosures present to be considered compliant:
+
+Program name and/or a description of the messages that will be sent (appointment reminders, marketing messages, occasional offers, etc.)
+
+The organization or individual being represented in the initial message
+
+Fee disclosure (“Message and data rates may apply”)
+
+Service delivery frequency or recurring messages disclosure (“4 messages per month”, “Message frequency varies”, “1 message per login”, etc
+
+Customer care information (typically “Text HELP for help” or Help at XXX-XXX-XXXX) - not required for single message programs (i.e 2FA)
+
+Opt out instructions (typically “Text STOP to unsubscribe”) - not required for single message programs (i.e 2FA)
+
+Link to Privacy Policy describing how end user opt-in information will be used. Be sure there is no mention of sharing of personal information with Third Parties (Must not be part of the checkbox statement. Instead, provide the link at the bottom of the form)
+
+Link to Terms and Conditions describing terms of service (Must not be part of the checkbox statement. Instead, provide the link at the bottom of the form)
+
+Incorporate a checkbox option that end-users must select in order to receive SMS messaging. The checkbox can not be pre-selected. The checkbox provides the end-user the ability to agree, or not agree, to receive SMS messaging.
