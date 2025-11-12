@@ -5,7 +5,7 @@ import { relations } from "drizzle-orm";
 
 // Enums
 export const assetClassEnum = pgEnum("asset_class", ["forex", "crypto", "futures"]);
-export const challengeTypeEnum = pgEnum("challenge_type", ["one-step", "two-step", "three-step", "instant", "instant-lite"]);
+export const challengeTypeEnum = pgEnum("challenge_type", ["one-step", "two-step", "three-step", "four-phase", "instant", "instant-lite"]);
 export const challengeStatusEnum = pgEnum("challenge_status", ["pending", "active", "passed", "failed", "funded"]);
 export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
 

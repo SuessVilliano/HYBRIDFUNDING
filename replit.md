@@ -85,7 +85,7 @@ Preferred communication style: Simple, everyday language.
 
 **Enums:**
 - assetClassEnum: forex, crypto, futures
-- challengeTypeEnum: one-step, two-step, three-step, instant
+- challengeTypeEnum: one-step, two-step, three-step, four-phase, instant, instant-lite
 - challengeStatusEnum: pending, active, passed, failed, funded
 - userRoleEnum: user, admin
 

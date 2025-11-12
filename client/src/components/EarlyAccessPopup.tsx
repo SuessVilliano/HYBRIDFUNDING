@@ -64,27 +64,30 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
                   <span className="font-['Orbitron'] font-bold text-white text-xl">HF</span>
                 </div>
                 <h2 className="font-['Orbitron'] text-2xl md:text-3xl font-bold text-white mb-2">
-                  Get Funded First
+                  Unlock VIP Rewards
                 </h2>
                 <div className="h-1 w-16 bg-accent mx-auto mb-4"></div>
                 <p className="text-[#B8B8D0] mb-4">
-                  Join our early access list for <span className="text-accent font-bold">20% off</span> your first challenge, 
-                  exclusive perks, and early account access!
+                  Join our exclusive community and get access to <span className="text-accent font-bold">giveaways, discounts,</span> and more! 
+                  Don't miss out on rewards worth thousands.
                 </p>
 
                 <div className="bg-[#171728] p-4 rounded-lg text-white mb-6">
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center justify-center">
-                      <span className="text-accent mr-2">✓</span> 20% off your first challenge
+                      <span className="text-accent mr-2">🎁</span> Monthly funded account giveaways
                     </li>
                     <li className="flex items-center justify-center">
-                      <span className="text-accent mr-2">✓</span> AI trade agent access
+                      <span className="text-accent mr-2">💰</span> Exclusive flash discounts & promo codes
                     </li>
                     <li className="flex items-center justify-center">
-                      <span className="text-accent mr-2">✓</span> Free prop account giveaways
+                      <span className="text-accent mr-2">🏆</span> TradeHouse Battles prize alerts
                     </li>
                     <li className="flex items-center justify-center">
-                      <span className="text-accent mr-2">✓</span> Priority platform access
+                      <span className="text-accent mr-2">⚡</span> VIP access to new features first
+                    </li>
+                    <li className="flex items-center justify-center">
+                      <span className="text-accent mr-2">📊</span> Premium trading insights & tips
                     </li>
                   </ul>
                 </div>
