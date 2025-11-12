@@ -13,7 +13,7 @@ const Challenges = () => {
   useEffect(() => {
     const assetData = (challengeData as any)[selectedAssetClass];
     if (assetData) {
-      const availableTypes = ["one-step", "two-step", "three-step", "four-phase", "instant"].filter(
+      const availableTypes = ["one-step", "two-step", "three-step", "four-phase", "instant", "instant-lite"].filter(
         type => assetData[type] && assetData[type].length > 0
       );
       if (availableTypes.length > 0 && !availableTypes.includes(selectedChallengeType)) {
@@ -52,6 +52,13 @@ const Challenges = () => {
         { tier: "25K", price: 1198, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: true, delay: 2, hasTrailingDD: true },
         { tier: "50K", price: 2588, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 3, hasTrailingDD: true },
         { tier: "100K", price: 5198, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 4, hasTrailingDD: true }
+      ],
+      "instant-lite": [
+        { tier: "5K", price: 70, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: false, delay: 0, hasTrailingDD: true },
+        { tier: "10K", price: 120, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: false, delay: 1, hasTrailingDD: true },
+        { tier: "25K", price: 225, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: true, delay: 2, hasTrailingDD: true },
+        { tier: "50K", price: 350, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: false, delay: 3, hasTrailingDD: true },
+        { tier: "100K", price: 650, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: false, delay: 4, hasTrailingDD: true }
       ]
     },
     crypto: {
@@ -68,7 +75,9 @@ const Challenges = () => {
         { tier: "25K", price: 238, profitTarget: 6, maxDrawdown: 9, label: "Recommended", bestValue: true, delay: 2, hasTrailingDD: false },
         { tier: "50K", price: 458, profitTarget: 6, maxDrawdown: 9, label: "Advanced", bestValue: false, delay: 3, hasTrailingDD: false },
         { tier: "100K", price: 938, profitTarget: 6, maxDrawdown: 9, label: "Professional", bestValue: false, delay: 4, hasTrailingDD: false }
-      ]
+      ],
+      "instant": [],
+      "instant-lite": []
     },
     futures: {
       "four-phase": [
@@ -80,7 +89,8 @@ const Challenges = () => {
       "one-step": [],
       "two-step": [],
       "three-step": [],
-      "instant": []
+      "instant": [],
+      "instant-lite": []
     }
   };
 
@@ -90,7 +100,8 @@ const Challenges = () => {
     "two-step": "A two-phase evaluation with 10% (Phase 1) and 5% (Phase 2) equity growth targets and 8% maximum drawdown. Provides a more structured path to funding.",
     "three-step": "A three-phase evaluation with 5% equity growth target per phase and 5% maximum drawdown. Designed for methodical traders who prefer smaller, consistent gains.",
     "four-phase": "A four-phase evaluation with 9% equity growth target per phase and 5% maximum drawdown. Includes early payouts starting from Phase 1 and consistency requirements. Designed for futures trading with structured progression.",
-    "instant": "Start trading with funded capital immediately. Trading rules apply with 8% maximum drawdown. KYC verification required before withdrawal. Higher entry fee with quicker access to trading."
+    "instant": "Start trading with funded capital immediately. Trading rules apply with 8% maximum drawdown. KYC verification required before withdrawal. Higher entry fee with quicker access to trading.",
+    "instant-lite": "Instant Funding Lite: Fast, affordable funding with 3% Daily DD, 5% Max Trailing DD, and 25% consistency rule. Features 80% profit split (90% add-on available), 3% non-withdrawable profit buffer, up to 50:1 leverage, first payout on demand (14-day subsequent), and payout on breach up to profit buffer when consistency is satisfied. Daily DD based on EOD balance."
   };
 
   // Asset class descriptions
@@ -116,7 +127,15 @@ const Challenges = () => {
     },
     {
       question: "Do I need to complete KYC verification?",
-      answer: "For standard evaluation programs, you must complete KYC verification before receiving your funded account. For Instant Funding, you can begin trading immediately, but must complete KYC verification before requesting any withdrawals."
+      answer: "For standard evaluation programs, you must complete KYC verification before receiving your funded account. For Instant Funding and Instant Funding Lite, you can begin trading immediately, but must complete KYC verification before requesting any withdrawals."
+    },
+    {
+      question: "What is the consistency requirement in IF Lite?",
+      answer: "Instant Funding Lite includes a 25% consistency rule, meaning no single day's profit can exceed 25% of your total profit. This ensures balanced trading performance and prevents over-reliance on a single trading day. You must satisfy this consistency requirement to be eligible for payouts."
+    },
+    {
+      question: "What is the profit buffer in IF Lite?",
+      answer: "IF Lite includes a 3% non-withdrawable profit buffer. This buffer protects your account and allows for payout on breach situations. If you breach the Daily DD or Max Trailing DD limits, you can still receive a payout up to the profit buffer amount, provided you've satisfied the consistency requirement. However, the account will be locked upon payout."
     }
   ];
 
@@ -124,7 +143,11 @@ const Challenges = () => {
   const forexFaqs = [
     {
       question: "What are the specific rules for Forex trading?",
-      answer: "For Forex One-Step: 10% profit target with 6% max drawdown. For Two-Step: 10% Phase 1 and 5% Phase 2 with 8% max drawdown and 4% daily loss limit. For Three-Step: 5% profit target per phase with 5% max drawdown. For Instant Funding: 8% max drawdown, 5% daily loss limit, and 80% profit share (can be increased to 90% with add-on)."
+      answer: "For Forex One-Step: 10% profit target with 6% max drawdown. For Two-Step: 10% Phase 1 and 5% Phase 2 with 8% max drawdown and 4% daily loss limit. For Three-Step: 5% profit target per phase with 5% max drawdown. For Instant Funding: 8% max drawdown, 5% daily loss limit, and 80% profit share (90% with add-on). For Instant Funding Lite: 3% Daily DD (EOD Balance), 5% Max Trailing DD, 25% consistency rule, 3% non-withdrawable profit buffer, 80% profit split (90% add-on), up to 50:1 leverage, first payout on demand (14-day subsequent)."
+    },
+    {
+      question: "What's the difference between Instant Funding and Instant Funding Lite?",
+      answer: "Instant Funding Lite offers a more affordable entry point ($70-$650 vs $218-$5,198) with tighter risk management: 3% Daily DD and 5% Max Trailing DD (vs 8% for regular IF), plus a 25% consistency requirement and 3% non-withdrawable profit buffer. Both offer immediate funded account access, but IF Lite has stricter drawdown rules and includes a consistency safeguard. IF Lite allows payout on breach up to the profit buffer when consistency is satisfied, with account lock upon payout."
     },
     {
       question: "What leverage is available for Forex accounts?",
@@ -269,8 +292,8 @@ const Challenges = () => {
             Select Challenge Type
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {["one-step", "two-step", "three-step", "four-phase", "instant"].map((type) => {
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {["one-step", "two-step", "three-step", "four-phase", "instant", "instant-lite"].map((type) => {
               const assetData = (challengeData as any)[selectedAssetClass];
               const isAvailable = assetData && assetData[type] && assetData[type].length > 0;
               
@@ -289,7 +312,8 @@ const Challenges = () => {
                     {type === "one-step" ? "1-STEP" : 
                      type === "two-step" ? "2-STEP" : 
                      type === "three-step" ? "3-STEP" : 
-                     type === "four-phase" ? "4-PHASE" : "INSTANT FUNDING"}
+                     type === "four-phase" ? "4-PHASE" : 
+                     type === "instant" ? "INSTANT FUNDING" : "IF LITE"}
                     {!isAvailable && <span className="ml-2 text-xs">(N/A)</span>}
                   </Button>
                 </motion.div>

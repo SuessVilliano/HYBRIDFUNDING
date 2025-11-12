@@ -7,7 +7,7 @@ Hybrid Funding is a next-generation proprietary trading firm platform that provi
 **Core Purpose:** Democratize access to trading capital by funding talented traders who demonstrate skill and discipline through structured evaluation programs.
 
 **Key Differentiators:**
-- Multiple challenge types (One-Step, Two-Step, Three-Step, Instant Funding)
+- Multiple challenge types (One-Step, Two-Step, Three-Step, Four-Phase, Instant Funding, Instant Funding Lite)
 - Multi-asset class support (Forex, Crypto, Futures)
 - TradeHouse Battles competitive gaming arena
 - Flexible profit splits (up to 90%)
