@@ -1,0 +1,18 @@
+{
+    "rewriteRoutes": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/api/index.ts"
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/api/index.ts"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/"
+        }
+    ]
+}
