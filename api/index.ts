@@ -82,22 +82,52 @@ app.post("/api/lead", async (req: Request, res: Response) => {
     });
 
     const bodyText = await ghlRes.text();
+    let parsed: any = {};
+    try { parsed = JSON.parse(bodyText); } catch { /* ignore */ }
 
-    if (!ghlRes.ok && ghlRes.status !== 409) {
+    // GHL surfaces "duplicate contact" as either 409 or a 400 with a specific
+    // message + an existing contactId. Both mean "we already have this lead" —
+    // treat them as success so the user sees the confirmation instead of an
+    // error, and re-tag the existing contact.
+    const isDuplicate =
+      ghlRes.status === 409 ||
+      (ghlRes.status === 400 &&
+        typeof parsed?.message === "string" &&
+        /duplicat/i.test(parsed.message));
+
+    if (!ghlRes.ok && !isDuplicate) {
       console.error("[lead] GHL error", ghlRes.status, bodyText);
       return res.status(502).json({ error: "Unable to submit at this time. Please try again." });
     }
 
-    let contactId: string | undefined;
-    try {
-      const json = JSON.parse(bodyText);
-      contactId = json?.contact?.id || json?.id;
-    } catch {
-      // ignore parse errors
+    const contactId: string | undefined =
+      parsed?.contact?.id || parsed?.id || parsed?.meta?.contactId;
+
+    // For duplicates, push tags onto the existing contact so the workflow still fires.
+    if (isDuplicate && contactId) {
+      try {
+        await fetch(`https://services.leadconnectorhq.com/contacts/${contactId}/tags`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Version: "2021-07-28",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ tags }),
+        });
+      } catch (tagErr) {
+        console.error("[lead] tag-on-duplicate failed", tagErr);
+      }
     }
 
-    console.log("[lead] accepted", { email: data.email, status: ghlRes.status, contactId });
-    return res.status(200).json({ success: true });
+    console.log("[lead] accepted", {
+      email: data.email,
+      status: ghlRes.status,
+      duplicate: isDuplicate,
+      contactId,
+    });
+    return res.status(200).json({ success: true, duplicate: isDuplicate });
   } catch (err) {
     console.error("[lead] network error", err);
     return res.status(502).json({ error: "Unable to submit at this time. Please try again." });

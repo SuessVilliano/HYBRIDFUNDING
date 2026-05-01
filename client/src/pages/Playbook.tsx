@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import SEO from "@/components/SEO";
 import { breadcrumbSchema } from "@/lib/jsonLd";
 import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
+import { Button } from "@/components/ui/button";
 import { CheckCircle2, FileText, Download } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 const benefits = [
   "Rule-by-rule walkthrough for every Hybrid Funding challenge type",
@@ -13,7 +16,23 @@ const benefits = [
   "Free 20% off code for your first challenge",
 ];
 
+const PDF_URL = "/trader-playbook.pdf";
+
 const Playbook: React.FC = () => {
+  const [unlocked, setUnlocked] = useState(false);
+
+  const handleSuccess = () => {
+    setUnlocked(true);
+    trackEvent("playbook_unlocked");
+    // Trigger immediate browser download as well
+    const a = document.createElement("a");
+    a.href = PDF_URL;
+    a.download = "Hybrid-Funding-Trader-Playbook.pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
   return (
     <section className="py-20 cyberpunk-bg page-transition">
       <SEO
@@ -61,13 +80,40 @@ const Playbook: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <h2 className="font-['Orbitron'] text-2xl font-bold text-white mb-2 text-center">
-              Get the Playbook
-            </h2>
-            <p className="text-[#B8B8D0] text-sm text-center mb-4">
-              We'll send the PDF and discount code to your phone.
-            </p>
-            <A2PCompliantOptInForm showResourceLinks={false} compactMode />
+            {unlocked ? (
+              <div className="text-center py-4">
+                <CheckCircle2 className="h-14 w-14 text-accent mx-auto mb-3" />
+                <h2 className="font-['Orbitron'] text-2xl font-bold text-white mb-2">
+                  You're in.
+                </h2>
+                <p className="text-[#B8B8D0] mb-5">
+                  Your download should have started automatically. We've also texted
+                  the link plus your 20% off code.
+                </p>
+                <a href={PDF_URL} download="Hybrid-Funding-Trader-Playbook.pdf">
+                  <Button variant="neon-filled" size="lg" rounded="full" className="font-['Orbitron']">
+                    <Download className="mr-2 h-5 w-5" /> Download Playbook (PDF)
+                  </Button>
+                </a>
+                <p className="text-[#6F6F8A] text-xs mt-4">
+                  Didn't start? Tap the button above.
+                </p>
+              </div>
+            ) : (
+              <>
+                <h2 className="font-['Orbitron'] text-2xl font-bold text-white mb-2 text-center">
+                  Get the Playbook
+                </h2>
+                <p className="text-[#B8B8D0] text-sm text-center mb-4">
+                  Drop your info and we'll start the download instantly + text you the link and discount code.
+                </p>
+                <A2PCompliantOptInForm
+                  showResourceLinks={false}
+                  compactMode
+                  onSuccess={handleSuccess}
+                />
+              </>
+            )}
           </motion.div>
         </div>
       </div>

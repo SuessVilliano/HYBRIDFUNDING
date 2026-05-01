@@ -147,51 +147,88 @@ const Home = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            {/* Economic Calendar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="glassmorphism rounded-xl p-6 text-center"
-            >
-              <Calendar className="h-12 w-12 text-accent mx-auto mb-4" />
-              <h3 className="text-white font-bold mb-3">Real-Time Economic Calendar</h3>
-              <p className="text-[#B8B8D0] text-sm">
-                Stay ahead of market-moving events with trade-impacting alerts and economic data releases.
-              </p>
-            </motion.div>
-
-            {/* Performance Dashboard */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="glassmorphism rounded-xl p-6 text-center"
-            >
-              <BarChart3 className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h3 className="text-white font-bold mb-3">Performance Dashboards</h3>
-              <p className="text-[#B8B8D0] text-sm">
-                Track your P&L, drawdown, win rate, and consistency metrics in real-time with detailed analytics.
-              </p>
-            </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {[
+              {
+                icon: Calendar,
+                color: "text-accent",
+                title: "Real-Time Economic Calendar",
+                desc: "Stay ahead of market-moving events with trade-impacting alerts and economic data releases.",
+              },
+              {
+                icon: BarChart3,
+                color: "text-primary",
+                title: "Performance Dashboards",
+                desc: "Track your P&L, drawdown, win rate, and consistency metrics in real-time with detailed analytics.",
+              },
+              {
+                icon: DollarSign,
+                color: "text-accent",
+                title: "Live Drawdown Tracker",
+                desc: "Always know exactly where your trailing max drawdown sits — never breach by surprise.",
+              },
+              {
+                icon: BookOpen,
+                color: "text-primary",
+                title: "Trade Journal & Replay",
+                desc: "Auto-capture every trade with chart context, tags, and notes. Review what worked and what didn't.",
+              },
+              {
+                icon: Newspaper,
+                color: "text-accent",
+                title: "AI Trade Insights",
+                desc: "Pattern detection, consistency scoring, and personalized coaching from our AI trade agent.",
+              },
+              {
+                icon: Zap,
+                color: "text-primary",
+                title: "Multi-Platform Access",
+                desc: "Trade on cTrader, DXTrade, MatchTrader, Rithmic Pro, GooeyPro — and Tradovate, coming soon.",
+              },
+            ].map((t, i) => {
+              const Icon = t.icon;
+              return (
+                <motion.div
+                  key={t.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.06 }}
+                  className="glassmorphism rounded-xl p-6"
+                >
+                  <Icon className={`h-10 w-10 ${t.color} mb-3`} />
+                  <h3 className="text-white font-bold mb-2">{t.title}</h3>
+                  <p className="text-[#B8B8D0] text-sm">{t.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="text-center"
+            className="text-center flex flex-wrap items-center justify-center gap-4"
           >
-            <Link href="/trader-portal">
-              <Button 
-                variant="neon" 
-                size="lg" 
+            <Link href="/challenges">
+              <Button
+                variant="neon-filled"
+                size="lg"
                 rounded="full"
-                  className="font-['Orbitron'] font-semibold"
-                >
-                  Explore Tools
-                </Button>
+                className="font-['Orbitron'] font-semibold"
+              >
+                Start a Challenge
+              </Button>
+            </Link>
+            <Link href="/playbook">
+              <Button
+                variant="neon"
+                size="lg"
+                rounded="full"
+                className="font-['Orbitron'] font-semibold"
+              >
+                Get the Free Playbook
+              </Button>
             </Link>
           </motion.div>
         </div>
