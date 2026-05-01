@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import SEO from "@/components/SEO";
+import { breadcrumbSchema } from "@/lib/jsonLd";
 
 const Terms = () => {
   const sections = [
@@ -46,8 +48,17 @@ const Terms = () => {
 
   return (
     <section className="py-20 cyberpunk-bg page-transition">
+      <SEO
+        title="Terms & Conditions — Hybrid Funding"
+        description="Hybrid Funding terms, prohibited practices, geographic restrictions, and program rules."
+        path="/terms"
+        jsonLd={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Terms", path: "/terms" },
+        ])}
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           className="max-w-4xl mx-auto glassmorphism rounded-xl p-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

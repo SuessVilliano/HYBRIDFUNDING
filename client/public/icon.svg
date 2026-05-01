@@ -1,0 +1,15 @@
+<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo Circle Background -->
+  <defs>
+    <linearGradient id="gradientBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6e33d9" />
+      <stop offset="100%" stop-color="#00d4ff" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Circle with gradient -->
+  <circle cx="30" cy="30" r="25" fill="url(#gradientBg)" />
+  
+  <!-- HF Text in Circle -->
+  <text x="30" y="35" font-family="Orbitron, sans-serif" font-size="16" font-weight="700" fill="white" text-anchor="middle">HF</text>
+</svg>

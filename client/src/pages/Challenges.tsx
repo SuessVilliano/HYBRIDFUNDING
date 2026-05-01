@@ -4,6 +4,8 @@ import ChallengeCard from "@/components/ChallengeCard";
 import AccordionItem from "@/components/AccordionItem";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import SEO from "@/components/SEO";
+import { breadcrumbSchema, faqPageSchema, productSchema } from "@/lib/jsonLd";
 
 const Challenges = () => {
   const [selectedAssetClass, setSelectedAssetClass] = useState("forex");
@@ -308,7 +310,39 @@ const Challenges = () => {
     return assetData[selectedChallengeType] || [];
   })();
 
+  // Build JSON-LD: FAQPage from current visible FAQs + Product offers from current asset class
+  const allOffers = Object.entries(challengeData).flatMap(([assetClass, types]) =>
+    Object.entries(types as Record<string, Array<{ tier: string; price: number }>>).flatMap(
+      ([challengeType, tiers]) =>
+        tiers.map((t) => ({ tier: t.tier, price: t.price, assetClass, challengeType }))
+    )
+  );
+
+  const seoTitle = "Prop Firm Challenges — Forex, Crypto, Futures & Single Session Equities";
+  const seoDescription =
+    "Pick from 1-Step, 2-Step, 3-Step, 4-Phase, Instant Funding, and Instant Funding Lite challenges across Forex, Crypto, Futures, and Single Session Equities. Account sizes $5K–$200K, up to 90% profit splits.";
+
   return (
+    <>
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        path="/challenges"
+        jsonLd={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Challenges", path: "/challenges" },
+          ]),
+          productSchema({
+            name: "Hybrid Funding Trading Challenges",
+            description:
+              "Evaluation challenges across Forex, Crypto, Futures, and Single Session Equities. Pass and trade with firm capital.",
+            url: "/challenges",
+            offers: allOffers,
+          }),
+          faqPageSchema(faqs),
+        ]}
+      />
     <section className="py-20 cyberpunk-bg page-transition">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
@@ -474,6 +508,7 @@ const Challenges = () => {
         </motion.div>
       </div>
     </section>
+    </>
   );
 };
 

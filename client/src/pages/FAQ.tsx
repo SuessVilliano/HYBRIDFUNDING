@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import Layout from "@/components/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccordionItem from "@/components/AccordionItem";
+import SEO from "@/components/SEO";
+import { breadcrumbSchema, faqPageSchema } from "@/lib/jsonLd";
 
 const FAQ: React.FC = () => {
   const [activeTab, setActiveTab] = useState("general");
@@ -247,8 +249,22 @@ const FAQ: React.FC = () => {
     }
   ];
 
+  const allFaqs = [...generalFaqs, ...forexFaqs, ...cryptoFaqs, ...futuresFaqs, ...equitiesFaqs];
+
   return (
     <Layout>
+      <SEO
+        title="Hybrid Funding FAQ — Rules, Payouts, Leverage & Drawdown Explained"
+        description="Answers about Hybrid Funding evaluations, profit splits, leverage, max drawdown, payouts, and platform-specific rules for Forex, Crypto, Futures, and Single Session Equities."
+        path="/faq"
+        jsonLd={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "FAQ", path: "/faq" },
+          ]),
+          faqPageSchema(allFaqs),
+        ]}
+      />
       <section className="py-24 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background to-background/60 z-0"></div>
         <div className="container mx-auto relative z-10">

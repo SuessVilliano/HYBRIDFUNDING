@@ -3,10 +3,21 @@ import ContactForm from "@/components/ContactForm";
 import { Mail, Users } from "lucide-react";
 import SocialIcon from "@/components/SocialIcon";
 import { getSupportEmail } from "@/lib/utils";
+import SEO from "@/components/SEO";
+import { breadcrumbSchema } from "@/lib/jsonLd";
 
 const Contact = () => {
   return (
     <section className="py-20 cyberpunk-bg page-transition">
+      <SEO
+        title="Contact Hybrid Funding — Trader Support"
+        description="Reach Hybrid Funding's support team. Fast answers on evaluations, payouts, platforms, and account questions for prop traders."
+        path="/contact"
+        jsonLd={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contact" },
+        ])}
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <motion.div 
