@@ -4,6 +4,8 @@ import { Check } from "lucide-react";
 import { getSupportEmail } from "@/lib/utils";
 import Loading from "@/components/ui/loading";
 import { useState } from "react";
+import SEO from "@/components/SEO";
+import { breadcrumbSchema } from "@/lib/jsonLd";
 
 const TraderPortal = () => {
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
@@ -30,6 +32,15 @@ const TraderPortal = () => {
 
   return (
     <section className="py-20 cyberpunk-bg page-transition">
+      <SEO
+        title="Trader Portal — Hybrid Funding Funded Account Access"
+        description="Access your Hybrid Funding funded account dashboard. Trade on cTrader, MatchTrader, DXTrade, Rithmic Pro, GooeyPro. Tradovate coming soon."
+        path="/trader-portal"
+        jsonLd={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Trader Portal", path: "/trader-portal" },
+        ])}
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           className="max-w-4xl mx-auto glassmorphism rounded-xl p-8"

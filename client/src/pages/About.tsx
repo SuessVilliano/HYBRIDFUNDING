@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { Check, Trophy, Users, Zap, Target } from "lucide-react";
+import SEO from "@/components/SEO";
+import { breadcrumbSchema, organizationSchema } from "@/lib/jsonLd";
 
 const About = () => {
   const platforms = [
@@ -44,9 +46,21 @@ const About = () => {
 
   return (
     <section className="py-20 cyberpunk-bg page-transition">
+      <SEO
+        title="About Hybrid Funding — Mission, Values & Supported Trading Platforms"
+        description="Hybrid Funding is a modern prop firm built by traders, for traders. Funding talent across Forex, Crypto, Futures, and Single Session Equities on cTrader, DXTrade, MatchTrader, Rithmic Pro, GooeyPro and (soon) Tradovate."
+        path="/about"
+        jsonLd={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "About", path: "/about" },
+          ]),
+          organizationSchema,
+        ]}
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

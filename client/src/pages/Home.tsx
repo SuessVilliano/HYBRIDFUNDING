@@ -3,19 +3,31 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import FeatureCard from "@/components/FeatureCard";
 import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
+import SEO from "@/components/SEO";
+import SocialProof from "@/components/SocialProof";
+import { organizationSchema, websiteSchema } from "@/lib/jsonLd";
 import { Zap, CheckCircle, Users, DollarSign, Calendar, BarChart3, BookOpen, Newspaper, Star, Quote, Trophy, Crown } from "lucide-react";
 
 const Home = () => {
   return (
     <div className="page-transition">
+      <SEO
+        title="Hybrid Funding — Get Funded for Forex, Crypto, Futures & Single Session Equities"
+        description="Hybrid Funding is a modern prop firm. Pass our evaluation, trade firm capital, and keep up to 90% of your profits across Forex, Crypto, Futures and Single Session Equities."
+        path="/"
+        jsonLd={[organizationSchema, websiteSchema]}
+      />
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center cyberpunk-bg overflow-hidden">
         {/* Background image with overlay */}
         <div className="absolute inset-0 opacity-30">
-          <img 
-            src="https://images.unsplash.com/photo-1639322537228-f710d846310a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080" 
-            alt="Cyberpunk digital background" 
-            className="w-full h-full object-cover" 
+          <img
+            src="https://images.unsplash.com/photo-1639322537228-f710d846310a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080"
+            alt="Hybrid Funding cyberpunk trading background"
+            className="w-full h-full object-cover"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
         
@@ -61,10 +73,14 @@ const Home = () => {
             >
               {/* A futuristic 3D visualization of trading data with neon highlights */}
               <div className="glassmorphism rounded-xl relative overflow-hidden w-full max-w-lg neon-border">
-                <img 
-                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
-                  alt="Futuristic trading dashboard" 
-                  className="w-full h-auto rounded-xl" 
+                <img
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+                  alt="Hybrid Funding trading dashboard preview showing profit target and drawdown metrics"
+                  className="w-full h-auto rounded-xl"
+                  loading="lazy"
+                  decoding="async"
+                  width="800"
+                  height="600"
                 />
                 
                 <div className="absolute bottom-0 left-0 right-0 glassmorphism p-4">
@@ -96,6 +112,8 @@ const Home = () => {
       </section>
 
 
+
+      <SocialProof />
 
       {/* A2P Compliant Opt-In Form Section */}
       <section className="py-20 bg-gradient-to-b from-[#0B1426] to-[#1A1A2E]">

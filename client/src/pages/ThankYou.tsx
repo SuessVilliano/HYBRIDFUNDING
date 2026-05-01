@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Mail, LogIn, Info, Clock } from "lucide-react";
 import { getSupportEmail } from "@/lib/utils";
+import SEO from "@/components/SEO";
 
 const ThankYou = () => {
   const nextSteps = [
@@ -26,8 +27,14 @@ const ThankYou = () => {
 
   return (
     <section className="py-20 cyberpunk-bg page-transition">
+      <SEO
+        title="Thank You — Hybrid Funding"
+        description="Thanks for joining Hybrid Funding."
+        path="/thank-you"
+        noindex
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           className="max-w-4xl mx-auto glassmorphism rounded-xl p-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

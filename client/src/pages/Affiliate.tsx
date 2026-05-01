@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { LineChart, BarChart, ArrowRight } from "lucide-react";
+import SEO from "@/components/SEO";
+import { breadcrumbSchema } from "@/lib/jsonLd";
 
 const Affiliate = () => {
   const features = [
@@ -30,9 +32,18 @@ const Affiliate = () => {
 
   return (
     <section className="py-20 cyberpunk-bg page-transition">
+      <SEO
+        title="Hybrid Funding Affiliate Program — Earn 5%–20% Commissions"
+        description="Refer traders to Hybrid Funding and earn tiered commissions from 5% up to 20%. Real-time tracking, weekly payouts, no cap on earnings."
+        path="/affiliate"
+        jsonLd={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Affiliate", path: "/affiliate" },
+        ])}
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

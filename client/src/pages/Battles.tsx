@@ -4,10 +4,21 @@ import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Trophy, Zap, Target, Users, Star, Award, Gift, Crown } from "lucide-react";
+import SEO from "@/components/SEO";
+import { breadcrumbSchema } from "@/lib/jsonLd";
 
 const Battles: React.FC = () => {
   return (
     <Layout>
+      <SEO
+        title="TradeHouse Battles — Compete for Funded Accounts"
+        description="Real-time trading tournaments with live leaderboards and prizes including funded accounts up to $100,000+. Welcome to TradeHouse Battles."
+        path="/battles"
+        jsonLd={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "TradeHouse Battles", path: "/battles" },
+        ])}
+      />
       <div className="page-transition">
         {/* Hero Section */}
         <section className="relative min-h-[70vh] flex items-center cyberpunk-bg overflow-hidden">

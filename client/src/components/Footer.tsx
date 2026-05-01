@@ -77,6 +77,21 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/blog" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/playbook" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Free Trader Playbook
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  FAQ
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact" className="text-[#B8B8D0] hover:text-accent transition duration-200">
                   Contact
                 </Link>

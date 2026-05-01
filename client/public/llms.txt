@@ -1,0 +1,37 @@
+# Hybrid Funding
+
+> Hybrid Funding is a proprietary trading firm (prop firm) that funds traders across Forex, Crypto, Futures, and Single Session Equities. We provide evaluation challenges that, once passed, give traders access to firm capital with up to 90% profit splits.
+
+## What we offer
+
+- **Forex challenges**: 1-Step, 2-Step, 3-Step, Instant Funding, and Instant Funding Lite. Account sizes $5K–$100K. Up to 1:50 leverage. Trading on cTrader, MatchTrader, DXTrade.
+- **Crypto challenges**: 1-Step, 2-Step, Instant Funding. BTC/ETH at 5:1 leverage, others at 2:1. 24/7 trading. 90% profit split available.
+- **Futures challenges**: 4-Phase Funded Futures Plan. Account sizes $25K–$150K. Trading on Rithmic Pro. Tradovate platform integration coming soon.
+- **Single Session Equities** (new): 1-Step, S&P 100 equities on GooeyPro. Account sizes $5K–$200K, client pricing $48–$1,828. 2:1 leverage. Trading window 09:30–15:55 ET. 10% profit target, 3% trailing max drawdown, 80/20 profit split, 14-day payouts.
+- **TradeHouse Battles**: competitive trading tournaments with live prizes.
+- **Affiliate program**: revenue-share for referring traders.
+
+## Key pages
+
+- [Home](https://www.hybridfunding.co/): brand overview and quick start.
+- [Challenges](https://www.hybridfunding.co/challenges): all challenge types, pricing, and tier details across Forex, Crypto, Futures, and Single Session Equities.
+- [FAQ](https://www.hybridfunding.co/faq): rules, payouts, leverage, drawdown calculations, and platform-specific guidance for each asset class.
+- [About](https://www.hybridfunding.co/about): company mission, values, supported trading platforms.
+- [Affiliate](https://www.hybridfunding.co/affiliate): commission tier structure for partners.
+- [Trader Portal](https://www.hybridfunding.co/trader-portal): platform access and trader dashboard.
+- [TradeHouse Battles](https://www.hybridfunding.co/battles): trading tournaments.
+- [Blog](https://www.hybridfunding.co/blog): guides, breakdowns, and rules explainers for prop traders.
+- [Contact](https://www.hybridfunding.co/contact): support.
+
+## Optional
+
+- [Terms](https://www.hybridfunding.co/terms): legal terms and prohibited practices.
+- [Sitemap](https://www.hybridfunding.co/sitemap.xml).
+
+## Common questions answered
+
+- "How do prop firm challenges work?" — Multi-phase or single-phase evaluations measuring discipline and consistency. Passing transitions you to a Funded account with profit split. See FAQ.
+- "What is Single Session Equities?" — Day-trading S&P 100 equity products on GooeyPro with 2:1 leverage; all positions must close by 15:55 ET. See FAQ and Challenges.
+- "What platforms does Hybrid Funding support?" — cTrader, DXTrade, MatchTrader (Forex/Crypto), Rithmic Pro (Futures), GooeyPro (Equities). Tradovate coming soon.
+- "What is the profit split?" — 80% by default, upgradable to 90% with the add-on. Single Session Equities is 80%/20%.
+- "What is the maximum drawdown?" — Asset-class specific: 6% trailing (Forex 1-Step), 3% trailing (Single Session Equities), 5% trailing (Futures), etc.
