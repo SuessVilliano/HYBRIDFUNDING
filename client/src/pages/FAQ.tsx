@@ -23,7 +23,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "Do I need to complete KYC verification?",
-      answer: "For standard evaluation programs, you must complete KYC verification before receiving your funded account. For Instant Funding accounts, you can begin trading immediately, but must complete KYC verification before requesting any withdrawals. This verification process helps ensure compliance with financial regulations."
+      answer: "For standard evaluation programs, you must complete KYC verification before receiving your funded account. For Instant Funding and Instant Funding Lite accounts, you can begin trading immediately, but must complete KYC verification before requesting any withdrawals. This verification process helps ensure compliance with financial regulations."
     },
     {
       question: "What is the profit split on funded accounts?",
@@ -51,11 +51,23 @@ const FAQ: React.FC = () => {
   const forexFaqs = [
     {
       question: "What are the different Forex challenge types?",
-      answer: "We offer One-Step, Two-Step, Three-Step, and Instant Funding options for Forex. Each has different profit targets, drawdown limits, and time frames. One-Step is fastest to funding with a single 10% profit target. Two-Step has 10% and 5% targets. Three-Step has three consecutive 5% targets. Instant Funding provides immediate access to trading capital with ongoing risk parameters."
+      answer: "We offer One-Step, Two-Step, Three-Step, Instant Funding, and Instant Funding Lite options for Forex. Each has different profit targets, drawdown limits, and time frames. One-Step is fastest to funding with a single 10% profit target. Two-Step has 10% and 5% targets. Three-Step has three consecutive 5% targets. Instant Funding provides immediate access to trading capital with ongoing risk parameters. Instant Funding Lite offers a more affordable entry point with tighter risk management rules."
+    },
+    {
+      question: "What's the difference between Instant Funding and Instant Funding Lite?",
+      answer: "Instant Funding Lite offers a more affordable entry point with prices ranging from $70-$650 (compared to $218-$5,198 for regular Instant Funding). IF Lite has tighter risk management rules: 3% Daily DD (EOD Balance) and 5% Max Trailing DD (vs 8% max DD for regular IF). It includes a 25% consistency requirement (no single day can exceed 25% of total profit) and a 3% non-withdrawable profit buffer. Both programs offer immediate trading access and 80-90% profit splits, but IF Lite allows payout on breach up to the profit buffer when consistency is satisfied, with account lock upon payout."
     },
     {
       question: "What are the specific rules for Forex trading?",
-      answer: "For Forex One-Step: 10% profit target with 6% max drawdown. For Two-Step: 10% Phase 1 and 5% Phase 2 with 8% max drawdown and 4% daily loss limit. For Three-Step: 5% profit target per phase with 5% max drawdown. For Instant Funding: 8% max drawdown, 5% daily loss limit, and 80% profit share (can be increased to 90% with add-on)."
+      answer: "For Forex One-Step: 10% profit target with 6% max drawdown. For Two-Step: 10% Phase 1 and 5% Phase 2 with 8% max drawdown and 4% daily loss limit. For Three-Step: 5% profit target per phase with 5% max drawdown. For Instant Funding: 8% max drawdown, 5% daily loss limit, and 80% profit share (90% with add-on). For Instant Funding Lite: 3% Daily DD (EOD Balance), 5% Max Trailing DD, 25% consistency rule, 3% non-withdrawable profit buffer, 80% profit split (90% add-on), up to 50:1 leverage, first payout on demand (14-day subsequent)."
+    },
+    {
+      question: "What is the consistency requirement in IF Lite?",
+      answer: "Instant Funding Lite includes a 25% consistency rule, meaning no single day's profit can exceed 25% of your total profit. This ensures balanced trading performance and prevents over-reliance on a single trading day. You must satisfy this consistency requirement to be eligible for payouts."
+    },
+    {
+      question: "What is the profit buffer in IF Lite?",
+      answer: "IF Lite includes a 3% non-withdrawable profit buffer. This buffer protects your account and allows for payout on breach situations. If you breach the Daily DD or Max Trailing DD limits, you can still receive a payout up to the profit buffer amount, provided you've satisfied the consistency requirement. However, the account will be locked upon payout."
     },
     {
       question: "What leverage is available for Forex accounts?",

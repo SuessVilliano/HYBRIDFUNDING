@@ -13,7 +13,7 @@ const Challenges = () => {
   useEffect(() => {
     const assetData = (challengeData as any)[selectedAssetClass];
     if (assetData) {
-      const availableTypes = ["one-step", "two-step", "three-step", "four-phase", "instant"].filter(
+      const availableTypes = ["one-step", "two-step", "three-step", "four-phase", "instant", "instant-lite"].filter(
         type => assetData[type] && assetData[type].length > 0
       );
       if (availableTypes.length > 0 && !availableTypes.includes(selectedChallengeType)) {
@@ -52,6 +52,13 @@ const Challenges = () => {
         { tier: "25K", price: 1198, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: true, delay: 2, hasTrailingDD: true },
         { tier: "50K", price: 2588, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 3, hasTrailingDD: true },
         { tier: "100K", price: 5198, profitTarget: 0, maxDrawdown: 8, label: "Instant", bestValue: false, delay: 4, hasTrailingDD: true }
+      ],
+      "instant-lite": [
+        { tier: "5K", price: 70, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: false, delay: 0, hasTrailingDD: true },
+        { tier: "10K", price: 120, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: false, delay: 1, hasTrailingDD: true },
+        { tier: "25K", price: 225, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: true, delay: 2, hasTrailingDD: true },
+        { tier: "50K", price: 350, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: false, delay: 3, hasTrailingDD: true },
+        { tier: "100K", price: 650, profitTarget: 0, maxDrawdown: 5, label: "IF Lite", bestValue: false, delay: 4, hasTrailingDD: true }
       ]
     },
     crypto: {
@@ -68,7 +75,9 @@ const Challenges = () => {
         { tier: "25K", price: 238, profitTarget: 6, maxDrawdown: 9, label: "Recommended", bestValue: true, delay: 2, hasTrailingDD: false },
         { tier: "50K", price: 458, profitTarget: 6, maxDrawdown: 9, label: "Advanced", bestValue: false, delay: 3, hasTrailingDD: false },
         { tier: "100K", price: 938, profitTarget: 6, maxDrawdown: 9, label: "Professional", bestValue: false, delay: 4, hasTrailingDD: false }
-      ]
+      ],
+      "instant": [],
+      "instant-lite": []
     },
     futures: {
       "four-phase": [
@@ -80,7 +89,8 @@ const Challenges = () => {
       "one-step": [],
       "two-step": [],
       "three-step": [],
-      "instant": []
+      "instant": [],
+      "instant-lite": []
     },
     equities: {
       "one-step": [
@@ -94,7 +104,8 @@ const Challenges = () => {
       "two-step": [],
       "three-step": [],
       "four-phase": [],
-      "instant": []
+      "instant": [],
+      "instant-lite": []
     }
   };
 
@@ -104,7 +115,8 @@ const Challenges = () => {
     "two-step": "A two-phase evaluation with 10% (Phase 1) and 5% (Phase 2) equity growth targets and 8% maximum drawdown. Provides a more structured path to funding.",
     "three-step": "A three-phase evaluation with 5% equity growth target per phase and 5% maximum drawdown. Designed for methodical traders who prefer smaller, consistent gains.",
     "four-phase": "A four-phase evaluation with 9% equity growth target per phase and 5% maximum drawdown. Includes early payouts starting from Phase 1 and consistency requirements. Designed for futures trading with structured progression.",
-    "instant": "Start trading with funded capital immediately. Trading rules apply with 8% maximum drawdown. KYC verification required before withdrawal. Higher entry fee with quicker access to trading."
+    "instant": "Start trading with funded capital immediately. Trading rules apply with 8% maximum drawdown. KYC verification required before withdrawal. Higher entry fee with quicker access to trading.",
+    "instant-lite": "Instant Funding Lite: Fast, affordable funding with 3% Daily DD, 5% Max Trailing DD, and 25% consistency rule. Features 80% profit split (90% add-on available), 3% non-withdrawable profit buffer, up to 50:1 leverage, first payout on demand (14-day subsequent), and payout on breach up to profit buffer when consistency is satisfied. Daily DD based on EOD balance."
   };
 
   // Asset class descriptions
@@ -131,7 +143,15 @@ const Challenges = () => {
     },
     {
       question: "Do I need to complete KYC verification?",
-      answer: "For standard evaluation programs, you must complete KYC verification before receiving your funded account. For Instant Funding, you can begin trading immediately, but must complete KYC verification before requesting any withdrawals."
+      answer: "For standard evaluation programs, you must complete KYC verification before receiving your funded account. For Instant Funding and Instant Funding Lite, you can begin trading immediately, but must complete KYC verification before requesting any withdrawals."
+    },
+    {
+      question: "What is the consistency requirement in IF Lite?",
+      answer: "Instant Funding Lite includes a 25% consistency rule, meaning no single day's profit can exceed 25% of your total profit. This ensures balanced trading performance and prevents over-reliance on a single trading day. You must satisfy this consistency requirement to be eligible for payouts."
+    },
+    {
+      question: "What is the profit buffer in IF Lite?",
+      answer: "IF Lite includes a 3% non-withdrawable profit buffer. This buffer protects your account and allows for payout on breach situations. If you breach the Daily DD or Max Trailing DD limits, you can still receive a payout up to the profit buffer amount, provided you've satisfied the consistency requirement. However, the account will be locked upon payout."
     }
   ];
 
@@ -139,7 +159,11 @@ const Challenges = () => {
   const forexFaqs = [
     {
       question: "What are the specific rules for Forex trading?",
-      answer: "For Forex One-Step: 10% profit target with 6% max drawdown. For Two-Step: 10% Phase 1 and 5% Phase 2 with 8% max drawdown and 4% daily loss limit. For Three-Step: 5% profit target per phase with 5% max drawdown. For Instant Funding: 8% max drawdown, 5% daily loss limit, and 80% profit share (can be increased to 90% with add-on)."
+      answer: "For Forex One-Step: 10% profit target with 6% max drawdown. For Two-Step: 10% Phase 1 and 5% Phase 2 with 8% max drawdown and 4% daily loss limit. For Three-Step: 5% profit target per phase with 5% max drawdown. For Instant Funding: 8% max drawdown, 5% daily loss limit, and 80% profit share (90% with add-on). For Instant Funding Lite: 3% Daily DD (EOD Balance), 5% Max Trailing DD, 25% consistency rule, 3% non-withdrawable profit buffer, 80% profit split (90% add-on), up to 50:1 leverage, first payout on demand (14-day subsequent)."
+    },
+    {
+      question: "What's the difference between Instant Funding and Instant Funding Lite?",
+      answer: "Instant Funding Lite offers a more affordable entry point ($70-$650 vs $218-$5,198) with tighter risk management: 3% Daily DD and 5% Max Trailing DD (vs 8% for regular IF), plus a 25% consistency requirement and 3% non-withdrawable profit buffer. Both offer immediate funded account access, but IF Lite has stricter drawdown rules and includes a consistency safeguard. IF Lite allows payout on breach up to the profit buffer when consistency is satisfied, with account lock upon payout."
     },
     {
       question: "What leverage is available for Forex accounts?",
@@ -206,14 +230,6 @@ const Challenges = () => {
       answer: "Single Session Equities trading is designed for traders who intend to open and close all positions within the same Trading Session. Positions may not be carried beyond 15:55 ET."
     },
     {
-      question: "Do I have to close all positions before the session ends?",
-      answer: "Yes. It is the responsibility of the trader to ensure that all positions are closed before 15:55 ET."
-    },
-    {
-      question: "What happens if I still have an open position at 15:55 ET?",
-      answer: "The platform will attempt to automatically close positions at 15:55 ET. However, it is the responsibility of the trader to ensure all positions are closed on or before this time. If a position remains open past that cutoff, it will be treated as a violation of the Prohibited Practices and result in a hard breach."
-    },
-    {
       question: "What products can I trade in Single Session Equities?",
       answer: "You may trade any S&P 100 equity products made available on the platform for this program."
     },
@@ -230,6 +246,10 @@ const Challenges = () => {
       answer: "For Single Session Equities, the permitted Trading Session is 09:30 ET through 15:55 ET only. Although U.S. equities may trade during Pre-Market, Regular Market, and Extended Hours sessions, trading outside of this permitted window is not allowed. All Single Session Equities positions must be fully closed by 15:55 ET."
     },
     {
+      question: "What happens if I still have an open position at 15:55 ET?",
+      answer: "The platform will attempt to automatically close positions at 15:55 ET. However, it is the responsibility of the trader to ensure all positions are closed on or before this time. If a position remains open past that cutoff, it will be treated as a violation of the Prohibited Practices and result in a hard breach."
+    },
+    {
       question: "What commissions apply to Single Session Equities?",
       answer: "Commissions are $0.02 per share per side, subject to a minimum commission of $0.50 per transaction."
     },
@@ -239,15 +259,15 @@ const Challenges = () => {
     },
     {
       question: "What is the Profit Target for Single Session Equities?",
-      answer: "You must achieve 10% returns in the Evaluation phase to progress to the Funded phase (assuming minimum profitable trading days is also met). Minimum profitable trading days: 3 days at 0.50%, applied in both Evaluation and Funded phases."
+      answer: "You must achieve 10% returns in the Evaluation phase to progress to the Funded phase. Minimum profitable trading days: 3 days at 0.50%, applied in both Evaluation and Funded phases."
     },
     {
       question: "What is the Max Drawdown for Single Session Equities?",
-      answer: "The Max Drawdown is a 3.0% Maximum Trailing Drawdown based on closed balance only, not equity. It begins 3.0% below your starting balance and trails upward as your closed balance reaches new highs. Once the account reaches a 3.0% return, the Max Drawdown stops trailing and is permanently locked at the starting balance. A violation of the Max Drawdown is considered a hard breach. Example: On a $100,000 account, the starting Max Drawdown threshold is $97,000. If your closed balance increases to $102,000, that becomes your new high-water mark and your Max Drawdown threshold moves up to $99,000. If your closed balance then increases to $103,000, the Max Drawdown threshold locks at your starting balance of $100,000 and no longer trails upward."
+      answer: "The Max Drawdown is a 3.0% Maximum Trailing Drawdown based on closed balance only, not equity. It begins 3.0% below your starting balance and trails upward as your closed balance reaches new highs. Once the account reaches a 3.0% return, the Max Drawdown stops trailing and is permanently locked at the starting balance. A violation of the Max Drawdown is considered a hard breach."
     },
     {
-      question: "What is the Daily Drawdown / Daily Profit Cap for Single Session Equities?",
-      answer: "Daily Drawdown is 2.5% (Trailing, Intraday). The Daily Profit Cap is 2.5% (Evaluation only, soft breach). Example on a $25,000 account: Daily Drawdown $625, Daily Profit Cap $625, Max Drawdown $750."
+      question: "What is the Daily Drawdown / Daily Profit Cap?",
+      answer: "Daily Drawdown is 2.5% (Trailing, Intraday). The Daily Profit Cap is 2.5% (Evaluation only, soft breach)."
     },
     {
       question: "What is the profit split, payout schedule, and consistency requirement?",
@@ -255,7 +275,7 @@ const Challenges = () => {
     },
     {
       question: "What about lock-on-payout, payout-on-breach, and other add-ons?",
-      answer: "By default, the account locks upon payout (waiver available as a 25% add-on) and there is no payout on breach (available as a 25% add-on). Other available add-ons include: 90% Profit Share Upgrade (15% of plan price), 33% Consistency Threshold (20%), and 50% Consistency Threshold (35%)."
+      answer: "By default, the account locks upon payout (waiver available as a 25% add-on) and there is no payout on breach (available as a 25% add-on). Other available add-ons: 90% Profit Share Upgrade (15% of plan price), 33% Consistency Threshold (20%), and 50% Consistency Threshold (35%)."
     },
     {
       question: "Can I hold Single Session Equities positions overnight?",
@@ -316,9 +336,9 @@ const Challenges = () => {
             Select Asset Class
           </h3>
           
-          <Tabs
-            defaultValue="forex"
-            className="w-full"
+          <Tabs 
+            defaultValue="forex" 
+            className="w-full" 
             onValueChange={(value) => setSelectedAssetClass(value)}
           >
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-[#0F0F1A] border border-accent/30 py-2 h-auto">
@@ -368,8 +388,8 @@ const Challenges = () => {
             Select Challenge Type
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {["one-step", "two-step", "three-step", "four-phase", "instant"].map((type) => {
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {["one-step", "two-step", "three-step", "four-phase", "instant", "instant-lite"].map((type) => {
               const assetData = (challengeData as any)[selectedAssetClass];
               const isAvailable = assetData && assetData[type] && assetData[type].length > 0;
               
@@ -388,7 +408,8 @@ const Challenges = () => {
                     {type === "one-step" ? "1-STEP" : 
                      type === "two-step" ? "2-STEP" : 
                      type === "three-step" ? "3-STEP" : 
-                     type === "four-phase" ? "4-PHASE" : "INSTANT FUNDING"}
+                     type === "four-phase" ? "4-PHASE" : 
+                     type === "instant" ? "INSTANT FUNDING" : "IF LITE"}
                     {!isAvailable && <span className="ml-2 text-xs">(N/A)</span>}
                   </Button>
                 </motion.div>

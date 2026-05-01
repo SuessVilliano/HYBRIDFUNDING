@@ -22,11 +22,12 @@ No. The account remains the property of Hybrid Funding. You are granted trading 
 ## Challenge Programs
 
 ### What challenge programs do you offer?
-We offer four types of programs:
+We offer five types of programs:
 - One-Step: Single evaluation phase with higher profit targets
 - Two-Step: Two consecutive phases with moderate targets
 - Three-Step: Three phases with lower targets per phase
 - Instant Funding: Immediate account access with no evaluation
+- Instant Funding Lite: Affordable instant funding with tighter risk management rules
 
 ### Which program is best for beginners?
 The Three-Step program is most suitable for beginners as it has the lowest profit targets per phase (5%) and provides more time to achieve funding. The moderate drawdown limit (5%) also helps beginners learn risk management.
@@ -36,6 +37,15 @@ Most of our programs don't have specific time limits. However, all accounts are 
 
 ### What happens if I fail a challenge?
 If you fail a challenge by violating a hard breach rule (exceeding max drawdown, daily loss limit, or inactivity), you'll need to purchase a new challenge. There are no free retakes.
+
+### What's the difference between Instant Funding and Instant Funding Lite?
+Instant Funding Lite offers a more affordable entry point with prices ranging from $70-$650 (compared to $218-$5,198 for regular Instant Funding). IF Lite has tighter risk management rules: 3% Daily DD (EOD Balance) and 5% Max Trailing DD (vs 8% max DD for regular IF). It includes a 25% consistency requirement (no single day can exceed 25% of total profit) and a 3% non-withdrawable profit buffer. Both programs offer immediate trading access and 80-90% profit splits, but IF Lite allows payout on breach up to the profit buffer when consistency is satisfied, with account lock upon payout.
+
+### What is the consistency requirement in IF Lite?
+The 25% consistency requirement means no single day's profit can exceed 25% of your total profit. This ensures balanced trading performance across multiple days rather than reliance on one lucky trade. For example, if you have $1,000 in total profit, no single trading day can contribute more than $250 to that total.
+
+### What is the profit buffer in IF Lite?
+IF Lite includes a 3% non-withdrawable profit buffer that acts as a safety net. If you breach the Daily DD or Max Trailing DD limits, you can still receive a payout up to the profit buffer amount, provided you've satisfied the consistency requirement. However, your account will be locked after this payout.
 
 ## Asset Classes
 

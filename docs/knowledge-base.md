@@ -76,6 +76,22 @@ Hybrid Funding offers several different challenge programs designed to suit vari
 - **Benefits**: No waiting period, start trading immediately
 - **Restrictions**: Higher initial cost, must complete KYC before any withdrawals
 
+### Instant Funding Lite (IF Lite)
+
+- **Structure**: Immediate access to funded account with enhanced risk management
+- **Pricing**: $70 (5K), $120 (10K), $225 (25K), $350 (50K), $650 (100K)
+- **Daily DD**: 3% (based on EOD Balance)
+- **Max DD (Trailing)**: 5%
+- **Consistency Rule**: 25% (no single day can exceed 25% of total profit)
+- **Profit Buffer**: 3% non-withdrawable safety buffer
+- **Profit Split**: 80% standard, 90% with add-on
+- **Leverage**: Up to 50:1
+- **Payout Frequency**: First on demand, 14-day subsequent
+- **Payout on Breach**: Yes, up to profit buffer when consistency is satisfied
+- **Lock Upon Payout**: Yes
+- **Benefits**: More affordable than regular Instant Funding, immediate trading access
+- **Restrictions**: Tighter drawdown limits (3% daily, 5% max trailing) and consistency requirements
+
 ---
 
 ## Asset Classes
