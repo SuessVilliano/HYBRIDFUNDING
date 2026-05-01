@@ -81,6 +81,20 @@ const Challenges = () => {
       "two-step": [],
       "three-step": [],
       "instant": []
+    },
+    equities: {
+      "one-step": [
+        { tier: "5K", price: 48, profitTarget: 10, maxDrawdown: 3, label: "Starter", bestValue: false, delay: 0, hasTrailingDD: true },
+        { tier: "10K", price: 88, profitTarget: 10, maxDrawdown: 3, label: "Popular", bestValue: false, delay: 1, hasTrailingDD: true },
+        { tier: "25K", price: 228, profitTarget: 10, maxDrawdown: 3, label: "Recommended", bestValue: true, delay: 2, hasTrailingDD: true },
+        { tier: "50K", price: 428, profitTarget: 10, maxDrawdown: 3, label: "Advanced", bestValue: false, delay: 3, hasTrailingDD: true },
+        { tier: "100K", price: 858, profitTarget: 10, maxDrawdown: 3, label: "Professional", bestValue: false, delay: 4, hasTrailingDD: true },
+        { tier: "200K", price: 1828, profitTarget: 10, maxDrawdown: 3, label: "Expert", bestValue: false, delay: 5, hasTrailingDD: true }
+      ],
+      "two-step": [],
+      "three-step": [],
+      "four-phase": [],
+      "instant": []
     }
   };
 
@@ -97,7 +111,8 @@ const Challenges = () => {
   const assetClassDescriptions = {
     "forex": "Trade major, minor and exotic currency pairs with up to 1:50 leverage. All positions must be closed by Friday 3:45pm EST unless you purchase the weekend holding add-on.",
     "crypto": "Trade Bitcoin, Ethereum and other cryptocurrencies with up to 5:1 leverage for BTC/ETH and 2:1 for others. Trading available 24/7 including weekends.",
-    "futures": "Trade indices, commodities, and more with specific leverage ratios per instrument. Our risk management system enforces consistent trading discipline."
+    "futures": "Trade indices, commodities, and more with specific leverage ratios per instrument. Our risk management system enforces consistent trading discipline. Tradovate platform integration coming soon.",
+    "equities": "Single Session Equities — trade S&P 100 equity products with 2:1 leverage on the GooeyPro platform. All positions open and close within the same session (09:30–15:55 ET); no overnight or weekend holds."
   };
 
   // Common FAQ questions across all asset classes
@@ -112,7 +127,7 @@ const Challenges = () => {
     },
     {
       question: "What trading platforms do you support?",
-      answer: "We support DXtrade, MatchTrader and cTrader platforms. Our technology is integrated with these platforms to monitor your trading performance in real-time."
+      answer: "We support DXtrade, MatchTrader and cTrader for Forex/Crypto, Rithmic for Futures, and GooeyPro for Single Session Equities. Tradovate platform integration is coming soon for Futures traders. Our technology is integrated with these platforms to monitor your trading performance in real-time."
     },
     {
       question: "Do I need to complete KYC verification?",
@@ -184,6 +199,70 @@ const Challenges = () => {
     }
   ];
 
+  // Single Session Equities specific FAQ questions
+  const equitiesFaqs = [
+    {
+      question: "What is Single Session Equities trading?",
+      answer: "Single Session Equities trading is designed for traders who intend to open and close all positions within the same Trading Session. Positions may not be carried beyond 15:55 ET."
+    },
+    {
+      question: "Do I have to close all positions before the session ends?",
+      answer: "Yes. It is the responsibility of the trader to ensure that all positions are closed before 15:55 ET."
+    },
+    {
+      question: "What happens if I still have an open position at 15:55 ET?",
+      answer: "The platform will attempt to automatically close positions at 15:55 ET. However, it is the responsibility of the trader to ensure all positions are closed on or before this time. If a position remains open past that cutoff, it will be treated as a violation of the Prohibited Practices and result in a hard breach."
+    },
+    {
+      question: "What products can I trade in Single Session Equities?",
+      answer: "You may trade any S&P 100 equity products made available on the platform for this program."
+    },
+    {
+      question: "What platform is available for Single Session Equities trading?",
+      answer: "Single Session Equities trading is available via the GooeyPro trading platform only."
+    },
+    {
+      question: "What leverage is available for Single Session Equities?",
+      answer: "Single Session Equities trading is offered with up to 2:1 leverage."
+    },
+    {
+      question: "How is a trading session defined?",
+      answer: "For Single Session Equities, the permitted Trading Session is 09:30 ET through 15:55 ET only. Although U.S. equities may trade during Pre-Market, Regular Market, and Extended Hours sessions, trading outside of this permitted window is not allowed. All Single Session Equities positions must be fully closed by 15:55 ET."
+    },
+    {
+      question: "What commissions apply to Single Session Equities?",
+      answer: "Commissions are $0.02 per share per side, subject to a minimum commission of $0.50 per transaction."
+    },
+    {
+      question: "Where do liquidity, pricing, and execution come from?",
+      answer: "Liquidity, pricing, and execution are sourced and provided directly from Nasdaq."
+    },
+    {
+      question: "What is the Profit Target for Single Session Equities?",
+      answer: "You must achieve 10% returns in the Evaluation phase to progress to the Funded phase (assuming minimum profitable trading days is also met). Minimum profitable trading days: 3 days at 0.50%, applied in both Evaluation and Funded phases."
+    },
+    {
+      question: "What is the Max Drawdown for Single Session Equities?",
+      answer: "The Max Drawdown is a 3.0% Maximum Trailing Drawdown based on closed balance only, not equity. It begins 3.0% below your starting balance and trails upward as your closed balance reaches new highs. Once the account reaches a 3.0% return, the Max Drawdown stops trailing and is permanently locked at the starting balance. A violation of the Max Drawdown is considered a hard breach. Example: On a $100,000 account, the starting Max Drawdown threshold is $97,000. If your closed balance increases to $102,000, that becomes your new high-water mark and your Max Drawdown threshold moves up to $99,000. If your closed balance then increases to $103,000, the Max Drawdown threshold locks at your starting balance of $100,000 and no longer trails upward."
+    },
+    {
+      question: "What is the Daily Drawdown / Daily Profit Cap for Single Session Equities?",
+      answer: "Daily Drawdown is 2.5% (Trailing, Intraday). The Daily Profit Cap is 2.5% (Evaluation only, soft breach). Example on a $25,000 account: Daily Drawdown $625, Daily Profit Cap $625, Max Drawdown $750."
+    },
+    {
+      question: "What is the profit split, payout schedule, and consistency requirement?",
+      answer: "Profit split is 80%/20% in your favor. Payout frequency is 14 days for the initial payout and 14 days for each subsequent payout. The minimum withdrawal amount is $100. Consistency Score is 25% (Funded phase only)."
+    },
+    {
+      question: "What about lock-on-payout, payout-on-breach, and other add-ons?",
+      answer: "By default, the account locks upon payout (waiver available as a 25% add-on) and there is no payout on breach (available as a 25% add-on). Other available add-ons include: 90% Profit Share Upgrade (15% of plan price), 33% Consistency Threshold (20%), and 50% Consistency Threshold (35%)."
+    },
+    {
+      question: "Can I hold Single Session Equities positions overnight?",
+      answer: "No. All positions must be fully closed by 15:55 ET. Overnight and weekend holds are not allowed."
+    }
+  ];
+
   // Select which FAQs to display based on asset class
   const getFaqsByAssetClass = () => {
     switch(selectedAssetClass) {
@@ -193,6 +272,8 @@ const Challenges = () => {
         return [...commonFaqs, ...cryptoFaqs];
       case "futures":
         return [...commonFaqs, ...futuresFaqs];
+      case "equities":
+        return [...commonFaqs, ...equitiesFaqs];
       default:
         return commonFaqs;
     }
@@ -235,17 +316,18 @@ const Challenges = () => {
             Select Asset Class
           </h3>
           
-          <Tabs 
-            defaultValue="forex" 
-            className="w-full" 
+          <Tabs
+            defaultValue="forex"
+            className="w-full"
             onValueChange={(value) => setSelectedAssetClass(value)}
           >
-            <TabsList className="grid w-full grid-cols-3 bg-[#0F0F1A] border border-accent/30 py-2">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-[#0F0F1A] border border-accent/30 py-2 h-auto">
               <TabsTrigger value="forex" className="font-['Orbitron']">FOREX</TabsTrigger>
               <TabsTrigger value="crypto" className="font-['Orbitron']">CRYPTO</TabsTrigger>
               <TabsTrigger value="futures" className="font-['Orbitron']">FUTURES</TabsTrigger>
+              <TabsTrigger value="equities" className="font-['Orbitron']">EQUITIES</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="forex" className="mt-4">
               <p className="text-[#B8B8D0]">{assetClassDescriptions.forex}</p>
             </TabsContent>
@@ -253,7 +335,24 @@ const Challenges = () => {
               <p className="text-[#B8B8D0]">{assetClassDescriptions.crypto}</p>
             </TabsContent>
             <TabsContent value="futures" className="mt-4">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-accent/15 border border-accent/40 text-accent rounded-full px-3 py-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse"></span>
+                  Tradovate Coming Soon
+                </span>
+              </div>
               <p className="text-[#B8B8D0]">{assetClassDescriptions.futures}</p>
+            </TabsContent>
+            <TabsContent value="equities" className="mt-4">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-primary/15 border border-primary/40 text-primary rounded-full px-3 py-1">
+                  Single Session Equities
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-[#171728] border border-accent/30 text-[#B8B8D0] rounded-full px-3 py-1">
+                  GooeyPro Platform
+                </span>
+              </div>
+              <p className="text-[#B8B8D0]">{assetClassDescriptions.equities}</p>
             </TabsContent>
           </Tabs>
         </motion.div>

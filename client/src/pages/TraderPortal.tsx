@@ -99,7 +99,8 @@ const TraderPortal = () => {
                   <div className="p-6 w-full">
                     <div className="bg-[#1A1A2E]/80 backdrop-blur-sm p-4 rounded-lg">
                       <p className="text-accent font-['Orbitron'] font-semibold">TRADING PLATFORM ACCESS</p>
-                      <p className="text-white text-sm">Rithmic • MatchTrader • DXTrade • cTrader</p>
+                      <p className="text-white text-sm">Rithmic • MatchTrader • DXTrade • cTrader • GooeyPro</p>
+                      <p className="text-[#B8B8D0] text-xs mt-1">Tradovate coming soon for Futures traders</p>
                     </div>
                   </div>
                 </div>

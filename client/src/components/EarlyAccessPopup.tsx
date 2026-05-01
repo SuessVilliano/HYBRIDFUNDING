@@ -2,23 +2,20 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Loading from "@/components/ui/loading";
+import GetStartedForm from "@/components/GetStartedForm";
 
 interface EarlyAccessPopupProps {
   delayInSeconds?: number;
 }
 
-const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({ 
-  delayInSeconds = 3 
+const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
+  delayInSeconds = 3,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Show popup after delay
     const timer = setTimeout(() => {
-      // Check if it was already shown
       const popupShown = localStorage.getItem("earlyAccessPopupShown");
       if (!popupShown) {
         setIsOpen(true);
@@ -30,34 +27,21 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
 
   const closePopup = () => {
     setIsOpen(false);
-    // Save that popup was shown
     localStorage.setItem("earlyAccessPopupShown", "true");
-  };
-
-  const handleOpenForm = async () => {
-    setIsLoading(true);
-    setShowForm(true);
-    
-    // Show loading animation for better UX
-    await new Promise(resolve => setTimeout(resolve, 600));
-    
-    // Open the form in a new tab if embedded form doesn't work properly
-    window.open("https://us.makeforms.co/9mwavgm/", "_blank");
-    setIsLoading(false);
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 overflow-y-auto py-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={(e) => e.target === e.currentTarget && closePopup()}
         >
           <motion.div
-            className="relative max-w-md w-full mx-4 bg-[#0F0F1A] border border-accent/40 rounded-xl p-8 shadow-2xl shadow-accent/20"
+            className="relative max-w-md w-full mx-4 bg-[#0F0F1A] border border-accent/40 rounded-xl p-8 shadow-2xl shadow-accent/20 my-auto"
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
@@ -65,6 +49,7 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
             <button
               onClick={closePopup}
               className="absolute top-3 right-3 text-[#B8B8D0] hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors"
+              aria-label="Close"
             >
               <X size={20} />
             </button>
@@ -74,12 +59,13 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
                 <span className="font-['Orbitron'] font-bold text-white text-xl">HF</span>
               </div>
               <h2 className="font-['Orbitron'] text-2xl font-bold text-white mb-2">
-                Get Funded First
+                Get Started Today
               </h2>
               <div className="h-1 w-16 bg-accent mx-auto mb-4"></div>
               <p className="text-[#B8B8D0]">
-                Join our early access list for <span className="text-accent font-bold">20% off</span> your first challenge, 
-                exclusive perks, and early account access!
+                Join our early access list for{" "}
+                <span className="text-accent font-bold">20% off</span> your first challenge,
+                exclusive perks, and early account access.
               </p>
             </div>
 
@@ -101,31 +87,17 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
                     </li>
                   </ul>
                 </div>
-                
-                <Button 
-                  variant="neon-filled" 
-                  className="w-full py-3 font-semibold text-lg" 
-                  onClick={handleOpenForm}
-                  disabled={isLoading}
+
+                <Button
+                  variant="neon-filled"
+                  className="w-full py-3 font-semibold text-lg"
+                  onClick={() => setShowForm(true)}
                 >
-                  {isLoading ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <Loading variant="pulse" size="sm" text="" />
-                      <span>INITIALIZING ACCESS...</span>
-                    </div>
-                  ) : (
-                    "Join Early Access"
-                  )}
+                  Join Early Access
                 </Button>
               </div>
             ) : (
-              <div className="h-[450px] overflow-hidden">
-                <div id="emqoufizt" className="makeforms-js-embed">
-                  <script dangerouslySetInnerHTML={{
-                    __html: `new makeforms.Embed({ sourceId: "682a0c421db33f7f3c057ad9", root: "emqoufizt", jsEmbedOnlyForm: true }).build()`
-                  }} />
-                </div>
-              </div>
+              <GetStartedForm source="early-access-popup" />
             )}
           </motion.div>
         </motion.div>

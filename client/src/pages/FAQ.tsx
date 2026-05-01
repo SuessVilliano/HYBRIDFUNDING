@@ -39,7 +39,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "What trading platforms do you support?",
-      answer: "We support Rithmic, MatchTrader, DXtrade, and cTrader platforms. Our technology is integrated with these platforms to monitor your trading performance in real-time."
+      answer: "We support Rithmic, MatchTrader, DXtrade, and cTrader platforms across Forex, Crypto, and Futures, plus GooeyPro for Single Session Equities. Tradovate platform integration is coming soon for Futures traders. Our technology is integrated with these platforms to monitor your trading performance in real-time."
     },
     {
       question: "Are there any geographic restrictions?",
@@ -156,6 +156,82 @@ const FAQ: React.FC = () => {
     {
       question: "How do I complete the CME market data attestation for Futures trading?",
       answer: "You must complete the CME market data attestation using the R | Trader Pro desktop app. This cannot be done through mobile or web platforms. Once completed in R | Trader Pro, you'll be able to use mobile or web apps. You must attest as a non-professional user."
+    },
+    {
+      question: "Is Tradovate coming to Hybrid Funding for Futures?",
+      answer: "Yes — Tradovate platform integration is coming soon for Futures traders. Stay tuned for the launch announcement."
+    }
+  ];
+
+  // Single Session Equities specific FAQ questions
+  const equitiesFaqs = [
+    {
+      question: "What is Single Session Equities trading?",
+      answer: "Single Session Equities trading is designed for traders who intend to open and close all positions within the same Trading Session. Positions may not be carried beyond 15:55 ET."
+    },
+    {
+      question: "Do I have to close all positions before the session ends?",
+      answer: "Yes. It is the responsibility of the trader to ensure that all positions are closed before 15:55 ET."
+    },
+    {
+      question: "What happens if I still have an open position at 15:55 ET?",
+      answer: "The platform will attempt to automatically close positions at 15:55 ET. However, it is the responsibility of the trader to ensure all positions are closed on or before this time. If a position remains open past that cutoff, it will be treated as a violation of the Prohibited Practices and result in a hard breach."
+    },
+    {
+      question: "What products can I trade in Single Session Equities?",
+      answer: "You may trade any S&P 100 equity products made available on the platform for this program."
+    },
+    {
+      question: "What platform is available for Single Session Equities trading?",
+      answer: "Single Session Equities trading is available via the GooeyPro trading platform only."
+    },
+    {
+      question: "What leverage is available for Single Session Equities?",
+      answer: "Single Session Equities trading is offered with up to 2:1 leverage."
+    },
+    {
+      question: "How is a trading session defined?",
+      answer: "For Single Session Equities, the permitted Trading Session is 09:30 ET through 15:55 ET only. Although U.S. equities may trade during Pre-Market, Regular Market, and Extended Hours sessions, trading outside of this permitted window is not allowed. All Single Session Equities positions must be fully closed by 15:55 ET."
+    },
+    {
+      question: "What commissions apply to Single Session Equities?",
+      answer: "Commissions are $0.02 per share per side, subject to a minimum commission of $0.50 per transaction."
+    },
+    {
+      question: "Where do liquidity, pricing, and execution come from?",
+      answer: "Liquidity, pricing, and execution are sourced and provided directly from Nasdaq."
+    },
+    {
+      question: "What is the Profit Target for Single Session Equities (Evaluation phase)?",
+      answer: "You must achieve 10% returns in the Evaluation phase to progress to the Funded phase (assuming the minimum profitable trading days requirement is also met)."
+    },
+    {
+      question: "What is the Max Drawdown for Single Session Equities (Evaluation and Funded phases)?",
+      answer: "The Max Drawdown is a 3.0% Maximum Trailing Drawdown based on closed balance only, not equity. It begins 3.0% below your starting balance and trails upward as your closed balance reaches new highs. Once the account reaches a 3.0% return, the Max Drawdown stops trailing and is permanently locked at the starting balance. A violation of the Max Drawdown is considered a hard breach. Example: On a $100,000 account, the starting Max Drawdown threshold is $97,000. If your closed balance increases to $102,000, that becomes your new high-water mark and your Max Drawdown threshold moves up to $99,000. If your closed balance then increases to $103,000, the Max Drawdown threshold locks at your starting balance of $100,000 and no longer trails upward."
+    },
+    {
+      question: "What is the Daily Drawdown and Daily Profit Cap for Single Session Equities?",
+      answer: "Daily Drawdown is 2.5% (Trailing, Intraday). The Daily Profit Cap is 2.5% (Evaluation only, soft breach). Example on a $25,000 account: Daily Drawdown $625, Daily Profit Cap $625, Max Drawdown $750."
+    },
+    {
+      question: "What are the minimum profitable trading days?",
+      answer: "Minimum 3 profitable trading days at 0.50% — applied in both the Evaluation and Funded phases."
+    },
+    {
+      question: "What is the profit split and payout schedule?",
+      answer: "Profit split is 80%/20% in your favor. Payout frequency is 14 days for the initial payout and 14 days for each subsequent payout. The minimum withdrawal amount is $100. Consistency Score is 25% (Funded phase only)."
+    },
+    {
+      question: "What are the lock-on-payout and payout-on-breach rules?",
+      answer: "By default, the account locks upon payout (waiver available as a 25% add-on) and there is no payout on breach (available as a 25% add-on)."
+    },
+    {
+      question: "What add-ons are available for Single Session Equities?",
+      answer: "Available add-ons: 90% Profit Share Upgrade (15% of plan price), 33% Consistency Threshold (20% of plan price), 50% Consistency Threshold (35% of plan price), Payout-on-Breach (25% of plan price), and Lock-Upon-Payout Waiver (25% of plan price)."
+    },
+    {
+      question: "Can I hold Single Session Equities positions overnight or over the weekend?",
+      answer: "No. All positions must be fully closed by 15:55 ET. Overnight and weekend holds are not allowed under the Single Session Equities program."
     }
   ];
 
@@ -187,7 +263,7 @@ const FAQ: React.FC = () => {
           >
             <Tabs defaultValue="general" value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="flex justify-center mb-8">
-                <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-background/50 p-1">
+                <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 bg-background/50 p-1 h-auto">
                   <TabsTrigger value="general" className="data-[state=active]:bg-primary">
                     General
                   </TabsTrigger>
@@ -199,6 +275,9 @@ const FAQ: React.FC = () => {
                   </TabsTrigger>
                   <TabsTrigger value="futures" className="data-[state=active]:bg-primary">
                     Futures
+                  </TabsTrigger>
+                  <TabsTrigger value="equities" className="data-[state=active]:bg-primary">
+                    Equities
                   </TabsTrigger>
                 </TabsList>
               </div>
@@ -235,7 +314,31 @@ const FAQ: React.FC = () => {
                 </TabsContent>
                 
                 <TabsContent value="futures" className="space-y-6 mt-0">
+                  <div className="mb-2">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-accent/15 border border-accent/40 text-accent rounded-full px-3 py-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse"></span>
+                      Tradovate Coming Soon
+                    </span>
+                  </div>
                   {futuresFaqs.map((faq, index) => (
+                    <AccordionItem
+                      key={index}
+                      question={faq.question}
+                      answer={faq.answer}
+                    />
+                  ))}
+                </TabsContent>
+
+                <TabsContent value="equities" className="space-y-6 mt-0">
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-primary/15 border border-primary/40 text-primary rounded-full px-3 py-1">
+                      Single Session Equities
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-[#171728] border border-accent/30 text-[#B8B8D0] rounded-full px-3 py-1">
+                      GooeyPro Platform
+                    </span>
+                  </div>
+                  {equitiesFaqs.map((faq, index) => (
                     <AccordionItem
                       key={index}
                       question={faq.question}

@@ -3,10 +3,12 @@ import { Check, Trophy, Users, Zap, Target } from "lucide-react";
 
 const About = () => {
   const platforms = [
-    { name: "Rithmic", description: "Professional futures platform" },
-    { name: "MatchTrader", description: "Advanced order types" },
+    { name: "cTrader", description: "For scalpers & algos" },
     { name: "DXTrade", description: "Web-based solution" },
-    { name: "cTrader", description: "For scalpers & algos" }
+    { name: "MatchTrader", description: "Advanced order types" },
+    { name: "Rithmic Pro", description: "Professional futures platform" },
+    { name: "GooeyPro", description: "Single Session Equities platform" },
+    { name: "Tradovate", description: "Coming soon for Futures traders", comingSoon: true }
   ];
 
   const coreValues = [
@@ -26,7 +28,7 @@ const About = () => {
     { 
       icon: Target, 
       title: "Multi-Asset Challenges", 
-      description: "Comprehensive evaluation programs across Forex, Crypto, and Futures markets with flexible challenge types."
+      description: "Comprehensive evaluation programs across Forex, Crypto, Futures, and Single Session Equities markets with flexible challenge types."
     },
     { 
       icon: Users, 
@@ -157,16 +159,22 @@ const About = () => {
               <h3 className="font-['Orbitron'] text-2xl font-bold text-white mb-4">Platforms We Support</h3>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-16">
               {platforms.map((platform, index) => (
                 <motion.div
                   key={index}
-                  className="glassmorphism rounded-xl p-4 text-center transform transition-all duration-300 hover:scale-105"
+                  className={`glassmorphism rounded-xl p-4 text-center transform transition-all duration-300 hover:scale-105 relative ${platform.comingSoon ? "border border-accent/40" : ""}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.1 * index + 0.3 }}
                   whileHover={{ y: -5 }}
                 >
+                  {platform.comingSoon && (
+                    <span className="absolute -top-2 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 text-[10px] font-['Orbitron'] uppercase tracking-wide bg-accent text-[#0F0F1A] rounded-full px-2.5 py-0.5 shadow-[0_0_8px_rgba(0,255,255,0.5)]">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#0F0F1A] animate-pulse"></span>
+                      Coming Soon
+                    </span>
+                  )}
                   <div className="font-['Orbitron'] text-xl font-bold text-accent">{platform.name}</div>
                   <p className="text-[#B8B8D0] text-sm mt-2">{platform.description}</p>
                 </motion.div>
