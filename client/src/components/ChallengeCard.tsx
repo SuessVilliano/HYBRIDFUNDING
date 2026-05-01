@@ -62,9 +62,15 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
       case "one-step": return "1-Step Challenge";
       case "two-step": return "2-Step Challenge";
       case "three-step": return "3-Step Challenge";
+      case "four-phase": return "4-Phase Challenge";
       case "instant": return "Instant Funding";
       default: return type;
     }
+  };
+
+  const formatAssetClass = (cls: string) => {
+    if (cls === "equities") return "SINGLE SESSION EQUITIES";
+    return cls.toUpperCase();
   };
 
   return (
@@ -130,7 +136,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
           <DialogHeader>
             <DialogTitle className="font-['Orbitron'] text-2xl text-center">${tier} Challenge</DialogTitle>
             <DialogDescription className="text-center text-[#B8B8D0]">
-              {formatChallengeType(challengeType)} for {assetClass.toUpperCase()}
+              {formatChallengeType(challengeType)} for {formatAssetClass(assetClass)}
             </DialogDescription>
           </DialogHeader>
 
@@ -146,7 +152,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-[#B8B8D0]">Asset Class</span>
-                <span className="text-white font-semibold uppercase">{assetClass}</span>
+                <span className="text-white font-semibold">{formatAssetClass(assetClass)}</span>
               </div>
               {profitTarget > 0 ? (
                 <div className="flex justify-between items-center mb-2">

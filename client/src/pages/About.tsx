@@ -26,7 +26,7 @@ const About = () => {
     { 
       icon: Target, 
       title: "Multi-Asset Challenges", 
-      description: "Comprehensive evaluation programs across Forex, Crypto, and Futures markets with flexible challenge types."
+      description: "Comprehensive evaluation programs across Forex, Crypto, Futures, and Single Session Equities markets with flexible challenge types."
     },
     { 
       icon: Users, 
