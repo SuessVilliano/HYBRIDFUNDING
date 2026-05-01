@@ -1,10 +1,4 @@
 {
-    "rewriteRoutes": [
-        {
-            "source": "/api/(.*)",
-            "destination": "/api/index.ts"
-        }
-    ],
     "rewrites": [
         {
             "source": "/api/(.*)",
