@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import Loading from "@/components/ui/loading";
 import { Phone, Calendar, Video } from "lucide-react";
+import WebinarModal from "@/components/WebinarModal";
+import { trackEvent } from "@/lib/analytics";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -34,6 +36,7 @@ const A2PCompliantOptInForm = ({
   compactMode = false 
 }: A2PCompliantOptInFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showWebinar, setShowWebinar] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -121,11 +124,13 @@ const A2PCompliantOptInForm = ({
             </div>
           </a>
 
-          <a
-            href="https://sqr.co/HYBRIDWEBINAR/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 bg-gradient-to-r from-accent/20 to-accent/10 hover:from-accent/30 hover:to-accent/20 border border-accent/30 rounded-lg p-4 transition-all group"
+          <button
+            type="button"
+            onClick={() => {
+              setShowWebinar(true);
+              trackEvent("webinar_card_click");
+            }}
+            className="flex items-center gap-3 bg-gradient-to-r from-accent/20 to-accent/10 hover:from-accent/30 hover:to-accent/20 border border-accent/30 rounded-lg p-4 transition-all group text-left w-full"
             data-testid="link-webinar"
           >
             <Video className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
@@ -133,9 +138,10 @@ const A2PCompliantOptInForm = ({
               <p className="text-white font-semibold text-sm">Watch Webinar</p>
               <p className="text-[#B8B8D0] text-xs">Learn about our program</p>
             </div>
-          </a>
+          </button>
         </div>
       )}
+      <WebinarModal open={showWebinar} onClose={() => setShowWebinar(false)} />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
