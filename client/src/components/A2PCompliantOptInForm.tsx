@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Loading from "@/components/ui/loading";
 import { Phone, Calendar, Video } from "lucide-react";
 import WebinarModal from "@/components/WebinarModal";
+import BookingModal from "@/components/BookingModal";
 import { trackEvent } from "@/lib/analytics";
 
 const formSchema = z.object({
@@ -37,6 +38,7 @@ const A2PCompliantOptInForm = ({
 }: A2PCompliantOptInFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showWebinar, setShowWebinar] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -110,11 +112,13 @@ const A2PCompliantOptInForm = ({
 
       {showResourceLinks && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <a
-            href="https://sqr.co/HYBRIDCALL/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 bg-gradient-to-r from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 border border-primary/30 rounded-lg p-4 transition-all group"
+          <button
+            type="button"
+            onClick={() => {
+              setShowBooking(true);
+              trackEvent("booking_card_click");
+            }}
+            className="flex items-center gap-3 bg-gradient-to-r from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 border border-primary/30 rounded-lg p-4 transition-all group text-left w-full"
             data-testid="link-appointment-booking"
           >
             <Calendar className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
@@ -122,7 +126,7 @@ const A2PCompliantOptInForm = ({
               <p className="text-white font-semibold text-sm">Book Appointment</p>
               <p className="text-[#B8B8D0] text-xs">Get your questions answered</p>
             </div>
-          </a>
+          </button>
 
           <button
             type="button"
@@ -142,6 +146,7 @@ const A2PCompliantOptInForm = ({
         </div>
       )}
       <WebinarModal open={showWebinar} onClose={() => setShowWebinar(false)} />
+      <BookingModal open={showBooking} onClose={() => setShowBooking(false)} />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
