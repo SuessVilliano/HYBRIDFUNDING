@@ -41,7 +41,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "What trading platforms do you support?",
-      answer: "We support Rithmic, MatchTrader, DXtrade, and cTrader platforms across Forex, Crypto, and Futures, plus GooeyPro for Single Session Equities. Tradovate platform integration is coming soon for Futures traders. Our technology is integrated with these platforms to monitor your trading performance in real-time."
+      answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is the platform we offer to international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures. Single Session Equities trades exclusively on GooeyPro. Our technology is integrated with each platform to monitor your trading performance in real-time."
     },
     {
       question: "Are there any geographic restrictions?",
@@ -168,12 +168,12 @@ const FAQ: React.FC = () => {
       answer: "You won't lose your account if you don't meet the consistency requirement. However, you won't be able to complete the phase and receive the payout until you achieve both the profit target and the consistency requirement."
     },
     {
-      question: "How do I complete the CME market data attestation for Futures trading?",
-      answer: "You must complete the CME market data attestation using the R | Trader Pro desktop app. This cannot be done through mobile or web platforms. Once completed in R | Trader Pro, you'll be able to use mobile or web apps. You must attest as a non-professional user."
+      question: "Which platforms can I use for Futures trading?",
+      answer: "Futures traders can choose from Tradovate (https://trader.tradovate.com/), Volumetrica (https://my.deepcharts.com/identity/account/login), and DXtrade Futures. All three are supported for Funded Futures Plan accounts."
     },
     {
-      question: "Is Tradovate coming to Hybrid Funding for Futures?",
-      answer: "Yes — Tradovate platform integration is coming soon for Futures traders. Stay tuned for the launch announcement."
+      question: "How do I complete the CME market data attestation for Futures trading?",
+      answer: "Complete the CME market data attestation through the desktop version of your chosen Futures platform (Tradovate, Volumetrica, or DXtrade Futures). You must attest as a non-professional user. Once completed on desktop, you'll be able to use mobile and web apps."
     }
   ];
 
@@ -201,7 +201,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "What leverage is available for Single Session Equities?",
-      answer: "Single Session Equities trading is offered with up to 2:1 leverage."
+      answer: "Single Session Equities trading is offered with 2:1 leverage."
     },
     {
       question: "How is a trading session defined?",
@@ -224,24 +224,48 @@ const FAQ: React.FC = () => {
       answer: "The Max Drawdown is a 3.0% Maximum Trailing Drawdown based on closed balance only, not equity. It begins 3.0% below your starting balance and trails upward as your closed balance reaches new highs. Once the account reaches a 3.0% return, the Max Drawdown stops trailing and is permanently locked at the starting balance. A violation of the Max Drawdown is considered a hard breach. Example: On a $100,000 account, the starting Max Drawdown threshold is $97,000. If your closed balance increases to $102,000, that becomes your new high-water mark and your Max Drawdown threshold moves up to $99,000. If your closed balance then increases to $103,000, the Max Drawdown threshold locks at your starting balance of $100,000 and no longer trails upward."
     },
     {
-      question: "What is the Daily Drawdown and Daily Profit Cap for Single Session Equities?",
-      answer: "Daily Drawdown is 2.5% (Trailing, Intraday). The Daily Profit Cap is 2.5% (Evaluation only, soft breach). Example on a $25,000 account: Daily Drawdown $625, Daily Profit Cap $625, Max Drawdown $750."
+      question: "What is the Daily Loss Limit for Single Session Equities?",
+      answer: "The Daily Loss Limit is the maximum amount an account may lose on a single trading day. A violation is a hard breach and the account will be terminated. The Daily Loss Limit follows an intraday trailing drawdown that trails the greater of the daily balance high water mark and the daily equity high water mark. Example: On a $100,000 account with a 2.5% Daily Loss Limit, the starting breach level is $97,500. If equity reaches $102,000 and balance reaches $101,000 during the day, $102,000 becomes the daily high-water mark and the new breach threshold is $99,450 (2.5% below $102,000). If equity falls below that, the account breaches. If the day ends with both balance and equity at $101,000, the next day starts with a new $98,475 threshold (2.5% below $101,000)."
     },
     {
-      question: "What are the minimum profitable trading days?",
-      answer: "Minimum 3 profitable trading days at 0.50% — applied in both the Evaluation and Funded phases."
+      question: "What is the Daily Profit Cap for Single Session Equities (Evaluation phase only)?",
+      answer: "The Daily Profit Cap applies during the Evaluation phase. A violation is a daily pause: open trades are closed, open orders are cancelled, and the account is disabled for the remainder of the session. The account is re-enabled on the next trading day. It's calculated as a fixed value from the day's starting equity. Example: On a $100,000 account with a 2.5% Daily Profit Cap, if the day begins with equity of $102,000, the day's profit cap is $104,500. If equity exceeds that amount, positions are closed and the account is paused for the rest of the day. The account may trade again the next trading day after 17:00 ET, with the new daily cap based on the new day's starting equity."
     },
     {
-      question: "What is the profit split and payout schedule?",
-      answer: "Profit split is 80%/20% in your favor. Payout frequency is 14 days for the initial payout and 14 days for each subsequent payout. The minimum withdrawal amount is $100. Consistency Score is 25% (Funded phase only)."
+      question: "What is the Consistency Rule (Funded phase only)?",
+      answer: "Funded phases are subject to a 25% consistency requirement. No more than 25% of total profits may be generated on a single trading day to qualify for a payout. Optional add-ons are available at checkout to allow for a higher consistency limit (33% or 50%)."
     },
     {
-      question: "What are the lock-on-payout and payout-on-breach rules?",
-      answer: "By default, the account locks upon payout (waiver available as a 25% add-on) and there is no payout on breach (available as a 25% add-on)."
+      question: "What are the minimum profitable trading day requirements?",
+      answer: "To proceed to the next phase or become eligible for a payout, you must generate at least 0.5% profit per day over three separate trading days in both the Evaluation and Funded phases, in addition to meeting all other applicable requirements."
+    },
+    {
+      question: "What is the minimum hold time for positions?",
+      answer: "All trades must be held for at least 1 minute. Any trade held for less than that will be deemed a violation and any profits generated from that trade will be forfeited."
+    },
+    {
+      question: "What is the Profit Split (Funded phase only)?",
+      answer: "Funded accounts are eligible for an 80/20 profit split on gains: the trader receives 80% of eligible profits and the firm retains 20%. A 90% Profit Share Upgrade is available as an add-on at checkout."
+    },
+    {
+      question: "What is the Payout Protector add-on?",
+      answer: "Payout Protector is an optional point-of-sale add-on available for an additional 25% cost. It protects a trader's eligible profit share in a Funded account in the event of a hard breach."
+    },
+    {
+      question: "How often can I request a payout?",
+      answer: "The first payout may be requested after 14 days in the Funded phase. After that, payouts may be requested every 14 days, provided all applicable payout conditions and program rules have been satisfied."
+    },
+    {
+      question: "What is Lock Upon Payout?",
+      answer: "Lock Upon Payout is enabled by default on all plans. Once a payout is processed, your Max Drawdown is permanently locked at the original starting balance. Traders may purchase an add-on at checkout for an additional 25% of the plan price to disable this feature. Example: If a trader has a $100,000 account and grows the balance to $110,000, once a payout is processed the Max Drawdown is permanently locked at $100,000. From that point forward, the account balance may not fall below $100,000; if it does, the account is considered breached."
+    },
+    {
+      question: "Is there a minimum withdrawal amount?",
+      answer: "Yes. The minimum withdrawal amount is $100 when requesting a payout through the platform."
     },
     {
       question: "What add-ons are available for Single Session Equities?",
-      answer: "Available add-ons: 90% Profit Share Upgrade (15% of plan price), 33% Consistency Threshold (20% of plan price), 50% Consistency Threshold (35% of plan price), Payout-on-Breach (25% of plan price), and Lock-Upon-Payout Waiver (25% of plan price)."
+      answer: "Available add-ons: 90% Profit Share Upgrade, 33% Consistency Threshold, 50% Consistency Threshold, Payout Protector (25% of plan price), and Lock-Upon-Payout Waiver (25% of plan price)."
     },
     {
       question: "Can I hold Single Session Equities positions overnight or over the weekend?",
@@ -342,10 +366,15 @@ const FAQ: React.FC = () => {
                 </TabsContent>
                 
                 <TabsContent value="futures" className="space-y-6 mt-0">
-                  <div className="mb-2">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-accent/15 border border-accent/40 text-accent rounded-full px-3 py-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse"></span>
-                      Tradovate Coming Soon
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-[#171728] border border-accent/30 text-[#B8B8D0] rounded-full px-3 py-1">
+                      Tradovate
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-[#171728] border border-accent/30 text-[#B8B8D0] rounded-full px-3 py-1">
+                      Volumetrica
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-[#171728] border border-accent/30 text-[#B8B8D0] rounded-full px-3 py-1">
+                      DXtrade Futures
                     </span>
                   </div>
                   {futuresFaqs.map((faq, index) => (

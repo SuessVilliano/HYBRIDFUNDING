@@ -5,13 +5,13 @@ This document contains frequently asked questions and answers about Hybrid Fundi
 ## General Questions
 
 ### What is Hybrid Funding?
-Hybrid Funding is a proprietary trading firm that provides capital to skilled traders. We offer evaluation programs across Forex, Crypto, and Futures markets to identify disciplined and profitable traders, then fund successful candidates with our capital and share the profits.
+Hybrid Funding is a proprietary trading firm that provides capital to skilled traders. We offer evaluation programs across Forex, Crypto, Futures, and Single Session Equities markets to identify disciplined and profitable traders, then fund successful candidates with our capital and share the profits.
 
 ### How does your funding model work?
 Our model consists of two main stages: an evaluation (challenge) phase and a funded phase. Traders first prove their skills by passing our evaluation challenge, then receive a funded account where they trade with our capital and keep a significant percentage of the profits. We also offer Instant Funding options for immediate trading access.
 
 ### What makes Hybrid Funding different from other prop firms?
-We offer multiple challenge paths across three asset classes (Forex, Crypto, and Futures), each with flexible rules. Our Futures program features a unique four-phase structure with payouts at each milestone. We also offer higher leverage on crypto pairs (5:1 for BTC/ETH) and competitive profit splits up to 90%.
+We offer multiple challenge paths across four asset classes (Forex, Crypto, Futures, and Single Session Equities), each with flexible rules. Our Futures program features a unique four-phase structure with payouts at each milestone, with three platform choices (Tradovate, Volumetrica, DXtrade Futures). We also offer higher leverage on crypto pairs (5:1 for BTC/ETH), Single Session Equities on GooeyPro with Nasdaq-sourced liquidity, and competitive profit splits up to 90%.
 
 ### Which countries do you accept traders from?
 We accept traders from most countries worldwide. However, due to regulations, we cannot provide services to residents of countries under OFAC sanctions. Please check our Terms page for the complete list of restricted countries.
@@ -50,25 +50,78 @@ IF Lite includes a 3% non-withdrawable profit buffer that acts as a safety net. 
 ## Asset Classes
 
 ### What markets can I trade with Hybrid Funding?
-We support three market categories:
-1. Forex: Currency pairs with varying leverage options
+We support four market categories:
+1. Forex: Currency pairs with varying leverage options (MatchTrader, DXtrade, cTrader)
 2. Crypto: Cryptocurrency trading with specialized leverage
-3. Futures: Indices, commodities, and financial futures through a four-phase program
+3. Futures: Indices, commodities, and financial futures through a four-phase program (Tradovate, Volumetrica, DXtrade Futures)
+4. Single Session Equities: S&P 100 day-trading on GooeyPro with 2:1 leverage, all positions closed by 15:55 ET
 
-### What's the difference between Forex, Crypto, and Futures programs?
+### What's the difference between Forex, Crypto, Futures, and Single Session Equities programs?
 Each asset class has specialized rules:
 - Forex: Standard challenge structure with weekend trading restrictions
 - Crypto: 24/7 trading allowed, with unique leverage ratios and daily cap limits
 - Futures: Four-phase program with consistency requirements and payouts at each phase
+- Single Session Equities: One-step structure with 10% profit target, 3% trailing max drawdown on closed balance, 2.5% intraday daily loss limit, 25% Funded-phase consistency rule, mandatory close by 15:55 ET, and a 1-minute minimum hold time
 
 ### What leverage do you offer?
 Leverage varies by asset class:
 - Forex: 1:20 to 1:50 depending on program
 - Crypto: 5:1 for BTC and ETH, 2:1 for other cryptocurrencies
 - Futures: Standard leverage ratios for futures contracts with specific contract limits
+- Single Session Equities: 2:1 leverage on S&P 100 names
 
 ### Can I trade over weekends?
-Crypto positions can be held over weekends by default. For Forex, you must close positions by 3:45 PM EST on Friday unless you purchase the Weekend Hold add-on. Futures markets follow standard exchange hours and cannot be traded when markets are closed.
+Crypto positions can be held over weekends by default. For Forex, you must close positions by 3:45 PM EST on Friday unless you purchase the Weekend Hold add-on. Futures markets follow standard exchange hours and cannot be traded when markets are closed. Single Session Equities does not allow overnight or weekend holds — every position must be closed by 15:55 ET each trading day.
+
+## Single Session Equities
+
+### What is Single Session Equities trading?
+Single Session Equities is designed for traders who open and close all positions within the same Trading Session. Positions may not be carried beyond 15:55 ET. The platform will attempt to auto-close at 15:55, but it is the trader's responsibility to be flat by then — leaving a position open past the cutoff is treated as a Prohibited Practices violation and a hard breach.
+
+### What products and platform are available?
+You may trade any S&P 100 equity products made available on the platform. Trading is exclusively on the GooeyPro trading platform. Liquidity, pricing, and execution are sourced and provided directly from Nasdaq.
+
+### What is the trading session?
+The permitted Trading Session is 09:30 ET through 15:55 ET only. Although U.S. equities also trade during Pre-Market and Extended Hours sessions, trading outside the permitted window is not allowed under this program.
+
+### What are the commissions?
+$0.02 per share per side, subject to a minimum commission of $0.50 per transaction.
+
+### What is the leverage and profit target?
+2:1 leverage. Evaluation phase requires 10% returns to progress to Funded (also subject to minimum profitable trading days).
+
+### What is the Max Drawdown?
+3.0% Maximum Trailing Drawdown based on closed balance only (not equity). It begins 3.0% below the starting balance and trails upward as closed balance reaches new highs. Once the account reaches a 3.0% return, it locks permanently at the starting balance. A violation is a hard breach.
+
+### What is the Daily Loss Limit?
+The Daily Loss Limit follows an intraday trailing drawdown that trails the greater of the daily balance high water mark and the daily equity high water mark. A violation is a hard breach.
+
+### What is the Daily Profit Cap (Evaluation only)?
+A daily-pause limit calculated as a fixed value from the day's starting equity. If exceeded, open trades close, open orders cancel, and the account is disabled until the next trading day after 17:00 ET. The new daily cap is then based on the new day's starting equity.
+
+### What is the minimum hold time?
+All trades must be held for at least 1 minute. Any trade held less than that will have its profits forfeited.
+
+### What is the Consistency Rule (Funded phase only)?
+No more than 25% of total profits may be generated on a single trading day to qualify for a payout. Higher-consistency add-ons (33%, 50%) are available at checkout.
+
+### What's the Profit Split and payout schedule?
+80/20 profit split (trader keeps 80%). First payout after 14 days in the Funded phase, then every 14 days. Minimum withdrawal $100. A 90% Profit Share Upgrade add-on is available at checkout.
+
+### What is Lock Upon Payout?
+Enabled by default on all plans. Once a payout is processed, the Max Drawdown is permanently locked at the original starting balance. A Lock-Upon-Payout Waiver add-on (25% of plan price) is available at checkout to disable this.
+
+### What is the Payout Protector add-on?
+A 25% point-of-sale add-on that protects a trader's eligible profit share in a Funded account in the event of a hard breach.
+
+### What add-ons are available for Single Session Equities?
+- 90% Profit Share Upgrade
+- 33% Consistency Threshold
+- 50% Consistency Threshold
+- Payout Protector (25%)
+- Lock-Upon-Payout Waiver (25%)
+
+---
 
 ## Trading Rules
 
@@ -118,7 +171,11 @@ If you fail verification after passing a standard challenge, a funded account wi
 ## Platform & Technology
 
 ### What trading platforms do you support?
-We support DXtrade, MatchTrader, and cTrader platforms. Our technology integrates with these platforms to monitor your trading performance in real-time.
+- **Forex:** MatchTrader, DXtrade, and cTrader (cTrader is for international Forex traders)
+- **Futures:** Tradovate (https://trader.tradovate.com/), Volumetrica (https://my.deepcharts.com/identity/account/login), and DXtrade Futures
+- **Single Session Equities:** GooeyPro exclusively (https://gooeypro.gooeytrade.com/login)
+
+Our technology integrates with each platform to monitor your trading performance in real-time.
 
 ### Are trading algorithms or EAs allowed?
 Yes, automated trading is allowed on our platforms. However, the specific rules vary by asset class and program. Crypto accounts generally allow EAs, while some restrictions may apply to other asset classes.

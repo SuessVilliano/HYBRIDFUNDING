@@ -41,7 +41,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose }) => {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-start justify-center bg-black/85 p-4 overflow-y-auto"
+          className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center bg-black/85 p-3 sm:p-6 overflow-y-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -51,26 +51,29 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose }) => {
           aria-label="Book a Hybrid Funding appointment"
         >
           <motion.div
-            className="relative w-full max-w-3xl my-8"
+            className="relative w-full max-w-5xl my-4 sm:my-8"
             initial={{ scale: 0.95, y: 10 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.95, y: 10 }}
           >
-            <button
-              onClick={onClose}
-              aria-label="Close booking"
-              className="absolute -top-12 right-0 inline-flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium transition-colors"
-            >
-              <X size={18} /> Close
-            </button>
             <div className="rounded-xl overflow-hidden border border-primary/40 shadow-2xl shadow-primary/30 bg-white">
+              <div className="flex items-center justify-between bg-[#0F0F1A] text-white px-4 py-2.5 border-b border-primary/30">
+                <span className="font-['Orbitron'] text-sm font-semibold tracking-wide">Book a Call</span>
+                <button
+                  onClick={onClose}
+                  aria-label="Close booking"
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-full hover:bg-white/10 text-white/90 hover:text-white transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
               <iframe
                 title="Hybrid Funding Booking Calendar"
                 src={BOOKING_URL}
                 id="008KqUmzv7u3pCdhgqDg_modal"
-                className="w-full block"
-                style={{ minHeight: "720px", border: "none" }}
-                scrolling="no"
+                className="w-full block min-h-[720px] sm:min-h-[780px] lg:min-h-[840px]"
+                style={{ border: "none" }}
+                scrolling="yes"
               />
             </div>
             <p className="text-[#B8B8D0] text-center text-xs mt-3">

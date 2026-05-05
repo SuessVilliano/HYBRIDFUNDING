@@ -183,7 +183,7 @@ const Home = () => {
                 icon: Zap,
                 color: "text-primary",
                 title: "Multi-Platform Access",
-                desc: "Trade on cTrader, DXTrade, MatchTrader, Rithmic Pro, GooeyPro — and Tradovate, coming soon.",
+                desc: "Trade on MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, and GooeyPro.",
               },
             ].map((t, i) => {
               const Icon = t.icon;

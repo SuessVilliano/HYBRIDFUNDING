@@ -1,7 +1,7 @@
 const Post = () => (
   <>
     <p className="lead">
-      Futures prop firm programs are dense with rules — trailing drawdowns, consistency requirements, contract limits, payout phases. Hybrid Funding's 4-Phase Funded Futures Plan is one of the more transparent in the space, and Tradovate platform integration is on the way for traders who prefer it over Rithmic. Here's the full picture.
+      Futures prop firm programs are dense with rules — trailing drawdowns, consistency requirements, contract limits, payout phases. Hybrid Funding's 4-Phase Funded Futures Plan is one of the more transparent in the space, and you have your choice of platform — Tradovate, Volumetrica, or DXtrade Futures. Here's the full picture.
     </p>
 
     <h2>The 4-Phase structure</h2>
@@ -61,12 +61,12 @@ const Post = () => (
 
     <h2>The CME data attestation</h2>
     <p>
-      Before you can trade, you must complete the CME market data attestation through R | Trader Pro on desktop. This cannot be done on mobile or web. Once completed in R | Trader Pro, you can use mobile or web platforms. You must attest as a non-professional user.
+      Before you can trade, you must complete the CME market data attestation through the desktop client of your chosen Futures platform (Tradovate, Volumetrica, or DXtrade Futures). This cannot be done on mobile or web. Once completed on desktop, you can use the mobile or web apps. You must attest as a non-professional user.
     </p>
 
-    <h2>Tradovate integration is coming</h2>
+    <h2>Three platform options for Futures</h2>
     <p>
-      Today, Futures runs on Rithmic Pro. Tradovate platform integration is in development and will be available to all Funded Futures traders. We'll publish a migration guide when it ships — same rules, same payouts, just an additional platform option.
+      Funded Futures traders can choose between <strong>Tradovate</strong> (<a href="https://trader.tradovate.com/" target="_blank" rel="noopener">trader.tradovate.com</a>), <strong>Volumetrica</strong> on DeepCharts (<a href="https://my.deepcharts.com/identity/account/login" target="_blank" rel="noopener">my.deepcharts.com</a>), and <strong>DXtrade Futures</strong>. Same rules, same payouts on every platform — pick the one that fits your workflow.
     </p>
 
     <h2>The bottom line</h2>

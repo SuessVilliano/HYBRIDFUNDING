@@ -5,12 +5,13 @@ import { breadcrumbSchema, organizationSchema } from "@/lib/jsonLd";
 
 const About = () => {
   const platforms = [
-    { name: "cTrader", description: "For scalpers & algos" },
-    { name: "DXTrade", description: "Web-based solution" },
-    { name: "MatchTrader", description: "Advanced order types" },
-    { name: "Rithmic Pro", description: "Professional futures platform" },
-    { name: "GooeyPro", description: "Single Session Equities platform" },
-    { name: "Tradovate", description: "Coming soon for Futures traders", comingSoon: true }
+    { name: "MatchTrader", description: "Forex — advanced order types" },
+    { name: "DXtrade", description: "Forex — web-based solution" },
+    { name: "cTrader", description: "Forex — for international traders, scalpers & algos" },
+    { name: "Tradovate", description: "Futures trading platform" },
+    { name: "Volumetrica", description: "Futures — volume & order-flow tools" },
+    { name: "DXtrade Futures", description: "Futures on DXtrade" },
+    { name: "GooeyPro", description: "Single Session Equities platform" }
   ];
 
   const coreValues = [
@@ -48,7 +49,7 @@ const About = () => {
     <section className="py-20 cyberpunk-bg page-transition">
       <SEO
         title="About Hybrid Funding — Mission, Values & Supported Trading Platforms"
-        description="Hybrid Funding is a modern prop firm built by traders, for traders. Funding talent across Forex, Crypto, Futures, and Single Session Equities on cTrader, DXTrade, MatchTrader, Rithmic Pro, GooeyPro and (soon) Tradovate."
+        description="Hybrid Funding is a modern prop firm built by traders, for traders. Funding talent across Forex, Crypto, Futures, and Single Session Equities on MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, and GooeyPro."
         path="/about"
         jsonLd={[
           breadcrumbSchema([

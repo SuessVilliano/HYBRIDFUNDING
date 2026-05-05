@@ -48,14 +48,14 @@ export const posts: PostMeta[] = [
   },
   {
     slug: "futures-prop-firm-rules",
-    title: "Futures Prop Firm Rules, Decoded (Plus What's Coming with Tradovate)",
+    title: "Futures Prop Firm Rules, Decoded — Tradovate, Volumetrica & DXtrade Futures",
     description:
       "Trailing drawdown, consistency requirements, contract limits, payout phases — what every futures trader needs to know before paying for a 4-Phase Funded Plan.",
     publishedAt: "2026-04-30",
     readingMinutes: 10,
-    tags: ["Futures", "Rithmic", "Tradovate"],
+    tags: ["Futures", "Tradovate", "Volumetrica", "DXtrade Futures"],
     excerpt:
-      "Hybrid Funding's 4-Phase Funded Futures Plan has phase-by-phase payouts and a 25% consistency requirement. We walk through every rule — and what changes when Tradovate goes live.",
+      "Hybrid Funding's 4-Phase Funded Futures Plan has phase-by-phase payouts and a 25% consistency requirement. Trade it on Tradovate, Volumetrica, or DXtrade Futures — same rules, your choice of platform.",
   },
   {
     slug: "hybrid-funding-vs-other-prop-firms",
