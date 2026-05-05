@@ -22,7 +22,7 @@ const Post = () => (
       <li><strong>Drawdowns:</strong> Forex 1-Step is 6% trailing on closed balance, locks at +6%. Crypto 1-Step is 6% trailing. Futures 4-Phase is 5% trailing on EOD. Single Session Equities is 3% trailing on closed balance with a 2.5% intraday daily DD.</li>
       <li><strong>Payouts:</strong> Funded accounts pay first request on demand. Subsequent payouts every 14–30 days depending on program.</li>
       <li><strong>Asset coverage:</strong> Forex, Crypto, Futures, Single Session Equities — four asset classes under one roof.</li>
-      <li><strong>Platforms:</strong> cTrader, DXTrade, MatchTrader (Forex/Crypto), Rithmic Pro (Futures), GooeyPro (Equities). Tradovate coming soon.</li>
+      <li><strong>Platforms:</strong> MatchTrader, DXtrade, cTrader (Forex/Crypto); Tradovate, Volumetrica, DXtrade Futures (Futures); GooeyPro (Single Session Equities).</li>
     </ul>
 
     <h2>When another firm is the better fit</h2>
@@ -38,7 +38,7 @@ const Post = () => (
       <li><strong>Multi-asset traders.</strong> If you swing forex during the week and rotate to crypto on weekends, you don't need two firms.</li>
       <li><strong>Single Session Equities.</strong> Most prop firms don't offer day-traded equities at all. We built it on GooeyPro with Nasdaq-sourced liquidity because the demand was there.</li>
       <li><strong>Honest math.</strong> We publish full FAQs with worked drawdown examples on the FAQ page rather than burying rules in 30-page PDFs.</li>
-      <li><strong>Tradovate option.</strong> Most futures-focused firms only support Rithmic. We're bringing Tradovate as an option for traders who prefer that ecosystem.</li>
+      <li><strong>Three Futures platforms.</strong> Most futures-focused firms lock you into one platform. We give Funded Futures traders a choice between Tradovate, Volumetrica, and DXtrade Futures.</li>
     </ul>
 
     <h2>The "before you pay" checklist</h2>

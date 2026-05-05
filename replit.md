@@ -2,13 +2,13 @@
 
 ## Overview
 
-Hybrid Funding is a next-generation proprietary trading firm platform that provides traders with access to capital through evaluation challenges across Forex, Crypto, and Futures markets. The platform features a revolutionary competitive trading arena called "TradeHouse Battles" where traders compete in real-time tournaments for funded accounts and rewards.
+Hybrid Funding is a next-generation proprietary trading firm platform that provides traders with access to capital through evaluation challenges across Forex, Crypto, Futures, and Single Session Equities markets. The platform features a revolutionary competitive trading arena called "TradeHouse Battles" where traders compete in real-time tournaments for funded accounts and rewards.
 
 **Core Purpose:** Democratize access to trading capital by funding talented traders who demonstrate skill and discipline through structured evaluation programs.
 
 **Key Differentiators:**
 - Multiple challenge types (One-Step, Two-Step, Three-Step, Four-Phase, Instant Funding, Instant Funding Lite)
-- Multi-asset class support (Forex, Crypto, Futures)
+- Multi-asset class support (Forex, Crypto, Futures, Single Session Equities)
 - TradeHouse Battles competitive gaming arena
 - Flexible profit splits (up to 90%)
 - Comprehensive affiliate program with tiered commissions
@@ -84,7 +84,7 @@ Preferred communication style: Simple, everyday language.
 - **affiliateApplications:** Affiliate program applications
 
 **Enums:**
-- assetClassEnum: forex, crypto, futures
+- assetClassEnum: forex, crypto, futures (Single Session Equities is surfaced in the UI/copy and tracked separately from the schema enum)
 - challengeTypeEnum: one-step, two-step, three-step, four-phase, instant, instant-lite
 - challengeStatusEnum: pending, active, passed, failed, funded
 - userRoleEnum: user, admin
@@ -102,10 +102,9 @@ Preferred communication style: Simple, everyday language.
    - External checkout redirects to `hybridfundingdashboard.propaccount.com`
 
 2. **Trading Platforms:**
-   - Rithmic (futures)
-   - MatchTrader (advanced order types)
-   - DXTrade (web-based)
-   - cTrader (scalping/algos)
+   - **Forex:** MatchTrader (advanced order types), DXtrade (web-based), cTrader (international Forex traders, scalping/algos)
+   - **Futures:** Tradovate (https://trader.tradovate.com/), Volumetrica (https://my.deepcharts.com/identity/account/login), DXtrade Futures
+   - **Single Session Equities:** GooeyPro (https://gooeypro.gooeytrade.com/login)
 
 3. **TradeHouse Battles:**
    - Embedded arena at `battles.hybridfunding.co`

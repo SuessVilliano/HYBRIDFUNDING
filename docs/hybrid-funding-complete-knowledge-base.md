@@ -86,7 +86,7 @@ Hybrid Funding offers several different challenge programs designed to suit vari
 
 ## Asset Classes
 
-Hybrid Funding supports three primary asset classes, each with specific rules and leverage restrictions:
+Hybrid Funding supports four primary asset classes, each with specific rules and leverage restrictions:
 
 ### Forex
 
@@ -106,6 +106,7 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
 
 ### Futures
 
+- **Platforms**: Tradovate, Volumetrica (DeepCharts), DXtrade Futures
 - **Structure**: Four-phase program with payouts at each phase
 - **Consistency Requirement**: 25% best day to total profit ratio
 - **Contract Limits**: Varies by account size
@@ -114,6 +115,29 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
   - $100K: 6 standard/60 micro contracts
   - $150K: 9 standard/90 micro contracts
 - **Special Rules**: End of day trailing max loss, consistency requirement
+
+### Single Session Equities
+
+- **Platform**: GooeyPro exclusively (https://gooeypro.gooeytrade.com/login)
+- **Universe**: Any S&P 100 equity products made available on the platform
+- **Liquidity / Pricing / Execution**: Sourced and provided directly from Nasdaq
+- **Leverage**: 2:1
+- **Trading Session**: 09:30 ET through 15:55 ET only — Pre-Market and Extended Hours are NOT permitted
+- **Hold Period**: Same-session only — no overnight or weekend holds; positions must be fully closed by 15:55 ET
+- **Auto-Close**: The platform will attempt to auto-close at 15:55 ET, but it is the trader's responsibility to be flat. Open positions past the cutoff are a hard breach.
+- **Commissions**: $0.02 per share per side ($0.50 minimum per transaction)
+- **Profit Target (Evaluation)**: 10% returns
+- **Max Drawdown**: 3.0% Maximum Trailing Drawdown based on closed balance only — locks at starting balance once account reaches +3.0% (hard breach on violation)
+- **Daily Loss Limit**: Intraday trailing drawdown that trails the greater of the daily balance HWM and daily equity HWM (hard breach)
+- **Daily Profit Cap (Evaluation only)**: A daily-pause limit calculated from the day's starting equity. Violation closes positions, cancels orders, and disables the account until the next trading day after 17:00 ET.
+- **Minimum Profitable Trading Days**: 0.5% per day across 3 separate days, in both Evaluation and Funded phases
+- **Minimum Hold Time**: 1 minute per trade — profits forfeited if violated
+- **Consistency Rule (Funded only)**: 25% — no more than 25% of total profits on a single day for payout eligibility
+- **Profit Split (Funded)**: 80/20 in trader's favor (90% upgrade available)
+- **Payout Schedule**: First payout after 14 days in the Funded phase, then every 14 days
+- **Minimum Withdrawal**: $100
+- **Lock Upon Payout**: Enabled by default — Max Drawdown locks at starting balance after first payout (waiver add-on available)
+- **Add-Ons**: Payout Protector (25%), Lock-Upon-Payout Waiver (25%), 33% Consistency Threshold, 50% Consistency Threshold, 90% Profit Share Upgrade
 
 ---
 
@@ -181,6 +205,7 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
 - Three-Step Program: 5% (all asset classes)
 - Instant Funding: 8% (trailing)
 - Futures Program: 5% (trailing based on EOD balance)
+- Single Session Equities: 3.0% Maximum Trailing Drawdown (closed balance only — locks at starting balance once account reaches +3.0%)
 
 **Consequences**:
 1. Immediate account termination
@@ -225,6 +250,7 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
 - Instant Funding: 5% of previous day's balance
 - One-Step & Three-Step Programs: No specific daily loss limit (only max drawdown applies)
 - Crypto Programs: 3% daily cap limit on both gains and losses
+- Single Session Equities: Intraday trailing drawdown that trails the greater of daily balance HWM and daily equity HWM (hard breach)
 
 **Consequences**:
 1. Immediate account termination (except for Crypto 3% cap, which is a temporary lock)
@@ -358,9 +384,13 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
 
 ### Supported Trading Platforms
 
-- **DXtrade**: Modern, web-based trading platform
-- **MatchTrader**: Multi-asset trading platform
-- **cTrader**: Advanced trading platform with algorithmic capabilities
+- **MatchTrader**: Forex — advanced order types
+- **DXtrade**: Forex — modern web-based platform
+- **cTrader**: Forex — for international Forex traders, scalping & algorithmic capabilities
+- **Tradovate**: Futures — https://trader.tradovate.com/
+- **Volumetrica** (DeepCharts): Futures — https://my.deepcharts.com/identity/account/login
+- **DXtrade Futures**: Futures on the DXtrade platform
+- **GooeyPro**: Single Session Equities only — https://gooeypro.gooeytrade.com/login
 
 ### Platform Features
 
@@ -504,8 +534,16 @@ Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are
 
 ### Available Add-ons
 
-- **Weekend Hold (10% additional cost)**: Allows holding positions over weekends
+- **Weekend Hold (10% additional cost)**: Allows holding Forex positions over weekends
 - **90% Profit Split (20% additional cost)**: Increases profit share from standard rate to 90%
+
+#### Single Session Equities Add-Ons
+
+- **Payout Protector (25% of plan price)**: Protects a trader's eligible profit share in the Funded phase in the event of a hard breach
+- **Lock-Upon-Payout Waiver (25% of plan price)**: Disables the default Lock Upon Payout behavior
+- **33% Consistency Threshold**: Raises Funded-phase consistency limit from 25% to 33%
+- **50% Consistency Threshold**: Raises Funded-phase consistency limit from 25% to 50%
+- **90% Profit Share Upgrade**: Upgrades Funded profit split to 90%
 
 ### Refund Policy
 
@@ -520,13 +558,13 @@ Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are
 ### General Questions
 
 **What is Hybrid Funding?**  
-Hybrid Funding is a proprietary trading firm that provides capital to skilled traders. We offer evaluation programs across Forex, Crypto, and Futures markets to identify disciplined and profitable traders, then fund successful candidates with our capital and share the profits.
+Hybrid Funding is a proprietary trading firm that provides capital to skilled traders. We offer evaluation programs across Forex, Crypto, Futures, and Single Session Equities markets to identify disciplined and profitable traders, then fund successful candidates with our capital and share the profits.
 
 **How does your funding model work?**  
-Our model consists of two main stages: an evaluation (challenge) phase and a funded phase. Traders first prove their skills by passing our evaluation challenge, then receive a funded account where they trade with our capital and keep a significant percentage of the profits. We also offer Instant Funding options for immediate trading access.
+Our model consists of two main stages: an evaluation (challenge) phase and a funded phase. Traders first prove their skills by passing our evaluation challenge, then receive a funded account where they trade with our capital and keep a significant percentage of the profits. We also offer Instant Funding options for immediate trading access. Single Session Equities is offered as a one-step Evaluation → Funded path.
 
 **What makes Hybrid Funding different from other prop firms?**  
-We offer multiple challenge paths across three asset classes (Forex, Crypto, and Futures), each with flexible rules. Our Futures program features a unique four-phase structure with payouts at each milestone. We also offer higher leverage on crypto pairs (5:1 for BTC/ETH) and competitive profit splits up to 90%.
+We offer multiple challenge paths across four asset classes (Forex, Crypto, Futures, and Single Session Equities), each with flexible rules. Our Futures program features a unique four-phase structure with payouts at each milestone, and traders choose between Tradovate, Volumetrica, and DXtrade Futures. Single Session Equities runs on GooeyPro with Nasdaq-sourced liquidity. We offer higher leverage on crypto pairs (5:1 for BTC/ETH) and competitive profit splits up to 90%.
 
 **Do I own the account after passing the challenge?**  
 No. The account remains the property of Hybrid Funding. You are granted trading access and earn a percentage of the profits generated, but the capital belongs to our firm.

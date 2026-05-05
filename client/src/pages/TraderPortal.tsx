@@ -34,7 +34,7 @@ const TraderPortal = () => {
     <section className="py-20 cyberpunk-bg page-transition">
       <SEO
         title="Trader Portal — Hybrid Funding Funded Account Access"
-        description="Access your Hybrid Funding funded account dashboard. Trade on cTrader, MatchTrader, DXTrade, Rithmic Pro, GooeyPro. Tradovate coming soon."
+        description="Access your Hybrid Funding funded account dashboard. Trade on MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, and GooeyPro."
         path="/trader-portal"
         jsonLd={breadcrumbSchema([
           { name: "Home", path: "/" },
@@ -110,8 +110,8 @@ const TraderPortal = () => {
                   <div className="p-6 w-full">
                     <div className="bg-[#1A1A2E]/80 backdrop-blur-sm p-4 rounded-lg">
                       <p className="text-accent font-['Orbitron'] font-semibold">TRADING PLATFORM ACCESS</p>
-                      <p className="text-white text-sm">Rithmic • MatchTrader • DXTrade • cTrader • GooeyPro</p>
-                      <p className="text-[#B8B8D0] text-xs mt-1">Tradovate coming soon for Futures traders</p>
+                      <p className="text-white text-sm">MatchTrader • DXtrade • cTrader • Tradovate</p>
+                      <p className="text-white text-sm">Volumetrica • DXtrade Futures • GooeyPro</p>
                     </div>
                   </div>
                 </div>

@@ -23,7 +23,7 @@ This knowledge base provides comprehensive information about Hybrid Funding's pr
 
 **About Hybrid Funding**
 
-Hybrid Funding is a proprietary trading firm that provides capital to skilled traders. The company uses a challenge-based evaluation system to identify disciplined and profitable traders, then funds successful candidates with trading capital and offers profit-sharing arrangements.
+Hybrid Funding is a proprietary trading firm that provides capital to skilled traders across Forex, Crypto, Futures, and Single Session Equities. The company uses a challenge-based evaluation system to identify disciplined and profitable traders, then funds successful candidates with trading capital and offers profit-sharing arrangements.
 
 **Vision and Mission**
 
@@ -96,7 +96,7 @@ Hybrid Funding offers several different challenge programs designed to suit vari
 
 ## Asset Classes
 
-Hybrid Funding supports three primary asset classes, each with specific rules and leverage restrictions:
+Hybrid Funding supports four primary asset classes, each with specific rules and leverage restrictions:
 
 ### Forex
 
@@ -116,6 +116,7 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
 
 ### Futures
 
+- **Platforms**: Tradovate, Volumetrica (DeepCharts), DXtrade Futures
 - **Structure**: Four-phase program with payouts at each phase
 - **Consistency Requirement**: 25% best day to total profit ratio
 - **Contract Limits**: Varies by account size
@@ -124,6 +125,27 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
   - $100K: 6 standard/60 micro contracts
   - $150K: 9 standard/90 micro contracts
 - **Special Rules**: End of day trailing max loss, consistency requirement
+
+### Single Session Equities
+
+- **Platform**: GooeyPro exclusively
+- **Universe**: Any S&P 100 equity products made available on the platform
+- **Liquidity / Pricing / Execution**: Sourced and provided directly from Nasdaq
+- **Leverage**: 2:1
+- **Trading Session**: 09:30 ET through 15:55 ET only — Pre-Market and Extended Hours are not allowed
+- **Hold Period**: Same-session only — no overnight or weekend holds; positions must be fully closed by 15:55 ET
+- **Commissions**: $0.02 per share per side ($0.50 minimum per transaction)
+- **Profit Target (Evaluation)**: 10% returns
+- **Max Drawdown**: 3.0% Maximum Trailing Drawdown based on closed balance only — locks at starting balance once account reaches +3.0%
+- **Daily Loss Limit**: Intraday trailing drawdown that trails the greater of daily balance HWM and daily equity HWM (hard breach)
+- **Daily Profit Cap (Evaluation only)**: Daily-pause limit calculated from the day's starting equity
+- **Minimum Profitable Trading Days**: 0.5% per day across 3 separate days, in both Evaluation and Funded phases
+- **Minimum Hold Time**: 1 minute per trade — profits forfeited if violated
+- **Consistency Rule (Funded only)**: 25% — no more than 25% of total profits on a single day for payout eligibility
+- **Profit Split (Funded)**: 80/20 in trader's favor
+- **Payout Schedule**: First payout after 14 days in the Funded phase, then every 14 days
+- **Minimum Withdrawal**: $100
+- **Lock Upon Payout**: Enabled by default — Max Drawdown locks at starting balance after first payout (waiver add-on available)
 
 ---
 
@@ -279,9 +301,13 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
 
 ### Supported Trading Platforms
 
-- **DXtrade**: Modern, web-based trading platform
-- **MatchTrader**: Multi-asset trading platform
-- **cTrader**: Advanced trading platform with algorithmic capabilities
+- **MatchTrader**: Forex — advanced order types
+- **DXtrade**: Forex — modern web-based platform
+- **cTrader**: Forex — international Forex traders, scalping & algorithmic capabilities
+- **Tradovate**: Futures — https://trader.tradovate.com/
+- **Volumetrica** (DeepCharts): Futures — https://my.deepcharts.com/identity/account/login
+- **DXtrade Futures**: Futures on the DXtrade platform
+- **GooeyPro**: Single Session Equities only — https://gooeypro.gooeytrade.com/login
 
 ### Platform Features
 
@@ -353,8 +379,16 @@ Hybrid Funding supports three primary asset classes, each with specific rules an
 
 ### Available Add-ons
 
-- **Weekend Hold (10% additional cost)**: Allows holding positions over weekends
+- **Weekend Hold (10% additional cost)**: Allows holding Forex positions over weekends
 - **90% Profit Split (20% additional cost)**: Increases profit share from standard rate to 90%
+
+#### Single Session Equities Add-ons
+
+- **Payout Protector (25%)**: Protects a trader's eligible profit share in the Funded phase in the event of a hard breach
+- **Lock-Upon-Payout Waiver (25%)**: Disables the default Lock Upon Payout behavior
+- **33% Consistency Threshold**: Raises Funded-phase consistency limit from 25% to 33%
+- **50% Consistency Threshold**: Raises Funded-phase consistency limit from 25% to 50%
+- **90% Profit Share Upgrade**: Upgrades Funded profit split to 90%
 
 ### Refund Policy
 

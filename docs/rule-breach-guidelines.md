@@ -51,6 +51,7 @@ A trader has open EUR/USD and GBP/JPY positions at 3:40 PM EST on Friday and doe
 - Three-Step Program: 5% (all asset classes)
 - Instant Funding: 8% (trailing)
 - Futures Program: 5% (trailing based on EOD balance)
+- Single Session Equities: 3.0% (Maximum Trailing Drawdown on closed balance only — locks at starting balance once account reaches +3.0%)
 
 **When Breach Occurs**:
 - Account equity drops below the maximum drawdown threshold
@@ -111,6 +112,7 @@ A trader with a funded account last placed a trade on January 1st. The trader re
 - Instant Funding: 5% of previous day's balance
 - One-Step & Three-Step Programs: No specific daily loss limit (only max drawdown applies)
 - Crypto Programs: 3% daily cap limit on both gains and losses
+- Single Session Equities: Intraday trailing drawdown that trails the greater of the daily balance high water mark and the daily equity high water mark (hard breach on violation)
 
 **When Breach Occurs**:
 - Account equity drops below the daily loss limit threshold during a single trading day
@@ -135,6 +137,51 @@ A trader has a $100,000 Two-Step funded account with a 4% daily loss limit. The 
 ---
 
 ## Additional Breach Scenarios
+
+### Single Session Equities — Position Open Past 15:55 ET (Hard Breach)
+
+**Rule**: All Single Session Equities positions must be fully closed by 15:55 ET.
+
+**When Breach Occurs**:
+- Any position remains open after 15:55 ET
+- The platform will attempt to auto-close at 15:55 ET, but it is the trader's responsibility to be flat by then
+
+**Consequences**:
+1. Treated as a Prohibited Practices violation
+2. Hard breach — account terminated
+3. For Funded accounts, trader still receives their share of any net positive gains generated before breach (subject to Payout Protector add-on, if purchased)
+
+---
+
+### Single Session Equities — Daily Profit Cap (Daily Pause, Evaluation Only)
+
+**Rule**: Evaluation phase accounts may not exceed the Daily Profit Cap, calculated as a fixed value from the day's starting equity.
+
+**When Breach Occurs**:
+- Account equity rises above the Daily Profit Cap during a single trading day
+
+**Consequences**:
+1. Open trades are closed
+2. Open orders are cancelled
+3. Account is disabled for the remainder of the current session
+4. Account is re-enabled on the next trading day (after 17:00 ET)
+5. The new daily cap is then based on the new day's starting equity
+6. Not a hard breach — account is not terminated
+
+---
+
+### Single Session Equities — Minimum Hold Time Violation
+
+**Rule**: All trades must be held for at least 1 minute.
+
+**When Breach Occurs**:
+- A trade is closed less than 1 minute after opening
+
+**Consequences**:
+1. Profits generated from the offending trade are forfeited
+2. Account remains active but the trade's profit is voided
+
+---
 
 ### Futures Consistency Requirement Violation (Not a Breach)
 

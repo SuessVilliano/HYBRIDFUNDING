@@ -23,8 +23,8 @@ const stats = [
   {
     icon: Shield,
     label: "Trusted Platforms",
-    value: "6",
-    sub: "cTrader, DXTrade, MatchTrader, Rithmic, GooeyPro, Tradovate (soon)",
+    value: "7",
+    sub: "MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, GooeyPro",
   },
 ];
 
