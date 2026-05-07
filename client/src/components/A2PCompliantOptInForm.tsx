@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,10 +8,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import Loading from "@/components/ui/loading";
-import { Phone, Calendar, Video } from "lucide-react";
+import { Phone, Calendar, Video, Lock } from "lucide-react";
 import WebinarModal from "@/components/WebinarModal";
 import BookingModal from "@/components/BookingModal";
 import { trackEvent } from "@/lib/analytics";
+
+type Intent = "webinar" | "booking" | null;
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -39,7 +41,16 @@ const A2PCompliantOptInForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showWebinar, setShowWebinar] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
+  const [intent, setIntent] = useState<Intent>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
+
+  const selectIntent = (next: Intent) => {
+    setIntent(next);
+    if (next === "webinar") trackEvent("webinar_card_click");
+    if (next === "booking") trackEvent("booking_card_click");
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -60,6 +71,13 @@ const A2PCompliantOptInForm = ({
       const firstName = spaceIdx === -1 ? trimmed : trimmed.slice(0, spaceIdx);
       const lastName = spaceIdx === -1 ? "" : trimmed.slice(spaceIdx + 1).trim();
 
+      const source =
+        intent === "webinar"
+          ? "watch-webinar-optin"
+          : intent === "booking"
+            ? "book-appointment-optin"
+            : "website-get-started-today";
+
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -70,7 +88,7 @@ const A2PCompliantOptInForm = ({
           phone: data.phone,
           smsConsent: data.smsConsent,
           marketingConsent: data.promotionalConsent ?? false,
-          source: "website-get-started-today",
+          source,
         }),
       });
 
@@ -79,12 +97,21 @@ const A2PCompliantOptInForm = ({
         throw new Error(body?.error || "Submission failed");
       }
 
-      toast({
-        title: "Successfully registered!",
-        description: "You'll receive a confirmation SMS shortly.",
-      });
+      if (intent === "webinar") {
+        trackEvent("webinar_optin_submitted");
+        setShowWebinar(true);
+      } else if (intent === "booking") {
+        trackEvent("booking_optin_submitted");
+        setShowBooking(true);
+      } else {
+        toast({
+          title: "Successfully registered!",
+          description: "You'll receive a confirmation SMS shortly.",
+        });
+      }
 
       form.reset();
+      setIntent(null);
       onSuccess?.();
     } catch (error) {
       const msg = error instanceof Error ? error.message : "Please try again later.";
@@ -111,45 +138,62 @@ const A2PCompliantOptInForm = ({
       </div>
 
       {showResourceLinks && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <button
-            type="button"
-            onClick={() => {
-              setShowBooking(true);
-              trackEvent("booking_card_click");
-            }}
-            className="flex items-center gap-3 bg-gradient-to-r from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 border border-primary/30 rounded-lg p-4 transition-all group text-left w-full"
-            data-testid="link-appointment-booking"
-          >
-            <Calendar className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
-            <div>
-              <p className="text-white font-semibold text-sm">Book Appointment</p>
-              <p className="text-[#B8B8D0] text-xs">Get your questions answered</p>
-            </div>
-          </button>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <button
+              type="button"
+              onClick={() => selectIntent("booking")}
+              aria-pressed={intent === "booking"}
+              className={`flex items-center gap-3 rounded-lg p-4 transition-all group text-left w-full border ${
+                intent === "booking"
+                  ? "bg-primary/30 border-primary shadow-[0_0_18px_rgba(138,43,226,0.45)]"
+                  : "bg-gradient-to-r from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 border-primary/30"
+              }`}
+              data-testid="link-appointment-booking"
+            >
+              <Calendar className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
+              <div>
+                <p className="text-white font-semibold text-sm">Book Appointment</p>
+                <p className="text-[#B8B8D0] text-xs">Get your questions answered</p>
+              </div>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setShowWebinar(true);
-              trackEvent("webinar_card_click");
-            }}
-            className="flex items-center gap-3 bg-gradient-to-r from-accent/20 to-accent/10 hover:from-accent/30 hover:to-accent/20 border border-accent/30 rounded-lg p-4 transition-all group text-left w-full"
-            data-testid="link-webinar"
-          >
-            <Video className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
-            <div>
-              <p className="text-white font-semibold text-sm">Watch Webinar</p>
-              <p className="text-[#B8B8D0] text-xs">Learn about our program</p>
+            <button
+              type="button"
+              onClick={() => selectIntent("webinar")}
+              aria-pressed={intent === "webinar"}
+              className={`flex items-center gap-3 rounded-lg p-4 transition-all group text-left w-full border ${
+                intent === "webinar"
+                  ? "bg-accent/30 border-accent shadow-[0_0_18px_rgba(0,255,255,0.45)]"
+                  : "bg-gradient-to-r from-accent/20 to-accent/10 hover:from-accent/30 hover:to-accent/20 border-accent/30"
+              }`}
+              data-testid="link-webinar"
+            >
+              <Video className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
+              <div>
+                <p className="text-white font-semibold text-sm">Watch Webinar</p>
+                <p className="text-[#B8B8D0] text-xs">Learn about our program</p>
+              </div>
+            </button>
+          </div>
+
+          {intent && (
+            <div className="mb-6 flex items-center gap-2 rounded-md border border-accent/30 bg-accent/10 px-3 py-2 text-xs text-white">
+              <Lock className="h-3.5 w-3.5 text-accent" />
+              <span>
+                {intent === "webinar"
+                  ? "Fill out the form below to unlock the training video."
+                  : "Fill out the form below to access the booking calendar."}
+              </span>
             </div>
-          </button>
-        </div>
+          )}
+        </>
       )}
       <WebinarModal open={showWebinar} onClose={() => setShowWebinar(false)} />
       <BookingModal open={showBooking} onClose={() => setShowBooking(false)} />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="name"
@@ -279,6 +323,10 @@ const A2PCompliantOptInForm = ({
                   <Loading variant="dots" size="sm" text="" />
                   <span>SUBMITTING...</span>
                 </div>
+              ) : intent === "webinar" ? (
+                "WATCH FREE TRAINING →"
+              ) : intent === "booking" ? (
+                "UNLOCK BOOKING CALENDAR →"
               ) : (
                 "GET STARTED"
               )}
