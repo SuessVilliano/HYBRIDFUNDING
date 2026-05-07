@@ -25,6 +25,7 @@ const Battles = lazy(() => import("@/pages/Battles"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const Playbook = lazy(() => import("@/pages/Playbook"));
+const Webinar = lazy(() => import("@/pages/Webinar"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 function PageViewTracker() {
@@ -56,6 +57,7 @@ function AppRouter() {
             <Route path="/faq" component={() => <PageTransition><FAQ /></PageTransition>} />
             <Route path="/battles" component={() => <PageTransition><Battles /></PageTransition>} />
             <Route path="/playbook" component={() => <PageTransition><Playbook /></PageTransition>} />
+            <Route path="/webinar" component={() => <PageTransition><Webinar /></PageTransition>} />
             <Route path="/blog" component={() => <PageTransition><Blog /></PageTransition>} />
             <Route path="/blog/:slug">
               {(params) => <PageTransition><BlogPost slug={params.slug} /></PageTransition>}
