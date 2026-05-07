@@ -1,82 +1,110 @@
 # GHL Webinar Funnel — Setup Guide
 
-This doc covers what's wired up in code on the `claude/webinar-funnel` branch and what you (or the GHL admin) still need to do **inside the GHL UI** to make the marketing automations fire.
+This doc covers what's wired in code on `claude/webinar-funnel` and what you (or the GHL admin) still need to do **inside GHL** to make the marketing automations fire.
 
-> Code-side work is complete. GHL workflows themselves cannot be created via API — they must be built in the GHL UI. The code applies the right tags so workflows can listen for them.
-
----
-
-## What the code now does
-
-When a visitor opts in on `https://www.hybridfunding.co/webinar`:
-
-1. The page POSTs to `/api/lead` with `source: "webinar-optin"`.
-2. The serverless handler (`api/index.ts`) creates a contact in GHL via `services.leadconnectorhq.com/contacts/` using `GHL_PIT_TOKEN`.
-3. The contact is created (or re-tagged if it's a duplicate) with these tags:
-   - `web-optin`
-   - `sms-consent`
-   - `webinar-lead`
-   - `funnel-webinar`
-   - `marketing-consent` (only if the optional checkbox was ticked)
-4. The page then plays the embedded YouTube training (`1btvnorAx6A` — same video as the existing Watch Webinar modal) and shows a CTA to book a strategy call.
-
-Source values for future funnels follow the same pattern: anything containing `"webinar"` adds the webinar tags, anything containing `"course"` adds `course-interest`.
+> **Code-side work is complete.** `/webinar` now embeds your GHL form (`DdwxJSrjfQVY2gY5Qnh0` — "Hybrid Funding Webinar"). The page swaps to the YouTube training automatically the moment the form is submitted.
 
 ---
 
-## What to set up inside GHL
+## How the page behaves
 
-Sub-account: **Hybrid Funding** · Location ID: `wAgobr9TOihDZxQ2G3a5`
+`https://www.hybridfunding.co/webinar` has two states:
 
-### 1. Workflow — "Webinar Lead Nurture"
+1. **Locked (default visit)** — left column shows the value-prop copy and bullets; right column embeds the GHL inline form via `https://api.leadconnectorhq.com/widget/form/DdwxJSrjfQVY2gY5Qnh0` with the official `form_embed.js` script loaded.
+2. **Unlocked** — page swaps to the YouTube training (autoplay) plus a "Book a Free Strategy Call" CTA pointing at the GHL booking widget for location `wAgobr9TOihDZxQ2G3a5`.
 
-**Trigger:** Contact Tag added · `webinar-lead`
+Three independent triggers can flip the page from locked → unlocked, in order of preference:
+
+| # | Trigger | Where it comes from |
+|---|---------|---------------------|
+| 1 | `postMessage` from the GHL form iframe (origin matches `leadconnectorhq.com / msgsndr.com / gohighlevel.com` and payload mentions submit) | `form_embed.js` after the visitor clicks Submit |
+| 2 | URL query param `?watched=1` | GHL form's "Redirect URL" setting (set this — see below) |
+| 3 | `localStorage["hf_webinar_unlocked"] === "1"` | Set by triggers 1 or 2 on prior visits |
+
+If GHL ever changes the postMessage shape, the redirect (trigger 2) is the safety net.
+
+---
+
+## What you need to do inside GHL
+
+### 1. Set the form redirect URL (belt-and-suspenders)
+
+GHL → Sites → Forms & Surveys → **Hybrid Funding Webinar** → **Settings** → **On Submit** → **Redirect to URL**:
+
+```
+https://www.hybridfunding.co/webinar?watched=1
+```
+
+You can also pass the first name through so the success banner greets the visitor:
+
+```
+https://www.hybridfunding.co/webinar?watched=1&first_name={{contact.first_name}}
+```
+
+This guarantees the page unlocks even if the cross-origin postMessage handshake misses.
+
+### 2. Workflow — "Webinar Lead Nurture" (this is where the SMS with the YouTube link lives)
+
+GHL → Automation → Workflows → New Workflow.
+
+**Trigger:** *Form Submitted* → form: **Hybrid Funding Webinar**
 
 **Steps (suggested):**
 
-1. Wait 1 minute → Send SMS: "Hey {{contact.first_name}}, your training is ready. Watch it now: https://hybridfunding.co/webinar"
-2. Send Email: "Your free training + replay link" (template — include the YouTube/Hybrid training URL and the booking link)
-3. Wait 1 day → Send Email: "Did the training make sense? Reply with your biggest takeaway."
-4. Wait 2 days → Send SMS: "Want me to walk through your funded-account roadmap on a free 20-min call? {{calendar.booking_link}}"
-5. If contact books → exit workflow. Else → Wait 4 days → Send last-chance email + offer.
+1. **Send SMS** (immediate)
+   ```
+   Hey {{contact.first_name}}, here's your Hybrid Funding training:
+   https://youtu.be/1btvnorAx6A
 
-### 2. Workflow — "Webinar No-Show / No Action"
+   Watch it from start to finish — there's a special offer at the end.
+   Reply STOP to opt out.
+   ```
+2. **Send Email** (immediate) — same link with a styled CTA + the booking link
+3. **Wait 1 day** → Send Email: "Did the training make sense? Reply with your biggest takeaway."
+4. **Wait 2 days** → Send SMS: "Want me to walk through your funded-account roadmap on a free 20-min call? {{calendar.booking_link}}"
+5. **If contact books a call** → exit workflow. Else → Wait 4 days → last-chance offer email.
 
-**Trigger:** Contact Tag added · `funnel-webinar`
-**Filter:** No `booking-completed` tag after 7 days
+This is the workflow that fulfills "text them the YouTube link."
 
-**Action:** Move into a longer-cycle drip (weekly value emails for 4 weeks).
+### 3. Pipeline — "Webinar Funnel" (optional but recommended)
 
-### 3. Pipeline — "Webinar Funnel"
-
-Create a pipeline with these stages so each lead becomes an Opportunity you can see on a board:
+Create a pipeline with these stages so each lead becomes an Opportunity on a board:
 
 | Stage | What moves a contact here |
 |---|---|
-| Opted In | Tag `webinar-lead` added (use a workflow action: "Create / Update Opportunity") |
-| Watched Training | Tag `webinar-watched` (set this in GHL when video is finished — see below) |
+| Opted In | "Form Submitted: Hybrid Funding Webinar" — add a workflow action: Opportunity → Create |
+| Watched Training | Tag `webinar-watched` (see Optional below) |
 | Strategy Call Booked | Calendar booking made on the linked GHL calendar |
 | Strategy Call Completed | Calendar appointment status = Showed |
 | Customer | Funded account purchased |
 | Lost | Manual or 30-day inactivity |
 
-To auto-create the opportunity: in workflow #1 above, add an "Opportunity → Create" action right after the trigger, pointing at this pipeline / "Opted In" stage.
+Add the **Opportunity → Create** action right after the form-submit trigger in workflow #2 above, pointing at this pipeline + "Opted In" stage.
 
-### 4. (Optional) Watch tracking
+### 4. Tags (for segmentation + future workflows)
 
-If you want a `webinar-watched` tag added when someone finishes the video, you have two options:
+Inside the form's settings (or as a workflow action), apply these tags on submit so future automations can branch off them:
 
-- **Quick path:** add a follow-up button under the embed ("Mark training complete → Book a call") that POSTs to `/api/lead` again with `source: "webinar-watched"`. (One-line code change if you want this.)
-- **Proper path:** use YouTube IFrame API `onStateChange` → fetch a webhook on completion → trigger a GHL workflow inbound webhook that adds the tag.
+- `webinar-lead`
+- `funnel-webinar`
 
-### 5. Booking calendar
+The home-page **Watch Webinar** card (which still uses the React form → `/api/lead`) already applies these tags automatically when its `source` contains "webinar". Keeping naming aligned across both entry points means one nurture workflow can listen on the tag instead of two separate triggers.
 
-The Watch view links to `https://api.leadconnectorhq.com/widget/booking/wAgobr9TOihDZxQ2G3a5`. If you have a more specific calendar (e.g. "Webinar Strategy Call"), replace `BOOKING_URL` in `client/src/pages/Webinar.tsx`.
+### 5. Optional — `webinar-watched` tracking
+
+If you want a separate tag added when someone finishes the video (so you can drip differently to "watched" vs "opted in but never watched"):
+
+- **Quick path:** add a follow-up button under the embed ("Mark training complete → Book a call") that POSTs to `/api/lead` with `source: "webinar-watched"`. One-line change.
+- **Proper path:** wire YouTube IFrame API `onStateChange` → fetch a GHL inbound webhook on completion → workflow adds the `webinar-watched` tag.
 
 ---
 
-## Things I did **not** do
+## What you don't need anymore
 
-- I did **not** create workflows, pipelines, opportunities, or calendars in GHL — the GHL API does not support creating workflows, and creating opportunities programmatically requires per-stage IDs that aren't available without the workflow/pipeline existing first. Those are UI tasks.
-- I did **not** change the existing `web-optin` tag flow used by the home-page form. New tags are additive.
-- I did **not** touch the `claude/ghl-optin-integration` branch (looked like an unrelated heavy refactor).
+- The custom React opt-in form previously on `/webinar` is gone — the GHL iframe replaces it. Form-side validation, A/B tests, field changes, and Twilio SMS/email-sending all happen inside GHL going forward.
+- `/api/lead` is **still wired** and is unchanged — used by the home-page "Watch Webinar" gated form. If you eventually want to migrate that to the iframe too, swap `A2PCompliantOptInForm` for the same iframe and you can deprecate `/api/lead`.
+
+## What I did **not** do
+
+- I did not create the form's redirect URL, workflow, pipeline, or opportunity stages — those are GHL UI tasks (the workflow API doesn't allow creating workflows).
+- I did not change the existing `claude/ghl-optin-integration` branch (looked like an unrelated heavy refactor).
