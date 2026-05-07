@@ -57,6 +57,14 @@ app.post("/api/lead", async (req: Request, res: Response) => {
   const tags = ["web-optin", "sms-consent"];
   if (data.marketingConsent) tags.push("marketing-consent");
 
+  const source = data.source || "website-get-started-today";
+  if (/webinar/i.test(source)) {
+    tags.push("webinar-lead", "funnel-webinar");
+  }
+  if (/course/i.test(source)) {
+    tags.push("course-interest");
+  }
+
   const payload = {
     locationId,
     firstName: data.firstName,
@@ -64,7 +72,7 @@ app.post("/api/lead", async (req: Request, res: Response) => {
     name: `${data.firstName} ${data.lastName}`,
     email: data.email,
     phone: phoneE164,
-    source: data.source || "website-get-started-today",
+    source,
     tags,
     dnd: false,
   };
