@@ -41,7 +41,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose }) => {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center bg-black/85 p-3 sm:p-6 overflow-y-auto"
+          className="fixed inset-0 z-[60] flex items-start justify-center bg-black/85 p-3 sm:p-6 overflow-y-auto overscroll-contain"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -51,13 +51,13 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose }) => {
           aria-label="Book a Hybrid Funding appointment"
         >
           <motion.div
-            className="relative w-full max-w-5xl my-4 sm:my-8"
-            initial={{ scale: 0.95, y: 10 }}
+            className="relative w-full max-w-5xl my-4 sm:my-6"
+            initial={{ scale: 0.97, y: 8 }}
             animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.95, y: 10 }}
+            exit={{ scale: 0.97, y: 8 }}
           >
             <div className="rounded-xl overflow-hidden border border-primary/40 shadow-2xl shadow-primary/30 bg-white">
-              <div className="flex items-center justify-between bg-[#0F0F1A] text-white px-4 py-2.5 border-b border-primary/30">
+              <div className="sticky top-0 z-10 flex items-center justify-between bg-[#0F0F1A] text-white px-4 py-2.5 border-b border-primary/30">
                 <span className="font-['Orbitron'] text-sm font-semibold tracking-wide">Book a Call</span>
                 <button
                   onClick={onClose}
@@ -71,9 +71,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose }) => {
                 title="Hybrid Funding Booking Calendar"
                 src={BOOKING_URL}
                 id="008KqUmzv7u3pCdhgqDg_modal"
-                className="w-full block min-h-[720px] sm:min-h-[780px] lg:min-h-[840px]"
-                style={{ border: "none" }}
-                scrolling="yes"
+                className="w-full block"
+                style={{ border: "none", height: "min(82vh, 900px)" }}
               />
             </div>
             <p className="text-[#B8B8D0] text-center text-xs mt-3">
