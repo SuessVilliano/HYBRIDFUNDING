@@ -3,13 +3,12 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { CheckCircle2, Play, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import BookingModal from "@/components/BookingModal";
 import SEO from "@/components/SEO";
 import { breadcrumbSchema } from "@/lib/jsonLd";
 import { trackEvent } from "@/lib/analytics";
 
 const YOUTUBE_ID = "1btvnorAx6A";
-const BOOKING_URL =
-  "https://api.leadconnectorhq.com/widget/booking/wAgobr9TOihDZxQ2G3a5";
 const GHL_FORM_ID = "DdwxJSrjfQVY2gY5Qnh0";
 const GHL_FORM_SRC = `https://api.leadconnectorhq.com/widget/form/${GHL_FORM_ID}`;
 const UNLOCK_KEY = "hf_webinar_unlocked";
@@ -229,6 +228,8 @@ const OptInView = () => {
 };
 
 const WatchView = ({ firstName }: { firstName: string }) => {
+  const [showBooking, setShowBooking] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -267,22 +268,19 @@ const WatchView = ({ firstName }: { firstName: string }) => {
           funding roadmap — no pressure, just clarity.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href={BOOKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center"
+          <Button
+            variant="neon"
+            size="lg"
+            rounded="full"
+            className="font-['Orbitron'] font-semibold"
+            onClick={() => {
+              trackEvent("booking_card_click", { source: "webinar_watch" });
+              setShowBooking(true);
+            }}
           >
-            <Button
-              variant="neon"
-              size="lg"
-              rounded="full"
-              className="font-['Orbitron'] font-semibold"
-            >
-              <Calendar className="h-4 w-4 mr-2" />
-              Book a Free Strategy Call
-            </Button>
-          </a>
+            <Calendar className="h-4 w-4 mr-2" />
+            Book a Free Strategy Call
+          </Button>
           <Link href="/challenges">
             <Button
               variant="outline"
@@ -295,6 +293,7 @@ const WatchView = ({ firstName }: { firstName: string }) => {
           </Link>
         </div>
       </div>
+      <BookingModal open={showBooking} onClose={() => setShowBooking(false)} />
     </motion.div>
   );
 };
