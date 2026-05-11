@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import SocialIcon from "./SocialIcon";
+import TrustpilotWidget from "./TrustpilotWidget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -181,8 +182,14 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-accent/10 text-center">
-          <p className="text-[#B8B8D0]">&copy; {new Date().getFullYear()} Hybrid Funding LLC. All rights reserved.</p>
+        <div className="mt-12 pt-8 border-t border-accent/10">
+          <p className="text-center text-[#B8B8D0] text-sm font-['Orbitron'] uppercase tracking-wider mb-4">
+            Trusted by traders worldwide
+          </p>
+          <div className="max-w-2xl mx-auto mb-8">
+            <TrustpilotWidget />
+          </div>
+          <p className="text-center text-[#B8B8D0]">&copy; {new Date().getFullYear()} Hybrid Funding LLC. All rights reserved.</p>
         </div>
       </div>
     </footer>
