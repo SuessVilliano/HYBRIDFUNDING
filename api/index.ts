@@ -147,4 +147,127 @@ app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
 });
 
+// Prop-firm account status endpoint.
+// Called by the Hybrid MCP server's `get_prop_firm_status` tool (propfirm
+// provider). Scrapes the public PropAccount dashboard for the linked account
+// and returns balance / equity / profit-target / drawdown numbers.
+// NOTE: phase, payout-eligibility and trader-score are NOT available from the
+// upstream HTML scrape — they live in other systems (PropAccount admin API,
+// payout workflow, internal scoring) and must be sourced separately.
+app.get("/api/account/status", async (req: Request, res: Response) => {
+  try {
+    const apiKey = req.header("x-api-key");
+    const expectedKey = process.env.HYBRID_FUNDING_API_KEY;
+    if (!expectedKey || !apiKey || apiKey !== expectedKey) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const account = typeof req.query.account === "string" ? req.query.account : "";
+    if (!account) {
+      return res.status(400).json({ error: "account query param required" });
+    }
+
+    const dashboardUrl = `https://hybridfundingdashboard.propaccount.com/es/overview?accountId=${encodeURIComponent(account)}`;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    let upstream: Response;
+    try {
+      upstream = await fetch(dashboardUrl, {
+        method: "GET",
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; HybridFundingBot/1.0)",
+          Accept: "text/html,application/xhtml+xml",
+        },
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (!upstream.ok) {
+      return res.status(502).json({
+        error: "Upstream dashboard error",
+        status: upstream.status,
+        account,
+      });
+    }
+
+    const html = await upstream.text();
+
+    // Regex-based extraction — mirrors hybrid-journal/base44/functions/
+    // syncHybridFunding/entry.ts parseHybridFundingDashboard().
+    let balance = 0;
+    let equity = 0;
+    let profit_target: number | null = null;
+    let daily_loss_limit: number | null = null;
+    let max_drawdown: number | null = null;
+    let total_profit_loss = 0;
+
+    const balanceMatch = html.match(/Balance[:\s]*\$?([\d,]+\.?\d*)/i);
+    if (balanceMatch) {
+      balance = parseFloat(balanceMatch[1].replace(/,/g, ""));
+    }
+
+    const equityMatch = html.match(/Equity[:\s]*\$?([\d,]+\.?\d*)/i);
+    if (equityMatch) {
+      equity = parseFloat(equityMatch[1].replace(/,/g, ""));
+    }
+
+    const profitTargetMatch = html.match(/Profit\s*Target[:\s]*\$?([\d,]+\.?\d*)/i);
+    if (profitTargetMatch) {
+      profit_target = parseFloat(profitTargetMatch[1].replace(/,/g, ""));
+    }
+
+    const dailyLossMatch = html.match(/Daily\s*Loss\s*Limit[:\s]*\$?([\d,]+\.?\d*)/i);
+    if (dailyLossMatch) {
+      daily_loss_limit = parseFloat(dailyLossMatch[1].replace(/,/g, ""));
+    }
+
+    const maxDrawdownMatch = html.match(/Max\s*Draw\s*down[:\s]*\$?([\d,]+\.?\d*)/i);
+    if (maxDrawdownMatch) {
+      max_drawdown = parseFloat(maxDrawdownMatch[1].replace(/,/g, ""));
+    }
+
+    // Sum trade profits from any embedded __INITIAL_STATE__ JSON, falling back
+    // to 0 if not present. The HTML table parse for individual trades is not
+    // needed here — the MCP only needs aggregate P&L.
+    const jsonDataMatch = html.match(/window\.__INITIAL_STATE__\s*=\s*({[\s\S]*?});/);
+    if (jsonDataMatch) {
+      try {
+        const data = JSON.parse(jsonDataMatch[1]);
+        if (Array.isArray(data?.trades)) {
+          total_profit_loss = data.trades.reduce(
+            (sum: number, t: any) => sum + (parseFloat(t.profit ?? t.pnl) || 0),
+            0,
+          );
+        }
+        if (data?.account) {
+          balance = data.account.balance || balance;
+          equity = data.account.equity || equity;
+        }
+      } catch {
+        /* ignore — fall back to regex-only metrics */
+      }
+    }
+
+    return res.status(200).json({
+      account,
+      configured: true,
+      fetched_at: new Date().toISOString(),
+      balance,
+      equity,
+      profit_target,
+      daily_loss_limit,
+      max_drawdown,
+      total_profit_loss,
+      source: "propaccount_dashboard",
+    });
+  } catch (error: any) {
+    console.error("[account/status] error", error);
+    return res.status(500).json({ error: error?.message || "Internal error" });
+  }
+});
+
 export default app;
