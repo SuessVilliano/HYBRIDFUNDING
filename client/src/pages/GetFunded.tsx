@@ -310,8 +310,28 @@ function fmt(n: number): string {
   return `$${n.toLocaleString()}`;
 }
 
+// ─── Card stagger variants ────────────────────────────────────────────────────
+const cardContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07 } },
+};
+const cardItem = {
+  hidden: { opacity: 0, y: 16, scale: 0.97 },
+  show:   { opacity: 1, y: 0,  scale: 1, transition: { type: "spring", stiffness: 300, damping: 24 } },
+};
+
 // ─── Tier Card (dense — dollar amounts, accurate futures payouts) ─────────────
-function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: boolean }) {
+function TierCard({
+  tier,
+  isMultiPhase = false,
+  isSelected = false,
+  onSelect,
+}: {
+  tier: Tier;
+  isMultiPhase?: boolean;
+  isSelected?: boolean;
+  onSelect: () => void;
+}) {
   const sizeNum = parseSize(tier.size);
   const targetDollars   = tier.profitTarget !== null ? fmt(sizeNum * tier.profitTarget / 100) : null;
   const drawdownDollars = fmt(sizeNum * tier.maxDrawdown / 100);
@@ -321,17 +341,36 @@ function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: b
   return (
     <motion.div
       layout
-      className={`rounded-xl border p-4 flex flex-col gap-3 transition-all ${
-        tier.recommended
-          ? "border-accent/50 bg-accent/5 shadow-[0_0_20px_rgba(0,255,255,0.08)]"
-          : "border-white/8 bg-white/2 hover:border-white/15"
+      variants={cardItem}
+      onClick={onSelect}
+      whileHover={{ scale: 1.02, transition: { duration: 0.15 } }}
+      whileTap={{ scale: 0.97 }}
+      className={`rounded-xl border p-4 flex flex-col gap-3 cursor-pointer transition-colors ${
+        isSelected
+          ? "border-accent bg-accent/10 shadow-[0_0_28px_rgba(0,255,255,0.18)] ring-1 ring-accent/40"
+          : tier.recommended
+          ? "border-accent/40 bg-accent/4 shadow-[0_0_14px_rgba(0,255,255,0.06)] hover:border-accent/60"
+          : "border-white/8 bg-white/2 hover:border-white/20"
       }`}
     >
-      {tier.recommended && (
-        <span className="self-start bg-accent text-[#0F0F1A] text-[10px] font-bold px-2.5 py-0.5 rounded-full font-['Orbitron'] tracking-wide">
-          RECOMMENDED
-        </span>
-      )}
+      <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-1">
+          {tier.recommended && !isSelected && (
+            <span className="self-start bg-accent text-[#0F0F1A] text-[10px] font-bold px-2.5 py-0.5 rounded-full font-['Orbitron'] tracking-wide">
+              RECOMMENDED
+            </span>
+          )}
+          {isSelected && (
+            <motion.span
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="self-start bg-accent text-[#0F0F1A] text-[10px] font-bold px-2.5 py-0.5 rounded-full font-['Orbitron'] tracking-wide flex items-center gap-1"
+            >
+              ✓ SELECTED
+            </motion.span>
+          )}
+        </div>
+      </div>
 
       {/* Price header */}
       <div>
@@ -409,14 +448,17 @@ function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: b
         </div>
       </div>
 
-      <a href="#get-started" onClick={() => trackEvent("lp_tier_click", { size: tier.size, price: tier.price })}>
+      <a
+        href="#get-started"
+        onClick={(e) => { e.stopPropagation(); trackEvent("lp_tier_click", { size: tier.size, price: tier.price }); }}
+      >
         <Button
-          variant={tier.recommended ? "neon-filled" : "neon"}
+          variant={isSelected ? "neon-filled" : tier.recommended ? "neon-filled" : "neon"}
           size="sm"
           rounded="full"
-          className="w-full font-['Orbitron'] text-xs mt-auto"
+          className={`w-full font-['Orbitron'] text-xs mt-auto transition-all ${isSelected ? "shadow-glow-accent" : ""}`}
         >
-          Get Started →
+          {isSelected ? "✓ Get Started →" : "Get Started →"}
         </Button>
       </a>
     </motion.div>
@@ -542,14 +584,20 @@ function FuturesLiveRules() {
 export default function GetFunded() {
   const [activeMarket, setActiveMarket] = useState<MarketKey>("futures");
   const [activePlan, setActivePlan] = useState<PlanKey>("one-step");
+  const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
   const market = MARKETS.find(m => m.key === activeMarket)!;
   const plan = market.plans.find(p => p.key === activePlan) ?? market.plans[0];
 
-  // When market changes, reset to first available plan
+  // When market or plan changes, reset card selection
   useEffect(() => {
     setActivePlan(market.plans[0].key);
+    setSelectedTier(null);
   }, [activeMarket]);
+
+  useEffect(() => {
+    setSelectedTier(null);
+  }, [activePlan]);
 
   useEffect(() => {
     trackEvent("lp_get_funded_view");
@@ -748,12 +796,24 @@ export default function GetFunded() {
                     </div>
                   </div>
 
-                  {/* Tier cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {/* Tier cards — stagger in on load/tab switch */}
+                  <motion.div
+                    key={`${activeMarket}-${activePlan}`}
+                    variants={cardContainer}
+                    initial="hidden"
+                    animate="show"
+                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+                  >
                     {plan.tiers.map(tier => (
-                      <TierCard key={tier.size} tier={tier} isMultiPhase={plan.key === "four-phase"} />
+                      <TierCard
+                        key={tier.size}
+                        tier={tier}
+                        isMultiPhase={plan.key === "four-phase"}
+                        isSelected={selectedTier === `${activeMarket}-${activePlan}-${tier.size}`}
+                        onSelect={() => setSelectedTier(`${activeMarket}-${activePlan}-${tier.size}`)}
+                      />
                     ))}
-                  </div>
+                  </motion.div>
 
                   {/* Futures: Live Funded explainer shown after tier cards */}
                   {activeMarket === "futures" && plan.key === "four-phase" && (
