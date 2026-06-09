@@ -168,7 +168,7 @@ const MARKETS: Market[] = [
     label: "Futures",
     emoji: "📈",
     tagline: "Trade CME futures through 4 phases — get paid after each one, then graduate to a Live Funded account",
-    platforms: ["Rithmic", "DXtrade Futures", "Volumetrica"],
+    platforms: ["DXtrade Futures", "Volumetrica"],
     plans: [
       {
         key: "four-phase",
@@ -245,11 +245,11 @@ const MARKETS: Market[] = [
 ];
 
 const PLATFORMS = [
-  { name: "MatchTrader", markets: "Forex, Crypto", color: "text-blue-400" },
-  { name: "DXtrade",     markets: "Forex, Crypto, Futures", color: "text-purple-400" },
-  { name: "cTrader",     markets: "Forex (International)", color: "text-cyan-400" },
-  { name: "Rithmic",     markets: "Futures", color: "text-orange-400" },
-  { name: "GooeyPro",    markets: "Single Session Equities", color: "text-green-400" },
+  { name: "MatchTrader",      markets: "Forex, Crypto", color: "text-blue-400" },
+  { name: "DXtrade",          markets: "Forex, Crypto, Futures", color: "text-purple-400" },
+  { name: "cTrader",          markets: "Forex (International)", color: "text-cyan-400" },
+  { name: "Volumetrica",      markets: "Futures", color: "text-orange-400" },
+  { name: "GooeyPro",         markets: "Single Session Equities", color: "text-green-400" },
 ];
 
 const TRUST = [
