@@ -6,7 +6,7 @@ import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 import SEO from "@/components/SEO";
 import SocialProof from "@/components/SocialProof";
 import { organizationSchema, websiteSchema } from "@/lib/jsonLd";
-import { Zap, CheckCircle, Users, DollarSign, Calendar, BarChart3, BookOpen, Newspaper, Star, Quote, Trophy, Crown } from "lucide-react";
+import { Zap, CheckCircle, Users, DollarSign, Calendar, BarChart3, BookOpen, Newspaper, Star, Quote, Trophy, Crown, ArrowRight, Target, Shield, Wallet } from "lucide-react";
 
 const Home = () => {
   return (
@@ -114,6 +114,160 @@ const Home = () => {
 
 
       <SocialProof />
+
+      {/* How It Works Section */}
+      <section className="py-20 bg-[#0B1426]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <span className="text-accent font-['Orbitron'] text-sm tracking-widest uppercase mb-3 block">Simple Process</span>
+            <h2 className="font-['Orbitron'] text-3xl md:text-4xl font-bold text-white mb-4">
+              How <span className="text-primary neon-text-primary">Hybrid Funding</span> Works
+            </h2>
+            <p className="text-[#B8B8D0] max-w-2xl mx-auto">
+              Three steps from sign-up to funded. No hidden fees, no fine print surprises — just a clear path to trading firm capital.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {[
+              {
+                step: "01",
+                icon: Target,
+                color: "text-accent",
+                border: "border-accent/30",
+                glow: "shadow-[0_0_20px_rgba(0,255,255,0.1)]",
+                title: "Choose Your Challenge",
+                desc: "Pick your account size ($5K–$100K), asset class (Forex, Crypto, Futures, or Single Session Equities), and challenge type (1-Step, 2-Step, or Instant Funding). Prices start at $48.",
+              },
+              {
+                step: "02",
+                icon: Shield,
+                color: "text-primary",
+                border: "border-primary/30",
+                glow: "shadow-[0_0_20px_rgba(99,102,241,0.1)]",
+                title: "Pass the Evaluation",
+                desc: "Hit your profit target while staying within the drawdown rules. Trade on real market conditions — no time pressure on most plans. Our rules are built to be fair and achievable.",
+              },
+              {
+                step: "03",
+                icon: Wallet,
+                color: "text-accent",
+                border: "border-accent/30",
+                glow: "shadow-[0_0_20px_rgba(0,255,255,0.1)]",
+                title: "Get Funded & Keep 90%",
+                desc: "Once you pass, you receive a live funded account. Trade the firm's capital and keep up to 90% of your profits. Request payouts at any time with no lock-in period.",
+              },
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.step}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.15 }}
+                  className={`glassmorphism rounded-xl p-8 border ${item.border} ${item.glow} relative`}
+                >
+                  <div className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-[#0F0F1A] border border-white/10 flex items-center justify-center">
+                    <span className="font-['Orbitron'] text-xs font-bold text-white/60">{item.step}</span>
+                  </div>
+                  <Icon className={`h-10 w-10 ${item.color} mb-4`} />
+                  <h3 className="font-['Orbitron'] text-lg font-bold text-white mb-3">{item.title}</h3>
+                  <p className="text-[#B8B8D0] text-sm leading-relaxed">{item.desc}</p>
+                  {i < 2 && (
+                    <div className="hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 z-10">
+                      <ArrowRight className="h-6 w-6 text-white/20" />
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Challenge Previews */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-10"
+          >
+            <h3 className="font-['Orbitron'] text-2xl font-bold text-white mb-2">
+              Most Popular <span className="text-accent neon-text-accent">Challenges</span>
+            </h3>
+            <p className="text-[#B8B8D0]">Forex 1-Step — the fastest path to a funded account</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+            {[
+              { tier: "$5K", price: "$48", target: "10%", drawdown: "6%", label: "Start Here" },
+              { tier: "$25K", price: "$228", target: "10%", drawdown: "6%", label: "Most Popular", highlight: true },
+              { tier: "$50K", price: "$428", target: "10%", drawdown: "6%", label: "Advanced" },
+              { tier: "$100K", price: "$858", target: "10%", drawdown: "6%", label: "Professional" },
+            ].map((c, i) => (
+              <motion.div
+                key={c.tier}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                className={`glassmorphism rounded-xl p-6 relative ${c.highlight ? "border border-accent/50 shadow-[0_0_20px_rgba(0,255,255,0.15)]" : "border border-white/5"}`}
+              >
+                {c.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-accent text-[#0F0F1A] text-xs font-bold px-3 py-1 rounded-full font-['Orbitron']">BEST VALUE</span>
+                  </div>
+                )}
+                <p className="font-['Orbitron'] text-2xl font-bold text-white mb-1">{c.tier}</p>
+                <p className="text-accent text-3xl font-bold mb-4">{c.price}</p>
+                <div className="space-y-2 mb-5 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-[#B8B8D0]">Profit Target</span>
+                    <span className="text-white font-medium">{c.target}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#B8B8D0]">Max Drawdown</span>
+                    <span className="text-white font-medium">{c.drawdown}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#B8B8D0]">Profit Split</span>
+                    <span className="text-white font-medium">Up to 90%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#B8B8D0]">Time Limit</span>
+                    <span className="text-white font-medium">Unlimited</span>
+                  </div>
+                </div>
+                <Link href="/challenges">
+                  <Button
+                    variant={c.highlight ? "neon-filled" : "neon"}
+                    size="sm"
+                    rounded="full"
+                    className="w-full font-['Orbitron'] text-xs"
+                  >
+                    {c.label}
+                  </Button>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link href="/challenges">
+              <Button variant="neon" size="lg" rounded="full" className="font-['Orbitron']">
+                See All Challenges — Forex · Crypto · Futures · Equities
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* A2P Compliant Opt-In Form Section */}
       <section className="py-20 bg-gradient-to-b from-[#0B1426] to-[#1A1A2E]">

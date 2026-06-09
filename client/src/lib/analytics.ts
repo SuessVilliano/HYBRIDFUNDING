@@ -1,6 +1,7 @@
 // Lightweight analytics initializer. No-ops when env vars are unset.
 // Set the following in Vercel env (and locally as needed):
-//   VITE_GA_MEASUREMENT_ID  (e.g. G-XXXXXXXXXX)
+//   VITE_GTM_ID             (e.g. GTM-XXXXXXX)  ← Google Tag Manager (recommended for ads)
+//   VITE_GA_MEASUREMENT_ID  (e.g. G-XXXXXXXXXX) ← GA4 direct (used if no GTM)
 //   VITE_POSTHOG_KEY        (e.g. phc_xxxxxxxx)
 //   VITE_POSTHOG_HOST       (defaults to https://us.i.posthog.com)
 //   VITE_META_PIXEL_ID      (e.g. 1234567890)
@@ -14,13 +15,37 @@ declare global {
   }
 }
 
+const GTM_ID = import.meta.env.VITE_GTM_ID as string | undefined;
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined;
 const PH_KEY = import.meta.env.VITE_POSTHOG_KEY as string | undefined;
 const PH_HOST = (import.meta.env.VITE_POSTHOG_HOST as string | undefined) || "https://us.i.posthog.com";
 const META_PIXEL = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
 
+function loadGTM() {
+  if (!GTM_ID || typeof window === "undefined") return;
+  // GTM dataLayer init
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+  // GTM script tag
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+  document.head.insertBefore(s, document.head.firstChild);
+  // GTM noscript iframe (appended to body for fallback)
+  const noscript = document.createElement("noscript");
+  const iframe = document.createElement("iframe");
+  iframe.src = `https://www.googletagmanager.com/ns.html?id=${GTM_ID}`;
+  iframe.height = "0";
+  iframe.width = "0";
+  iframe.style.display = "none";
+  iframe.style.visibility = "hidden";
+  noscript.appendChild(iframe);
+  document.body.insertBefore(noscript, document.body.firstChild);
+}
+
 function loadGA() {
-  if (!GA_ID || typeof window === "undefined") return;
+  // Skip direct GA load if GTM is handling it
+  if (!GA_ID || GTM_ID || typeof window === "undefined") return;
   const s = document.createElement("script");
   s.async = true;
   s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
@@ -85,7 +110,8 @@ function loadMetaPixel() {
 
 export function initAnalytics() {
   if (typeof window === "undefined") return;
-  loadGA();
+  loadGTM();  // GTM first — it manages GA4, pixels, etc. inside the container
+  loadGA();   // Direct GA4 only fires if GTM is NOT set
   loadPostHog();
   loadMetaPixel();
 }
