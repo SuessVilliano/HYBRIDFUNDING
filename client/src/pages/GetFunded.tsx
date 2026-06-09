@@ -2,12 +2,13 @@ import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
+import TrustpilotWidget from "@/components/TrustpilotWidget";
 import { trackEvent } from "@/lib/analytics";
 import {
-  CheckCircle, Target, Shield, Wallet, ArrowRight,
-  Star, Users, TrendingUp, Zap, Info, ChevronDown, ChevronUp,
+  CheckCircle, ArrowRight,
+  Star, Users, TrendingUp, Zap, Info, Copy, Check,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type MarketKey = "forex" | "crypto" | "futures" | "equities";
@@ -229,13 +230,42 @@ const STEPS = [
   { num: "05", title: "Trade & Get Paid",     desc: "Keep up to 90% of profits. Request payouts on demand, scale your account." },
 ];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Coupon Copy Block ────────────────────────────────────────────────────────
+function CouponBlock() {
+  const [copied, setCopied] = useState(false);
+  const copy = useCallback(() => {
+    navigator.clipboard.writeText("UNITY20").then(() => {
+      setCopied(true);
+      trackEvent("lp_coupon_copy");
+      setTimeout(() => setCopied(false), 2500);
+    });
+  }, []);
+  return (
+    <div className="flex items-center justify-between gap-3 bg-accent/8 border border-accent/30 rounded-xl px-5 py-4 max-w-sm mx-auto">
+      <div>
+        <p className="text-[#B8B8D0] text-[10px] uppercase tracking-widest font-bold mb-0.5">Best deal — use code</p>
+        <p className="font-['Orbitron'] text-xl font-bold text-accent tracking-widest">UNITY20</p>
+      </div>
+      <button
+        onClick={copy}
+        className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-bold text-xs transition-all font-['Orbitron'] ${
+          copied
+            ? "bg-green-500/20 border border-green-500/40 text-green-400"
+            : "bg-accent/15 border border-accent/30 text-accent hover:bg-accent hover:text-[#0F0F1A]"
+        }`}
+      >
+        {copied ? <><Check className="h-3.5 w-3.5" /> COPIED</> : <><Copy className="h-3.5 w-3.5" /> COPY</>}
+      </button>
+    </div>
+  );
+}
+
+// ─── Tier Card (dense — all specs visible) ────────────────────────────────────
 function TierCard({ tier }: { tier: Tier }) {
-  const [showRules, setShowRules] = useState(false);
   return (
     <motion.div
       layout
-      className={`rounded-xl border p-5 flex flex-col gap-3 transition-all ${
+      className={`rounded-xl border p-4 flex flex-col gap-3 transition-all ${
         tier.recommended
           ? "border-accent/50 bg-accent/5 shadow-[0_0_20px_rgba(0,255,255,0.08)]"
           : "border-white/8 bg-white/2 hover:border-white/15"
@@ -246,60 +276,56 @@ function TierCard({ tier }: { tier: Tier }) {
           RECOMMENDED
         </span>
       )}
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="font-['Orbitron'] text-xl font-bold text-white">{tier.size}</p>
-          <p className="text-accent text-2xl font-bold mt-0.5">${tier.price}</p>
-        </div>
-        <button
-          onClick={() => setShowRules(!showRules)}
-          className="text-[#B8B8D0] hover:text-accent transition-colors flex items-center gap-1 text-xs"
-        >
-          Rules {showRules ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-        </button>
+
+      {/* Price header */}
+      <div>
+        <p className="font-['Orbitron'] text-lg font-bold text-white">{tier.size}</p>
+        <p className="text-accent text-2xl font-bold leading-none mt-0.5">${tier.price}</p>
+        <p className="text-[#B8B8D0] text-[10px] mt-0.5">one-time fee</p>
       </div>
 
-      <AnimatePresence>
-        {showRules && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="space-y-1.5 border-t border-white/8 pt-3">
-              {tier.profitTarget !== null && (
-                <div className="flex justify-between text-xs">
-                  <span className="text-[#B8B8D0]">Profit Target</span>
-                  <span className="text-white font-medium">{tier.profitTarget}%</span>
-                </div>
-              )}
-              <div className="flex justify-between text-xs">
-                <span className="text-[#B8B8D0]">Max Drawdown</span>
-                <span className="text-white font-medium">{tier.maxDrawdown}% trailing</span>
-              </div>
-              {tier.dailyDD && (
-                <div className="flex justify-between text-xs">
-                  <span className="text-[#B8B8D0]">Daily Loss Limit</span>
-                  <span className="text-white font-medium">{tier.dailyDD}%</span>
-                </div>
-              )}
-              <div className="flex justify-between text-xs">
-                <span className="text-[#B8B8D0]">Leverage</span>
-                <span className="text-white font-medium">{tier.leverage}</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-[#B8B8D0]">Profit Split</span>
-                <span className="text-green-400 font-medium">{tier.profitSplit}</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-[#B8B8D0]">Time Limit</span>
-                <span className="text-white font-medium">{tier.timeLimit}</span>
-              </div>
-            </div>
-          </motion.div>
+      {/* All specs inline — no hidden rows */}
+      <div className="space-y-1.5 border-t border-white/8 pt-3">
+        {tier.profitTarget !== null && (
+          <div className="flex justify-between text-xs">
+            <span className="text-[#B8B8D0]">Profit Target</span>
+            <span className="text-white font-medium">{tier.profitTarget}%</span>
+          </div>
         )}
-      </AnimatePresence>
+        {tier.profitTarget === null && (
+          <div className="flex justify-between text-xs">
+            <span className="text-[#B8B8D0]">Evaluation</span>
+            <span className="text-green-400 font-medium">None</span>
+          </div>
+        )}
+        <div className="flex justify-between text-xs">
+          <span className="text-[#B8B8D0]">Max Drawdown</span>
+          <span className="text-white font-medium">{tier.maxDrawdown}%</span>
+        </div>
+        {tier.dailyDD ? (
+          <div className="flex justify-between text-xs">
+            <span className="text-[#B8B8D0]">Daily Loss Limit</span>
+            <span className="text-white font-medium">{tier.dailyDD}%</span>
+          </div>
+        ) : (
+          <div className="flex justify-between text-xs">
+            <span className="text-[#B8B8D0]">Daily Loss Limit</span>
+            <span className="text-[#B8B8D0] font-medium">—</span>
+          </div>
+        )}
+        <div className="flex justify-between text-xs">
+          <span className="text-[#B8B8D0]">Leverage</span>
+          <span className="text-white font-medium">{tier.leverage}</span>
+        </div>
+        <div className="flex justify-between text-xs">
+          <span className="text-[#B8B8D0]">Profit Split</span>
+          <span className="text-green-400 font-medium">{tier.profitSplit}</span>
+        </div>
+        <div className="flex justify-between text-xs">
+          <span className="text-[#B8B8D0]">Time Limit</span>
+          <span className="text-white font-medium">{tier.timeLimit}</span>
+        </div>
+      </div>
 
       <a href="#get-started" onClick={() => trackEvent("lp_tier_click", { size: tier.size, price: tier.price })}>
         <Button
@@ -370,7 +396,7 @@ export default function GetFunded() {
             <p className="text-[#B8B8D0] text-lg sm:text-xl max-w-2xl mx-auto mb-8">
               Pass a simple evaluation or get instant funding — trade Hybrid Funding's capital across 4 markets on 5 platforms, starting at just $48.
             </p>
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center mb-8">
               <a href="#choose-program" onClick={() => trackEvent("lp_hero_primary_cta")}>
                 <Button variant="neon-filled" size="xl" rounded="full" className="font-['Orbitron'] shadow-glow-accent">
                   CHOOSE MY PROGRAM <ArrowRight className="ml-2 h-5 w-5" />
@@ -382,6 +408,8 @@ export default function GetFunded() {
                 </Button>
               </a>
             </div>
+            {/* Coupon code — visible above the fold */}
+            <CouponBlock />
           </motion.div>
         </div>
       </section>
@@ -607,13 +635,19 @@ export default function GetFunded() {
       {/* ── Opt-In Form ── */}
       <section id="get-started" className="py-20 bg-gradient-to-b from-[#0B1426] to-[#1A1A2E]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-xl">
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <h2 className="font-['Orbitron'] text-3xl font-bold text-white mb-3">
               Ready to Get <span className="text-accent neon-text-accent">Funded?</span>
             </h2>
-            <p className="text-[#B8B8D0] text-sm">
+            <p className="text-[#B8B8D0] text-sm mb-5">
               Enter your details — our team will help you choose the right program and walk you through your first challenge.
             </p>
+            {/* Trustpilot widget */}
+            <div className="max-w-xs mx-auto mb-4">
+              <TrustpilotWidget />
+            </div>
+            {/* Coupon reminder above form */}
+            <CouponBlock />
           </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
