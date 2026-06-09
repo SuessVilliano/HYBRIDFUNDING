@@ -25,6 +25,9 @@ interface Tier {
   profitSplit: string;
   timeLimit: string;
   recommended?: boolean;
+  // Futures-specific
+  contracts?: string;          // e.g. "1 Std / 15 Micro"
+  phasePayouts?: [number, number, number, number]; // fixed $ per phase 1-4
 }
 
 interface Plan {
@@ -164,20 +167,53 @@ const MARKETS: Market[] = [
     key: "futures",
     label: "Futures",
     emoji: "📈",
-    tagline: "Trade indices, commodities & more with structured 4-phase progression and early payouts",
+    tagline: "Trade CME futures through 4 phases — get paid after each one, then graduate to a Live Funded account",
     platforms: ["Rithmic", "DXtrade Futures", "Volumetrica"],
     plans: [
       {
         key: "four-phase",
         label: "4-Phase Funded Plan",
-        badge: "Early Payouts",
-        description: "Four progressive phases with 9% profit target each and 5% trailing drawdown. Early payouts start at Phase 1. 90% profit split after completion.",
-        highlight: "Get paid during evaluation — not just after",
+        badge: "Paid Every Phase",
+        description: "Complete 4 phases, each with a 9% profit target and 5% trailing max loss (EOD). Receive a real payout after each phase. Graduate to a Live Funded Futures account with 90% profit split.",
+        highlight: "Real payouts start at Phase 1 — not after you finish",
         tiers: [
-          { size: "$25K",  price: 298,  profitTarget: 9, maxDrawdown: 5, leverage: "Per contract", profitSplit: "90%", timeLimit: "Unlimited", recommended: true },
-          { size: "$50K",  price: 598,  profitTarget: 9, maxDrawdown: 5, leverage: "Per contract", profitSplit: "90%", timeLimit: "Unlimited" },
-          { size: "$100K", price: 1098, profitTarget: 9, maxDrawdown: 5, leverage: "Per contract", profitSplit: "90%", timeLimit: "Unlimited" },
-          { size: "$150K", price: 1758, profitTarget: 9, maxDrawdown: 5, leverage: "Per contract", profitSplit: "90%", timeLimit: "Unlimited" },
+          {
+            size: "$25K",  price: 298,
+            profitTarget: 9, maxDrawdown: 5,
+            leverage: "1 Std / 15 Micro",
+            profitSplit: "90% (Live Funded)",
+            timeLimit: "60 days/phase",
+            contracts: "1 Std / 15 Micro",
+            phasePayouts: [500, 750, 750, 1500],
+            recommended: true,
+          },
+          {
+            size: "$50K",  price: 598,
+            profitTarget: 9, maxDrawdown: 5,
+            leverage: "3 Std / 30 Micro",
+            profitSplit: "90% (Live Funded)",
+            timeLimit: "60 days/phase",
+            contracts: "3 Std / 30 Micro",
+            phasePayouts: [1000, 1500, 1500, 3000],
+          },
+          {
+            size: "$100K", price: 1098,
+            profitTarget: 9, maxDrawdown: 5,
+            leverage: "6 Std / 60 Micro",
+            profitSplit: "90% (Live Funded)",
+            timeLimit: "60 days/phase",
+            contracts: "6 Std / 60 Micro",
+            phasePayouts: [2000, 3000, 3000, 6000],
+          },
+          {
+            size: "$150K", price: 1758,
+            profitTarget: 9, maxDrawdown: 5,
+            leverage: "9 Std / 90 Micro",
+            profitSplit: "90% (Live Funded)",
+            timeLimit: "60 days/phase",
+            contracts: "9 Std / 90 Micro",
+            phasePayouts: [3000, 4500, 4500, 9000],
+          },
         ],
       },
     ],
@@ -274,16 +310,13 @@ function fmt(n: number): string {
   return `$${n.toLocaleString()}`;
 }
 
-// ─── Tier Card (dense — dollar amounts, futures phase payouts) ────────────────
+// ─── Tier Card (dense — dollar amounts, accurate futures payouts) ─────────────
 function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: boolean }) {
   const sizeNum = parseSize(tier.size);
-  const targetDollars  = tier.profitTarget !== null ? fmt(sizeNum * tier.profitTarget / 100) : null;
+  const targetDollars   = tier.profitTarget !== null ? fmt(sizeNum * tier.profitTarget / 100) : null;
   const drawdownDollars = fmt(sizeNum * tier.maxDrawdown / 100);
-  const dailyDollars   = tier.dailyDD ? fmt(sizeNum * tier.dailyDD / 100) : null;
-  // Per-phase payout for futures: 90% of 9% target each phase
-  const phasePayoutDollars = isMultiPhase && tier.profitTarget
-    ? fmt(sizeNum * (tier.profitTarget / 100) * 0.90)
-    : null;
+  const dailyDollars    = tier.dailyDD ? fmt(sizeNum * tier.dailyDD / 100) : null;
+  const totalPayout     = tier.phasePayouts ? tier.phasePayouts.reduce((a, b) => a + b, 0) : null;
 
   return (
     <motion.div
@@ -307,6 +340,22 @@ function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: b
         <p className="text-[#B8B8D0] text-[10px] mt-0.5">one-time fee</p>
       </div>
 
+      {/* Futures: phase-by-phase payout breakdown */}
+      {tier.phasePayouts && (
+        <div className="bg-green-500/8 border border-green-500/20 rounded-lg p-2.5 space-y-1">
+          {tier.phasePayouts.map((p, i) => (
+            <div key={i} className="flex justify-between text-xs">
+              <span className="text-[#B8B8D0]">Phase {i + 1} payout</span>
+              <span className={i === 3 ? "text-green-400 font-bold" : "text-white font-medium"}>${p.toLocaleString()}</span>
+            </div>
+          ))}
+          <div className="flex justify-between text-xs border-t border-green-500/20 pt-1 mt-1">
+            <span className="text-green-400 font-bold">Total earned</span>
+            <span className="text-green-400 font-bold">${totalPayout!.toLocaleString()}</span>
+          </div>
+        </div>
+      )}
+
       {/* All specs inline */}
       <div className="space-y-1.5 border-t border-white/8 pt-3">
         {targetDollars !== null ? (
@@ -321,42 +370,36 @@ function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: b
           </div>
         )}
 
-        {/* Futures phase payout highlight */}
-        {phasePayoutDollars && (
-          <div className="flex justify-between text-xs bg-green-500/10 rounded px-1.5 py-1 -mx-1.5">
-            <span className="text-green-400 font-medium">Payout / Phase</span>
-            <span className="text-green-400 font-bold">{phasePayoutDollars}</span>
-          </div>
-        )}
-
-        {isMultiPhase && (
-          <div className="flex justify-between text-xs">
-            <span className="text-[#B8B8D0]">Phases</span>
-            <span className="text-white font-medium">4 (paid each)</span>
-          </div>
-        )}
-
         <div className="flex justify-between text-xs">
-          <span className="text-[#B8B8D0]">Total Loss Limit</span>
+          <span className="text-[#B8B8D0]">{isMultiPhase ? "Max Trailing Loss (EOD)" : "Max Drawdown"}</span>
           <span className="text-white font-medium">{drawdownDollars}</span>
         </div>
+
+        {/* Only show daily loss if it applies (not for futures) */}
+        {!isMultiPhase && (
+          <div className="flex justify-between text-xs">
+            <span className="text-[#B8B8D0]">Daily Loss Limit</span>
+            <span className={dailyDollars ? "text-white font-medium" : "text-[#B8B8D0] font-medium"}>
+              {dailyDollars ?? "—"}
+            </span>
+          </div>
+        )}
+
+        {tier.contracts && (
+          <div className="flex justify-between text-xs">
+            <span className="text-[#B8B8D0]">Max Contracts</span>
+            <span className="text-white font-medium">{tier.contracts}</span>
+          </div>
+        )}
+
         <div className="flex justify-between text-xs">
-          <span className="text-[#B8B8D0]">Daily Loss Limit</span>
-          <span className={dailyDollars ? "text-white font-medium" : "text-[#B8B8D0] font-medium"}>
-            {dailyDollars ?? "—"}
-          </span>
+          <span className="text-[#B8B8D0]">{isMultiPhase ? "Time / Phase" : "Time Limit"}</span>
+          <span className="text-white font-medium">{tier.timeLimit}</span>
         </div>
-        <div className="flex justify-between text-xs">
-          <span className="text-[#B8B8D0]">Leverage</span>
-          <span className="text-white font-medium">{tier.leverage}</span>
-        </div>
+
         <div className="flex justify-between text-xs">
           <span className="text-[#B8B8D0]">Profit Split</span>
           <span className="text-green-400 font-medium">{tier.profitSplit}</span>
-        </div>
-        <div className="flex justify-between text-xs">
-          <span className="text-[#B8B8D0]">Time Limit</span>
-          <span className="text-white font-medium">{tier.timeLimit}</span>
         </div>
       </div>
 
