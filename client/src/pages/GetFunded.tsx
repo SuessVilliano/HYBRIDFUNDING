@@ -261,8 +261,30 @@ function CouponBlock() {
   );
 }
 
-// ─── Tier Card (dense — all specs visible) ────────────────────────────────────
-function TierCard({ tier }: { tier: Tier }) {
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function parseSize(size: string): number {
+  const s = size.replace(/[$,]/g, "");
+  if (s.endsWith("K")) return parseFloat(s) * 1_000;
+  if (s.endsWith("M")) return parseFloat(s) * 1_000_000;
+  return parseFloat(s);
+}
+
+function fmt(n: number): string {
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(n % 1_000 === 0 ? 0 : 1)}K`;
+  return `$${n.toLocaleString()}`;
+}
+
+// ─── Tier Card (dense — dollar amounts, futures phase payouts) ────────────────
+function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: boolean }) {
+  const sizeNum = parseSize(tier.size);
+  const targetDollars  = tier.profitTarget !== null ? fmt(sizeNum * tier.profitTarget / 100) : null;
+  const drawdownDollars = fmt(sizeNum * tier.maxDrawdown / 100);
+  const dailyDollars   = tier.dailyDD ? fmt(sizeNum * tier.dailyDD / 100) : null;
+  // Per-phase payout for futures: 90% of 9% target each phase
+  const phasePayoutDollars = isMultiPhase && tier.profitTarget
+    ? fmt(sizeNum * (tier.profitTarget / 100) * 0.90)
+    : null;
+
   return (
     <motion.div
       layout
@@ -285,35 +307,45 @@ function TierCard({ tier }: { tier: Tier }) {
         <p className="text-[#B8B8D0] text-[10px] mt-0.5">one-time fee</p>
       </div>
 
-      {/* All specs inline — no hidden rows */}
+      {/* All specs inline */}
       <div className="space-y-1.5 border-t border-white/8 pt-3">
-        {tier.profitTarget !== null && (
+        {targetDollars !== null ? (
           <div className="flex justify-between text-xs">
-            <span className="text-[#B8B8D0]">Profit Target</span>
-            <span className="text-white font-medium">{tier.profitTarget}%</span>
+            <span className="text-[#B8B8D0]">{isMultiPhase ? "Goal / Phase" : "Profit Goal"}</span>
+            <span className="text-white font-medium">{targetDollars}</span>
           </div>
-        )}
-        {tier.profitTarget === null && (
+        ) : (
           <div className="flex justify-between text-xs">
             <span className="text-[#B8B8D0]">Evaluation</span>
             <span className="text-green-400 font-medium">None</span>
           </div>
         )}
-        <div className="flex justify-between text-xs">
-          <span className="text-[#B8B8D0]">Max Drawdown</span>
-          <span className="text-white font-medium">{tier.maxDrawdown}%</span>
-        </div>
-        {tier.dailyDD ? (
-          <div className="flex justify-between text-xs">
-            <span className="text-[#B8B8D0]">Daily Loss Limit</span>
-            <span className="text-white font-medium">{tier.dailyDD}%</span>
-          </div>
-        ) : (
-          <div className="flex justify-between text-xs">
-            <span className="text-[#B8B8D0]">Daily Loss Limit</span>
-            <span className="text-[#B8B8D0] font-medium">—</span>
+
+        {/* Futures phase payout highlight */}
+        {phasePayoutDollars && (
+          <div className="flex justify-between text-xs bg-green-500/10 rounded px-1.5 py-1 -mx-1.5">
+            <span className="text-green-400 font-medium">Payout / Phase</span>
+            <span className="text-green-400 font-bold">{phasePayoutDollars}</span>
           </div>
         )}
+
+        {isMultiPhase && (
+          <div className="flex justify-between text-xs">
+            <span className="text-[#B8B8D0]">Phases</span>
+            <span className="text-white font-medium">4 (paid each)</span>
+          </div>
+        )}
+
+        <div className="flex justify-between text-xs">
+          <span className="text-[#B8B8D0]">Total Loss Limit</span>
+          <span className="text-white font-medium">{drawdownDollars}</span>
+        </div>
+        <div className="flex justify-between text-xs">
+          <span className="text-[#B8B8D0]">Daily Loss Limit</span>
+          <span className={dailyDollars ? "text-white font-medium" : "text-[#B8B8D0] font-medium"}>
+            {dailyDollars ?? "—"}
+          </span>
+        </div>
         <div className="flex justify-between text-xs">
           <span className="text-[#B8B8D0]">Leverage</span>
           <span className="text-white font-medium">{tier.leverage}</span>
@@ -344,7 +376,7 @@ function TierCard({ tier }: { tier: Tier }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function GetFunded() {
-  const [activeMarket, setActiveMarket] = useState<MarketKey>("forex");
+  const [activeMarket, setActiveMarket] = useState<MarketKey>("futures");
   const [activePlan, setActivePlan] = useState<PlanKey>("one-step");
 
   const market = MARKETS.find(m => m.key === activeMarket)!;
@@ -555,7 +587,7 @@ export default function GetFunded() {
                   {/* Tier cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                     {plan.tiers.map(tier => (
-                      <TierCard key={tier.size} tier={tier} />
+                      <TierCard key={tier.size} tier={tier} isMultiPhase={plan.key === "four-phase"} />
                     ))}
                   </div>
                 </motion.div>
