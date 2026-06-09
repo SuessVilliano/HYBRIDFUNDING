@@ -417,91 +417,117 @@ function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: b
   );
 }
 
-// ─── Live Funded Payout Rules (Futures only) ─────────────────────────────────
+// ─── Futures Full Payout Journey ─────────────────────────────────────────────
+const FUTURES_PAYOUTS = [
+  { size: "$25K",  phases: [500,  750,  750,  1500], total: 3500  },
+  { size: "$50K",  phases: [1000, 1500, 1500, 3000], total: 7000  },
+  { size: "$100K", phases: [2000, 3000, 3000, 6000], total: 14000 },
+  { size: "$150K", phases: [3000, 4500, 4500, 9000], total: 21000 },
+];
+
 function FuturesLiveRules() {
-  const [open, setOpen] = useState(false);
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="mt-6 rounded-xl border border-primary/30 bg-primary/5 overflow-hidden"
+      className="mt-8 space-y-6"
     >
-      <button
-        onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left"
-      >
-        <div className="flex items-center gap-3">
-          <span className="text-lg">💰</span>
+      {/* ── Part 1: Payout by plan ── */}
+      <div className="rounded-xl border border-accent/25 bg-accent/4 overflow-hidden">
+        <div className="px-5 py-4 border-b border-white/8 flex items-center gap-3">
+          <span className="text-xl">💰</span>
           <div>
-            <p className="font-['Orbitron'] text-sm font-bold text-white">After Phase 4: How You Get Paid</p>
-            <p className="text-[#B8B8D0] text-xs mt-0.5">Pass all 4 phases → keep requesting payouts every 5 profitable days, forever</p>
+            <p className="font-['Orbitron'] text-sm font-bold text-white">What You Earn — Phase by Phase</p>
+            <p className="text-[#B8B8D0] text-xs mt-0.5">Fixed cash payouts after completing each phase. You get paid before moving to the next one.</p>
           </div>
         </div>
-        <span className="text-accent text-xs font-bold font-['Orbitron'] shrink-0 ml-3">
-          {open ? "HIDE ▲" : "SEE HOW ▼"}
-        </span>
-      </button>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-white/8 bg-white/2">
+                <th className="text-left text-[#B8B8D0] px-4 py-3 font-medium">Plan Size</th>
+                <th className="text-center text-[#B8B8D0] px-3 py-3 font-medium">Phase 1</th>
+                <th className="text-center text-[#B8B8D0] px-3 py-3 font-medium">Phase 2</th>
+                <th className="text-center text-[#B8B8D0] px-3 py-3 font-medium">Phase 3</th>
+                <th className="text-center text-[#B8B8D0] px-3 py-3 font-medium">Phase 4</th>
+                <th className="text-center text-green-400 px-4 py-3 font-bold">Total Earned</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {FUTURES_PAYOUTS.map((row, i) => (
+                <tr key={row.size} className={i % 2 === 0 ? "bg-white/1" : ""}>
+                  <td className="px-4 py-3 font-['Orbitron'] text-white font-bold">{row.size}</td>
+                  {row.phases.map((p, pi) => (
+                    <td key={pi} className="px-3 py-3 text-center text-white font-medium">
+                      ${p.toLocaleString()}
+                    </td>
+                  ))}
+                  <td className="px-4 py-3 text-center text-green-400 font-bold font-['Orbitron']">
+                    ${row.total.toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="px-5 py-3 text-[#B8B8D0] text-[11px] border-t border-white/8">
+          Each payout must be requested and completed before advancing to the next phase. 25% consistency rule applies per phase.
+        </p>
+      </div>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 pb-6 border-t border-white/8 pt-5 space-y-4">
-
-              {/* 3-step visual flow */}
-              <div className="grid sm:grid-cols-3 gap-3">
-                {[
-                  {
-                    icon: "🎯",
-                    title: "Hit Your Daily Profit",
-                    body: "Make at least $150 profit on a trading day for it to count as a qualifying day.",
-                  },
-                  {
-                    icon: "📅",
-                    title: "Stack 5 Qualifying Days",
-                    body: "Collect 5 of those $150+ profit days. They don't need to be back-to-back.",
-                  },
-                  {
-                    icon: "💸",
-                    title: "Request Your Payout",
-                    body: "Submit your payout request. You keep 90% of the profits. Clock resets — do it again.",
-                  },
-                ].map(s => (
-                  <div key={s.title} className="flex flex-col gap-2 p-4 rounded-xl bg-white/3 border border-white/8 text-center">
-                    <span className="text-2xl">{s.icon}</span>
-                    <p className="text-white text-xs font-bold font-['Orbitron']">{s.title}</p>
-                    <p className="text-[#B8B8D0] text-xs leading-relaxed">{s.body}</p>
-                  </div>
-                ))}
+      {/* ── Part 2: The full journey ── */}
+      <div className="rounded-xl border border-primary/25 bg-primary/4 overflow-hidden">
+        <div className="px-5 py-4 border-b border-white/8 flex items-center gap-3">
+          <span className="text-xl">🚀</span>
+          <div>
+            <p className="font-['Orbitron'] text-sm font-bold text-white">Your Full Journey — Phase 1 Through Live Funded</p>
+            <p className="text-[#B8B8D0] text-xs mt-0.5">Here's exactly what happens from the moment you start to when you're getting paid on repeat.</p>
+          </div>
+        </div>
+        <div className="px-5 py-5 space-y-3">
+          {[
+            {
+              marker: "Phases 1–4",
+              color: "text-accent",
+              bg: "bg-accent/10 border-accent/20",
+              title: "Hit your profit goal. Get paid. Move up.",
+              body: "Each phase has a 9% profit target on your account size. Hit it while staying within the 5% trailing max loss and meeting the 25% consistency rule. Once you do, you request that phase's payout — the cash amounts are in the table above. Then you move to the next phase. 60 days to complete each one.",
+            },
+            {
+              marker: "Phase 4 Complete",
+              color: "text-yellow-400",
+              bg: "bg-yellow-400/8 border-yellow-400/20",
+              title: "You've graduated. Time to go live.",
+              body: "After collecting your Phase 4 payout you transition out of evaluation entirely. No more targets, no more phases. You're now trading on a Live Funded Futures account — real money, real markets, real payouts.",
+            },
+            {
+              marker: "Live Funded",
+              color: "text-green-400",
+              bg: "bg-green-500/8 border-green-500/20",
+              title: "Trade. Stack 5 profitable days. Get paid. Repeat.",
+              body: "To request a payout on your live account you need 5 qualifying profitable trading days — each day must show at least $150 in profit. The days don't need to be back-to-back. Once you have your 5 days, request your payout and keep 90% of the profits. After the payout processes, the 5-day clock resets and you start again. No cap on how many times you can request — as long as you keep hitting your days, you keep getting paid.",
+            },
+            {
+              marker: "Stay Active",
+              color: "text-[#B8B8D0]",
+              bg: "bg-white/3 border-white/10",
+              title: "One trade every 7 days keeps your account open.",
+              body: "There are no ongoing profit requirements or time limits on the live account. Just make sure you place at least one executed trade every 7 calendar days to keep your account active.",
+            },
+          ].map(step => (
+            <div key={step.marker} className={`rounded-lg border p-4 ${step.bg}`}>
+              <div className="flex items-start gap-3">
+                <span className={`font-['Orbitron'] text-[10px] font-bold ${step.color} shrink-0 mt-0.5 uppercase tracking-widest`}>
+                  {step.marker}
+                </span>
               </div>
-
-              {/* Key numbers at a glance */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                  { label: "Min profit/day to qualify", value: "$150" },
-                  { label: "Days needed to request", value: "5" },
-                  { label: "Your profit split", value: "90%" },
-                  { label: "How often you can request", value: "Every 5 days" },
-                ].map(k => (
-                  <div key={k.label} className="bg-accent/5 border border-accent/15 rounded-lg p-3 text-center">
-                    <p className="font-['Orbitron'] text-accent font-bold text-base">{k.value}</p>
-                    <p className="text-[#B8B8D0] text-[10px] mt-0.5 leading-tight">{k.label}</p>
-                  </div>
-                ))}
-              </div>
-
-              <p className="text-[#B8B8D0] text-[11px] leading-relaxed border-t border-white/8 pt-3">
-                No additional evaluation required after Phase 4. Keep trading, keep hitting your daily targets, keep requesting payouts — there's no cap on how many times you can request. Trade at least once every 7 days to keep your account active.
-              </p>
+              <p className="text-white text-xs font-bold mt-1.5 mb-1">{step.title}</p>
+              <p className="text-[#B8B8D0] text-xs leading-relaxed">{step.body}</p>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          ))}
+        </div>
+      </div>
     </motion.div>
   );
 }
