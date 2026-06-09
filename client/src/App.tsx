@@ -12,6 +12,7 @@ import { AnimatePresence } from "framer-motion";
 import { trackEvent } from "./lib/analytics";
 
 // Route-level code splitting — each page becomes its own chunk
+const GetFunded = lazy(() => import("@/pages/GetFunded"));
 const Home = lazy(() => import("@/pages/Home"));
 const Challenges = lazy(() => import("@/pages/Challenges"));
 const About = lazy(() => import("@/pages/About"));
@@ -90,7 +91,17 @@ function App() {
       <TooltipProvider>
         <CyberpunkLoadingScreen isLoading={isInitialLoading} />
         <Router>
-          <AppRouter />
+          {/* Landing pages — no navbar, no exit popups, conversion-only */}
+          <Switch>
+            <Route path="/get-funded">
+              <Suspense fallback={<div className="min-h-screen bg-[#0F0F1A]" />}>
+                <GetFunded />
+              </Suspense>
+            </Route>
+            <Route>
+              <AppRouter />
+            </Route>
+          </Switch>
         </Router>
         <Toaster />
       </TooltipProvider>
