@@ -417,14 +417,7 @@ function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: b
   );
 }
 
-// ─── Live Funded Rules (Futures only) ────────────────────────────────────────
-const LIVE_FUNDED_TIERS = [
-  { label: "$25K Plan", liveBalance: "$3,000", maxLoss: "$1,500", minDayProfit: "$150", payoutCap: "$1,000", payoutFreq: "Every 5 profitable days" },
-  { label: "$50K Plan", liveBalance: "$6,000", maxLoss: "$3,000", minDayProfit: "$150", payoutCap: "$2,000", payoutFreq: "Every 5 profitable days" },
-  { label: "$100K Plan", liveBalance: "$12,000", maxLoss: "$6,000", minDayProfit: "$150", payoutCap: "$4,000", payoutFreq: "Every 5 profitable days" },
-  { label: "$150K Plan", liveBalance: "$18,000", maxLoss: "$9,000", minDayProfit: "$150", payoutCap: "$6,000", payoutFreq: "Every 5 profitable days" },
-];
-
+// ─── Live Funded Payout Rules (Futures only) ─────────────────────────────────
 function FuturesLiveRules() {
   const [open, setOpen] = useState(false);
   return (
@@ -434,20 +427,19 @@ function FuturesLiveRules() {
       transition={{ duration: 0.3 }}
       className="mt-6 rounded-xl border border-primary/30 bg-primary/5 overflow-hidden"
     >
-      {/* Header — always visible */}
       <button
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center justify-between px-5 py-4 text-left"
       >
         <div className="flex items-center gap-3">
-          <span className="text-lg">🏆</span>
+          <span className="text-lg">💰</span>
           <div>
-            <p className="font-['Orbitron'] text-sm font-bold text-white">After Phase 4: Live Funded Account</p>
-            <p className="text-[#B8B8D0] text-xs mt-0.5">Complete all 4 phases → graduate to real live trading with ongoing 90% payouts</p>
+            <p className="font-['Orbitron'] text-sm font-bold text-white">After Phase 4: How You Get Paid</p>
+            <p className="text-[#B8B8D0] text-xs mt-0.5">Pass all 4 phases → keep requesting payouts every 5 profitable days, forever</p>
           </div>
         </div>
         <span className="text-accent text-xs font-bold font-['Orbitron'] shrink-0 ml-3">
-          {open ? "HIDE ▲" : "SEE HOW IT WORKS ▼"}
+          {open ? "HIDE ▲" : "SEE HOW ▼"}
         </span>
       </button>
 
@@ -459,86 +451,53 @@ function FuturesLiveRules() {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-6 space-y-6 border-t border-white/8 pt-4">
+            <div className="px-5 pb-6 border-t border-white/8 pt-5 space-y-4">
 
-              {/* Plain English explanation */}
-              <div className="space-y-3">
-                <p className="text-white text-sm font-semibold font-['Orbitron']">In plain English — here's how payouts work after you pass:</p>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {[
-                    {
-                      step: "01",
-                      title: "Finish Phase 4",
-                      body: "Hit your profit goal in all 4 phases while staying within the 5% trailing max loss. Once Phase 4 is complete and your payout is processed, you graduate.",
-                    },
-                    {
-                      step: "02",
-                      title: "Get a Live Funded Account",
-                      body: "You're assigned a real live trading account. The starting balance is smaller than your eval size — this is the capital you're actually trading.",
-                    },
-                    {
-                      step: "03",
-                      title: "Stack 5 Profitable Days",
-                      body: "To request a payout, you need 5 profitable trading days — each day must clear at least $150 in profit. Days don't have to be consecutive.",
-                    },
-                    {
-                      step: "04",
-                      title: "Request Your Payout",
-                      body: "Once you hit 5 qualifying days, request your payout. There's a cap per request based on your account size. You keep 90% of everything.",
-                    },
-                    {
-                      step: "05",
-                      title: "Repeat Every 5 Days",
-                      body: "After each payout, the 5-day clock resets. Keep trading, keep stacking days, keep getting paid — no additional evaluation required.",
-                    },
-                    {
-                      step: "06",
-                      title: "Stay Active",
-                      body: "Place at least one trade every 7 days to keep your account active. No time pressure beyond that — trade at your own pace.",
-                    },
-                  ].map(s => (
-                    <div key={s.step} className="flex gap-3 p-3 rounded-lg bg-white/3 border border-white/6">
-                      <span className="font-['Orbitron'] text-accent font-bold text-xs shrink-0 mt-0.5">{s.step}</span>
-                      <div>
-                        <p className="text-white text-xs font-bold mb-1">{s.title}</p>
-                        <p className="text-[#B8B8D0] text-xs leading-relaxed">{s.body}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              {/* 3-step visual flow */}
+              <div className="grid sm:grid-cols-3 gap-3">
+                {[
+                  {
+                    icon: "🎯",
+                    title: "Hit Your Daily Profit",
+                    body: "Make at least $150 profit on a trading day for it to count as a qualifying day.",
+                  },
+                  {
+                    icon: "📅",
+                    title: "Stack 5 Qualifying Days",
+                    body: "Collect 5 of those $150+ profit days. They don't need to be back-to-back.",
+                  },
+                  {
+                    icon: "💸",
+                    title: "Request Your Payout",
+                    body: "Submit your payout request. You keep 90% of the profits. Clock resets — do it again.",
+                  },
+                ].map(s => (
+                  <div key={s.title} className="flex flex-col gap-2 p-4 rounded-xl bg-white/3 border border-white/8 text-center">
+                    <span className="text-2xl">{s.icon}</span>
+                    <p className="text-white text-xs font-bold font-['Orbitron']">{s.title}</p>
+                    <p className="text-[#B8B8D0] text-xs leading-relaxed">{s.body}</p>
+                  </div>
+                ))}
               </div>
 
-              {/* Per-plan live funded breakdown */}
-              <div>
-                <p className="text-white text-sm font-semibold font-['Orbitron'] mb-3">Live Funded Account Details by Plan</p>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs">
-                    <thead>
-                      <tr className="border-b border-white/10">
-                        <th className="text-left text-[#B8B8D0] pb-2 pr-4 font-medium">Plan</th>
-                        <th className="text-right text-[#B8B8D0] pb-2 pr-4 font-medium">Live Balance</th>
-                        <th className="text-right text-[#B8B8D0] pb-2 pr-4 font-medium">Max Loss</th>
-                        <th className="text-right text-[#B8B8D0] pb-2 pr-4 font-medium">Min/Day</th>
-                        <th className="text-right text-[#B8B8D0] pb-2 font-medium">Max Payout</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {LIVE_FUNDED_TIERS.map(t => (
-                        <tr key={t.label}>
-                          <td className="py-2 pr-4 text-white font-medium">{t.label}</td>
-                          <td className="py-2 pr-4 text-right text-white">{t.liveBalance}</td>
-                          <td className="py-2 pr-4 text-right text-white">{t.maxLoss}</td>
-                          <td className="py-2 pr-4 text-right text-accent font-bold">{t.minDayProfit}</td>
-                          <td className="py-2 text-right text-green-400 font-bold">{t.payoutCap}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="text-[#B8B8D0] text-[11px] mt-3 leading-relaxed">
-                  * Payout requests available every 5 qualifying profitable days ($150+ per day). 90% profit split on all payouts. Market data and platform fees deducted from account balance once live. Max loss is static at this stage — no trailing.
-                </p>
+              {/* Key numbers at a glance */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { label: "Min profit/day to qualify", value: "$150" },
+                  { label: "Days needed to request", value: "5" },
+                  { label: "Your profit split", value: "90%" },
+                  { label: "How often you can request", value: "Every 5 days" },
+                ].map(k => (
+                  <div key={k.label} className="bg-accent/5 border border-accent/15 rounded-lg p-3 text-center">
+                    <p className="font-['Orbitron'] text-accent font-bold text-base">{k.value}</p>
+                    <p className="text-[#B8B8D0] text-[10px] mt-0.5 leading-tight">{k.label}</p>
+                  </div>
+                ))}
               </div>
+
+              <p className="text-[#B8B8D0] text-[11px] leading-relaxed border-t border-white/8 pt-3">
+                No additional evaluation required after Phase 4. Keep trading, keep hitting your daily targets, keep requesting payouts — there's no cap on how many times you can request. Trade at least once every 7 days to keep your account active.
+              </p>
             </div>
           </motion.div>
         )}
