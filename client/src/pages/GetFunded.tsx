@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 import TrustpilotWidget from "@/components/TrustpilotWidget";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { trackEvent } from "@/lib/analytics";
 import {
   CheckCircle, ArrowRight,
@@ -667,6 +668,9 @@ export default function GetFunded() {
           </motion.div>
         </div>
       </section>
+
+      {/* ── Exit Intent Popup ── */}
+      <ExitIntentPopup />
 
       {/* ── Footer ── */}
       <footer className="py-10 bg-[#0F0F1A]/90 border-t border-white/5">
