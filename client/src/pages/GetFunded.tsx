@@ -336,8 +336,14 @@ function TierCard({ tier, isMultiPhase = false }: { tier: Tier; isMultiPhase?: b
       {/* Price header */}
       <div>
         <p className="font-['Orbitron'] text-lg font-bold text-white">{tier.size}</p>
-        <p className="text-accent text-2xl font-bold leading-none mt-0.5">${tier.price}</p>
-        <p className="text-[#B8B8D0] text-[10px] mt-0.5">one-time fee</p>
+        <div className="flex items-baseline gap-2 mt-0.5">
+          <span className="text-[#B8B8D0] text-sm line-through">${tier.price}</span>
+          <span className="text-accent text-2xl font-bold leading-none">${Math.round(tier.price * 0.8)}</span>
+        </div>
+        <div className="flex items-center gap-1.5 mt-1">
+          <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-0.5 rounded-full">20% OFF</span>
+          <span className="text-[#B8B8D0] text-[10px]">one-time fee</span>
+        </div>
       </div>
 
       {/* Futures: phase-by-phase payout breakdown */}
