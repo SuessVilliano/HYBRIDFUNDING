@@ -6,10 +6,10 @@ import TrustpilotWidget from "@/components/TrustpilotWidget";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { trackEvent } from "@/lib/analytics";
 import {
-  CheckCircle, ArrowRight,
-  Star, Users, TrendingUp, Zap, Info, Copy, Check,
+  CheckCircle, ArrowRight, ChevronDown, ChevronUp,
+  Star, Users, TrendingUp, Zap, Info, Copy, Check, Clock, X,
 } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type MarketKey = "forex" | "crypto" | "futures" | "equities";
@@ -267,9 +267,170 @@ const STEPS = [
   { num: "05", title: "Trade & Get Paid",     desc: "Keep up to 90% of profits. Request payouts on demand, scale your account." },
 ];
 
+// ─── Countdown Timer hook ─────────────────────────────────────────────────────
+function useCountdown() {
+  const getOrSetExpiry = () => {
+    if (typeof window === "undefined") return Date.now() + 72 * 3_600_000;
+    let expiry = parseInt(sessionStorage.getItem("unity20_expiry") || "0", 10);
+    if (!expiry || expiry < Date.now()) {
+      expiry = Date.now() + 72 * 3_600_000;
+      sessionStorage.setItem("unity20_expiry", String(expiry));
+    }
+    return expiry;
+  };
+  const [left, setLeft] = useState(() => Math.max(0, getOrSetExpiry() - Date.now()));
+  useEffect(() => {
+    const id = setInterval(() => {
+      const remaining = Math.max(0, getOrSetExpiry() - Date.now());
+      setLeft(remaining);
+      if (remaining === 0) sessionStorage.removeItem("unity20_expiry");
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return {
+    h: pad(Math.floor(left / 3_600_000)),
+    m: pad(Math.floor((left % 3_600_000) / 60_000)),
+    s: pad(Math.floor((left % 60_000) / 1_000)),
+  };
+}
+
+// ─── Recently Funded data + ticker ───────────────────────────────────────────
+const RECENT_FUNDED = [
+  { name: "Marcus T.", city: "Atlanta, GA",      plan: "$50K Futures" },
+  { name: "Darius W.", city: "Houston, TX",      plan: "$25K Forex 1-Step" },
+  { name: "Kezia M.",  city: "Chicago, IL",      plan: "$100K Futures" },
+  { name: "Jordan P.", city: "Miami, FL",        plan: "$50K Forex 2-Step" },
+  { name: "Brianna L.",city: "Los Angeles, CA",  plan: "$25K Futures" },
+  { name: "Anthony R.",city: "Dallas, TX",       plan: "$100K Forex 1-Step" },
+  { name: "Simone K.", city: "New York, NY",     plan: "$150K Futures" },
+  { name: "Devon H.",  city: "Phoenix, AZ",      plan: "$50K Crypto 1-Step" },
+  { name: "Aaliyah J.",city: "Detroit, MI",      plan: "$25K Forex 1-Step" },
+  { name: "Malik C.",  city: "Charlotte, NC",    plan: "$100K Futures" },
+  { name: "Tiana B.",  city: "Atlanta, GA",      plan: "$50K Futures" },
+  { name: "Carlos V.", city: "San Antonio, TX",  plan: "$25K Crypto 2-Step" },
+  { name: "Yemi A.",   city: "Baltimore, MD",    plan: "$50K Forex 1-Step" },
+  { name: "Rashida P.",city: "Memphis, TN",      plan: "$100K Futures" },
+  { name: "Tyler S.",  city: "Denver, CO",       plan: "$25K Forex 3-Step" },
+];
+
+function RecentlyFunded() {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setIdx(i => (i + 1) % RECENT_FUNDED.length), 3200);
+    return () => clearInterval(id);
+  }, []);
+  const entry = RECENT_FUNDED[idx];
+  return (
+    <div className="flex items-center justify-center gap-2 py-2.5 px-4 bg-green-500/8 border border-green-500/20 rounded-full max-w-md mx-auto overflow-hidden">
+      <span className="w-2 h-2 bg-green-400 rounded-full shrink-0 animate-pulse" />
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={idx}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.3 }}
+          className="text-xs text-[#B8B8D0] whitespace-nowrap"
+        >
+          <span className="text-green-400 font-bold">{entry.name}</span> from {entry.city} just got funded —{" "}
+          <span className="text-white font-medium">{entry.plan}</span>
+        </motion.p>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ─── FAQ Accordion ────────────────────────────────────────────────────────────
+const FAQ_ITEMS = [
+  {
+    q: "What if I fail the evaluation?",
+    a: "You can purchase a new account and try again. There are no limits on how many times you can attempt. Many funded traders passed on their second or third try.",
+  },
+  {
+    q: "How fast are payouts processed?",
+    a: "Payout requests are typically processed within 1–7 business days. For Futures Phase payouts, you must request before advancing to the next phase.",
+  },
+  {
+    q: "Do I need prior trading experience?",
+    a: "No requirement — but you do need to understand basic risk management. The evaluation is designed to confirm you can trade consistently, not just get lucky.",
+  },
+  {
+    q: "Is my evaluation fee refundable if I pass?",
+    a: "The evaluation fee is non-refundable, but your first payout will cover it and then some — a $25K Futures Phase 1 payout alone is $500.",
+  },
+  {
+    q: "What is the consistency requirement?",
+    a: "Your best single trading day cannot account for more than 25% of your total profits. This prevents passing on one lucky trade. It means you need at least 4 solid trading days to hit your goal cleanly.",
+  },
+  {
+    q: "Can I use automated trading strategies?",
+    a: "Yes — automated strategies are permitted as long as they don't violate our prohibited trading policy (no latency exploitation, no copy-trading between accounts, no gambling-style oversizing).",
+  },
+  {
+    q: "Can I trade news events?",
+    a: "Yes. Our Futures program does not prohibit news trading, but you trade at your own risk during high-volatility events. Manage your size accordingly.",
+  },
+  {
+    q: "How many accounts can I hold at once?",
+    a: "You can hold one account per size tier simultaneously — up to four total ($25K, $50K, $100K, $150K). Combined starting balances cannot exceed $325,000.",
+  },
+];
+
+function FAQAccordion() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  return (
+    <section className="py-16 bg-[#0B1426]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+        <div className="text-center mb-10">
+          <h2 className="font-['Orbitron'] text-2xl font-bold text-white mb-2">
+            Common <span className="text-accent neon-text-accent">Questions</span>
+          </h2>
+          <p className="text-[#B8B8D0] text-sm">Everything you need to know before you start.</p>
+        </div>
+        <div className="space-y-2">
+          {FAQ_ITEMS.map((item, i) => (
+            <motion.div
+              key={i}
+              initial={false}
+              className={`rounded-xl border overflow-hidden transition-colors ${
+                openIdx === i ? "border-accent/40 bg-accent/4" : "border-white/8 bg-white/2 hover:border-white/15"
+              }`}
+            >
+              <button
+                onClick={() => setOpenIdx(openIdx === i ? null : i)}
+                className="w-full flex items-center justify-between px-5 py-4 text-left gap-4"
+              >
+                <span className="text-white text-sm font-medium">{item.q}</span>
+                <span className="shrink-0 text-accent">
+                  {openIdx === i ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </span>
+              </button>
+              <AnimatePresence initial={false}>
+                {openIdx === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
+                  >
+                    <p className="px-5 pb-4 text-[#B8B8D0] text-sm leading-relaxed border-t border-white/8 pt-3">{item.a}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Coupon Copy Block ────────────────────────────────────────────────────────
 function CouponBlock() {
   const [copied, setCopied] = useState(false);
+  const { h, m, s } = useCountdown();
   const copy = useCallback(() => {
     navigator.clipboard.writeText("UNITY20").then(() => {
       setCopied(true);
@@ -278,21 +439,31 @@ function CouponBlock() {
     });
   }, []);
   return (
-    <div className="flex items-center justify-between gap-3 bg-accent/8 border border-accent/30 rounded-xl px-5 py-4 max-w-sm mx-auto">
-      <div>
-        <p className="text-[#B8B8D0] text-[10px] uppercase tracking-widest font-bold mb-0.5">Best deal — use code</p>
-        <p className="font-['Orbitron'] text-xl font-bold text-accent tracking-widest">UNITY20</p>
+    <div className="bg-accent/8 border border-accent/30 rounded-xl px-5 py-4 max-w-sm mx-auto space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-[#B8B8D0] text-[10px] uppercase tracking-widest font-bold mb-0.5">Best deal — use code</p>
+          <p className="font-['Orbitron'] text-xl font-bold text-accent tracking-widest">UNITY20</p>
+        </div>
+        <button
+          onClick={copy}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-bold text-xs transition-all font-['Orbitron'] ${
+            copied
+              ? "bg-green-500/20 border border-green-500/40 text-green-400"
+              : "bg-accent/15 border border-accent/30 text-accent hover:bg-accent hover:text-[#0F0F1A]"
+          }`}
+        >
+          {copied ? <><Check className="h-3.5 w-3.5" /> COPIED</> : <><Copy className="h-3.5 w-3.5" /> COPY</>}
+        </button>
       </div>
-      <button
-        onClick={copy}
-        className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-bold text-xs transition-all font-['Orbitron'] ${
-          copied
-            ? "bg-green-500/20 border border-green-500/40 text-green-400"
-            : "bg-accent/15 border border-accent/30 text-accent hover:bg-accent hover:text-[#0F0F1A]"
-        }`}
-      >
-        {copied ? <><Check className="h-3.5 w-3.5" /> COPIED</> : <><Copy className="h-3.5 w-3.5" /> COPY</>}
-      </button>
+      {/* Countdown */}
+      <div className="flex items-center gap-2 justify-center">
+        <Clock className="h-3 w-3 text-orange-400 shrink-0" />
+        <span className="text-[#B8B8D0] text-[10px] uppercase tracking-widest">Offer expires in</span>
+        <span className="font-['Orbitron'] text-orange-400 text-sm font-bold tracking-wider tabular-nums">
+          {h}:{m}:{s}
+        </span>
+      </div>
     </div>
   );
 }
@@ -581,10 +752,64 @@ function FuturesLiveRules() {
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
+interface Selection {
+  marketLabel: string;
+  planLabel: string;
+  tierSize: string;
+  discountedPrice: number;
+}
+
+function StickySelectionBar({ selection, onClear }: { selection: Selection | null; onClear: () => void }) {
+  return (
+    <AnimatePresence>
+      {selection && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 340, damping: 32 }}
+          className="fixed bottom-0 left-0 right-0 z-50 bg-[#0F0F1A]/96 backdrop-blur border-t border-accent/30 shadow-[0_-4px_40px_rgba(0,255,255,0.12)]"
+        >
+          <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="w-2 h-2 bg-accent rounded-full shrink-0 animate-pulse" />
+              <div className="min-w-0">
+                <p className="text-white text-sm font-bold truncate">
+                  {selection.tierSize} — {selection.marketLabel} {selection.planLabel}
+                </p>
+                <p className="text-accent text-xs font-['Orbitron'] font-bold">
+                  ${selection.discountedPrice} <span className="text-green-400">with UNITY20</span>
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <a
+                href="#get-started"
+                onClick={() => trackEvent("lp_sticky_bar_cta")}
+                className="font-['Orbitron'] text-xs font-bold px-5 py-2.5 rounded-full bg-accent text-[#0F0F1A] hover:bg-accent/90 transition-all shadow-glow-accent"
+              >
+                GET STARTED →
+              </a>
+              <button
+                onClick={onClear}
+                className="text-[#B8B8D0] hover:text-white p-1.5 rounded-full hover:bg-white/8 transition-colors"
+                aria-label="Dismiss"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function GetFunded() {
   const [activeMarket, setActiveMarket] = useState<MarketKey>("futures");
   const [activePlan, setActivePlan] = useState<PlanKey>("one-step");
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
+  const [selection, setSelection] = useState<Selection | null>(null);
 
   const market = MARKETS.find(m => m.key === activeMarket)!;
   const plan = market.plans.find(p => p.key === activePlan) ?? market.plans[0];
@@ -593,10 +818,12 @@ export default function GetFunded() {
   useEffect(() => {
     setActivePlan(market.plans[0].key);
     setSelectedTier(null);
+    setSelection(null);
   }, [activeMarket]);
 
   useEffect(() => {
     setSelectedTier(null);
+    setSelection(null);
   }, [activePlan]);
 
   useEffect(() => {
@@ -634,12 +861,12 @@ export default function GetFunded() {
               PROP FUNDING — FOREX · CRYPTO · FUTURES · EQUITIES
             </span>
             <h1 className="font-['Orbitron'] text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 max-w-4xl mx-auto">
-              Get Funded.<br />
-              <span className="text-primary neon-text-primary">Trade Capital.</span>{" "}
-              <span className="text-accent neon-text-accent">Keep 90%.</span>
+              Prove Your Edge.<br />
+              <span className="text-accent neon-text-accent">Get Funded.</span>{" "}
+              <span className="text-primary neon-text-primary">Keep 90%.</span>
             </h1>
             <p className="text-[#B8B8D0] text-lg sm:text-xl max-w-2xl mx-auto mb-8">
-              Pass a simple evaluation or get instant funding — trade Hybrid Funding's capital across 4 markets on 5 platforms, starting at just $48.
+              Trade real capital across Forex, Crypto, Futures & Equities. Pass one evaluation — or skip it entirely with Instant Funding. Starting at $48.
             </p>
             <div className="flex flex-wrap gap-4 justify-center mb-8">
               <a href="#choose-program" onClick={() => trackEvent("lp_hero_primary_cta")}>
@@ -676,6 +903,11 @@ export default function GetFunded() {
           </div>
         </div>
       </section>
+
+      {/* ── Recently funded ticker ── */}
+      <div className="py-4 bg-[#0B1426] border-b border-white/5">
+        <RecentlyFunded />
+      </div>
 
       {/* ── 5-Step Journey ── */}
       <section id="how-it-works" className="py-20 bg-[#0B1426]">
@@ -810,7 +1042,16 @@ export default function GetFunded() {
                         tier={tier}
                         isMultiPhase={plan.key === "four-phase"}
                         isSelected={selectedTier === `${activeMarket}-${activePlan}-${tier.size}`}
-                        onSelect={() => setSelectedTier(`${activeMarket}-${activePlan}-${tier.size}`)}
+                        onSelect={() => {
+                          setSelectedTier(`${activeMarket}-${activePlan}-${tier.size}`);
+                          setSelection({
+                            marketLabel: market.label,
+                            planLabel: plan.label,
+                            tierSize: tier.size,
+                            discountedPrice: Math.round(tier.price * 0.8),
+                          });
+                          trackEvent("lp_tier_click", { market: activeMarket, plan: activePlan, size: tier.size });
+                        }}
                       />
                     ))}
                   </motion.div>
@@ -894,6 +1135,9 @@ export default function GetFunded() {
         </div>
       </section>
 
+      {/* ── FAQ ── */}
+      <FAQAccordion />
+
       {/* ── Opt-In Form ── */}
       <section id="get-started" className="py-20 bg-gradient-to-b from-[#0B1426] to-[#1A1A2E]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-xl">
@@ -932,6 +1176,9 @@ export default function GetFunded() {
 
       {/* ── Exit Intent Popup ── */}
       <ExitIntentPopup />
+
+      {/* ── Sticky Selection Bar ── */}
+      <StickySelectionBar selection={selection} onClear={() => { setSelection(null); setSelectedTier(null); }} />
 
       {/* ── Footer ── */}
       <footer className="py-10 bg-[#0F0F1A]/90 border-t border-white/5">
