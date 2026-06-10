@@ -13,9 +13,9 @@ import {
   CheckCircle, ArrowRight, ChevronDown, ChevronUp,
   Star, Users, TrendingUp, Zap, Info, Copy, Check, Clock, X,
   Calendar, BarChart3, DollarSign, BookOpen, Newspaper,
-  Trophy, Crown, Target, Shield, Wallet,
+  Trophy, Crown,
 } from "lucide-react";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type MarketKey = "forex" | "crypto" | "futures" | "equities";
@@ -259,7 +259,7 @@ const PLATFORMS = [
 ];
 
 const TRUST = [
-  { icon: Users,      stat: "500+", label: "Funded Traders" },
+  { icon: Users,      stat: "10K+", label: "Funded Traders" },
   { icon: TrendingUp, stat: "90%",  label: "Max Profit Split" },
   { icon: Star,       stat: "$48",  label: "Starting at" },
   { icon: Zap,        stat: "4",    label: "Asset Classes" },

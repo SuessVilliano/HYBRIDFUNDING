@@ -13,7 +13,7 @@ import { trackEvent } from "./lib/analytics";
 
 // Route-level code splitting — each page becomes its own chunk
 const GetFunded = lazy(() => import("@/pages/GetFunded"));
-const Home = lazy(() => import("@/pages/Home"));
+// Home is no longer used — homepage now served by GetFunded
 const Challenges = lazy(() => import("@/pages/Challenges"));
 const About = lazy(() => import("@/pages/About"));
 const Affiliate = lazy(() => import("@/pages/Affiliate"));
@@ -47,7 +47,6 @@ function AppRouter() {
       <Suspense fallback={<div className="min-h-screen" />}>
         <AnimatePresence mode="wait">
           <Switch>
-            <Route path="/" component={() => <PageTransition><Home /></PageTransition>} />
             <Route path="/challenges" component={() => <PageTransition><Challenges /></PageTransition>} />
             <Route path="/about" component={() => <PageTransition><About /></PageTransition>} />
             <Route path="/affiliate" component={() => <PageTransition><Affiliate /></PageTransition>} />
