@@ -98,6 +98,12 @@ function App() {
                 <GetFunded />
               </Suspense>
             </Route>
+            {/* Homepage now uses the GetFunded conversion page (no navbar) */}
+            <Route path="/">
+              <Suspense fallback={<div className="min-h-screen bg-[#0F0F1A]" />}>
+                <GetFunded />
+              </Suspense>
+            </Route>
             <Route>
               <AppRouter />
             </Route>

@@ -4,10 +4,16 @@ import { Button } from "@/components/ui/button";
 import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 import TrustpilotWidget from "@/components/TrustpilotWidget";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
+import SocialProof from "@/components/SocialProof";
+import FeatureCard from "@/components/FeatureCard";
+import SEO from "@/components/SEO";
+import { organizationSchema, websiteSchema } from "@/lib/jsonLd";
 import { trackEvent } from "@/lib/analytics";
 import {
   CheckCircle, ArrowRight, ChevronDown, ChevronUp,
   Star, Users, TrendingUp, Zap, Info, Copy, Check, Clock, X,
+  Calendar, BarChart3, DollarSign, BookOpen, Newspaper,
+  Trophy, Crown, Target, Shield, Wallet,
 } from "lucide-react";
 import { useEffect, useState, useCallback, useRef } from "react";
 
@@ -997,6 +1003,12 @@ export default function GetFunded() {
 
   return (
     <div className="min-h-screen bg-[#0F0F1A] text-white">
+      <SEO
+        title="Hybrid Funding — Get Funded for Forex, Crypto, Futures & Single Session Equities"
+        description="Hybrid Funding is a modern prop firm. Pass our evaluation, trade firm capital, and keep up to 90% of your profits across Forex, Crypto, Futures and Single Session Equities."
+        path="/"
+        jsonLd={[organizationSchema, websiteSchema]}
+      />
 
       {/* ── Minimal sticky header ── */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0F0F1A]/95 backdrop-blur-sm">
@@ -1070,6 +1082,9 @@ export default function GetFunded() {
       <div className="py-4 bg-[#0B1426] border-b border-white/5">
         <RecentlyFunded />
       </div>
+
+      {/* ── Social Proof ── */}
+      <SocialProof />
 
       {/* ── 5-Step Journey ── */}
       <section id="how-it-works" className="py-20 bg-[#0B1426]">
@@ -1265,6 +1280,66 @@ export default function GetFunded() {
         </div>
       </section>
 
+      {/* ── Trading Tools ── */}
+      <section className="py-20 bg-[#0F0F1A]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <h2 className="font-['Orbitron'] text-3xl md:text-4xl font-bold text-white mb-4">
+              Built-In Tools to Help You <span className="text-primary neon-text-primary">Win</span>
+            </h2>
+            <p className="text-[#B8B8D0] max-w-3xl mx-auto mb-8">
+              Every trader gains access to professional-grade tools built directly into your trading experience — so you can focus on execution, not admin.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {[
+              { icon: Calendar,   color: "text-accent",   title: "Real-Time Economic Calendar",   desc: "Stay ahead of market-moving events with trade-impacting alerts and economic data releases." },
+              { icon: BarChart3,  color: "text-primary",  title: "Performance Dashboards",          desc: "Track your P&L, drawdown, win rate, and consistency metrics in real-time with detailed analytics." },
+              { icon: DollarSign, color: "text-accent",   title: "Live Drawdown Tracker",           desc: "Always know exactly where your trailing max drawdown sits — never breach by surprise." },
+              { icon: BookOpen,   color: "text-primary",  title: "Trade Journal & Replay",          desc: "Auto-capture every trade with chart context, tags, and notes. Review what worked and what didn't." },
+              { icon: Newspaper,  color: "text-accent",   title: "AI Trade Insights",               desc: "Pattern detection, consistency scoring, and personalized coaching from our AI trade agent." },
+              { icon: Zap,        color: "text-primary",  title: "Multi-Platform Access",           desc: "Trade on MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, and GooeyPro." },
+            ].map((t, i) => {
+              const Icon = t.icon;
+              return (
+                <motion.div
+                  key={t.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.06 }}
+                  className="glassmorphism rounded-xl p-6"
+                >
+                  <Icon className={`h-10 w-10 ${t.color} mb-3`} />
+                  <h3 className="text-white font-bold mb-2">{t.title}</h3>
+                  <p className="text-[#B8B8D0] text-sm">{t.desc}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <div className="text-center flex flex-wrap items-center justify-center gap-4">
+            <a href="#choose-program">
+              <Button variant="neon-filled" size="lg" rounded="full" className="font-['Orbitron'] font-semibold">
+                Start a Challenge
+              </Button>
+            </a>
+            <Link href="/playbook">
+              <Button variant="neon" size="lg" rounded="full" className="font-['Orbitron'] font-semibold">
+                Get the Free Playbook
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── Why Hybrid Funding ── */}
       <section className="py-16 bg-[#0F0F1A]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
@@ -1294,6 +1369,102 @@ export default function GetFunded() {
                 <span className="text-[#B8B8D0] text-sm">{item}</span>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TradeHouse Battles ── */}
+      <section className="py-20 bg-gradient-to-r from-primary/20 via-[#1A1A2E] to-accent/20 relative overflow-hidden">
+        <div className="absolute inset-0 grid-pattern opacity-10" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="w-full lg:w-1/2"
+            >
+              <div className="flex items-center mb-4">
+                <Crown className="h-8 w-8 text-accent mr-3" />
+                <span className="text-accent font-['Orbitron'] font-bold text-sm tracking-wider">NEW FEATURE</span>
+              </div>
+              <h2 className="font-['Orbitron'] text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+                <span className="text-white">Enter the </span>
+                <span className="text-primary neon-text-primary">Battle</span><br />
+                <span className="text-accent neon-text-accent">Arena</span>
+              </h2>
+              <p className="text-[#B8B8D0] text-lg mb-6">
+                Compete against traders worldwide in real-time tournaments. Climb leaderboards, win exclusive prizes, and earn funded accounts worth up to $100,000+. Every battle is your shot at proving you're elite.
+              </p>
+              <div className="flex flex-wrap items-center gap-6 mb-8">
+                <div className="flex items-center gap-2"><Trophy className="h-5 w-5 text-primary" /><span className="text-white text-sm">Live Tournaments</span></div>
+                <div className="flex items-center gap-2"><Star className="h-5 w-5 text-accent" /><span className="text-white text-sm">Exclusive Rewards</span></div>
+                <div className="flex items-center gap-2"><Users className="h-5 w-5 text-primary" /><span className="text-white text-sm">Global Leaderboards</span></div>
+              </div>
+              <Link href="/battles">
+                <Button variant="neon-filled" size="xl" rounded="full" className="font-['Orbitron'] shadow-glow-accent">
+                  <Trophy className="mr-2 h-5 w-5" /> JOIN THE BATTLE
+                </Button>
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="w-full lg:w-1/2"
+            >
+              <div className="glassmorphism rounded-xl p-6">
+                <div className="bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg p-4 mb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-white font-['Orbitron'] font-bold">LIVE BATTLE</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+                      <span className="text-accent text-sm">LIVE</span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-black/30 rounded p-3 text-center">
+                      <p className="text-accent text-xs mb-1">TOP TRADER</p>
+                      <p className="text-white font-bold">+$12,500</p>
+                      <p className="text-[#B8B8D0] text-xs">Alex_Trader</p>
+                    </div>
+                    <div className="bg-black/30 rounded p-3 text-center">
+                      <p className="text-primary text-xs mb-1">PRIZE POOL</p>
+                      <p className="text-white font-bold">$50K Fund</p>
+                      <p className="text-[#B8B8D0] text-xs">147 Traders</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center gap-6 text-sm">
+                  <div className="flex items-center gap-2"><Trophy className="h-4 w-4 text-accent" /><span className="text-white">24 Active Battles</span></div>
+                  <div className="h-4 w-px bg-white/20" />
+                  <div className="flex items-center gap-2"><Crown className="h-4 w-4 text-primary" /><span className="text-white">Elite Rewards</span></div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Features Summary ── */}
+      <section className="py-20 bg-[#1A1A2E]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="font-['Orbitron'] text-3xl md:text-4xl font-bold text-white mb-4">
+              Our Platform <span className="text-accent neon-text-accent">Features</span>
+            </h2>
+            <p className="text-[#B8B8D0] max-w-2xl mx-auto">
+              Experience the next generation of prop trading with our innovative platform features designed for trader success.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <FeatureCard icon={Zap}         title="Fast Funding"            description="Pass our challenge and get funded quickly with no delays or complicated processes."        delay={0} />
+            <FeatureCard icon={CheckCircle} title="Fair Rules"              description="Our evaluation rules are designed to be fair and achievable for disciplined traders."       delay={1} />
+            <FeatureCard icon={Users}       title="Affiliate Opportunities" description="Earn significant commissions by referring new traders to our platform."                    delay={2} />
+            <FeatureCard icon={DollarSign}  title="Community Empowerment"  description="Join a supportive community of traders on the path to financial freedom."                  delay={3} />
           </div>
         </div>
       </section>
@@ -1359,9 +1530,17 @@ export default function GetFunded() {
       <footer className="py-10 bg-[#0F0F1A]/90 border-t border-white/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
           <p className="text-[#B8B8D0] text-xs text-center leading-relaxed">
-            <strong className="text-white">DISCLAIMER:</strong> Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are provided by Prop Account, LLC and all assessment fees are paid to Prop Account, LLC. If you qualify for a Funded Account, you will be required to enter into a Trader Agreement with Prop Account LC. For complete terms, visit our{" "}
+            <strong className="text-white">DISCLAIMER:</strong> Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are provided by Prop Account, LLC and all assessment fees are paid to Prop Account, LLC. If you qualify for a Funded Account, you will be required to enter into a Trader Agreement with Prop Account LC. Neither Prop Account, LLC nor Prop Account LC provides any trading education or other services. All such services are provided by Hybrid Funding. For complete terms and conditions, please visit{" "}
+            <a
+              href="https://dashboardanalytix.com/client-terms-and-policies/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:text-primary transition-colors underline"
+            >
+              Terms and Conditions
+            </a>{" "}or our{" "}
             <Link href="/terms">
-              <span className="text-accent hover:text-primary transition-colors underline cursor-pointer">Terms and Conditions</span>
+              <span className="text-accent hover:text-primary transition-colors underline cursor-pointer">site terms</span>
             </Link>.
           </p>
           <p className="text-white/30 text-xs text-center mt-4">
