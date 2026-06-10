@@ -497,11 +497,13 @@ function TierCard({
   isMultiPhase = false,
   isSelected = false,
   onSelect,
+  onGetStarted,
 }: {
   tier: Tier;
   isMultiPhase?: boolean;
   isSelected?: boolean;
   onSelect: () => void;
+  onGetStarted: () => void;
 }) {
   const sizeNum = parseSize(tier.size);
   const targetDollars   = tier.profitTarget !== null ? fmt(sizeNum * tier.profitTarget / 100) : null;
@@ -619,19 +621,18 @@ function TierCard({
         </div>
       </div>
 
-      <a
-        href="#get-started"
-        onClick={(e) => { e.stopPropagation(); trackEvent("lp_tier_click", { size: tier.size, price: tier.price }); }}
+      <button
+        onClick={(e) => { e.stopPropagation(); onGetStarted(); }}
+        className={`w-full font-['Orbitron'] text-xs rounded-full py-2 font-bold transition-all border mt-auto ${
+          isSelected
+            ? "bg-accent text-[#0F0F1A] border-accent shadow-glow-accent"
+            : tier.recommended
+            ? "bg-accent text-[#0F0F1A] border-accent"
+            : "bg-transparent text-accent border-accent/50 hover:bg-accent hover:text-[#0F0F1A]"
+        }`}
       >
-        <Button
-          variant={isSelected ? "neon-filled" : tier.recommended ? "neon-filled" : "neon"}
-          size="sm"
-          rounded="full"
-          className={`w-full font-['Orbitron'] text-xs mt-auto transition-all ${isSelected ? "shadow-glow-accent" : ""}`}
-        >
-          {isSelected ? "✓ Get Started →" : "Get Started →"}
-        </Button>
-      </a>
+        {isSelected ? "✓ Get Started →" : "Get Started →"}
+      </button>
     </motion.div>
   );
 }
@@ -751,6 +752,153 @@ function FuturesLiveRules() {
   );
 }
 
+// ─── Purchase Confirm Modal ───────────────────────────────────────────────────
+interface ModalTier {
+  size: string;
+  marketLabel: string;
+  planLabel: string;
+  planKey: string;
+  originalPrice: number;
+  discountedPrice: number;
+  profitTarget: number | null;
+  maxDrawdown: number;
+}
+
+function planKeyToLabel(planKey: string): string {
+  switch (planKey) {
+    case "one-step":     return "1-Step Challenge";
+    case "two-step":     return "2-Step Challenge";
+    case "three-step":   return "3-Step Challenge";
+    case "four-phase":   return "4-Phase Challenge";
+    case "instant":      return "Instant Funding";
+    case "instant-lite": return "Instant Funding Lite";
+    default:             return planKey;
+  }
+}
+
+function PurchaseConfirmModal({
+  tier,
+  onClose,
+}: {
+  tier: ModalTier | null;
+  onClose: () => void;
+}) {
+  return (
+    <AnimatePresence>
+      {tier !== null && (
+        <>
+          {/* Overlay */}
+          <motion.div
+            key="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            className="fixed inset-0 z-[60] bg-black/70"
+          />
+          {/* Panel */}
+          <motion.div
+            key="modal-panel"
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 20 }}
+            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            className="fixed inset-0 z-[61] flex items-center justify-center p-4 pointer-events-none"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#0F0F1A] border border-accent/40 rounded-xl shadow-2xl shadow-accent/30 max-w-md w-full pointer-events-auto relative p-6 flex flex-col gap-4"
+            >
+              {/* Close button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 text-[#B8B8D0] hover:text-white transition-colors p-1 rounded-full hover:bg-white/8"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
+              {/* Title */}
+              <div>
+                <h3 className="font-['Orbitron'] text-xl font-bold text-white">{tier.size} Challenge</h3>
+                <p className="text-[#B8B8D0] text-sm mt-0.5">{tier.planLabel} — {tier.marketLabel.toUpperCase()}</p>
+              </div>
+
+              {/* Summary table */}
+              <div className="space-y-2">
+                {[
+                  { label: "Account Size",   value: <span className="text-white font-semibold">{tier.size}</span> },
+                  { label: "Challenge Type", value: <span className="text-white font-semibold">{planKeyToLabel(tier.planKey)}</span> },
+                  { label: "Asset Class",    value: <span className="text-white font-semibold">{tier.marketLabel.toUpperCase()}</span> },
+                  { label: "Profit Target",  value: tier.profitTarget !== null
+                      ? <span className="text-white font-semibold">{tier.profitTarget}%</span>
+                      : <span className="text-green-400 font-semibold">None</span>
+                  },
+                  { label: "Max Drawdown",   value: <span className="text-white font-semibold">{tier.maxDrawdown}%</span> },
+                ].map(row => (
+                  <div key={row.label} className="flex justify-between text-sm">
+                    <span className="text-[#B8B8D0]">{row.label}</span>
+                    {row.value}
+                  </div>
+                ))}
+                <div className="border-t border-white/10 pt-2 flex justify-between items-baseline">
+                  <span className="text-[#B8B8D0] text-sm font-bold">Total</span>
+                  <span className="flex items-baseline gap-2">
+                    <span className="text-[#B8B8D0] text-sm line-through">${tier.originalPrice}</span>
+                    <span className="font-['Orbitron'] text-xl font-bold text-accent">${tier.discountedPrice}</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Coupon reminder */}
+              <p className="text-green-400 text-xs text-center">Use code <strong>UNITY20</strong> at checkout for 20% off</p>
+
+              {/* Action buttons */}
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-1">
+                  <p className="text-[#B8B8D0] text-[10px] text-center">Already have an account</p>
+                  <button
+                    onClick={() => {
+                      trackEvent("lp_modal_proceed_existing");
+                      window.open("https://hybridfundingdashboard.propaccount.com/en/challenges", "_blank");
+                      onClose();
+                    }}
+                    className="w-full font-['Orbitron'] text-xs font-bold py-3 px-4 rounded-full bg-accent text-[#0F0F1A] hover:bg-accent/90 transition-all shadow-glow-accent"
+                  >
+                    PROCEED TO CHALLENGES →
+                  </button>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="text-[#B8B8D0] text-[10px] text-center">New to Hybrid Funding?</p>
+                  <button
+                    onClick={() => {
+                      trackEvent("lp_modal_proceed_new");
+                      window.open("https://hybridfundingdashboard.propaccount.com/en/sign-up", "_blank");
+                      onClose();
+                    }}
+                    className="w-full font-['Orbitron'] text-xs font-bold py-3 px-4 rounded-full bg-transparent text-accent border border-accent/50 hover:bg-accent hover:text-[#0F0F1A] transition-all"
+                  >
+                    CREATE FREE ACCOUNT →
+                  </button>
+                </div>
+              </div>
+
+              {/* Terms */}
+              <p className="text-[#B8B8D0] text-[10px] text-center">
+                By proceeding, you agree to our{" "}
+                <Link href="/terms">
+                  <span className="text-accent hover:text-primary transition-colors underline cursor-pointer">Terms &amp; Conditions</span>
+                </Link>
+              </p>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 interface Selection {
   marketLabel: string;
@@ -759,7 +907,7 @@ interface Selection {
   discountedPrice: number;
 }
 
-function StickySelectionBar({ selection, onClear }: { selection: Selection | null; onClear: () => void }) {
+function StickySelectionBar({ selection, onClear, onGetStarted }: { selection: Selection | null; onClear: () => void; onGetStarted: () => void }) {
   return (
     <AnimatePresence>
       {selection && (
@@ -783,13 +931,12 @@ function StickySelectionBar({ selection, onClear }: { selection: Selection | nul
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <a
-                href="#get-started"
-                onClick={() => trackEvent("lp_sticky_bar_cta")}
+              <button
+                onClick={onGetStarted}
                 className="font-['Orbitron'] text-xs font-bold px-5 py-2.5 rounded-full bg-accent text-[#0F0F1A] hover:bg-accent/90 transition-all shadow-glow-accent"
               >
                 GET STARTED →
-              </a>
+              </button>
               <button
                 onClick={onClear}
                 className="text-[#B8B8D0] hover:text-white p-1.5 rounded-full hover:bg-white/8 transition-colors"
@@ -810,9 +957,24 @@ export default function GetFunded() {
   const [activePlan, setActivePlan] = useState<PlanKey>("one-step");
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [selection, setSelection] = useState<Selection | null>(null);
+  const [modalTier, setModalTier] = useState<ModalTier | null>(null);
 
   const market = MARKETS.find(m => m.key === activeMarket)!;
   const plan = market.plans.find(p => p.key === activePlan) ?? market.plans[0];
+
+  const openModal = (tier: Tier) => {
+    setModalTier({
+      size: tier.size,
+      marketLabel: market.label,
+      planLabel: plan.label,
+      planKey: plan.key,
+      originalPrice: tier.price,
+      discountedPrice: Math.round(tier.price * 0.8),
+      profitTarget: tier.profitTarget,
+      maxDrawdown: tier.maxDrawdown,
+    });
+    trackEvent("lp_checkout_modal_open", { market: activeMarket, plan: activePlan, size: tier.size });
+  };
 
   // When market or plan changes, reset card selection
   useEffect(() => {
@@ -844,7 +1006,7 @@ export default function GetFunded() {
               HYBRID <span className="text-accent neon-text-accent">FUNDING</span>
             </span>
           </Link>
-          <a href="#get-started" onClick={() => trackEvent("lp_header_cta_click")}
+          <a href="#choose-program" onClick={() => trackEvent("lp_header_cta_click")}
             className="font-['Orbitron'] text-xs font-bold px-4 py-2 rounded-full border border-accent text-accent hover:bg-accent hover:text-[#0F0F1A] transition-all">
             GET STARTED
           </a>
@@ -1052,6 +1214,7 @@ export default function GetFunded() {
                           });
                           trackEvent("lp_tier_click", { market: activeMarket, plan: activePlan, size: tier.size });
                         }}
+                        onGetStarted={() => openModal(tier)}
                       />
                     ))}
                   </motion.div>
@@ -1174,11 +1337,23 @@ export default function GetFunded() {
         </div>
       </section>
 
+      {/* ── Purchase Confirm Modal ── */}
+      <PurchaseConfirmModal tier={modalTier} onClose={() => setModalTier(null)} />
+
       {/* ── Exit Intent Popup ── */}
       <ExitIntentPopup />
 
       {/* ── Sticky Selection Bar ── */}
-      <StickySelectionBar selection={selection} onClear={() => { setSelection(null); setSelectedTier(null); }} />
+      <StickySelectionBar
+        selection={selection}
+        onClear={() => { setSelection(null); setSelectedTier(null); }}
+        onGetStarted={() => {
+          if (selection) {
+            const t = plan.tiers.find(t => t.size === selection.tierSize);
+            if (t) openModal(t);
+          }
+        }}
+      />
 
       {/* ── Footer ── */}
       <footer className="py-10 bg-[#0F0F1A]/90 border-t border-white/5">
