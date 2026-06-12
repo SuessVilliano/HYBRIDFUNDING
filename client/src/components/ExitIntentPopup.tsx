@@ -86,13 +86,11 @@ const ExitIntentPopup: React.FC = () => {
                   Wait — before you go
                 </p>
                 <h2 className="font-['Orbitron'] text-2xl md:text-3xl font-bold text-white mb-2">
-                  <h2 className="font-['Orbitron'] text-2xl md:text-3xl font-bold text-white mb-2">
-                    {ACTIVE_PROMOTION.exitPopupHeadline ?? ACTIVE_PROMOTION.headline}
-                  </h2>
+                  {ACTIVE_PROMOTION.exitPopupHeadline ?? ACTIVE_PROMOTION.headline}
+                </h2>
                 <p className="text-[#B8B8D0]">
-                  <p className="text-[#B8B8D0]">
-                    {ACTIVE_PROMOTION.exitPopupSubtext ?? ACTIVE_PROMOTION.subtext}
-                  </p>
+                  {ACTIVE_PROMOTION.exitPopupSubtext ?? ACTIVE_PROMOTION.subtext}
+                </p>
               </div>
               <A2PCompliantOptInForm
                 onSuccess={() => setTimeout(close, 1500)}
