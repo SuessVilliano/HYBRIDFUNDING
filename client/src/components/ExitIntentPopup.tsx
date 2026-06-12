@@ -82,10 +82,10 @@ const ExitIntentPopup: React.FC = () => {
                   Wait — before you go
                 </p>
                 <h2 className="font-['Orbitron'] text-2xl md:text-3xl font-bold text-white mb-2">
-                  Lock in <span className="text-accent">20% off</span> your first challenge
+                  Lock in up to <span className="text-accent">40% off</span> your first challenge
                 </h2>
                 <p className="text-[#B8B8D0]">
-                  Drop your number and we'll text you the discount code plus our trader playbook PDF.
+                  Drop your number and we'll text you the promo code plus our trader playbook PDF. Use GOAL40 for 40% off all plans, or GOAL25 for 25% off Instant Funding.
                 </p>
               </div>
               <A2PCompliantOptInForm
@@ -102,3 +102,4 @@ const ExitIntentPopup: React.FC = () => {
 };
 
 export default ExitIntentPopup;
+
