@@ -16,6 +16,7 @@ import {
   Trophy, Crown,
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
+import ACTIVE_PROMOTION, { getPromoForPlan } from "@/config/promotions";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type MarketKey = "forex" | "crypto" | "futures" | "equities";
@@ -889,11 +890,12 @@ function PurchaseConfirmModal({
 
               {/* Coupon reminder */}
               {(() => {
-                const isInstant = tier.planKey === "instant" || tier.planKey === "instant-lite";
-                const code = isInstant ? "GOAL25" : "GOAL40";
-                const pct = isInstant ? "25%" : "40%";
+                const promo = getPromoForPlan(tier.planKey);
+                if (!promo) return null;
                 return (
-                  <p className="text-green-400 text-xs text-center">Use code <strong>{code}</strong> at checkout for {pct} off</p>
+                  <p className="text-green-400 text-xs text-center">
+                    Use code <strong>{promo.code}</strong> at checkout for {promo.discountPercent}% off
+                  </p>
                 );
               })()}
 
@@ -1007,13 +1009,12 @@ export default function GetFunded() {
   const plan = market.plans.find(p => p.key === activePlan) ?? market.plans[0];
 
   const getDiscount = (planKey: PlanKey) => {
-    const isInstant = planKey === "instant" || planKey === "instant-lite";
-    return isInstant ? 0.25 : 0.40;
+    const promo = getPromoForPlan(planKey);
+    return promo ? 1 - promo.multiplier : 0;
   };
 
   const getPromoCode = (planKey: PlanKey) => {
-    const isInstant = planKey === "instant" || planKey === "instant-lite";
-    return isInstant ? "GOAL25" : "GOAL40";
+    return getPromoForPlan(planKey)?.code ?? "";
   };
 
   const openModal = (tier: Tier) => {
