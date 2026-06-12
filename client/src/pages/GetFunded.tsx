@@ -445,42 +445,60 @@ function CouponBlock() {
       setTimeout(() => setCopiedCode(null), 2500);
     });
   }, []);
+
+  if (!ACTIVE_PROMOTION.active || ACTIVE_PROMOTION.tiers.length === 0) return null;
+
+  const isOneTier = ACTIVE_PROMOTION.tiers.length === 1;
+
   return (
     <div className="bg-accent/8 border border-accent/30 rounded-xl px-5 py-4 max-w-lg mx-auto space-y-3">
-      <p className="text-center text-[#B8B8D0] text-[10px] uppercase tracking-widest font-bold">🔥 Summer Promo — Valid June 19 – July 19, 2026</p>
-      <div className="grid grid-cols-2 gap-3">
-        {/* GOAL40 */}
-        <div className="flex flex-col items-center gap-1.5 bg-accent/10 border border-accent/30 rounded-lg px-3 py-2.5">
-          <p className="text-[#B8B8D0] text-[9px] uppercase tracking-widest font-bold text-center">All Plans (excl. Instant)</p>
-          <p className="font-['Orbitron'] text-lg font-bold text-accent tracking-widest">GOAL40</p>
-          <span className="bg-green-500/20 text-green-400 text-[9px] font-bold px-2 py-0.5 rounded-full">40% OFF</span>
-          <button
-            onClick={() => copyCode("GOAL40")}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg font-bold text-[10px] transition-all font-['Orbitron'] ${
-              copiedCode === "GOAL40"
-                ? "bg-green-500/20 border border-green-500/40 text-green-400"
-                : "bg-accent/15 border border-accent/30 text-accent hover:bg-accent hover:text-[#0F0F1A]"
-            }`}
-          >
-            {copiedCode === "GOAL40" ? <><Check className="h-3 w-3" /> COPIED</> : <><Copy className="h-3 w-3" /> COPY</>}
-          </button>
-        </div>
-        {/* GOAL25 */}
-        <div className="flex flex-col items-center gap-1.5 bg-primary/10 border border-primary/30 rounded-lg px-3 py-2.5">
-          <p className="text-[#B8B8D0] text-[9px] uppercase tracking-widest font-bold text-center">Instant Funding & IF Lite</p>
-          <p className="font-['Orbitron'] text-lg font-bold text-primary tracking-widest">GOAL25</p>
-          <span className="bg-blue-500/20 text-blue-400 text-[9px] font-bold px-2 py-0.5 rounded-full">25% OFF</span>
-          <button
-            onClick={() => copyCode("GOAL25")}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg font-bold text-[10px] transition-all font-['Orbitron'] ${
-              copiedCode === "GOAL25"
-                ? "bg-green-500/20 border border-green-500/40 text-green-400"
-                : "bg-primary/15 border border-primary/30 text-primary hover:bg-primary hover:text-[#0F0F1A]"
-            }`}
-          >
-            {copiedCode === "GOAL25" ? <><Check className="h-3 w-3" /> COPIED</> : <><Copy className="h-3 w-3" /> COPY</>}
-          </button>
-        </div>
+      {ACTIVE_PROMOTION.badgeText && (
+        <p className="text-center text-[#B8B8D0] text-[10px] uppercase tracking-widest font-bold">
+          {ACTIVE_PROMOTION.badgeText}
+        </p>
+      )}
+      <div className={`grid gap-3 ${isOneTier ? "grid-cols-1" : "grid-cols-2"}`}>
+        {ACTIVE_PROMOTION.tiers.map((promo) => {
+          const isAccentTier = promo.applicablePlans !== "instant";
+          const planLabel =
+            promo.applicablePlans === "standard" ? "All Plans (excl. Instant)" :
+            promo.applicablePlans === "instant"  ? "Instant Funding & IF Lite"  :
+            "All Plans";
+          return (
+            <div
+              key={promo.code}
+              className={isAccentTier
+                ? "flex flex-col items-center gap-1.5 bg-accent/10 border border-accent/30 rounded-lg px-3 py-2.5"
+                : "flex flex-col items-center gap-1.5 bg-primary/10 border border-primary/30 rounded-lg px-3 py-2.5"}
+            >
+              <p className="text-[#B8B8D0] text-[9px] uppercase tracking-widest font-bold text-center">{planLabel}</p>
+              <p className={isAccentTier
+                ? "font-['Orbitron'] text-lg font-bold text-accent tracking-widest"
+                : "font-['Orbitron'] text-lg font-bold text-primary tracking-widest"}>
+                {promo.code}
+              </p>
+              <span className={isAccentTier
+                ? "bg-green-500/20 text-green-400 text-[9px] font-bold px-2 py-0.5 rounded-full"
+                : "bg-blue-500/20 text-blue-400 text-[9px] font-bold px-2 py-0.5 rounded-full"}>
+                {promo.label}
+              </span>
+              <button
+                onClick={() => copyCode(promo.code)}
+                className={
+                  copiedCode === promo.code
+                    ? "flex items-center gap-1 px-3 py-1 rounded-lg font-bold text-[10px] transition-all font-['Orbitron'] bg-green-500/20 border border-green-500/40 text-green-400"
+                    : isAccentTier
+                      ? "flex items-center gap-1 px-3 py-1 rounded-lg font-bold text-[10px] transition-all font-['Orbitron'] bg-accent/15 border border-accent/30 text-accent hover:bg-accent hover:text-[#0F0F1A]"
+                      : "flex items-center gap-1 px-3 py-1 rounded-lg font-bold text-[10px] transition-all font-['Orbitron'] bg-primary/15 border border-primary/30 text-primary hover:bg-primary hover:text-[#0F0F1A]"
+                }
+              >
+                {copiedCode === promo.code
+                  ? <><Check className="h-3 w-3" /> COPIED</>
+                  : <><Copy className="h-3 w-3" /> COPY</>}
+              </button>
+            </div>
+          );
+        })}
       </div>
       {/* Countdown */}
       <div className="flex items-center gap-2 justify-center">
@@ -575,22 +593,27 @@ function TierCard({
 
       {/* Price header */}
       {(() => {
-        const isInstant = planKey === "instant" || planKey === "instant-lite";
-        const discountPct = isInstant ? 0.25 : 0.40;
-        const discountLabel = isInstant ? "25% OFF" : "40% OFF";
-        const promoCode = isInstant ? "GOAL25" : "GOAL40";
-        const discountedPrice = Math.round(tier.price * (1 - discountPct));
+        const promo = getPromoForPlan(planKey);
+        const discountedPrice = promo ? Math.round(tier.price * promo.multiplier) : tier.price;
         return (
           <div>
             <p className="font-['Orbitron'] text-lg font-bold text-white">{tier.size}</p>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-[#B8B8D0] text-sm line-through">${tier.price}</span>
-              <span className="text-accent text-2xl font-bold leading-none">${discountedPrice}</span>
-            </div>
-            <div className="flex items-center gap-1.5 mt-1">
-              <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-0.5 rounded-full">{discountLabel}</span>
-              <span className="text-[#B8B8D0] text-[10px]">with {promoCode}</span>
-            </div>
+            {promo ? (
+              <>
+                <div className="flex items-baseline gap-2 mt-0.5">
+                  <span className="text-[#B8B8D0] text-sm line-through">${tier.price}</span>
+                  <span className="text-accent text-2xl font-bold leading-none">${discountedPrice}</span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-0.5 rounded-full">{promo.label}</span>
+                  <span className="text-[#B8B8D0] text-[10px]">with {promo.code}</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="text-accent text-2xl font-bold leading-none">${tier.price}</span>
+              </div>
+            )}
           </div>
         );
       })()}
@@ -972,7 +995,10 @@ function StickySelectionBar({ selection, onClear, onGetStarted }: { selection: S
                   {selection.tierSize} — {selection.marketLabel} {selection.planLabel}
                 </p>
                 <p className="text-accent text-xs font-['Orbitron'] font-bold">
-                  ${selection.discountedPrice} <span className="text-green-400">with {selection.promoCode}</span>
+                  ${selection.discountedPrice}
+                  {selection.promoCode && (
+                    <span className="text-green-400"> with {selection.promoCode}</span>
+                  )}
                 </p>
               </div>
             </div>
