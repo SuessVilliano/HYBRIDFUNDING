@@ -277,10 +277,10 @@ const STEPS = [
 function useCountdown() {
   const getOrSetExpiry = () => {
     if (typeof window === "undefined") return Date.now() + 72 * 3_600_000;
-    let expiry = parseInt(sessionStorage.getItem("unity20_expiry") || "0", 10);
+    let expiry = parseInt(sessionStorage.getItem("goal_promo_expiry") || "0", 10);
     if (!expiry || expiry < Date.now()) {
       expiry = Date.now() + 72 * 3_600_000;
-      sessionStorage.setItem("unity20_expiry", String(expiry));
+      sessionStorage.setItem("goal_promo_expiry", String(expiry));
     }
     return expiry;
   };
@@ -289,7 +289,7 @@ function useCountdown() {
     const id = setInterval(() => {
       const remaining = Math.max(0, getOrSetExpiry() - Date.now());
       setLeft(remaining);
-      if (remaining === 0) sessionStorage.removeItem("unity20_expiry");
+      if (remaining === 0) sessionStorage.removeItem("goal_promo_expiry");
     }, 1000);
     return () => clearInterval(id);
   }, []);
@@ -435,32 +435,51 @@ function FAQAccordion() {
 
 // ─── Coupon Copy Block ────────────────────────────────────────────────────────
 function CouponBlock() {
-  const [copied, setCopied] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const { h, m, s } = useCountdown();
-  const copy = useCallback(() => {
-    navigator.clipboard.writeText("UNITY20").then(() => {
-      setCopied(true);
-      trackEvent("lp_coupon_copy");
-      setTimeout(() => setCopied(false), 2500);
+  const copyCode = useCallback((code: string) => {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopiedCode(code);
+      trackEvent("lp_coupon_copy", { code });
+      setTimeout(() => setCopiedCode(null), 2500);
     });
   }, []);
   return (
-    <div className="bg-accent/8 border border-accent/30 rounded-xl px-5 py-4 max-w-sm mx-auto space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-[#B8B8D0] text-[10px] uppercase tracking-widest font-bold mb-0.5">Best deal — use code</p>
-          <p className="font-['Orbitron'] text-xl font-bold text-accent tracking-widest">UNITY20</p>
+    <div className="bg-accent/8 border border-accent/30 rounded-xl px-5 py-4 max-w-lg mx-auto space-y-3">
+      <p className="text-center text-[#B8B8D0] text-[10px] uppercase tracking-widest font-bold">🔥 Summer Promo — Valid June 19 – July 19, 2026</p>
+      <div className="grid grid-cols-2 gap-3">
+        {/* GOAL40 */}
+        <div className="flex flex-col items-center gap-1.5 bg-accent/10 border border-accent/30 rounded-lg px-3 py-2.5">
+          <p className="text-[#B8B8D0] text-[9px] uppercase tracking-widest font-bold text-center">All Plans (excl. Instant)</p>
+          <p className="font-['Orbitron'] text-lg font-bold text-accent tracking-widest">GOAL40</p>
+          <span className="bg-green-500/20 text-green-400 text-[9px] font-bold px-2 py-0.5 rounded-full">40% OFF</span>
+          <button
+            onClick={() => copyCode("GOAL40")}
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg font-bold text-[10px] transition-all font-['Orbitron'] ${
+              copiedCode === "GOAL40"
+                ? "bg-green-500/20 border border-green-500/40 text-green-400"
+                : "bg-accent/15 border border-accent/30 text-accent hover:bg-accent hover:text-[#0F0F1A]"
+            }`}
+          >
+            {copiedCode === "GOAL40" ? <><Check className="h-3 w-3" /> COPIED</> : <><Copy className="h-3 w-3" /> COPY</>}
+          </button>
         </div>
-        <button
-          onClick={copy}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-bold text-xs transition-all font-['Orbitron'] ${
-            copied
-              ? "bg-green-500/20 border border-green-500/40 text-green-400"
-              : "bg-accent/15 border border-accent/30 text-accent hover:bg-accent hover:text-[#0F0F1A]"
-          }`}
-        >
-          {copied ? <><Check className="h-3.5 w-3.5" /> COPIED</> : <><Copy className="h-3.5 w-3.5" /> COPY</>}
-        </button>
+        {/* GOAL25 */}
+        <div className="flex flex-col items-center gap-1.5 bg-primary/10 border border-primary/30 rounded-lg px-3 py-2.5">
+          <p className="text-[#B8B8D0] text-[9px] uppercase tracking-widest font-bold text-center">Instant Funding & IF Lite</p>
+          <p className="font-['Orbitron'] text-lg font-bold text-primary tracking-widest">GOAL25</p>
+          <span className="bg-blue-500/20 text-blue-400 text-[9px] font-bold px-2 py-0.5 rounded-full">25% OFF</span>
+          <button
+            onClick={() => copyCode("GOAL25")}
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg font-bold text-[10px] transition-all font-['Orbitron'] ${
+              copiedCode === "GOAL25"
+                ? "bg-green-500/20 border border-green-500/40 text-green-400"
+                : "bg-primary/15 border border-primary/30 text-primary hover:bg-primary hover:text-[#0F0F1A]"
+            }`}
+          >
+            {copiedCode === "GOAL25" ? <><Check className="h-3 w-3" /> COPIED</> : <><Copy className="h-3 w-3" /> COPY</>}
+          </button>
+        </div>
       </div>
       {/* Countdown */}
       <div className="flex items-center gap-2 justify-center">
@@ -500,12 +519,14 @@ const cardItem = {
 // ─── Tier Card (dense — dollar amounts, accurate futures payouts) ─────────────
 function TierCard({
   tier,
+  planKey = "one-step",
   isMultiPhase = false,
   isSelected = false,
   onSelect,
   onGetStarted,
 }: {
   tier: Tier;
+  planKey?: PlanKey;
   isMultiPhase?: boolean;
   isSelected?: boolean;
   onSelect: () => void;
@@ -552,17 +573,26 @@ function TierCard({
       </div>
 
       {/* Price header */}
-      <div>
-        <p className="font-['Orbitron'] text-lg font-bold text-white">{tier.size}</p>
-        <div className="flex items-baseline gap-2 mt-0.5">
-          <span className="text-[#B8B8D0] text-sm line-through">${tier.price}</span>
-          <span className="text-accent text-2xl font-bold leading-none">${Math.round(tier.price * 0.8)}</span>
-        </div>
-        <div className="flex items-center gap-1.5 mt-1">
-          <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-0.5 rounded-full">20% OFF</span>
-          <span className="text-[#B8B8D0] text-[10px]">one-time fee</span>
-        </div>
-      </div>
+      {(() => {
+        const isInstant = planKey === "instant" || planKey === "instant-lite";
+        const discountPct = isInstant ? 0.25 : 0.40;
+        const discountLabel = isInstant ? "25% OFF" : "40% OFF";
+        const promoCode = isInstant ? "GOAL25" : "GOAL40";
+        const discountedPrice = Math.round(tier.price * (1 - discountPct));
+        return (
+          <div>
+            <p className="font-['Orbitron'] text-lg font-bold text-white">{tier.size}</p>
+            <div className="flex items-baseline gap-2 mt-0.5">
+              <span className="text-[#B8B8D0] text-sm line-through">${tier.price}</span>
+              <span className="text-accent text-2xl font-bold leading-none">${discountedPrice}</span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-0.5 rounded-full">{discountLabel}</span>
+              <span className="text-[#B8B8D0] text-[10px]">with {promoCode}</span>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Futures: phase-by-phase payout breakdown */}
       {tier.phasePayouts && (
@@ -858,7 +888,14 @@ function PurchaseConfirmModal({
               </div>
 
               {/* Coupon reminder */}
-              <p className="text-green-400 text-xs text-center">Use code <strong>UNITY20</strong> at checkout for 20% off</p>
+              {(() => {
+                const isInstant = tier.planKey === "instant" || tier.planKey === "instant-lite";
+                const code = isInstant ? "GOAL25" : "GOAL40";
+                const pct = isInstant ? "25%" : "40%";
+                return (
+                  <p className="text-green-400 text-xs text-center">Use code <strong>{code}</strong> at checkout for {pct} off</p>
+                );
+              })()}
 
               {/* Action buttons */}
               <div className="flex flex-col gap-3">
@@ -911,6 +948,7 @@ interface Selection {
   planLabel: string;
   tierSize: string;
   discountedPrice: number;
+  promoCode: string;
 }
 
 function StickySelectionBar({ selection, onClear, onGetStarted }: { selection: Selection | null; onClear: () => void; onGetStarted: () => void }) {
@@ -932,7 +970,7 @@ function StickySelectionBar({ selection, onClear, onGetStarted }: { selection: S
                   {selection.tierSize} — {selection.marketLabel} {selection.planLabel}
                 </p>
                 <p className="text-accent text-xs font-['Orbitron'] font-bold">
-                  ${selection.discountedPrice} <span className="text-green-400">with UNITY20</span>
+                  ${selection.discountedPrice} <span className="text-green-400">with {selection.promoCode}</span>
                 </p>
               </div>
             </div>
@@ -968,14 +1006,25 @@ export default function GetFunded() {
   const market = MARKETS.find(m => m.key === activeMarket)!;
   const plan = market.plans.find(p => p.key === activePlan) ?? market.plans[0];
 
+  const getDiscount = (planKey: PlanKey) => {
+    const isInstant = planKey === "instant" || planKey === "instant-lite";
+    return isInstant ? 0.25 : 0.40;
+  };
+
+  const getPromoCode = (planKey: PlanKey) => {
+    const isInstant = planKey === "instant" || planKey === "instant-lite";
+    return isInstant ? "GOAL25" : "GOAL40";
+  };
+
   const openModal = (tier: Tier) => {
+    const discount = getDiscount(plan.key);
     setModalTier({
       size: tier.size,
       marketLabel: market.label,
       planLabel: plan.label,
       planKey: plan.key,
       originalPrice: tier.price,
-      discountedPrice: Math.round(tier.price * 0.8),
+      discountedPrice: Math.round(tier.price * (1 - discount)),
       profitTarget: tier.profitTarget,
       maxDrawdown: tier.maxDrawdown,
     });
@@ -1217,15 +1266,18 @@ export default function GetFunded() {
                       <TierCard
                         key={tier.size}
                         tier={tier}
+                        planKey={plan.key}
                         isMultiPhase={plan.key === "four-phase"}
                         isSelected={selectedTier === `${activeMarket}-${activePlan}-${tier.size}`}
                         onSelect={() => {
+                          const discount = getDiscount(plan.key);
                           setSelectedTier(`${activeMarket}-${activePlan}-${tier.size}`);
                           setSelection({
                             marketLabel: market.label,
                             planLabel: plan.label,
                             tierSize: tier.size,
-                            discountedPrice: Math.round(tier.price * 0.8),
+                            discountedPrice: Math.round(tier.price * (1 - discount)),
+                            promoCode: getPromoCode(plan.key),
                           });
                           trackEvent("lp_tier_click", { market: activeMarket, plan: activePlan, size: tier.size });
                         }}
@@ -1552,3 +1604,4 @@ export default function GetFunded() {
     </div>
   );
 }
+
