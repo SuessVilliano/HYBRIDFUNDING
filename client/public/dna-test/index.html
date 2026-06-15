@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trader DNA Test | Hybrid Funding</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0A0E1A;
+    --navy2: #0F1628;
+    --navy3: #151D35;
+    --gold: #D4AF37;
+    --gold-light: #F0D060;
+    --blue: #00D4FF;
+    --white: #FFFFFF;
+    --gray: #8892A4;
+    --glass: rgba(255,255,255,0.04);
+    --glass-border: rgba(212,175,55,0.15);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridPan 20s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes gridPan {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(50px); }
+  }
+
+  .grid-fade {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 20%, var(--navy) 80%);
+    pointer-events: none;
+  }
+
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px 80px;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 780px; }
+
+  .badge {
+    display: inline-block;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.3);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 8px 20px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 10vw, 96px);
+    line-height: 0.95;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 24px;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: rgba(255,255,255,0.75);
+    font-weight: 400;
+    margin-bottom: 40px;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .social-proof {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 24px;
+    margin-bottom: 44px;
+  }
+
+  .proof-item {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .proof-item::before {
+    content: '●';
+    color: var(--gold);
+    font-size: 8px;
+  }
+
+  .proof-item:first-child::before { display: none; }
+
+  .btn-primary {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #0A0E1A;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 18px 44px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    min-height: 56px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 30px rgba(212,175,55,0.25);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(212,175,55,0.4);
+  }
+
+  .archetypes {
+    padding: 80px 20px;
+    background: var(--navy2);
+  }
+
+  .section-label {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    text-align: center;
+    color: var(--white);
+    margin-bottom: 56px;
+    letter-spacing: 1px;
+  }
+
+  .arc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 600px) {
+    .arc-grid { grid-template-columns: 1fr; }
+  }
+
+  .arc-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 32px 28px;
+    backdrop-filter: blur(10px);
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .arc-card:hover {
+    border-color: rgba(212,175,55,0.4);
+    transform: translateY(-4px);
+  }
+
+  .arc-icon {
+    font-size: 36px;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .arc-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .arc-tag {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    font-style: italic;
+  }
+
+  #quiz {
+    padding: 80px 20px;
+    background: var(--navy);
+  }
+
+  .quiz-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.07);
+    border-radius: 100px;
+    height: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 100px;
+    transition: width 0.4s ease;
+    width: 12.5%;
+  }
+
+  .progress-label {
+    text-align: right;
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 40px;
+    font-weight: 500;
+  }
+
+  .question-slide {
+    display: none;
+    animation: fadeSlide 0.4s ease both;
+  }
+
+  .question-slide.active { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .q-number {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .q-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(22px, 4vw, 34px);
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 32px;
+    letter-spacing: 0.5px;
+  }
+
+  .q-options { display: flex; flex-direction: column; gap: 12px; }
+
+  .q-option {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 18px 20px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.8);
+    text-align: left;
+    transition: all 0.2s;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .q-option::before {
+    content: attr(data-letter);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .q-option:hover {
+    border-color: rgba(212,175,55,0.4);
+    background: rgba(212,175,55,0.05);
+    color: var(--white);
+  }
+
+  .q-option.selected {
+    border-color: var(--gold);
+    background: rgba(212,175,55,0.1);
+    color: var(--white);
+  }
+
+  .q-option.selected::before {
+    background: var(--gold);
+    color: #0A0E1A;
+  }
+
+  .btn-next {
+    margin-top: 32px;
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #0A0E1A;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    min-height: 56px;
+    transition: all 0.2s;
+    box-shadow: 0 0 24px rgba(212,175,55,0.2);
+  }
+
+  .btn-next:disabled {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.25);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .btn-next:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(212,175,55,0.4);
+  }
+
+  #lead-gate {
+    display: none;
+    max-width: 580px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  #lead-gate.active { display: block; animation: fadeSlide 0.4s ease both; }
+
+  .gate-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 6vw, 56px);
+    color: var(--white);
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .gate-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 36px;
+  }
+
+  .lead-form { display: flex; flex-direction: column; gap: 14px; }
+
+  .form-input {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--white);
+    width: 100%;
+    min-height: 54px;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  .form-input::placeholder { color: rgba(255,255,255,0.3); }
+
+  .btn-reveal {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #0A0E1A;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    min-height: 58px;
+    width: 100%;
+    transition: all 0.2s;
+    box-shadow: 0 0 30px rgba(212,175,55,0.3);
+    margin-top: 4px;
+  }
+
+  .btn-reveal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(212,175,55,0.5);
+  }
+
+  .fine-print {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 14px;
+    text-align: center;
+  }
+
+  #results {
+    display: none;
+    padding: 80px 20px;
+    background: var(--navy2);
+  }
+
+  #results.active { display: block; }
+
+  .result-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .result-type { display: none; }
+  .result-type.active { display: block; animation: fadeSlide 0.5s ease both; }
+
+  .result-emoji {
+    font-size: 72px;
+    display: block;
+    margin-bottom: 16px;
+    animation: popIn 0.6s ease both;
+  }
+
+  @keyframes popIn {
+    0%   { transform: scale(0); opacity: 0; }
+    70%  { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .result-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .result-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 8vw, 72px);
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    line-height: 1;
+  }
+
+  .result-tagline {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+    margin-bottom: 36px;
+  }
+
+  .result-desc {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: left;
+    margin-bottom: 36px;
+  }
+
+  .result-desc p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 16px;
+  }
+
+  .result-desc p:last-child { margin-bottom: 0; }
+
+  .traits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 32px;
+    margin-bottom: 36px;
+    text-align: left;
+  }
+
+  @media (max-width: 480px) { .traits-grid { grid-template-columns: 1fr; } }
+
+  .trait-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gray);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .trait-label span { color: var(--gold); font-weight: 700; }
+
+  .trait-bar {
+    background: rgba(255,255,255,0.07);
+    border-radius: 100px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .trait-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    width: 0;
+    transition: width 1.2s ease;
+  }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+
+  .tag {
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.25);
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 6px 16px;
+    border-radius: 100px;
+  }
+
+  .challenge-box {
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 28px 28px 24px;
+    margin-bottom: 32px;
+    background: rgba(212,175,55,0.04);
+    text-align: left;
+  }
+
+  .challenge-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .challenge-text {
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.6;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  @media (min-width: 500px) {
+    .cta-row { flex-direction: row; }
+    .cta-row .btn-primary, .cta-row .btn-secondary { flex: 1; }
+  }
+
+  .btn-secondary {
+    display: inline-block;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.75);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 18px 28px;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    min-height: 56px;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .btn-secondary:hover {
+    border-color: rgba(255,255,255,0.5);
+    color: var(--white);
+  }
+
+  .confetti-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 999;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    top: -12px;
+    width: 10px; height: 10px;
+    opacity: 0;
+    animation: confettiFall linear both;
+  }
+
+  @keyframes confettiFall {
+    0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(110vh) rotate(720deg); }
+  }
+
+  footer {
+    background: #060810;
+    padding: 40px 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .footer-links {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 10px;
+  }
+
+  .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; }
+  .footer-links a:hover { color: var(--gold); }
+
+  .footer-disclaimer {
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    max-width: 540px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 56px;
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="grid-bg"></div>
+  <div class="grid-fade"></div>
+  <div class="hero-content">
+    <span class="badge">Trader Assessment</span>
+    <h1>What Kind of<br>Trader Are You?</h1>
+    <p class="hero-sub">8 Questions. 2 Minutes. Your personalized path to funding.</p>
+    <div class="social-proof">
+      <span class="proof-item">10,000+ Funded Traders</span>
+      <span class="proof-item">80+ Countries</span>
+      <span class="proof-item">Up to 90% Profit Split</span>
+    </div>
+    <a href="#quiz" class="btn-primary">DISCOVER YOUR TRADER DNA &rarr;</a>
+  </div>
+</section>
+
+<section class="archetypes">
+  <p class="section-label">The Four Types</p>
+  <h2 class="section-title">WHICH ONE ARE YOU?</h2>
+  <div class="arc-grid">
+    <div class="arc-card">
+      <span class="arc-icon">&#127919;</span>
+      <p class="arc-name">THE SNIPER</p>
+      <p class="arc-tag">Precision over volume</p>
+    </div>
+    <div class="arc-card">
+      <span class="arc-icon">&#128208;</span>
+      <p class="arc-name">THE ARCHITECT</p>
+      <p class="arc-tag">Systems over instinct</p>
+    </div>
+    <div class="arc-card">
+      <span class="arc-icon">&#9889;</span>
+      <p class="arc-name">THE HYBRID</p>
+      <p class="arc-tag">Adaptability over rigidity</p>
+    </div>
+    <div class="arc-card">
+      <span class="arc-icon">&#128293;</span>
+      <p class="arc-name">THE PHOENIX</p>
+      <p class="arc-tag">Resilience over perfection</p>
+    </div>
+  </div>
+</section>
+
+<section id="quiz">
+  <div class="quiz-wrap">
+    <p class="section-label" style="text-align:center;margin-bottom:8px;">TRADER DNA TEST</p>
+    <h2 class="section-title" style="margin-bottom:40px;">FIND YOUR TYPE</h2>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <p class="progress-label" id="progressLabel">Question 1 of 8</p>
+    <div class="question-slide active" data-q="1">
+      <p class="q-number">Question 01 &mdash; Mindset</p>
+      <p class="q-text">When the market opens, your first instinct is to...</p>
+      <div class="q-options">
+        <button class="q-option" data-letter="A" data-type="S">Wait for my exact setup, no matter how long it takes.</button>
+        <button class="q-option" data-letter="B" data-type="A">Check my pre-market analysis and follow the plan.</button>
+        <button class="q-option" data-letter="C" data-type="H">Read the price action and adapt to what I see.</button>
+        <button class="q-option" data-letter="D" data-type="P">Look for the biggest mover and attack it.</button>
+      </div>
+      <button class="btn-next" disabled>NEXT &rarr;</button>
+    </div>
+    <div class="question-slide" data-q="2">
+      <p class="q-number">Question 02 &mdash; Volume</p>
+      <p class="q-text">How many trades do you typically take per session?</p>
+      <div class="q-options">
+        <button class="q-option" data-letter="A" data-type="S">1&ndash;3. I'm patient. One good trade beats ten average ones.</button>
+        <button class="q-option" data-letter="B" data-type="A">I follow my system &mdash; exactly as many as it signals.</button>
+        <button class="q-option" data-letter="C" data-type="H">It varies. Could be 2, could be 10 depending on the day.</button>
+        <button class="q-option" data-letter="D" data-type="P">As many as the market gives me. I stay in attack mode.</button>
+      </div>
+      <button class="btn-next" disabled>NEXT &rarr;</button>
+    </div>
+    <div class="question-slide" data-q="3">
+      <p class="q-number">Question 03 &mdash; Recovery</p>
+      <p class="q-text">You take a loss. What happens next?</p>
+      <div class="q-options">
+        <button class="q-option" data-letter="A" data-type="S">I stop. Review. I won't trade again until I know why.</button>
+        <button class="q-option" data-letter="B" data-type="A">I check my rules. If I followed them, it's data. Move on.</button>
+        <button class="q-option" data-letter="C" data-type="H">I recalibrate. The loss tells me something &mdash; I listen.</button>
+        <button class="q-option" data-letter="D" data-type="P">I'm already looking for the next trade. Losses don't stop me.</button>
+      </div>
+      <button class="btn-next" disabled>NEXT &rarr;</button>
+    </div>
+    <div class="question-slide" data-q="4">
+      <p class="q-number">Question 04 &mdash; Style</p>
+      <p class="q-text">Your trading style is best described as...</p>
+      <div class="q-options">
+        <button class="q-option" data-letter="A" data-type="S">Sniper &mdash; I wait for one perfect setup and execute.</button>
+        <button class="q-option" data-letter="B" data-type="A">Algorithmic &mdash; I follow rules and remove emotion.</button>
+        <button class="q-option" data-letter="C" data-type="H">Hybrid &mdash; I mix technicals with reading the room.</button>
+        <button class="q-option" data-letter="D" data-type="P">Aggressive &mdash; I chase momentum and manage risk fast.</button>
+      </div>
+      <button class="btn-next" disabled>NEXT &rarr;</button>
+    </div>
+    <div class="question-slide" data-q="5">
+      <p class="q-number">Question 05 &mdash; Risk</p>
+      <p class="q-text">How do you handle risk?</p>
+      <div class="q-options">
+        <button class="q-option" data-letter="A" data-type="S">Fixed percentage, never exceeded. I protect capital first.</button>
+        <button class="q-option" data-letter="B" data-type="A">Predefined stops and targets, calculated before every trade.</button>
+        <button class="q-option" data-letter="C" data-type="H">Dynamic &mdash; I adjust based on market conditions in real time.</button>
+        <button class="q-option" data-letter="D" data-type="P">Higher risk when I'm confident. The edge justifies it.</button>
+      </div>
+      <button class="btn-next" disabled>NEXT &rarr;</button>
+    </div>
+    <div class="question-slide" data-q="6">
+      <p class="q-number">Question 06 &mdash; Strength</p>
+      <p class="q-text">Your biggest trading strength is...</p>
+      <div class="q-options">
+        <button class="q-option" data-letter="A" data-type="S">Patience &mdash; I can wait for days for the right setup.</button>
+        <button class="q-option" data-letter="B" data-type="A">Discipline &mdash; I execute the same way every single time.</button>
+        <button class="q-option" data-letter="C" data-type="H">Versatility &mdash; I can trade any setup in any condition.</button>
+        <button class="q-option" data-letter="D" data-type="P">Speed &mdash; I identify momentum fast and I'm in before others.</button>
+      </div>
+      <button class="btn-next" disabled>NEXT &rarr;</button>
+    </div>
+    <div class="question-slide" data-q="7">
+      <p class="q-number">Question 07 &mdash; In-Trade Behavior</p>
+      <p class="q-text">You're in a trade and it starts going against you. You...</p>
+      <div class="q-options">
+        <button class="q-option" data-letter="A" data-type="S">Have already set my stop. I let it play out.</button>
+        <button class="q-option" data-letter="B" data-type="A">Check my rules. If the thesis is intact, I hold.</button>
+        <button class="q-option" data-letter="C" data-type="H">Read the price action and decide in the moment.</button>
+        <button class="q-option" data-letter="D" data-type="P">Evaluate fast. If the momentum is gone, I'm out.</button>
+      </div>
+      <button class="btn-next" disabled>NEXT &rarr;</button>
+    </div>
+    <div class="question-slide" data-q="8">
+      <p class="q-number">Question 08 &mdash; Identity</p>
+      <p class="q-text">Which statement sounds most like you?</p>
+      <div class="q-options">
+        <button class="q-option" data-letter="A" data-type="S">&ldquo;I'd rather miss 10 trades than take 1 bad one.&rdquo;</button>
+        <button class="q-option" data-letter="B" data-type="A">&ldquo;If I follow my system, the results take care of themselves.&rdquo;</button>
+        <button class="q-option" data-letter="C" data-type="H">&ldquo;The market changes &mdash; so do I.&rdquo;</button>
+        <button class="q-option" data-letter="D" data-type="P">&ldquo;You can't win if you're afraid to pull the trigger.&rdquo;</button>
+      </div>
+      <button class="btn-next" disabled>SEE YOUR RESULTS &rarr;</button>
+    </div>
+    <div id="lead-gate">
+      <p class="gate-title">Your DNA profile<br>is ready.</p>
+      <p class="gate-sub">Enter your details to see your trader type + your recommended challenge.</p>
+      <form class="lead-form" id="leadForm">
+        <input class="form-input" type="text" placeholder="First Name" id="fname" required autocomplete="given-name">
+        <input class="form-input" type="email" placeholder="Email Address" id="femail" required autocomplete="email">
+        <button type="submit" class="btn-reveal">REVEAL MY TRADER DNA &rarr;</button>
+      </form>
+      <p class="fine-print">No spam. We'll also send your personalized funding roadmap.</p>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="result-inner">
+    <div class="result-type" id="result-S">
+      <span class="result-emoji">&#127919;</span>
+      <p class="result-label">YOU ARE</p>
+      <p class="result-name">THE SNIPER</p>
+      <p class="result-tagline">Precision over volume. You don't miss.</p>
+      <div class="result-desc">
+        <p>You're the trader who waits. While others force setups, you sit in cash &mdash; sometimes for hours &mdash; until your exact conditions are met. That patience is your superpower. You don't trade often, but when you do, you mean it.</p>
+        <p>Most prop firm failures happen because traders take too many trades. You won't make that mistake. Your challenge isn't finding opportunities &mdash; it's trusting that not trading IS a strategy.</p>
+        <p>The Sniper who learns to hold through drawdowns becomes one of the most consistently profitable traders alive.</p>
+      </div>
+      <div class="traits-grid">
+        <div class="trait-item"><div class="trait-label">Patience <span>95</span></div><div class="trait-bar"><div class="trait-fill" data-pct="95"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Discipline <span>85</span></div><div class="trait-bar"><div class="trait-fill" data-pct="85"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Adaptability <span>45</span></div><div class="trait-bar"><div class="trait-fill" data-pct="45"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Aggression <span>30</span></div><div class="trait-bar"><div class="trait-fill" data-pct="30"></div></div></div>
+      </div>
+      <div class="tags-row"><span class="tag">High Win Rate</span><span class="tag">Low Frequency</span><span class="tag">Capital Preservationist</span></div>
+      <div class="challenge-box"><p class="challenge-label">Recommended Challenge</p><p class="challenge-text">1-Step Evaluation &mdash; No time pressure. Trade when YOUR setup appears. Keep up to 90% of profits.</p></div>
+      <div class="cta-row">
+        <a href="https://hybridfunding.co" class="btn-primary" target="_blank">Start 1-Step Eval &rarr;</a>
+        <a href="https://hybridfunding.co" class="btn-secondary" target="_blank">Book a Strategy Call &rarr;</a>
+      </div>
+    </div>
+    <div class="result-type" id="result-A">
+      <span class="result-emoji">&#128208;</span>
+      <p class="result-label">YOU ARE</p>
+      <p class="result-name">THE ARCHITECT</p>
+      <p class="result-tagline">Systems over instinct. Your edge is structure.</p>
+      <div class="result-desc">
+        <p>You build before you execute. Your trading plan isn't a suggestion &mdash; it's law. You've probably spent more time backtesting than most traders spend actually trading, and that's not a flaw &mdash; that's your edge.</p>
+        <p>The Architect eliminates the emotional variable that destroys most traders. You know your edge, you know your rules, and you follow them even when it hurts.</p>
+        <p>The problem for most Architects isn't losing &mdash; it's deviation. The moment you break your rules is the moment you become a different (worse) trader.</p>
+      </div>
+      <div class="traits-grid">
+        <div class="trait-item"><div class="trait-label">Patience <span>75</span></div><div class="trait-bar"><div class="trait-fill" data-pct="75"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Discipline <span>98</span></div><div class="trait-bar"><div class="trait-fill" data-pct="98"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Adaptability <span>55</span></div><div class="trait-bar"><div class="trait-fill" data-pct="55"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Aggression <span>40</span></div><div class="trait-bar"><div class="trait-fill" data-pct="40"></div></div></div>
+      </div>
+      <div class="tags-row"><span class="tag">Rule-Follower</span><span class="tag">System Builder</span><span class="tag">Process-Driven</span></div>
+      <div class="challenge-box"><p class="challenge-label">Recommended Challenge</p><p class="challenge-text">2-Step Evaluation &mdash; Structured targets. Process-based metrics. Built for traders who follow systems.</p></div>
+      <div class="cta-row">
+        <a href="https://hybridfunding.co" class="btn-primary" target="_blank">Start 2-Step Eval &rarr;</a>
+        <a href="https://hybridfunding.co" class="btn-secondary" target="_blank">Book a Strategy Call &rarr;</a>
+      </div>
+    </div>
+    <div class="result-type" id="result-H">
+      <span class="result-emoji">&#9889;</span>
+      <p class="result-label">YOU ARE</p>
+      <p class="result-name">THE HYBRID</p>
+      <p class="result-tagline">Adaptability over rigidity. You evolve with the market.</p>
+      <div class="result-desc">
+        <p>You don't have one style &mdash; you have all of them. You read the market in real time and adjust. When momentum is running, you're aggressive. When it's choppy, you step back. This adaptability is rare.</p>
+        <p>Most traders are rigid &mdash; they force their style on the market. You let the market tell you what it needs. The challenge for Hybrids is consistency. Because you can trade multiple styles, you sometimes lack the guardrails that protect more rigid traders.</p>
+        <p>Your edge is flexibility &mdash; your risk is sprawl.</p>
+      </div>
+      <div class="traits-grid">
+        <div class="trait-item"><div class="trait-label">Patience <span>65</span></div><div class="trait-bar"><div class="trait-fill" data-pct="65"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Discipline <span>70</span></div><div class="trait-bar"><div class="trait-fill" data-pct="70"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Adaptability <span>95</span></div><div class="trait-bar"><div class="trait-fill" data-pct="95"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Aggression <span>70</span></div><div class="trait-bar"><div class="trait-fill" data-pct="70"></div></div></div>
+      </div>
+      <div class="tags-row"><span class="tag">Market Reader</span><span class="tag">Multi-Style</span><span class="tag">Real-Time Adjuster</span></div>
+      <div class="challenge-box"><p class="challenge-label">Recommended Challenge</p><p class="challenge-text">Instant Funding &mdash; Skip the evaluation. Get funded directly. Built for traders who've already proven they can adapt.</p></div>
+      <div class="cta-row">
+        <a href="https://hybridfunding.co" class="btn-primary" target="_blank">Get Instant Funding &rarr;</a>
+        <a href="https://hybridfunding.co" class="btn-secondary" target="_blank">Book a Strategy Call &rarr;</a>
+      </div>
+    </div>
+    <div class="result-type" id="result-P">
+      <span class="result-emoji">&#128293;</span>
+      <p class="result-label">YOU ARE</p>
+      <p class="result-name">THE PHOENIX</p>
+      <p class="result-tagline">Resilience over perfection. You rise every time.</p>
+      <div class="result-desc">
+        <p>You're built different. Loss doesn't break you &mdash; it fuels you. While other traders are paralyzed by a red day, you're already looking at the next setup. Your aggression is your weapon, and when it's calibrated, there's no stopping you.</p>
+        <p>The Phoenix often starts slower than others &mdash; higher drawdowns in phase 1 &mdash; but ends stronger. Because you recover fast and you don't quit.</p>
+        <p>The risk? Overtrading when emotional. The Phoenix who masters their aggression becomes the trader who takes the biggest accounts and runs them hard.</p>
+      </div>
+      <div class="traits-grid">
+        <div class="trait-item"><div class="trait-label">Patience <span>40</span></div><div class="trait-bar"><div class="trait-fill" data-pct="40"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Discipline <span>65</span></div><div class="trait-bar"><div class="trait-fill" data-pct="65"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Adaptability <span>80</span></div><div class="trait-bar"><div class="trait-fill" data-pct="80"></div></div></div>
+        <div class="trait-item"><div class="trait-label">Aggression <span>98</span></div><div class="trait-bar"><div class="trait-fill" data-pct="98"></div></div></div>
+      </div>
+      <div class="tags-row"><span class="tag">Momentum Trader</span><span class="tag">Fast Learner</span><span class="tag">High-Conviction</span></div>
+      <div class="challenge-box"><p class="challenge-label">Recommended Challenge</p><p class="challenge-text">1-Step High Capital ($50K&ndash;$200K) &mdash; Room to breathe. Sized for traders who need capital to express their edge.</p></div>
+      <div class="cta-row">
+        <a href="https://hybridfunding.co" class="btn-primary" target="_blank">Start High-Capital Challenge &rarr;</a>
+        <a href="https://hybridfunding.co" class="btn-secondary" target="_blank">Book a Strategy Call &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p class="footer-logo">HYBRID FUNDING</p>
+  <p class="footer-links"><a href="https://hybridfunding.co">hybridfunding.co</a></p>
+  <p class="footer-disclaimer">&copy; 2026 Hybrid Funding | hybridfunding.co<br>Hybrid Funding is a proprietary trading firm. Past performance does not guarantee future results.</p>
+</footer>
+
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+(function () {
+  'use strict';
+  var answers = [];
+  var currentQ = 1;
+  var totalQ = 8;
+  var progressFill = document.getElementById('progressFill');
+  var progressLabel = document.getElementById('progressLabel');
+  var leadGate = document.getElementById('lead-gate');
+  var leadForm = document.getElementById('leadForm');
+  var results = document.getElementById('results');
+  var confettiEl = document.getElementById('confettiContainer');
+
+  function getSlide(q) { return document.querySelector('.question-slide[data-q="' + q + '"]'); }
+
+  function updateProgress(q) {
+    progressFill.style.width = (q / totalQ * 100) + '%';
+    progressLabel.textContent = 'Question ' + q + ' of ' + totalQ;
+  }
+
+  document.querySelectorAll('.question-slide').forEach(function (slide) {
+    var options = slide.querySelectorAll('.q-option');
+    var nextBtn = slide.querySelector('.btn-next');
+    var chosen = null;
+    options.forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        options.forEach(function (o) { o.classList.remove('selected'); });
+        opt.classList.add('selected');
+        chosen = opt.getAttribute('data-type');
+        nextBtn.disabled = false;
+      });
+    });
+    nextBtn.addEventListener('click', function () {
+      if (!chosen) return;
+      answers.push(chosen);
+      var qNum = parseInt(slide.getAttribute('data-q'));
+      if (qNum < totalQ) {
+        slide.classList.remove('active');
+        getSlide(qNum + 1).classList.add('active');
+        currentQ = qNum + 1;
+        updateProgress(currentQ);
+        window.scrollTo({ top: document.getElementById('quiz').offsetTop - 20, behavior: 'smooth' });
+      } else {
+        slide.classList.remove('active');
+        progressFill.style.width = '100%';
+        progressLabel.textContent = 'Almost there...';
+        leadGate.classList.add('active');
+        window.scrollTo({ top: document.getElementById('quiz').offsetTop - 20, behavior: 'smooth' });
+      }
+    });
+  });
+
+  updateProgress(1);
+
+  leadForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    showResults();
+  });
+
+  function countType(type) { return answers.filter(function (a) { return a === type; }).length; }
+
+  function determineType() {
+    var counts = { S: countType('S'), A: countType('A'), H: countType('H'), P: countType('P') };
+    var winner = 'H'; var max = -1;
+    Object.keys(counts).forEach(function (k) { if (counts[k] > max) { max = counts[k]; winner = k; } });
+    return winner;
+  }
+
+  function showResults() {
+    var type = determineType();
+    results.classList.add('active');
+    var activeResult = document.getElementById('result-' + type);
+    activeResult.classList.add('active');
+    setTimeout(function () {
+      activeResult.querySelectorAll('.trait-fill').forEach(function (bar) {
+        bar.style.width = bar.getAttribute('data-pct') + '%';
+      });
+    }, 300);
+    window.scrollTo({ top: results.offsetTop - 20, behavior: 'smooth' });
+    launchConfetti();
+  }
+
+  var confettiColors = ['#D4AF37','#F0D060','#00D4FF','#FFFFFF','#FFD700','#87CEEB'];
+
+  function launchConfetti() {
+    for (var i = 0; i < 80; i++) {
+      (function (idx) {
+        setTimeout(function () {
+          var el = document.createElement('div');
+          el.className = 'confetti-piece';
+          var color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+          var size = 6 + Math.random() * 8;
+          var isCircle = Math.random() > 0.5;
+          el.style.cssText = 'left:' + (Math.random()*100) + 'vw;background:' + color + ';animation-delay:' + (Math.random()*0.8) + 's;animation-duration:' + (2.5+Math.random()*2) + 's;width:' + size + 'px;height:' + (isCircle ? size : size*0.4) + 'px;border-radius:' + (isCircle ? '50%' : '2px');
+          confettiEl.appendChild(el);
+          setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 4000);
+        }, idx * 30);
+      })(i);
+    }
+  }
+})();
+</script>
+</body>
+</html>
