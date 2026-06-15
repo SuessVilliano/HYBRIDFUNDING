@@ -15,7 +15,7 @@ import {
   Calendar, BarChart3, DollarSign, BookOpen, Newspaper,
   Trophy, Crown,
 } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import ACTIVE_PROMOTION, { getPromoForPlan } from "@/config/promotions";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -1024,9 +1024,27 @@ function StickySelectionBar({ selection, onClear, onGetStarted }: { selection: S
   );
 }
 
+
+// ─── URL param helpers ─────────────────────────────────────────────────────
+const VALID_MARKETS: MarketKey[] = ["forex", "crypto", "futures", "equities"];
+const VALID_PLANS: PlanKey[] = ["one-step", "two-step", "three-step", "four-phase", "instant", "instant-lite"];
+
+function getInitialParams(): { market: MarketKey; plan: PlanKey } {
+  if (typeof window === "undefined") return { market: "futures", plan: "one-step" };
+  const p = new URLSearchParams(window.location.search);
+  const m = p.get("market") as MarketKey;
+  const pl = p.get("plan") as PlanKey;
+  return {
+    market: VALID_MARKETS.includes(m) ? m : "futures",
+    plan: VALID_PLANS.includes(pl) ? pl : "one-step",
+  };
+}
+
 export default function GetFunded() {
-  const [activeMarket, setActiveMarket] = useState<MarketKey>("futures");
-  const [activePlan, setActivePlan] = useState<PlanKey>("one-step");
+  const { market: initMarket, plan: initPlan } = getInitialParams();
+  const [activeMarket, setActiveMarket] = useState<MarketKey>(initMarket);
+  const [activePlan, setActivePlan] = useState<PlanKey>(initPlan);
+  const isFirstMarketChange = useRef(true);
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [selection, setSelection] = useState<Selection | null>(null);
   const [modalTier, setModalTier] = useState<ModalTier | null>(null);
@@ -1058,8 +1076,12 @@ export default function GetFunded() {
     trackEvent("lp_checkout_modal_open", { market: activeMarket, plan: activePlan, size: tier.size });
   };
 
-  // When market or plan changes, reset card selection
+  // When market or plan changes, reset card selection (skip on mount for URL params)
   useEffect(() => {
+    if (isFirstMarketChange.current) {
+      isFirstMarketChange.current = false;
+      return;
+    }
     setActivePlan(market.plans[0].key);
     setSelectedTier(null);
     setSelection(null);
