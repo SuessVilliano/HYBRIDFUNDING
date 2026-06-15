@@ -1024,7 +1024,6 @@ function StickySelectionBar({ selection, onClear, onGetStarted }: { selection: S
   );
 }
 
-
 // ─── URL param helpers ─────────────────────────────────────────────────────
 const VALID_MARKETS: MarketKey[] = ["forex", "crypto", "futures", "equities"];
 const VALID_PLANS: PlanKey[] = ["one-step", "two-step", "three-step", "four-phase", "instant", "instant-lite"];
@@ -1076,7 +1075,7 @@ export default function GetFunded() {
     trackEvent("lp_checkout_modal_open", { market: activeMarket, plan: activePlan, size: tier.size });
   };
 
-  // When market or plan changes, reset card selection (skip on mount for URL params)
+  // When market or plan changes, reset card selection
   useEffect(() => {
     if (isFirstMarketChange.current) {
       isFirstMarketChange.current = false;
