@@ -1647,12 +1647,21 @@ export default function GetFunded() {
             © {new Date().getFullYear()} Hybrid Funding. All rights reserved.{" "}
             <Link href="/"><span className="hover:text-accent transition-colors cursor-pointer">hybridfunding.co</span></Link>
           </p>
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: '48px', paddingTop: '24px', display: 'flex', justifyContent: 'center', gap: '32px', flexWrap: 'wrap' }}>
-            <a href="https://www.hybridfunding.co/trader-portal" target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', fontSize: '13px', fontWeight: 600, textDecoration: 'none', letterSpacing: '1px', textTransform: 'uppercase' }}>Trader Portal</a>
-            <a href="https://hybridfunding.co/affiliates" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Affiliates</a>
-            <a href="https://hybridfunding.co/faq" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>FAQ</a>
-            <a href="https://hybridfunding.co/contact" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Contact</a>
-          </div>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: '48px', paddingTop: '24px' }}>
+  <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', flexWrap: 'wrap', marginBottom: '12px' }}>
+    <a href="/challenges" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Challenges</a>
+    <a href="/battles" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Battles</a>
+    <a href="/webinar" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Free Training</a>
+    <a href="/blog" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Blog</a>
+    <a href="/about" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>About</a>
+    <a href="/affiliate" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Affiliate</a>
+    <a href="/faq" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>FAQ</a>
+    <a href="/contact" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Contact</a>
+  </div>
+  <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <a href="/trader-portal" style={{ color: '#C9A84C', fontSize: '13px', fontWeight: 700, textDecoration: 'none', letterSpacing: '1.5px', textTransform: 'uppercase', border: '1px solid rgba(201,168,76,0.4)', padding: '8px 20px', borderRadius: '4px' }}>Trader Portal Login</a>
+  </div>
+</div>
         </div>
       </footer>
     </div>
