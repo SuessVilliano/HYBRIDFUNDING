@@ -20,6 +20,23 @@
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-MDMQVJVC');</script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-21JK717FGX"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-21JK717FGX');</script>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'PIXEL_ID_PLACEHOLDER');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=PIXEL_ID_PLACEHOLDER&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel -->
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -164,7 +181,7 @@
     <a href="https://www.hybridfunding.co" class="logo">HYBRID<span>FUNDING</span></a>
     <nav class="header-nav">
       <a href="https://www.hybridfunding.co/trader-portal" class="portal-link">TRADER PORTAL</a>
-      <a href="https://www.hybridfunding.co/get-funded" class="btn-header">GET FUNDED</a>
+      <a href="https://www.hybridfunding.co/get-funded" class="btn-header" onclick="fbq('track', 'InitiateCheckout');">GET FUNDED</a>
     </nav>
   </div>
 </header>
@@ -233,7 +250,7 @@
         <p class="path-desc">Trade our simulated capital, hit the targets, get funded. No time limits on our 1-Step. No activation fee when you pass.</p>
         <div class="path-rule">Pass once. Get funded. Done.</div>
         <p class="path-plans">Plans available: 1-Step &bull; 2-Step &bull; 3-Step</p>
-        <a href="https://www.hybridfunding.co/get-funded" class="path-cta outline">See Evaluation Plans &#8594;</a>
+        <a href="https://www.hybridfunding.co/get-funded" class="path-cta outline" onclick="fbq('track', 'InitiateCheckout');">See Evaluation Plans &#8594;</a>
       </div>
       <div class="path-card featured">
         <div class="path-badge">MOST POPULAR</div>
@@ -241,14 +258,14 @@
         <div class="path-title">Instant Funding</div>
         <p class="path-desc">No evaluation. No waiting. Get funded today and start trading live capital immediately.</p>
         <div class="path-rule">No evaluation required. Zero activation fee.</div>
-        <a href="https://www.hybridfunding.co/get-funded?market=forex&amp;plan=instant" class="path-cta" onclick="window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:'cta_click',cta_type:'instant_funding',section:'paths'});">Get Instant Funding &#8594;</a>
+        <a href="https://www.hybridfunding.co/get-funded?market=forex&amp;plan=instant" class="path-cta" onclick="window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:fbq('track', 'InitiateCheckout');'cta_click',cta_type:'instant_funding',section:'paths'});">Get Instant Funding &#8594;</a>
       </div>
       <div class="path-card">
         <div class="path-icon">&#128200;</div>
         <div class="path-title">Futures Trader</div>
         <p class="path-desc">Our 4-Phase Futures plan pays you at every phase &#8212; not just the end. Most firms make you complete everything before seeing a dollar.</p>
         <div class="path-rule">Get paid every phase you pass.</div>
-        <a href="https://www.hybridfunding.co/get-funded?market=futures&amp;plan=four-phase" class="path-cta outline">See Futures Plans &#8594;</a>
+        <a href="https://www.hybridfunding.co/get-funded?market=futures&amp;plan=four-phase" class="path-cta outline" onclick="fbq('track', 'InitiateCheckout');">See Futures Plans &#8594;</a>
       </div>
     </div>
   </div>
@@ -289,7 +306,7 @@
       <div class="promo-code-badge"><div class="promo-code-value">GOAL40</div><div class="promo-code-desc">40% off all evaluation plans</div></div>
       <div class="promo-code-badge"><div class="promo-code-value">GOAL25</div><div class="promo-code-desc">25% off Instant Funding &amp; IF Lite</div></div>
     </div>
-    <a href="https://www.hybridfunding.co/get-funded" class="btn-promo" onclick="window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:'cta_click',cta_type:'claim_promo',section:'goal40'});">Claim Your Discount &#8594;</a>
+    <a href="https://www.hybridfunding.co/get-funded" class="btn-promo" onclick="window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:fbq('track', 'InitiateCheckout');'cta_click',cta_type:'claim_promo',section:'goal40'});">Claim Your Discount &#8594;</a>
     <div class="countdown-wrapper" id="countdown">
       <div class="countdown-unit"><div class="countdown-num" id="cd-days">--</div><div class="countdown-label">Days</div></div>
       <div class="countdown-unit"><div class="countdown-num" id="cd-hours">--</div><div class="countdown-label">Hours</div></div>
