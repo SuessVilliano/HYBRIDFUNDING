@@ -1647,6 +1647,12 @@ export default function GetFunded() {
             © {new Date().getFullYear()} Hybrid Funding. All rights reserved.{" "}
             <Link href="/"><span className="hover:text-accent transition-colors cursor-pointer">hybridfunding.co</span></Link>
           </p>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: '48px', paddingTop: '24px', display: 'flex', justifyContent: 'center', gap: '32px', flexWrap: 'wrap' }}>
+            <a href="https://traders.hybridfunding.co" target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', fontSize: '13px', fontWeight: 600, textDecoration: 'none', letterSpacing: '1px', textTransform: 'uppercase' }}>Trader Portal</a>
+            <a href="https://hybridfunding.co/affiliates" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Affiliates</a>
+            <a href="https://hybridfunding.co/faq" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>FAQ</a>
+            <a href="https://hybridfunding.co/contact" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Contact</a>
+          </div>
         </div>
       </footer>
     </div>
