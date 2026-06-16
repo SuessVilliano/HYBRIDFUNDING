@@ -52,6 +52,20 @@ const ExitIntentPopup: React.FC = () => {
     };
   }, []);
 
+
+  // Dismiss on Escape key
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        trackEvent("exit_intent_dismissed");
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
   const close = () => {
     setOpen(false);
     trackEvent("exit_intent_dismissed");
@@ -76,7 +90,7 @@ const ExitIntentPopup: React.FC = () => {
             <button
               onClick={close}
               aria-label="Close"
-              className="absolute top-3 right-3 z-10 text-[#B8B8D0] hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
+              className="absolute top-3 right-3 z-10 text-white bg-white/10 hover:bg-white/20 border border-white/20 p-1.5 rounded-full transition-colors"
             >
               <X size={20} />
             </button>
