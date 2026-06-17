@@ -852,6 +852,170 @@
       .nav-links { display: none; }
       .nav-inner { justify-content: space-between; }
     }
+
+    /* ── TABLE OF CONTENTS ── */
+    #toc-index { margin-bottom: 0; }
+    .toc-box {
+      background: var(--bg3);
+      border: 1px solid var(--cyan-border);
+      border-radius: 14px;
+      padding: 24px 28px 20px;
+      margin: 0 0 0;
+    }
+    .toc-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 18px;
+    }
+    .toc-icon { font-size: 18px; line-height: 1; }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 900px) { .toc-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px) { .toc-grid { grid-template-columns: repeat(2, 1fr); } }
+    .toc-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-sec);
+      font-size: 13px;
+      font-weight: 500;
+      transition: border-color 0.18s, color 0.18s, background 0.18s;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .toc-item:hover {
+      color: var(--text);
+      border-color: var(--cyan-border);
+      background: var(--cyan-dim);
+    }
+    .toc-num {
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+
+    /* ── PRINT / PDF STYLES ── */
+    @media print {
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .promo-banner, .nav, #toc-index, .hero-actions, .cta-block, footer,
+      .nav-cta, button { display: none !important; }
+
+      body {
+        background: #fff !important;
+        color: #111 !important;
+        font-size: 11pt;
+        line-height: 1.55;
+      }
+
+      .hero {
+        padding: 24pt 0 16pt;
+        text-align: left;
+        border-bottom: 2pt solid #00C4AF;
+        margin-bottom: 16pt;
+      }
+      .hero h1 { font-size: 22pt; color: #0a0a1a !important; }
+      .hero h1 span { color: #00A89A !important; }
+      .hero-sub { color: #333 !important; font-size: 11pt; }
+      .hero-eyebrow { background: none !important; border: 1pt solid #00A89A; color: #00A89A !important; font-size: 8pt; }
+
+      .page-wrap { max-width: 100%; padding: 0 16pt; }
+
+      .section {
+        padding: 18pt 0 12pt;
+        border-top: 1pt solid #ddd;
+        page-break-inside: avoid;
+      }
+      .section-label { color: #00A89A !important; font-size: 8pt; }
+      .section-title { color: #0a0a1a !important; font-size: 16pt; }
+      .section-desc { color: #444 !important; font-size: 10pt; }
+
+      table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+      th {
+        background: #0a2a28 !important;
+        color: #fff !important;
+        padding: 6pt 8pt;
+        text-align: left;
+        font-size: 9pt;
+      }
+      td { padding: 5pt 8pt; border-bottom: 0.5pt solid #ddd; color: #111 !important; }
+      tr:nth-child(even) td { background: #f5fffe !important; }
+      .td-cyan { color: #007A6E !important; font-weight: 700; }
+
+      .callout {
+        background: #f0fffe !important;
+        border-left: 3pt solid #00A89A !important;
+        color: #111 !important;
+        padding: 8pt 12pt;
+        margin: 10pt 0;
+        font-size: 10pt;
+      }
+      .callout-warn {
+        background: #fff8e6 !important;
+        border-left-color: #e0a800 !important;
+      }
+      .callout strong { color: #0a0a1a !important; }
+
+      .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8pt; }
+      .stat-card {
+        background: #f5fffe !important;
+        border: 0.5pt solid #cceee9 !important;
+        border-radius: 6pt;
+        padding: 8pt;
+      }
+      .stat-value { color: #00A89A !important; font-size: 18pt; font-weight: 800; }
+      .stat-label { color: #333 !important; font-size: 8pt; }
+
+      .rule-card {
+        background: #fafafa !important;
+        border: 0.5pt solid #ddd !important;
+        margin-bottom: 10pt;
+        page-break-inside: avoid;
+      }
+      .rule-card-header { background: #f0fffe !important; }
+      .rule-num { color: #00A89A !important; }
+      .rule-title, .rule-body { color: #111 !important; }
+
+      .breach-card, .adv-card, .roadmap-step {
+        background: #fafafa !important;
+        border: 0.5pt solid #ddd !important;
+        color: #111 !important;
+        page-break-inside: avoid;
+      }
+      .breach-title, .adv-title { color: #0a0a1a !important; }
+      .breach-desc, .adv-desc, .roadmap-desc { color: #333 !important; }
+      .breach-fix { color: #007A6E !important; }
+
+      .adv-dot { background: #00A89A !important; }
+      .toc-box, .toc-item { display: none !important; }
+
+      a { color: inherit !important; text-decoration: none; }
+
+      h2, h3 { color: #0a0a1a !important; }
+      p, li { color: #333 !important; }
+      strong { color: #0a0a1a !important; }
+
+      /* Page headers */
+      @page {
+        margin: 18mm 15mm 18mm 15mm;
+        size: Letter portrait;
+      }
+    }
   </style>
 </head>
 <body>
@@ -902,6 +1066,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="hero-actions">
     <a href="/get-funded" class="btn btn-primary">Get Funded — Code GOAL40</a>
     <a href="#quick-ref" class="btn btn-ghost">Read the Playbook ↓</a>
+    <button onclick="window.print()" class="btn btn-ghost" style="border-color:rgba(0,229,204,0.35);color:var(--cyan);">⬇ Download PDF</button>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="page-wrap" id="toc-index">
+  <div class="toc-box">
+    <div class="toc-header">
+      <span class="toc-icon">≡</span>
+      <span>Jump to Section</span>
+    </div>
+    <div class="toc-grid">
+      <a href="#quick-ref"   class="toc-item"><span class="toc-num">01</span>Quick Reference</a>
+      <a href="#5-rules"     class="toc-item"><span class="toc-num">02</span>The 5 Rules</a>
+      <a href="#sizing"      class="toc-item"><span class="toc-num">03</span>Position Sizing</a>
+      <a href="#trailing-dd" class="toc-item"><span class="toc-num">04</span>Trailing Drawdown</a>
+      <a href="#forex"       class="toc-item"><span class="toc-num">05</span>Forex Playbook</a>
+      <a href="#crypto"      class="toc-item"><span class="toc-num">06</span>Crypto Playbook</a>
+      <a href="#futures"     class="toc-item"><span class="toc-num">07</span>Futures 4-Phase</a>
+      <a href="#equities"    class="toc-item"><span class="toc-num">08</span>SS Equities</a>
+      <a href="#addons"      class="toc-item"><span class="toc-num">09</span>Add-ons</a>
+      <a href="#breaches"    class="toc-item"><span class="toc-num">10</span>Common Breaches</a>
+      <a href="#why-hybrid"  class="toc-item"><span class="toc-num">11</span>Why Hybrid</a>
+      <a href="#roadmap"     class="toc-item"><span class="toc-num">12</span>30-Day Roadmap</a>
+      <a href="#compounding" class="toc-item"><span class="toc-num">13</span>Payout Math</a>
+      <a href="#affiliate"   class="toc-item"><span class="toc-num">14</span>Affiliate Program</a>
+      <a href="#battles"     class="toc-item"><span class="toc-num">15</span>TradeHouse Battles</a>
+      <a href="#next-move"   class="toc-item"><span class="toc-num">16</span>Your Next Move</a>
+    </div>
   </div>
 </div>
 
@@ -991,7 +1184,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </tr>
           <tr>
             <td>Futures</td>
-            <td>Rithmic Pro · Tradovate</td>
+            <td>DX Futures · Volumetrica · Rithmic Pro ★</td>
             <td class="td-cyan">Per instrument</td>
             <td>Close by 15:10 CST</td>
           </tr>
@@ -1004,6 +1197,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </tbody>
       </table>
     </div>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:10px;line-height:1.6;">★ Rithmic Pro is available by request — contact support after purchase to activate.</p>
 
     <div class="callout">
       <strong>If you remember nothing else:</strong> don't oversize, get to your trailing-DD lock threshold first, then ladder up to the profit target.
@@ -1387,7 +1581,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <div class="callout callout-warn">
-      <strong>CME Attestation Note:</strong> You must attest as a non-professional trader through the R|Trader Pro desktop application — not the web version, not Tradovate. This is a one-time step that unlocks CME market data at the non-professional rate. Don't skip it.
+      <strong>CME Attestation Note:</strong> You must attest as a non-professional trader through the R|Trader Pro desktop application (not the web version). This is a one-time step that unlocks CME market data at the non-professional rate. Don't skip it.
     </div>
 
     <div class="cta-block">
@@ -1593,7 +1787,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="adv-card">
         <div class="adv-title"><div class="adv-dot"></div>Modern Platform Stack</div>
-        <div class="adv-desc">cTrader, DXTrade, MatchTrader, Rithmic Pro, Tradovate, GooeyPro. Use the platform you know — no proprietary platform learning curve.</div>
+        <div class="adv-desc">cTrader, DXTrade, MatchTrader, DX Futures, Volumetrica, Rithmic Pro ★, GooeyPro. Use the platform you know — no proprietary platform learning curve.</div>
       </div>
       <div class="adv-card">
         <div class="adv-title"><div class="adv-dot"></div>Up to 90% Profit Splits</div>
