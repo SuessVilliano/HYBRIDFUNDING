@@ -1,1 +1,1897 @@
-<h1>test</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hybrid Funding Trader Playbook — hybridfunding.co/playbook</title>
+  <meta name="description" content="The complete trader's guide to Hybrid Funding: rules, position sizing, payout strategy, and more. Built for funded traders who want to stay funded." />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MDMQVJVC');</script>
+
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "x7loeajlzz");
+  </script>
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-21JK717FGX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-21JK717FGX');
+  </script>
+
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'PIXEL_ID_PLACEHOLDER');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=PIXEL_ID_PLACEHOLDER&ev=PageView&noscript=1" /></noscript>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0F0F1A;
+      --bg2: #13131F;
+      --bg3: #1A1A2E;
+      --bg4: #1E1E32;
+      --cyan: #00E5CC;
+      --cyan-dim: rgba(0,229,204,0.12);
+      --cyan-border: rgba(0,229,204,0.3);
+      --text: #FFFFFF;
+      --text-sec: #B8B8D0;
+      --text-dim: #7A7A96;
+      --border: rgba(255,255,255,0.07);
+      --row-alt: rgba(255,255,255,0.03);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── PROMO BANNER ── */
+    .promo-banner {
+      background: linear-gradient(90deg, #007A6E 0%, #00B8A5 50%, #007A6E 100%);
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      position: relative;
+      z-index: 1001;
+    }
+    .promo-banner a {
+      color: #fff;
+      text-decoration: none;
+    }
+    .promo-banner span.code {
+      background: rgba(0,0,0,0.25);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+    }
+    .promo-banner .promo-arrow {
+      display: inline-block;
+      margin-left: 8px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 4px;
+      padding: 2px 10px;
+      font-size: 13px;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(15,15,26,0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      height: 58px;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      margin-right: 32px;
+      flex-shrink: 0;
+    }
+    .nav-logo span { color: var(--cyan); }
+    .nav-links {
+      display: flex;
+      gap: 2px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex: 1;
+    }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-link:hover { color: var(--text); background: var(--row-alt); }
+    .nav-link.active { color: var(--cyan); background: var(--cyan-dim); }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      background: var(--cyan);
+      color: #0F0F1A;
+      font-weight: 700;
+      font-size: 13px;
+      border-radius: 8px;
+      padding: 8px 16px;
+      text-decoration: none;
+      white-space: nowrap;
+      margin-left: 16px;
+      flex-shrink: 0;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.88; }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 72px 24px 56px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: var(--cyan-dim);
+      border: 1px solid var(--cyan-border);
+      border-radius: 100px;
+      padding: 5px 14px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 58px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--cyan); }
+    .hero-sub {
+      color: var(--text-sec);
+      font-size: 18px;
+      max-width: 640px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section {
+      padding: 72px 0 56px;
+      border-top: 1px solid var(--border);
+    }
+    .section:first-of-type { border-top: none; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: clamp(22px, 3.5vw, 34px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .section-desc {
+      color: var(--text-sec);
+      font-size: 16px;
+      max-width: 700px;
+      margin-bottom: 36px;
+      line-height: 1.65;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 13px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+      cursor: pointer;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary { background: var(--cyan); color: #0F0F1A; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-sec);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+    /* ── STAT GRID ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    @media (max-width: 700px) {
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 400px) {
+      .stat-grid { grid-template-columns: 1fr; }
+    }
+    .stat-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 18px;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--cyan-border); }
+    .stat-value {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--cyan);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-sec);
+    }
+
+    /* ── TABLES ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 28px;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+    }
+    thead tr {
+      background: var(--bg3);
+    }
+    thead th {
+      padding: 13px 18px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-sec);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:nth-child(even) { background: var(--row-alt); }
+    tbody tr:hover { background: rgba(0,229,204,0.04); }
+    tbody td {
+      padding: 13px 18px;
+      font-size: 14px;
+      color: var(--text-sec);
+      vertical-align: top;
+    }
+    tbody td:first-child {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .td-cyan { color: var(--cyan) !important; font-weight: 700 !important; }
+    .td-highlight { color: var(--text) !important; }
+
+    /* ── CALLOUT BOXES ── */
+    .callout {
+      background: var(--cyan-dim);
+      border: 1px solid var(--cyan-border);
+      border-left: 4px solid var(--cyan);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 28px;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .callout strong { color: var(--cyan); }
+    .callout-warn {
+      background: rgba(255, 165, 0, 0.08);
+      border-color: rgba(255, 165, 0, 0.3);
+      border-left-color: #FFA500;
+    }
+    .callout-warn strong { color: #FFA500; }
+
+    /* ── RULE CARDS ── */
+    .rule-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 26px;
+      margin-bottom: 20px;
+    }
+    .rule-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .rule-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--cyan);
+      color: #0F0F1A;
+      font-weight: 900;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .rule-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── CARDS GRID ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 800px) {
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 20px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover {
+      border-color: var(--cyan-border);
+      transform: translateY(-2px);
+    }
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-sec);
+      line-height: 1.55;
+    }
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 14px;
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .card-link:hover { opacity: 0.8; }
+
+    /* ── ACTION CARDS ── */
+    .action-cards {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    @media (max-width: 900px) {
+      .action-cards { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .action-cards { grid-template-columns: repeat(2, 1fr); }
+    }
+    .action-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 16px;
+      text-align: center;
+      text-decoration: none;
+      transition: border-color 0.2s, transform 0.2s;
+      display: block;
+    }
+    .action-card:hover {
+      border-color: var(--cyan-border);
+      transform: translateY(-2px);
+    }
+    .action-card-icon { font-size: 30px; margin-bottom: 10px; }
+    .action-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .action-card-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* ── PHASE TABLE ── */
+    .phase-row { position: relative; }
+
+    /* ── AFFILIATE TIERS ── */
+    .tier-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .tier-1 { background: rgba(148,163,184,0.15); color: #94A3B8; }
+    .tier-2 { background: rgba(234,179,8,0.15); color: #EAB308; }
+    .tier-3 { background: rgba(16,185,129,0.15); color: #10B981; }
+    .tier-4 { background: rgba(0,229,204,0.15); color: var(--cyan); }
+
+    /* ── RISK BUDGET LIST ── */
+    .list-clean {
+      list-style: none;
+      padding: 0;
+    }
+    .list-clean li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-sec);
+      font-size: 15px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .list-clean li:last-child { border-bottom: none; }
+    .list-clean li::before {
+      content: '›';
+      color: var(--cyan);
+      font-size: 18px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: -1px;
+    }
+
+    /* ── STEPS ── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 600px) {
+      .steps { grid-template-columns: 1fr; }
+    }
+    .step-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      gap: 14px;
+    }
+    .step-num {
+      counter-increment: step;
+      content: counter(step);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--cyan-dim);
+      border: 1px solid var(--cyan-border);
+      color: var(--cyan);
+      font-weight: 800;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-body { font-size: 14px; color: var(--text-sec); line-height: 1.55; }
+    .step-body strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 15px; }
+
+    /* ── BREACH SCENARIOS ── */
+    .breach-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 14px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .breach-num {
+      background: rgba(255,70,70,0.12);
+      border: 1px solid rgba(255,70,70,0.25);
+      color: #FF4646;
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .breach-content { flex: 1; }
+    .breach-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .breach-desc { font-size: 14px; color: var(--text-sec); line-height: 1.55; }
+    .breach-fix {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--cyan);
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+    .breach-fix::before { content: '✓'; font-weight: 700; flex-shrink: 0; }
+
+    /* ── ROADMAP ── */
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    @media (max-width: 700px) {
+      .roadmap { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 400px) {
+      .roadmap { grid-template-columns: 1fr; }
+    }
+    .roadmap-step {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 24px 20px;
+      position: relative;
+    }
+    .roadmap-step:first-child { border-radius: 12px 0 0 12px; }
+    .roadmap-step:last-child { border-radius: 0 12px 12px 0; border-right: 1px solid var(--border); }
+    .roadmap-step + .roadmap-step { border-left: none; }
+    @media (max-width: 700px) {
+      .roadmap-step:first-child { border-radius: 12px 0 0 0; }
+      .roadmap-step:nth-child(2) { border-radius: 0 12px 0 0; }
+      .roadmap-step:nth-child(3) { border-radius: 0 0 0 12px; border-left: 1px solid var(--border); border-top: none; }
+      .roadmap-step:last-child { border-radius: 0 0 12px 0; border-left: none; }
+    }
+    .roadmap-week {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .roadmap-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .roadmap-desc { font-size: 13px; color: var(--text-sec); line-height: 1.55; }
+
+    /* ── SCALING TABLE ── */
+    .scale-highlight { color: var(--cyan) !important; font-weight: 700 !important; font-size: 16px !important; }
+
+    /* ── CTA SECTION ── */
+    .cta-block {
+      background: linear-gradient(135deg, var(--bg3) 0%, #0D1A2E 100%);
+      border: 1px solid var(--cyan-border);
+      border-radius: 16px;
+      padding: 36px 32px;
+      text-align: center;
+      margin-top: 28px;
+    }
+    .cta-block h3 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .cta-block p {
+      color: var(--text-sec);
+      margin-bottom: 22px;
+      font-size: 15px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 56px 0;
+    }
+
+    /* ── INLINE LABEL ── */
+    .label-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--cyan-dim);
+      border: 1px solid var(--cyan-border);
+      color: var(--cyan);
+      border-radius: 6px;
+      padding: 2px 8px;
+      margin-right: 4px;
+    }
+
+    /* ── SHARE ── */
+    .share-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .share-url {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: var(--cyan);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .share-label { color: var(--text-sec); font-size: 14px; white-space: nowrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg3);
+      border-top: 1px solid var(--border);
+      padding: 48px 24px 36px;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-logo {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .footer-logo span { color: var(--cyan); }
+    .footer-tagline {
+      color: var(--text-sec);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      margin-bottom: 32px;
+    }
+    .footer-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--cyan); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .footer-disclaimer {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      max-width: 680px;
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    /* ── ADVANTAGES GRID ── */
+    .adv-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 700px) {
+      .adv-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 440px) {
+      .adv-grid { grid-template-columns: 1fr; }
+    }
+    .adv-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 20px;
+      transition: border-color 0.2s;
+    }
+    .adv-card:hover { border-color: var(--cyan-border); }
+    .adv-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .adv-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      flex-shrink: 0;
+    }
+    .adv-desc { font-size: 14px; color: var(--text-sec); line-height: 1.55; }
+
+    /* ── MISC ── */
+    p { color: var(--text-sec); line-height: 1.7; margin-bottom: 16px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--text); }
+    ul, ol { padding-left: 20px; color: var(--text-sec); }
+    li { margin-bottom: 8px; line-height: 1.6; }
+
+    .mt-24 { margin-top: 24px; }
+    .mb-0 { margin-bottom: 0; }
+    .text-cyan { color: var(--cyan); }
+
+    /* Mobile nav hamburger area */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-inner { justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- GTM noscript -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MDMQVJVC"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<!-- PROMO BANNER -->
+<div class="promo-banner">
+  <a href="/get-funded">
+    40% off all challenges — code <span class="code">GOAL40</span> &nbsp;·&nbsp; Expires July 19
+    <span class="promo-arrow">Get Funded →</span>
+  </a>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">HYBRID<span>FUNDING</span></a>
+    <div class="nav-links" id="nav-links">
+      <a href="#quick-ref" class="nav-link">Quick Ref</a>
+      <a href="#5-rules" class="nav-link">5 Rules</a>
+      <a href="#sizing" class="nav-link">Sizing</a>
+      <a href="#trailing-dd" class="nav-link">Trailing DD</a>
+      <a href="#forex" class="nav-link">Forex</a>
+      <a href="#crypto" class="nav-link">Crypto</a>
+      <a href="#futures" class="nav-link">Futures</a>
+      <a href="#equities" class="nav-link">Equities</a>
+      <a href="#addons" class="nav-link">Add-ons</a>
+      <a href="#breaches" class="nav-link">Breaches</a>
+      <a href="#why-hybrid" class="nav-link">Why Us</a>
+      <a href="#roadmap" class="nav-link">30 Days</a>
+      <a href="#compounding" class="nav-link">Payouts</a>
+      <a href="#affiliate" class="nav-link">Affiliate</a>
+      <a href="#battles" class="nav-link">Battles</a>
+      <a href="#next-move" class="nav-link">Next Move</a>
+    </div>
+    <a href="/get-funded" class="nav-cta">Get Funded →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Official Trader Playbook</div>
+  <h1>Everything You Need to<br /><span>Stay Funded & Get Paid</span></h1>
+  <p class="hero-sub">The complete guide to Hybrid Funding's rules, sizing, payouts, and strategy — across Forex, Crypto, Futures, and Single Session Equities.</p>
+  <div class="hero-actions">
+    <a href="/get-funded" class="btn btn-primary">Get Funded — Code GOAL40</a>
+    <a href="#quick-ref" class="btn btn-ghost">Read the Playbook ↓</a>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ════════════════════════════════════════
+       01 · QUICK REFERENCE CARD
+  ════════════════════════════════════════ -->
+  <section class="section" id="quick-ref">
+    <div class="section-label">01 · Quick Reference Card</div>
+    <h2 class="section-title">The Numbers at a Glance</h2>
+    <p class="section-desc">Every key metric across all four asset classes — memorize these before you go live.</p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-value">10%</div>
+        <div class="stat-label">Forex 1-Step Profit Target</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">6%</div>
+        <div class="stat-label">Forex 1-Step Trailing Drawdown</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">1:50</div>
+        <div class="stat-label">Max Forex Leverage</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">90%</div>
+        <div class="stat-label">Profit Split (with Add-on)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">9%</div>
+        <div class="stat-label">Futures Target / Phase</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">5%</div>
+        <div class="stat-label">Futures Trailing Loss (EOD)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">25%</div>
+        <div class="stat-label">Futures Consistency Rule</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">$1.5K</div>
+        <div class="stat-label">Phase 4 Payout on $25K</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">3%</div>
+        <div class="stat-label">SS Equities Trailing Drawdown</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">2:1</div>
+        <div class="stat-label">Equities Max Leverage</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">15:55</div>
+        <div class="stat-label">ET Equities Hard Close</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">$0.02</div>
+        <div class="stat-label">Equities Per-Share Commission</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Asset Class</th>
+            <th>Platforms</th>
+            <th>Max Leverage</th>
+            <th>Session / Close</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Forex</td>
+            <td>cTrader · DXTrade · MatchTrader</td>
+            <td class="td-cyan">1:50</td>
+            <td>24/5 · Auto-close 3:45 PM Fri ET</td>
+          </tr>
+          <tr>
+            <td>Crypto</td>
+            <td>cTrader · DXTrade · MatchTrader</td>
+            <td class="td-cyan">5:1 BTC/ETH · 2:1 alts</td>
+            <td>24/7</td>
+          </tr>
+          <tr>
+            <td>Futures</td>
+            <td>Rithmic Pro · Tradovate</td>
+            <td class="td-cyan">Per instrument</td>
+            <td>Close by 15:10 CST</td>
+          </tr>
+          <tr>
+            <td>SS Equities</td>
+            <td>GooeyPro</td>
+            <td class="td-cyan">2:1</td>
+            <td>09:30–15:55 ET ONLY</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>If you remember nothing else:</strong> don't oversize, get to your trailing-DD lock threshold first, then ladder up to the profit target.
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       02 · THE 5 RULES EVERY TRADER MEMORIZES
+  ════════════════════════════════════════ -->
+  <section class="section" id="5-rules">
+    <div class="section-label">02 · The 5 Rules Every Trader Memorizes</div>
+    <h2 class="section-title">Rules That Protect Your Account</h2>
+    <p class="section-desc">Know these cold. Every breach comes back to violating one of these five rules.</p>
+
+    <!-- Rule 1 -->
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-num">1</div>
+        <div class="rule-title">Profit Target — What You Need to Pass</div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:0;">
+        <table>
+          <thead>
+            <tr><th>Program</th><th>Target</th><th>Phases</th><th>Base Split</th><th>w/ Upgrade</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Forex 1-Step</td><td>10%</td><td>1</td><td>80%</td><td class="td-cyan">90%</td></tr>
+            <tr><td>Forex 2-Step</td><td>10% + 5%</td><td>2</td><td>80%</td><td class="td-cyan">90%</td></tr>
+            <tr><td>Forex 3-Step</td><td>5% per phase</td><td>3</td><td>80%</td><td class="td-cyan">90%</td></tr>
+            <tr><td>Forex Instant Funding</td><td>No target</td><td>0</td><td>80%</td><td class="td-cyan">90%</td></tr>
+            <tr><td>Forex IF Lite</td><td>No target</td><td>0</td><td>80%</td><td class="td-cyan">90%</td></tr>
+            <tr><td>Crypto 1-Step</td><td>9%</td><td>1</td><td>90%</td><td class="td-cyan">90%</td></tr>
+            <tr><td>Crypto 2-Step</td><td>6% + 9%</td><td>2</td><td>90%</td><td class="td-cyan">90%</td></tr>
+            <tr><td>Futures 4-Phase</td><td>9% per phase</td><td>4</td><td>90%</td><td class="td-cyan">90%</td></tr>
+            <tr><td>SS Equities</td><td>10% (Eval only)</td><td>1</td><td>80%</td><td class="td-cyan">90%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-24" style="font-size:13px;color:var(--text-dim);margin-bottom:0;">Add the <strong style="color:var(--cyan)">90% Profit Share Upgrade</strong> (15% of plan price) to any Forex or Equities program to lift your split to 90%. Pays back in your first payout.</p>
+    </div>
+
+    <!-- Rule 2 -->
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-num">2</div>
+        <div class="rule-title">Max Drawdown — The Hard Floor</div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:0;">
+        <table>
+          <thead>
+            <tr><th>Program</th><th>DD Type</th><th>Max Drawdown</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Forex 1-Step</td><td>Trailing</td><td class="td-cyan">6% on closed balance</td></tr>
+            <tr><td>Forex 2-Step</td><td>Static</td><td>8%</td></tr>
+            <tr><td>Forex 3-Step</td><td>Trailing</td><td class="td-cyan">5% trailing</td></tr>
+            <tr><td>Forex Instant Funding</td><td>Trailing</td><td class="td-cyan">8% trailing</td></tr>
+            <tr><td>Forex IF Lite</td><td>Trailing</td><td class="td-cyan">5% trailing</td></tr>
+            <tr><td>Crypto 1-Step</td><td>Static</td><td>6% static</td></tr>
+            <tr><td>Crypto 2-Step</td><td>Static</td><td>9% static</td></tr>
+            <tr><td>Futures 4-Phase</td><td>Trailing</td><td class="td-cyan">5% on EOD balance</td></tr>
+            <tr><td>SS Equities</td><td>Trailing</td><td class="td-cyan">3% on closed balance</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Rule 3 -->
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-num">3</div>
+        <div class="rule-title">Daily Loss Limit — Per-Day Caps</div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:0;">
+        <table>
+          <thead>
+            <tr><th>Program</th><th>Daily Loss Limit</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Forex 1-Step &amp; 3-Step</td><td>None</td></tr>
+            <tr><td>Forex 2-Step</td><td>4%</td></tr>
+            <tr><td>Forex Instant Funding</td><td>5%</td></tr>
+            <tr><td>Forex IF Lite</td><td>3%</td></tr>
+            <tr><td>Crypto 1-Step &amp; 2-Step</td><td class="td-cyan">3% bidirectional daily cap</td></tr>
+            <tr><td>Futures 4-Phase</td><td>Effectively trailing loss (5% EOD)</td></tr>
+            <tr><td>SS Equities</td><td class="td-cyan">2.5% intraday trailing</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Rule 4 -->
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-num">4</div>
+        <div class="rule-title">Trading Window — When You Can Be in the Market</div>
+      </div>
+      <ul class="list-clean" style="margin-bottom:0;">
+        <li><strong>Forex:</strong> 24/5 — auto-closes at 3:45 PM EST Friday. Add the Weekend Hold add-on to carry positions through the weekend.</li>
+        <li><strong>Crypto:</strong> 24/7 — weekend holds allowed natively, no add-on required.</li>
+        <li><strong>Futures:</strong> All positions must be closed by 15:10 CST. No overnight holds, no weekend holds, ever.</li>
+        <li><strong>SS Equities:</strong> 09:30–15:55 ET ONLY. Any open position past 15:55 ET is a hard breach — no exceptions.</li>
+      </ul>
+    </div>
+
+    <!-- Rule 5 -->
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-num">5</div>
+        <div class="rule-title">Consistency Rule — Don't Let One Day Make You</div>
+      </div>
+      <ul class="list-clean" style="margin-bottom:0;">
+        <li><strong>Futures Funded:</strong> Your best single day cannot exceed 25% of your total profit. This requires a minimum of 4 trading days to be mathematically achievable.</li>
+        <li><strong>SS Equities Funded:</strong> 25% Consistency Score applies. You must have a minimum of 3 profitable days, each showing at least 0.50% profit relative to account.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       03 · POSITION SIZING
+  ════════════════════════════════════════ -->
+  <section class="section" id="sizing">
+    <div class="section-label">03 · Position Sizing</div>
+    <h2 class="section-title">The 0.25–0.5% Rule</h2>
+    <p class="section-desc">Risk between 0.25% and 0.5% of your account per trade. This gives you enough room to reach your target while keeping any single loss survivable. Sizing above 1% per trade is how most people blow their challenges.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Account Size</th>
+            <th>0.25% Risk Per Trade</th>
+            <th>0.5% Risk Per Trade</th>
+            <th>10% Target Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>$5,000</td><td>$12.50</td><td>$25</td><td>$500</td></tr>
+          <tr><td>$10,000</td><td>$25</td><td>$50</td><td>$1,000</td></tr>
+          <tr><td>$25,000</td><td>$62.50</td><td>$125</td><td>$2,500</td></tr>
+          <tr><td>$50,000</td><td>$125</td><td>$250</td><td>$5,000</td></tr>
+          <tr><td>$100,000</td><td>$250</td><td>$500</td><td>$10,000</td></tr>
+          <tr><td>$200,000</td><td>$500</td><td>$1,000</td><td>$20,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>Sizing Warning:</strong> Risking 1% per trade halves your trade count to target — but doubles your blow-up odds. Stay in the 0.25–0.5% band and let your edge work at volume.
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       04 · TRAILING MAX DRAWDOWN
+  ════════════════════════════════════════ -->
+  <section class="section" id="trailing-dd">
+    <div class="section-label">04 · Trailing Max Drawdown</div>
+    <h2 class="section-title">How the Trailing Floor Works</h2>
+    <p class="section-desc">The trailing drawdown follows your <strong>closed balance</strong> upward — it never moves down. Once your closed balance locks it at your starting balance, you're protected forever. The worked example below uses a $100K Forex 1-Step account with a 6% trailing drawdown.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>What Happened</th>
+            <th>Closed Balance</th>
+            <th>DD Floor (6% below peak)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Start</td>
+            <td>—</td>
+            <td>$100,000</td>
+            <td>$94,000</td>
+          </tr>
+          <tr>
+            <td>Day 1</td>
+            <td>+$2K winner closed</td>
+            <td>$102,000</td>
+            <td class="td-cyan">$96,000 (trailed up)</td>
+          </tr>
+          <tr>
+            <td>Day 2</td>
+            <td>−$1.5K loser closed</td>
+            <td>$100,500</td>
+            <td>$96,000 (no change — floor never drops)</td>
+          </tr>
+          <tr>
+            <td>Day 3</td>
+            <td>+$5.5K winner closed</td>
+            <td>$106,000</td>
+            <td class="td-cyan" style="font-weight:800;">LOCKED at $100,000 forever</td>
+          </tr>
+          <tr>
+            <td>Day 4+</td>
+            <td>Continue trading</td>
+            <td>Whatever</td>
+            <td style="color:#10B981;font-weight:700;">$100,000 — can never breach original capital</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>The #1 funded trader strategy:</strong> Ladder to your lock threshold first. Most blow-ups happen between Day 1 and the lock. Get to that threshold before sizing up or chasing the profit target.
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       05 · FOREX PLAYBOOK
+  ════════════════════════════════════════ -->
+  <section class="section" id="forex">
+    <div class="section-label">05 · Forex Playbook</div>
+    <h2 class="section-title">Five Paths to Forex Funding</h2>
+    <p class="section-desc">Hybrid Funding offers five distinct Forex programs — each tuned for a different trader profile. Pick the one that fits your style and account objective.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Program</th>
+            <th>Target</th>
+            <th>Max DD</th>
+            <th>Max Leverage</th>
+            <th>Best For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1-Step</td>
+            <td class="td-cyan">10%</td>
+            <td>6% trailing</td>
+            <td>1:20</td>
+            <td>Newer pros — clean, one-shot pass</td>
+          </tr>
+          <tr>
+            <td>2-Step</td>
+            <td>10% + 5%</td>
+            <td>8% static</td>
+            <td>1:30</td>
+            <td>Methodical traders who want more breathing room</td>
+          </tr>
+          <tr>
+            <td>3-Step</td>
+            <td>5% × 3</td>
+            <td>5% trailing</td>
+            <td>1:20</td>
+            <td>Slow and sure — grind it out safely</td>
+          </tr>
+          <tr>
+            <td>Instant Funding</td>
+            <td>No target</td>
+            <td>8% trailing</td>
+            <td>1:50</td>
+            <td>Traders with a documented track record</td>
+          </tr>
+          <tr>
+            <td>IF Lite</td>
+            <td>No target</td>
+            <td>5% trailing</td>
+            <td>Up to 50:1</td>
+            <td>Cost-conscious, already funded elsewhere</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>1-Step Highlights:</strong> One phase, one target, fastest path to funded status. No daily loss limit. 24/5 trading. Trailing DD locks as soon as your closed balance exceeds 106% of starting — then you're protected. Most traders clear in 2–4 weeks at proper sizing.<br /><br />
+      <strong>IF Lite Highlights:</strong> Skip the challenge entirely. Go straight to funded with a tighter trailing DD (5%). Ideal for experienced traders who don't want to "prove" themselves on sim again.
+    </div>
+
+    <div class="cta-block">
+      <h3>Ready to trade Forex with real capital?</h3>
+      <p>Use code GOAL40 for 40% off your challenge. Expires July 19.</p>
+      <a href="/get-funded" class="btn btn-primary">Get Funded with Forex →</a>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       06 · CRYPTO PLAYBOOK
+  ════════════════════════════════════════ -->
+  <section class="section" id="crypto">
+    <div class="section-label">06 · Crypto Playbook</div>
+    <h2 class="section-title">Crypto — 24/7, 90% Split</h2>
+    <p class="section-desc">Two programs, weekend holds allowed natively, and a 3% bidirectional daily cap that manages both risk and reward. The only prop firm offering professional crypto funding at 90% split.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Program</th>
+            <th>Phase Targets</th>
+            <th>Max DD (Static)</th>
+            <th>Daily Cap</th>
+            <th>Split</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Crypto 1-Step</td>
+            <td class="td-cyan">9%</td>
+            <td>6% static</td>
+            <td class="td-cyan">3% bidirectional</td>
+            <td>90%</td>
+          </tr>
+          <tr>
+            <td>Crypto 2-Step</td>
+            <td>6% → 9%</td>
+            <td>9% static</td>
+            <td class="td-cyan">3% bidirectional</td>
+            <td>90%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>3% Daily Cap Explained (Bidirectional):</strong> If your open equity hits +3% on the day, your positions are locked — you cannot open new trades until the next session. This applies in both directions: +3% gain locks you out just like a −3% loss locks you out. Plan your sessions accordingly.
+    </div>
+
+    <ul class="list-clean">
+      <li><strong>BTC &amp; ETH leverage:</strong> 5:1 maximum</li>
+      <li><strong>Altcoin leverage:</strong> 2:1 maximum</li>
+      <li><strong>Weekend holds:</strong> Fully allowed — no Weekend Hold add-on required</li>
+      <li><strong>Platforms:</strong> cTrader, DXTrade, MatchTrader — same interface as Forex</li>
+      <li><strong>Profit split:</strong> 90% from day one — no upgrade needed</li>
+    </ul>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       07 · FUTURES 4-PHASE PLAYBOOK
+  ════════════════════════════════════════ -->
+  <section class="section" id="futures">
+    <div class="section-label">07 · Futures 4-Phase Playbook</div>
+    <h2 class="section-title">Futures — Four Phases, Real Payouts</h2>
+    <p class="section-desc">Hybrid Funding's Futures program is a structured 4-phase path to live funded status. Each phase has a 9% profit target, 5% trailing loss on end-of-day balance, and a 25% consistency cap.</p>
+
+    <div class="callout" style="margin-bottom:28px;">
+      <strong>Key rule:</strong> All futures positions must be closed by 15:10 CST. No overnight holds, no weekend exposure, no exceptions. The CME attestation (confirming non-professional status) must be completed in R|Trader Pro desktop only.
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Account Size</th>
+            <th>Min Contracts</th>
+            <th>Max Contracts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>$25,000</td><td>1</td><td class="td-cyan">15</td></tr>
+          <tr><td>$50,000</td><td>3</td><td class="td-cyan">30</td></tr>
+          <tr><td>$100,000</td><td>6</td><td class="td-cyan">60</td></tr>
+          <tr><td>$150,000</td><td>9</td><td class="td-cyan">90</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text);">Phase Payout Schedule — $25K Account</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Payout</th>
+            <th>Cumulative</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Phase 1 Complete</td><td class="td-cyan">$500</td><td>$500</td></tr>
+          <tr><td>Phase 2 Complete</td><td class="td-cyan">$750</td><td>$1,250</td></tr>
+          <tr><td>Phase 3 Complete</td><td class="td-cyan">$750</td><td>$2,000</td></tr>
+          <tr><td>Phase 4 Complete</td><td class="td-cyan">$1,500</td><td>$3,500</td></tr>
+          <tr><td>Live Funded</td><td class="td-cyan" style="font-weight:800;">90% no cap</td><td>Ongoing</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>CME Attestation Note:</strong> You must attest as a non-professional trader through the R|Trader Pro desktop application — not the web version, not Tradovate. This is a one-time step that unlocks CME market data at the non-professional rate. Don't skip it.
+    </div>
+
+    <div class="cta-block">
+      <h3>Start Your Futures Journey</h3>
+      <p>Four phases. Real capital. 90% split at the finish line. Code GOAL40 takes 40% off.</p>
+      <a href="/get-funded" class="btn btn-primary">Get Futures Funded →</a>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       08 · SINGLE SESSION EQUITIES
+  ════════════════════════════════════════ -->
+  <section class="section" id="equities">
+    <div class="section-label">08 · Single Session Equities</div>
+    <h2 class="section-title">SS Equities — The Tightest Rules, the Best Hours</h2>
+    <p class="section-desc">Single Session Equities is built for intraday stock traders. One session, one window, strict rules — but the tightest feedback loop in prop trading. You know exactly where you stand every day by 4 PM.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Rule</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Platform</td>
+            <td>GooeyPro</td>
+          </tr>
+          <tr>
+            <td>Evaluation Target</td>
+            <td class="td-cyan">10% of account value</td>
+          </tr>
+          <tr>
+            <td>Max Drawdown</td>
+            <td class="td-cyan">3% trailing on closed balance</td>
+          </tr>
+          <tr>
+            <td>Intraday Trailing</td>
+            <td class="td-cyan">2.5% intraday trailing on open equity</td>
+          </tr>
+          <tr>
+            <td>Max Leverage</td>
+            <td>2:1</td>
+          </tr>
+          <tr>
+            <td>Commission</td>
+            <td>$0.02 per share</td>
+          </tr>
+          <tr>
+            <td>Base Split</td>
+            <td>80% (90% with upgrade)</td>
+          </tr>
+          <tr>
+            <td>Consistency — Funded</td>
+            <td>25% Consistency Score, min 3 profitable days at 0.50%+</td>
+          </tr>
+          <tr>
+            <td>Phases</td>
+            <td>1 (Eval) → Live Funded</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>HARD CLOSE — 15:55 ET:</strong> Any position open after 15:55 Eastern Time is an automatic breach. No exceptions, no appeal. Set a hard alarm for 15:50 ET every session day. This is the single most common breach in the SS Equities program.
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       09 · ADD-ON DECISION TREE
+  ════════════════════════════════════════ -->
+  <section class="section" id="addons">
+    <div class="section-label">09 · Add-on Decision Tree</div>
+    <h2 class="section-title">Which Add-ons Are Worth It?</h2>
+    <p class="section-desc">Add-ons are priced as a percentage of your plan cost. Most traders need one or two max — here's how to decide.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Add-on</th>
+            <th>Cost</th>
+            <th>Use It If…</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>90% Profit Share Upgrade</td>
+            <td class="td-cyan">15%</td>
+            <td>You intend to scale — pays back in your first payout month</td>
+          </tr>
+          <tr>
+            <td>Weekend Hold (Forex only)</td>
+            <td>10%</td>
+            <td>You swing trade Sun–Fri; skip if you scalp or day trade only</td>
+          </tr>
+          <tr>
+            <td>Payout-on-Breach</td>
+            <td>25%</td>
+            <td>On tight-rules programs (SS Equities, Instant Funding) — real safety net for near-misses</td>
+          </tr>
+          <tr>
+            <td>Lock-Upon-Payout Waiver</td>
+            <td>25%</td>
+            <td>You take small, frequent payouts and don't want to relock your trailing floor each time</td>
+          </tr>
+          <tr>
+            <td>33% Consistency Threshold</td>
+            <td>20%</td>
+            <td>You want a slightly looser consistency rule than the base 25%</td>
+          </tr>
+          <tr>
+            <td>50% Consistency Threshold</td>
+            <td>35%</td>
+            <td>You want maximum flexibility — most traders skip this, the cost rarely justifies it</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>Recommended starting stack:</strong> 90% Profit Share Upgrade + Weekend Hold (if you swing trade). Everything else is situational.
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       10 · HOW TRADERS BREACH
+  ════════════════════════════════════════ -->
+  <section class="section" id="breaches">
+    <div class="section-label">10 · How Traders Breach (And How Not To)</div>
+    <h2 class="section-title">The 5 Most Common Blow-Ups</h2>
+    <p class="section-desc">Most breaches are preventable. They fall into the same five patterns. Study these and you've already eliminated 80% of your risk.</p>
+
+    <div class="breach-item">
+      <div class="breach-num">1</div>
+      <div class="breach-content">
+        <div class="breach-title">The Friday Trap</div>
+        <div class="breach-desc">Trader leaves a Forex position open over the weekend without the Weekend Hold add-on. The platform auto-closes at 3:45 PM EST Friday — potentially mid-move at a loss.</div>
+        <div class="breach-fix">Set a phone alarm for 3:30 PM Friday. Or buy the Weekend Hold add-on if you swing trade.</div>
+      </div>
+    </div>
+
+    <div class="breach-item">
+      <div class="breach-num">2</div>
+      <div class="breach-content">
+        <div class="breach-title">The "Hold It Longer" Trap</div>
+        <div class="breach-desc">Trader runs a small drawdown, adds to a losing position to "hold through it," and trails their DD floor down to a breach in one session. Common on 1-Step and IF Lite with tight trailing DDs.</div>
+        <div class="breach-fix">Never add to a losing position on a trailing-DD account. Take the small loss, reset, and re-enter with conviction.</div>
+      </div>
+    </div>
+
+    <div class="breach-item">
+      <div class="breach-num">3</div>
+      <div class="breach-content">
+        <div class="breach-title">The Consistency Breach</div>
+        <div class="breach-desc">Funded Futures trader has a monster day — 35% of all profit made in one session. Violates the 25% consistency cap. Account is flagged even though they're profitable.</div>
+        <div class="breach-fix">If you're having a big day, scale down size mid-session once you approach 20% of total profit. Spread your edge across days.</div>
+      </div>
+    </div>
+
+    <div class="breach-item">
+      <div class="breach-num">4</div>
+      <div class="breach-content">
+        <div class="breach-title">The Intraday Equity Breach (SS Equities)</div>
+        <div class="breach-desc">SS Equities has a 2.5% intraday trailing DD on open equity — not just closed. A trade that's open and down 2.5% from the day's high equity triggers the breach, even if no position is closed.</div>
+        <div class="breach-fix">Treat your intraday trailing floor like a hard stop. Monitor open equity, not just closed P&amp;L.</div>
+      </div>
+    </div>
+
+    <div class="breach-item">
+      <div class="breach-num">5</div>
+      <div class="breach-content">
+        <div class="breach-title">The Inactivity Breach</div>
+        <div class="breach-desc">Some programs require minimum trading activity. Trader goes 30+ days without placing a trade. Account is flagged or closed for inactivity.</div>
+        <div class="breach-fix">Even if you have nothing to trade, place one small qualifying trade per month to keep the account active. Check your specific program's inactivity policy.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Three rules that prevent most breaches:</strong> Keep position size small. Lock the trailing floor before laddering up. Close winners when you have them — don't let green go red.
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       11 · WHY TRADERS PICK HYBRID FUNDING
+  ════════════════════════════════════════ -->
+  <section class="section" id="why-hybrid">
+    <div class="section-label">11 · Why Traders Pick Hybrid Funding</div>
+    <h2 class="section-title">6 Unfair Advantages</h2>
+    <p class="section-desc">Here's what makes Hybrid Funding different — and why funded traders who've been through other firms don't go back.</p>
+
+    <div class="adv-grid">
+      <div class="adv-card">
+        <div class="adv-title"><div class="adv-dot"></div>4 Asset Classes, 1 Firm</div>
+        <div class="adv-desc">Trade Forex, Crypto, Futures, and Equities under one roof. Switch instruments without switching accounts, logins, or firms.</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-title"><div class="adv-dot"></div>Single Session Equities</div>
+        <div class="adv-desc">The only prop firm with a structured intraday equities program. Tight rules, tight feedback, fast growth for stock traders.</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-title"><div class="adv-dot"></div>Modern Platform Stack</div>
+        <div class="adv-desc">cTrader, DXTrade, MatchTrader, Rithmic Pro, Tradovate, GooeyPro. Use the platform you know — no proprietary platform learning curve.</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-title"><div class="adv-dot"></div>Up to 90% Profit Splits</div>
+        <div class="adv-desc">Crypto and Futures start at 90% natively. Forex and Equities hit 90% with a single upgrade add-on that pays back in your first payout.</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-title"><div class="adv-dot"></div>Transparent Rules</div>
+        <div class="adv-desc">No hidden clauses, no surprise resets, no ambiguous consistency definitions. Every rule on this page is exactly what you'll find in your dashboard.</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-title"><div class="adv-dot"></div>Real Community — TradeHouse Battles</div>
+        <div class="adv-desc">Monthly trading competitions with real prizes. A community of serious traders who share setups, accountability, and wins — not just a Discord server.</div>
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <h3>Join Traders Already Funded</h3>
+      <p>40% off every challenge through July 19. No recurring fees — just results.</p>
+      <a href="/get-funded" class="btn btn-primary">Get Funded — Use Code GOAL40 →</a>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       12 · FIRST 30 DAYS ROADMAP
+  ════════════════════════════════════════ -->
+  <section class="section" id="roadmap">
+    <div class="section-label">12 · The First 30 Days Roadmap</div>
+    <h2 class="section-title">Week-by-Week Blueprint</h2>
+    <p class="section-desc">Most funded traders pass their challenge and receive their first payout within 30 days. Here's the template that works.</p>
+
+    <div class="roadmap">
+      <div class="roadmap-step">
+        <div class="roadmap-week">Week 1</div>
+        <div class="roadmap-title">Setup &amp; Calibration</div>
+        <div class="roadmap-desc">Connect your platform, configure risk per trade at 0.25–0.5%, place your first calibration trades at minimum size. Confirm your DD floor math is right.</div>
+      </div>
+      <div class="roadmap-step">
+        <div class="roadmap-week">Week 2</div>
+        <div class="roadmap-title">Lock the Trailing Floor</div>
+        <div class="roadmap-desc">Priority #1: get your closed balance above the lock threshold. Don't think about the profit target yet. Protect the account first.</div>
+      </div>
+      <div class="roadmap-step">
+        <div class="roadmap-week">Week 3</div>
+        <div class="roadmap-title">Ladder to Target</div>
+        <div class="roadmap-desc">With the floor locked, size up incrementally. Ride your A+ setups. Stay disciplined — you're one bad session away from erasing a week's work if you oversize.</div>
+      </div>
+      <div class="roadmap-step">
+        <div class="roadmap-week">Week 4</div>
+        <div class="roadmap-title">Pass + First Payout</div>
+        <div class="roadmap-desc">Hit the target, get evaluated, receive your funded account. Submit your first payout request within the eligible window.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Typical timelines:</strong> 1-Step Forex clears in 2–4 weeks for consistent traders. SS Equities typically clears in 3–5 weeks. Futures Phase 1 passes in 2–3 weeks at proper sizing.
+    </div>
+
+    <div class="cta-block">
+      <h3>Start Your 30-Day Run Today</h3>
+      <p>Use GOAL40 for 40% off. The clock starts when you're ready.</p>
+      <a href="/get-funded" class="btn btn-primary">Start Your 30-Day Run →</a>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       13 · COMPOUNDING MATH OF PAYOUTS
+  ════════════════════════════════════════ -->
+  <section class="section" id="compounding">
+    <div class="section-label">13 · The Compounding Math of Payouts</div>
+    <h2 class="section-title">What Consistent Payouts Actually Build</h2>
+    <p class="section-desc">Most traders focus on passing the challenge. The real game is building a payout ladder. Here's what consistent monthly performance on a $100K account looks like at 80% split.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Monthly Payout</th>
+            <th>Cumulative Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Month 1</td><td class="td-cyan">$1,200</td><td>$1,200</td></tr>
+          <tr><td>Month 2</td><td class="td-cyan">$3,000</td><td>$4,200</td></tr>
+          <tr><td>Month 3</td><td class="scale-highlight">$5,200</td><td>$9,400</td></tr>
+          <tr><td>Month 6</td><td class="scale-highlight">$5,800</td><td>$28,000</td></tr>
+          <tr><td>Month 12</td><td class="scale-highlight">—</td><td class="scale-highlight">$72,000+</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>Why most traders never get past Month 1:</strong>
+      <ul style="margin-top:10px;padding-left:20px;color:var(--text-sec);">
+        <li>They take the funded account as a signal to size up — and immediately breach the DD</li>
+        <li>They don't treat the funded account like a business — no journal, no routine, no accountability</li>
+        <li>They chase targets in a bad market instead of sitting on hands and protecting the account</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       14 · AFFILIATE PROGRAM
+  ════════════════════════════════════════ -->
+  <section class="section" id="affiliate">
+    <div class="section-label">14 · Get Paid to Refer Traders</div>
+    <h2 class="section-title">The Hybrid Funding Affiliate Program</h2>
+    <p class="section-desc">Refer traders to Hybrid Funding and earn a recurring commission on every challenge they buy. Four tiers — the more you refer, the higher your rate.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Monthly Sales</th>
+            <th>Commission Rate</th>
+            <th>Est. Annual Earnings</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tier-badge tier-1">Tier 1</span></td>
+            <td>1–9 sales / month</td>
+            <td class="td-highlight">5%</td>
+            <td>~$300/yr</td>
+          </tr>
+          <tr>
+            <td><span class="tier-badge tier-2">Tier 2</span></td>
+            <td>10–49 sales / month</td>
+            <td class="td-highlight">10%</td>
+            <td>~$3,000/yr</td>
+          </tr>
+          <tr>
+            <td><span class="tier-badge tier-3">Tier 3</span></td>
+            <td>50–100 sales / month</td>
+            <td class="td-highlight">15%</td>
+            <td>~$9,000/yr</td>
+          </tr>
+          <tr>
+            <td><span class="tier-badge tier-4">Tier 4</span></td>
+            <td>100+ sales / month</td>
+            <td class="td-cyan" style="font-size:18px;font-weight:800;">20%</td>
+            <td>$24,000+/yr</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ol class="list-clean">
+      <li><strong>Step 1 — Apply:</strong> Sign up at hybridfunding.co/affiliate with your email and trading background.</li>
+      <li><strong>Step 2 — Get your link:</strong> Receive a unique referral link and discount code for your audience.</li>
+      <li><strong>Step 3 — Share:</strong> Post content, run a community, or simply tell other traders. Your code gives them a discount — making the sell easy.</li>
+      <li><strong>Step 4 — Get paid:</strong> Commissions are tracked in your dashboard and paid monthly via your preferred method.</li>
+    </ol>
+
+    <div class="cta-block">
+      <h3>Turn Your Audience into Income</h3>
+      <p>Educators, YouTubers, Discord mods, and prop trading veterans — this program was built for you.</p>
+      <a href="/affiliate" class="btn btn-primary">Become an Affiliate →</a>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       15 · TRADEHOUSE BATTLES
+  ════════════════════════════════════════ -->
+  <section class="section" id="battles">
+    <div class="section-label">15 · Join TradeHouse Battles</div>
+    <h2 class="section-title">Compete. Win. Level Up.</h2>
+    <p class="section-desc">TradeHouse Battles are monthly trading competitions built for Hybrid Funding traders. Real prizes, real accountability, real community. The only competition where your prop account performance translates directly to prizes.</p>
+
+    <div class="adv-grid">
+      <div class="adv-card">
+        <div class="adv-title"><div class="adv-dot"></div>Real Cash Prizes</div>
+        <div class="adv-desc">Monthly prize pools distributed to top performers. The leaderboard is live — you know exactly where you stand throughout the competition period.</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-title"><div class="adv-dot"></div>Account Upgrades</div>
+        <div class="adv-desc">Top finishers earn free account upgrades — bigger funded accounts, higher-tier programs, or add-on packages. Compete your way to a larger allocation.</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-title"><div class="adv-dot"></div>Community Recognition</div>
+        <div class="adv-desc">Win in a room of serious traders. The leaderboard spotlight builds reputation in the TradeHouse community — which opens doors to partnerships, content deals, and more.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Why traders love Battles:</strong> Accountability. When you know your P&amp;L is ranked against 200 other traders in real time, you trade your plan instead of revenge-trading. The competition makes you better — not just richer.
+    </div>
+
+    <div class="cta-block">
+      <h3>Enter the Next TradeHouse Battle</h3>
+      <p>New battles launch monthly. Registration is open to all active Hybrid Funding traders.</p>
+      <a href="/battles" class="btn btn-primary">Enter the Next Battle →</a>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       16 · YOUR NEXT MOVE
+  ════════════════════════════════════════ -->
+  <section class="section" id="next-move">
+    <div class="section-label">16 · Your Next Move</div>
+    <h2 class="section-title">Ready? Here's Where to Go Next.</h2>
+    <p class="section-desc">You've read the playbook. Now put it to work. Pick your next action below.</p>
+
+    <div class="action-cards">
+      <a href="/get-funded" class="action-card">
+        <div class="action-card-icon">🚀</div>
+        <div class="action-card-title">Get Funded</div>
+        <div class="action-card-sub">Code GOAL40 — 40% off</div>
+      </a>
+      <a href="/faq" class="action-card">
+        <div class="action-card-icon">📖</div>
+        <div class="action-card-title">Read the FAQ</div>
+        <div class="action-card-sub">Every edge case answered</div>
+      </a>
+      <a href="/affiliate" class="action-card">
+        <div class="action-card-icon">💰</div>
+        <div class="action-card-title">Become Affiliate</div>
+        <div class="action-card-sub">Earn up to 20% per sale</div>
+      </a>
+      <a href="/battles" class="action-card">
+        <div class="action-card-icon">🏆</div>
+        <div class="action-card-title">TradeHouse Battles</div>
+        <div class="action-card-sub">Compete &amp; win monthly</div>
+      </a>
+      <a href="/blog" class="action-card">
+        <div class="action-card-icon">📊</div>
+        <div class="action-card-title">Read the Blog</div>
+        <div class="action-card-sub">Strategy &amp; market insights</div>
+      </a>
+    </div>
+
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;color:var(--text);">Share this Playbook</h3>
+    <div class="share-box">
+      <span class="share-label">Direct link:</span>
+      <div class="share-url">hybridfunding.co/playbook</div>
+      <button onclick="navigator.clipboard.writeText('https://hybridfunding.co/playbook').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})"
+        style="background:var(--cyan);color:#0F0F1A;border:none;border-radius:8px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;">
+        Copy
+      </button>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:40px;">
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:0;line-height:1.7;">
+        <strong style="color:var(--text-sec);">Disclaimer:</strong> This playbook is for educational and informational purposes only and does not constitute investment advice, financial advice, trading advice, or any other sort of advice. Trading involves a significant risk of loss and is not suitable for all investors. Past performance is not indicative of future results. All figures, percentages, and rules described herein are subject to change — always verify current program rules in your Hybrid Funding dashboard. Hybrid Funding LLC is not responsible for any trading losses incurred by traders acting on the information presented in this document.
+      </p>
+    </div>
+  </section>
+
+</div><!-- /page-wrap -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">HYBRID<span>FUNDING</span>.CO</div>
+    <div class="footer-tagline">Empowering Traders. Funding Potential.</div>
+    <div class="footer-links">
+      <a href="/get-funded" class="footer-link">Get Funded</a>
+      <a href="/programs" class="footer-link">Programs</a>
+      <a href="/playbook" class="footer-link">Playbook</a>
+      <a href="/affiliate" class="footer-link">Affiliate</a>
+      <a href="/battles" class="footer-link">TradeHouse Battles</a>
+      <a href="/blog" class="footer-link">Blog</a>
+      <a href="/faq" class="footer-link">FAQ</a>
+      <a href="/terms" class="footer-link">Terms</a>
+      <a href="/privacy" class="footer-link">Privacy</a>
+      <a href="/contact" class="footer-link">Contact</a>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-disclaimer">
+        Trading involves substantial risk of loss and is not appropriate for all investors. This content is for educational purposes only and does not constitute investment advice. Hybrid Funding LLC does not guarantee profits or freedom from losses in connection with any of the investment strategies discussed. Performance results presented are hypothetical. Individual results will vary.
+      </div>
+      <div class="footer-copy">© 2025 Hybrid Funding LLC. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scrollspy
+  (function() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    function onScroll() {
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.getBoundingClientRect().top;
+        if (top <= 120) current = sec.id;
+      });
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+</script>
+
+</body>
+</html>
