@@ -4,21 +4,10 @@ import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Trophy, Zap, Target, Users, Star, Award, Gift, Crown } from "lucide-react";
-import SEO from "@/components/SEO";
-import { breadcrumbSchema } from "@/lib/jsonLd";
 
 const Battles: React.FC = () => {
   return (
     <Layout>
-      <SEO
-        title="TradeHouse Battles — Compete for Funded Accounts"
-        description="Real-time trading tournaments with live leaderboards and prizes including funded accounts up to $100,000+. Welcome to TradeHouse Battles."
-        path="/battles"
-        jsonLd={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "TradeHouse Battles", path: "/battles" },
-        ])}
-      />
       <div className="page-transition">
         {/* Hero Section */}
         <section className="relative min-h-[70vh] flex items-center cyberpunk-bg overflow-hidden">
@@ -261,20 +250,21 @@ const Battles: React.FC = () => {
                   </p>
                 </div>
 
-                <Button 
-                  variant="neon-filled" 
-                  size="xl" 
-                  rounded="full"
-                  className="font-['Orbitron'] shadow-glow-primary mb-4"
-                  onClick={() => window.open('https://battles.hybridfunding.co', '_blank', 'noopener,noreferrer')}
-                >
-                  <Zap className="mr-2 h-6 w-6" />
-                  LAUNCH BATTLES ARENA
-                  <Trophy className="ml-2 h-6 w-6" />
-                </Button>
+                <Link href="/battles/lobby">
+                  <Button
+                    variant="neon-filled"
+                    size="xl"
+                    rounded="full"
+                    className="font-['Orbitron'] shadow-glow-primary mb-4"
+                  >
+                    <Zap className="mr-2 h-6 w-6" />
+                    LAUNCH BATTLES ARENA
+                    <Trophy className="ml-2 h-6 w-6" />
+                  </Button>
+                </Link>
 
                 <p className="text-[#B8B8D0] text-sm">
-                  Opens in a new window for the best experience
+                  Full-screen arena • OBS-ready • 1v1 / 2v2 / 3v3 modes
                 </p>
               </div>
             </motion.div>

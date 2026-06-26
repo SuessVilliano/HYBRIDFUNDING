@@ -1,6 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import crypto from "crypto";
 import { 
   insertUserSchema, 
   insertChallengeProductSchema, 
@@ -189,110 +190,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // GHL (LeadConnector) lead capture — Hybrid Funding sub-account
-  const leadSchema = z.object({
-    firstName: z.string().trim().min(1, "First name is required").max(80),
-    lastName: z.string().trim().min(1, "Last name is required").max(80),
-    email: z.string().trim().toLowerCase().email("Valid email required"),
-    phone: z.string().trim().min(7, "Phone is required").max(20),
-    smsConsent: z.literal(true, {
-      errorMap: () => ({ message: "SMS consent is required" }),
-    }),
-    marketingConsent: z.boolean().optional().default(false),
-    source: z.string().trim().max(120).optional(),
-  });
-
-  function toE164(raw: string): string | null {
-    const digits = raw.replace(/\D/g, "");
-    if (!digits) return null;
-    if (raw.trim().startsWith("+") && digits.length >= 8 && digits.length <= 15) {
-      return `+${digits}`;
-    }
-    if (digits.length === 10) return `+1${digits}`;
-    if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
-    if (digits.length >= 8 && digits.length <= 15) return `+${digits}`;
-    return null;
-  }
-
-  app.post("/api/lead", async (req: Request, res: Response) => {
-    const parsed = leadSchema.safeParse(req.body);
-    if (!parsed.success) {
-      const first = parsed.error.issues[0];
-      return res.status(400).json({ error: first?.message || "Invalid input" });
-    }
-    const data = parsed.data;
-
-    const phoneE164 = toE164(data.phone);
-    if (!phoneE164) {
-      return res.status(400).json({ error: "Phone number must be valid" });
-    }
-
-    const token = process.env.GHL_PIT_TOKEN;
-    const locationId = process.env.GHL_LOCATION_ID || "wAgobr9TOihDZxQ2G3a5";
-
-    if (!token) {
-      console.error("[lead] GHL_PIT_TOKEN is not configured");
-      return res.status(500).json({ error: "Lead service is not configured" });
-    }
-
-    const tags = ["web-optin", "sms-consent"];
-    if (data.marketingConsent) tags.push("marketing-consent");
-
-    const source = data.source || "website-get-started-today";
-    if (/webinar/i.test(source)) {
-      tags.push("webinar-lead", "funnel-webinar");
-    }
-    if (/course/i.test(source)) {
-      tags.push("course-interest");
-    }
-
-    const payload = {
-      locationId,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      name: `${data.firstName} ${data.lastName}`,
-      email: data.email,
-      phone: phoneE164,
-      source,
-      tags,
-      dnd: false,
-    };
-
-    try {
-      const ghlRes = await fetch("https://services.leadconnectorhq.com/contacts/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Version: "2021-07-28",
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const bodyText = await ghlRes.text();
-
-      if (!ghlRes.ok && ghlRes.status !== 409) {
-        console.error("[lead] GHL error", ghlRes.status, bodyText);
-        return res.status(502).json({ error: "Unable to submit at this time. Please try again." });
-      }
-
-      let contactId: string | undefined;
-      try {
-        const json = JSON.parse(bodyText);
-        contactId = json?.contact?.id || json?.id;
-      } catch {
-        // ignore parse errors
-      }
-
-      console.log("[lead] accepted", { email: data.email, status: ghlRes.status, contactId });
-      return res.status(200).json({ success: true });
-    } catch (err) {
-      console.error("[lead] network error", err);
-      return res.status(502).json({ error: "Unable to submit at this time. Please try again." });
-    }
-  });
-
   // Affiliate application route
   app.post("/api/affiliate/apply", async (req: Request, res: Response) => {
     try {
@@ -317,6 +214,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Error submitting application:", error);
+      res.status(500).json({ error: "Server error" });
+    }
+  });
+
+  // ─── Trader Battles: Stream Video token generation ───────────────────────────
+  app.post("/api/battle-token", async (req: Request, res: Response) => {
+    try {
+      const { userId, userName, roomId } = req.body;
+      if (!userId || !userName || !roomId) {
+        return res.status(400).json({ error: "userId, userName, and roomId are required" });
+      }
+
+      const apiKey = process.env.STREAM_KEY;
+      const apiSecret = process.env.STREAM_SECRET;
+      if (!apiKey || !apiSecret) {
+        return res.status(500).json({ error: "Stream credentials not configured" });
+      }
+
+      // Generate a Stream Video user token (HS256 JWT)
+      const now = Math.floor(Date.now() / 1000);
+      const exp = now + 60 * 60 * 6; // 6-hour token
+
+      const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
+      const payload = Buffer.from(
+        JSON.stringify({ iss: apiKey, sub: `user/${userId}`, iat: now, exp, user_id: userId })
+      ).toString("base64url");
+      const signature = crypto
+        .createHmac("sha256", apiSecret)
+        .update(`${header}.${payload}`)
+        .digest("base64url");
+      const token = `${header}.${payload}.${signature}`;
+
+      res.json({ token, apiKey, userId, userName, roomId });
+    } catch (error) {
+      console.error("Error generating battle token:", error);
       res.status(500).json({ error: "Server error" });
     }
   });
