@@ -2,16 +2,14 @@
   "redirects": [
     {
       "source": "/",
-      "has": [{"type": "host", "value": "battles.hybridfunding.co"}],
+      "has": [{ "type": "host", "value": "battles.hybridfunding.co" }],
       "destination": "/battles/lobby",
       "permanent": false
     }
   ],
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/index"
-    }
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
     {
