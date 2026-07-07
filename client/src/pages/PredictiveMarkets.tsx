@@ -366,7 +366,7 @@ const PredictiveMarkets = () => {
                   <tr key={p.tier} className="border-b border-white/5 last:border-0">
                     <td className="px-6 py-4 text-white font-medium">{p.size}</td>
                     <td className="px-6 py-4 text-[#B8B8D0]">{p.target}</td>
-                    <td className="px-6 py-4 text-right text-white font-bold font-['Orbitron']">${p.price}</td>
+                    <td className="px-6 py-4 text-right text-white font-bold font-['Orbitron']">${p.price.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
