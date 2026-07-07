@@ -12,6 +12,7 @@ import { AnimatePresence } from "framer-motion";
 // Pages
 import Home from "@/pages/Home";
 import Challenges from "@/pages/Challenges";
+import PredictiveMarkets from "@/pages/PredictiveMarkets";
 import About from "@/pages/About";
 import Affiliate from "@/pages/Affiliate";
 import TraderPortal from "@/pages/TraderPortal";
@@ -38,6 +39,7 @@ function AppRouter() {
               <Switch>
                 <Route path="/" component={() => <PageTransition><Home /></PageTransition>} />
                 <Route path="/challenges" component={() => <PageTransition><Challenges /></PageTransition>} />
+                <Route path="/predictive-markets" component={() => <PageTransition><PredictiveMarkets /></PageTransition>} />
                 <Route path="/about" component={() => <PageTransition><About /></PageTransition>} />
                 <Route path="/affiliate" component={() => <PageTransition><Affiliate /></PageTransition>} />
                 <Route path="/trader-portal" component={() => <PageTransition><TraderPortal /></PageTransition>} />

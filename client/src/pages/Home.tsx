@@ -111,7 +111,49 @@ const Home = () => {
         </motion.div>
       </section>
 
-
+      {/* Predictive Markets Banner */}
+      <section className="relative py-6 bg-gradient-to-r from-primary/20 via-accent/10 to-primary/20 border-y border-accent/30 overflow-hidden">
+        <div className="absolute inset-0 grid-pattern opacity-10"></div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            className="flex flex-col md:flex-row items-center justify-between gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-center gap-4 text-center md:text-left">
+              <div className="hidden sm:flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent">
+                <Target className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 justify-center md:justify-start">
+                  <span className="rounded-full bg-accent px-2.5 py-0.5 text-xs font-bold text-[#0B1426] font-['Orbitron']">
+                    NEW
+                  </span>
+                  <h3 className="font-['Orbitron'] text-lg md:text-xl font-bold text-white">
+                    Predictive Markets Are Here
+                  </h3>
+                </div>
+                <p className="text-[#B8B8D0] text-sm md:text-base mt-1">
+                  Get funded to trade the outcome of real-world events. 10% target, up to 90% split, funded from $98.
+                </p>
+              </div>
+            </div>
+            <Link href="/predictive-markets" className="flex-shrink-0">
+              <Button
+                variant="neon-filled"
+                size="lg"
+                rounded="full"
+                className="font-['Orbitron'] shadow-glow-accent whitespace-nowrap"
+              >
+                EXPLORE PREDICTIVE MARKETS
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
 
       <SocialProof />
 
