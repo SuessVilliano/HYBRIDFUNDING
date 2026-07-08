@@ -13,6 +13,11 @@ import { AnimatePresence } from "framer-motion";
 import Home from "@/pages/Home";
 import Challenges from "@/pages/Challenges";
 import PredictiveMarkets from "@/pages/PredictiveMarkets";
+import Webinar from "@/pages/Webinar";
+import Blog from "@/pages/Blog";
+import BlogPost from "@/pages/BlogPost";
+import Playbook from "@/pages/Playbook";
+import GetFunded from "@/pages/GetFunded";
 import About from "@/pages/About";
 import Affiliate from "@/pages/Affiliate";
 import TraderPortal from "@/pages/TraderPortal";
@@ -48,6 +53,13 @@ function AppRouter() {
                 <Route path="/thank-you" component={() => <PageTransition><ThankYou /></PageTransition>} />
                 <Route path="/faq" component={() => <PageTransition><FAQ /></PageTransition>} />
                 <Route path="/battles" component={() => <PageTransition><Battles /></PageTransition>} />
+                <Route path="/webinar" component={() => <PageTransition><Webinar /></PageTransition>} />
+                <Route path="/get-funded" component={() => <PageTransition><GetFunded /></PageTransition>} />
+                <Route path="/playbook" component={() => <PageTransition><Playbook /></PageTransition>} />
+                <Route path="/blog" component={() => <PageTransition><Blog /></PageTransition>} />
+                <Route path="/blog/:slug">
+                  {(params) => <PageTransition><BlogPost slug={params.slug} /></PageTransition>}
+                </Route>
                 <Route component={() => <PageTransition><NotFound /></PageTransition>} />
               </Switch>
             </AnimatePresence>
