@@ -13,7 +13,7 @@ import {
   CheckCircle, ArrowRight, ChevronDown, ChevronUp,
   Star, Users, TrendingUp, Zap, Info, Copy, Check, Clock, X,
   Calendar, BarChart3, DollarSign, BookOpen, Newspaper,
-  Trophy, Crown,
+  Trophy, Crown, Menu, Landmark, Globe2, Gamepad2, Bitcoin,
 } from "lucide-react";
 import { useEffect, useState, useCallback, useRef } from "react";
 import ACTIVE_PROMOTION, { getPromoForPlan } from "@/config/promotions";
@@ -1039,10 +1039,23 @@ function getInitialParams(): { market: MarketKey; plan: PlanKey } {
   };
 }
 
+const NAV_LINKS: { label: string; href: string; isNew?: boolean }[] = [
+  { label: "Predictive Markets", href: "/predictive-markets", isNew: true },
+  { label: "Challenges", href: "/challenges" },
+  { label: "Battles", href: "/battles" },
+  { label: "Playbook", href: "/playbook" },
+  { label: "Blog", href: "/blog" },
+  { label: "FAQ", href: "/faq" },
+  { label: "About", href: "/about" },
+  { label: "Affiliate", href: "/affiliate" },
+  { label: "Contact", href: "/contact" },
+];
+
 export default function GetFunded() {
   const { market: initMarket, plan: initPlan } = getInitialParams();
   const [activeMarket, setActiveMarket] = useState<MarketKey>(initMarket);
   const [activePlan, setActivePlan] = useState<PlanKey>(initPlan);
+  const [menuOpen, setMenuOpen] = useState(false);
   const isFirstMarketChange = useRef(true);
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [selection, setSelection] = useState<Selection | null>(null);
@@ -1107,19 +1120,77 @@ export default function GetFunded() {
         jsonLd={[organizationSchema, websiteSchema]}
       />
 
-      {/* ── Minimal sticky header ── */}
+      {/* ── Sticky header with quick nav ── */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0F0F1A]/95 backdrop-blur-sm">
-        <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <Link href="/">
-            <span className="font-['Orbitron'] text-lg font-bold text-white tracking-wider cursor-pointer">
+            <span className="font-['Orbitron'] text-lg font-bold text-white tracking-wider cursor-pointer whitespace-nowrap">
               HYBRID <span className="text-accent neon-text-accent">FUNDING</span>
             </span>
           </Link>
-          <a href="#choose-program" onClick={() => trackEvent("lp_header_cta_click")}
-            className="font-['Orbitron'] text-xs font-bold px-4 py-2 rounded-full border border-accent text-accent hover:bg-accent hover:text-[#0F0F1A] transition-all">
-            GET STARTED
-          </a>
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
+            {NAV_LINKS.slice(0, 6).map((l) => (
+              <Link key={l.href} href={l.href}>
+                <span className="inline-flex items-center gap-1.5 text-sm text-[#B8B8D0] hover:text-accent transition-colors cursor-pointer whitespace-nowrap">
+                  {l.label}
+                  {l.isNew && (
+                    <span className="rounded bg-accent px-1 py-px text-[9px] font-bold text-[#0F0F1A] font-['Orbitron']">
+                      NEW
+                    </span>
+                  )}
+                </span>
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <a href="#choose-program" onClick={() => trackEvent("lp_header_cta_click")}
+              className="font-['Orbitron'] text-xs font-bold px-4 py-2 rounded-full border border-accent text-accent hover:bg-accent hover:text-[#0F0F1A] transition-all whitespace-nowrap">
+              GET STARTED
+            </a>
+            {/* Mobile menu toggle */}
+            <button
+              className="lg:hidden text-white p-2 -mr-2"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile menu panel */}
+        {menuOpen && (
+          <nav className="lg:hidden border-t border-white/5 bg-[#0F0F1A]/98 backdrop-blur-sm max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="container mx-auto px-4 sm:px-6 py-4 flex flex-col">
+              {NAV_LINKS.map((l) => (
+                <Link key={l.href} href={l.href}>
+                  <span
+                    className="flex items-center justify-between py-3 border-b border-white/5 last:border-0 text-[#B8B8D0] hover:text-accent transition-colors cursor-pointer"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {l.label}
+                    {l.isNew && (
+                      <span className="rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold text-[#0F0F1A] font-['Orbitron']">
+                        NEW
+                      </span>
+                    )}
+                  </span>
+                </Link>
+              ))}
+              <Link href="/trader-portal">
+                <span
+                  className="mt-4 text-center font-['Orbitron'] text-xs font-bold px-4 py-3 rounded-full border border-accent text-accent hover:bg-accent hover:text-[#0F0F1A] transition-all cursor-pointer block"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  TRADER PORTAL
+                </span>
+              </Link>
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* ── Hero ── */}
@@ -1129,7 +1200,7 @@ export default function GetFunded() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-block bg-accent/10 border border-accent/20 text-accent text-xs font-bold px-4 py-1.5 rounded-full font-['Orbitron'] tracking-widest mb-6">
-              PROP FUNDING — FOREX · CRYPTO · FUTURES · EQUITIES
+              PROP FUNDING — FOREX · CRYPTO · FUTURES · EQUITIES · PREDICTION MARKETS
             </span>
             <h1 className="font-['Orbitron'] text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 max-w-4xl mx-auto">
               Prove Your Edge.<br />
@@ -1542,6 +1613,95 @@ export default function GetFunded() {
                   <div className="flex items-center gap-2"><Trophy className="h-4 w-4 text-accent" /><span className="text-white">24 Active Battles</span></div>
                   <div className="h-4 w-px bg-white/20" />
                   <div className="flex items-center gap-2"><Crown className="h-4 w-4 text-primary" /><span className="text-white">Elite Rewards</span></div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Predictive Markets ── */}
+      <section className="py-20 bg-gradient-to-r from-accent/15 via-[#0B1426] to-primary/15 relative overflow-hidden">
+        <div className="absolute inset-0 grid-pattern opacity-10" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="w-full lg:w-1/2"
+            >
+              <div className="flex items-center mb-4">
+                <span className="relative flex h-3 w-3 mr-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                <span className="text-accent font-['Orbitron'] font-bold text-sm tracking-wider">NEW — NOW LIVE</span>
+              </div>
+              <h2 className="font-['Orbitron'] text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+                <span className="text-white">Trade </span>
+                <span className="text-accent neon-text-accent">Predictive</span><br />
+                <span className="text-primary neon-text-primary">Markets</span>
+              </h2>
+              <p className="text-[#B8B8D0] text-lg mb-6">
+                Get funded to trade the outcome of real-world events — not just charts. Buy Yes or No
+                on elections, sports, crypto prices, world events, even esports. Hit a 10% target once
+                and keep up to 90% of your profits. No leverage, no liquidations. Funded from $98.
+              </p>
+              <div className="flex flex-wrap items-center gap-6 mb-8">
+                <div className="flex items-center gap-2"><Landmark className="h-5 w-5 text-accent" /><span className="text-white text-sm">Politics</span></div>
+                <div className="flex items-center gap-2"><Trophy className="h-5 w-5 text-primary" /><span className="text-white text-sm">Sports</span></div>
+                <div className="flex items-center gap-2"><Bitcoin className="h-5 w-5 text-accent" /><span className="text-white text-sm">Crypto</span></div>
+                <div className="flex items-center gap-2"><Globe2 className="h-5 w-5 text-primary" /><span className="text-white text-sm">World Events</span></div>
+                <div className="flex items-center gap-2"><Gamepad2 className="h-5 w-5 text-accent" /><span className="text-white text-sm">Esports</span></div>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                <Link href="/predictive-markets">
+                  <Button variant="neon-filled" size="xl" rounded="full" className="font-['Orbitron'] shadow-glow-accent"
+                    onClick={() => trackEvent("lp_predictive_markets_cta")}>
+                    EXPLORE PREDICTIVE MARKETS <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="w-full lg:w-1/2"
+            >
+              <div className="glassmorphism rounded-xl p-6">
+                <div className="bg-gradient-to-r from-accent/30 to-primary/30 rounded-lg p-4 mb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-white font-['Orbitron'] font-bold">LIVE MARKETS</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                      <span className="text-accent text-sm">100+ OPEN</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {[
+                      "Who wins the World Cup?",
+                      "Fed rate decision this month?",
+                      "What price will Bitcoin hit?",
+                    ].map((q) => (
+                      <div key={q} className="flex items-center justify-between bg-black/30 rounded p-3 gap-2">
+                        <span className="text-white text-sm truncate">{q}</span>
+                        <span className="flex items-center gap-2 flex-shrink-0">
+                          <span className="rounded bg-green-500/15 text-green-400 text-xs font-semibold px-2 py-1">Yes</span>
+                          <span className="rounded bg-red-500/15 text-red-400 text-xs font-semibold px-2 py-1">No</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center justify-center gap-6 text-sm">
+                  <div className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-accent" /><span className="text-white">10% Target, One Step</span></div>
+                  <div className="h-4 w-px bg-white/20" />
+                  <div className="flex items-center gap-2"><DollarSign className="h-4 w-4 text-primary" /><span className="text-white">Up to 90% Split</span></div>
                 </div>
               </div>
             </motion.div>
