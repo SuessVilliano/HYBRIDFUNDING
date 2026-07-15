@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import SEO from "@/components/SEO";
+import LivePredictionMarkets from "@/components/LivePredictionMarkets";
 import { breadcrumbSchema, faqPageSchema, productSchema } from "@/lib/jsonLd";
 import {
   Target,
@@ -180,14 +181,18 @@ const PredictiveMarkets = () => {
               prediction markets, hit your target, and get paid when your read is right.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a href="#pricing">
+              <a href="#live-markets">
                 <Button variant="neon-filled" size="xl" rounded="full" className="font-['Orbitron'] shadow-glow-accent">
-                  VIEW PLANS &amp; PRICING
+                  <span className="relative flex h-2.5 w-2.5 mr-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                  </span>
+                  SEE LIVE MARKETS
                 </Button>
               </a>
-              <a href="#how-it-works">
+              <a href="#pricing">
                 <Button variant="neon" size="xl" rounded="full" className="font-['Orbitron']">
-                  SEE HOW IT WORKS
+                  VIEW PLANS &amp; PRICING
                 </Button>
               </a>
             </div>
@@ -198,6 +203,9 @@ const PredictiveMarkets = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Live markets preview */}
+      <LivePredictionMarkets />
 
       {/* What it is */}
       <section id="how-it-works" className="py-20 bg-[#0B1426]">
