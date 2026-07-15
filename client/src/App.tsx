@@ -36,13 +36,19 @@ function AppRouter() {
       <Route path="/battles/lobby" component={() => <BattleLobby />} />
       <Route path="/battles/room/:roomId" component={() => <BattleRoom />} />
 
+      {/* ── Homepage uses the GetFunded conversion page (no navbar, own footer) ──
+          Restored from fc1b85f — this was accidentally reverted to Home in the
+          June 26 battles rewrite (248e492). ── */}
+      <Route path="/" component={() => <GetFunded />} />
+      <Route path="/get-funded" component={() => <GetFunded />} />
+
       {/* ── Main site routes with Layout ── */}
       <Route>
         {() => (
           <Layout>
             <AnimatePresence mode="wait">
               <Switch>
-                <Route path="/" component={() => <PageTransition><Home /></PageTransition>} />
+                <Route path="/home" component={() => <PageTransition><Home /></PageTransition>} />
                 <Route path="/challenges" component={() => <PageTransition><Challenges /></PageTransition>} />
                 <Route path="/predictive-markets" component={() => <PageTransition><PredictiveMarkets /></PageTransition>} />
                 <Route path="/about" component={() => <PageTransition><About /></PageTransition>} />
@@ -54,7 +60,6 @@ function AppRouter() {
                 <Route path="/faq" component={() => <PageTransition><FAQ /></PageTransition>} />
                 <Route path="/battles" component={() => <PageTransition><Battles /></PageTransition>} />
                 <Route path="/webinar" component={() => <PageTransition><Webinar /></PageTransition>} />
-                <Route path="/get-funded" component={() => <PageTransition><GetFunded /></PageTransition>} />
                 <Route path="/playbook" component={() => <PageTransition><Playbook /></PageTransition>} />
                 <Route path="/blog" component={() => <PageTransition><Blog /></PageTransition>} />
                 <Route path="/blog/:slug">
