@@ -1,0 +1,50 @@
+{
+  "name": "Hybrid Funding",
+  "short_name": "Hybrid Funding",
+  "description": "Get funded to trade Forex, Crypto, Futures, Equities & Prediction Markets. Keep up to 90% of profits.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0F0F1A",
+  "theme_color": "#0F0F1A",
+  "categories": ["finance", "business"],
+  "icons": [
+    {
+      "src": "/pwa-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Predictive Markets",
+      "url": "/predictive-markets?source=pwa",
+      "icons": [{ "src": "/pwa-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Get Funded",
+      "url": "/?source=pwa#choose-program",
+      "icons": [{ "src": "/pwa-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Trader Portal",
+      "url": "/trader-portal?source=pwa",
+      "icons": [{ "src": "/pwa-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
