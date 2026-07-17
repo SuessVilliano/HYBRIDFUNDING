@@ -1121,7 +1121,7 @@ export default function GetFunded() {
       />
 
       {/* ── Sticky header with quick nav ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0F0F1A]/95 backdrop-blur-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0F0F1A]/95 backdrop-blur-sm pt-[env(safe-area-inset-top)]">
         <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <Link href="/">
             <span className="font-['Orbitron'] text-lg font-bold text-white tracking-wider cursor-pointer whitespace-nowrap">
@@ -1194,7 +1194,7 @@ export default function GetFunded() {
       </header>
 
       {/* ── Hero ── */}
-      <section className="relative pt-32 pb-10 overflow-hidden">
+      <section className="relative pt-[calc(8rem+env(safe-area-inset-top))] pb-10 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-10" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-accent/5 rounded-full blur-3xl" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">

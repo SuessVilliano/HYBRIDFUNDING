@@ -37,7 +37,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 glassmorphism shadow-lg">
+    <header className="sticky top-0 z-50 glassmorphism shadow-lg pt-[env(safe-area-inset-top)]">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">

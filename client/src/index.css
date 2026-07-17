@@ -162,3 +162,9 @@
     }
   }
 }
+
+/* Installed-PWA mode: keep the GHL chat widget clear of the bottom tab bar */
+html.hf-standalone chat-widget,
+html.hf-standalone .lc_text-widget {
+  transform: translateY(calc(-68px - env(safe-area-inset-bottom))) !important;
+}

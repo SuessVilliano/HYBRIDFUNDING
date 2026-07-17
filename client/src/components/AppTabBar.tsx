@@ -5,7 +5,7 @@ import {
   LayoutDashboard,
   TrendingUp,
   CandlestickChart,
-  Users,
+  BookOpen,
   ExternalLink,
   X,
 } from "lucide-react";
@@ -53,9 +53,12 @@ const AppTabBar = () => {
       try {
         sessionStorage.setItem("hf-pwa", "1");
       } catch {}
-      // Keep page content clear of the fixed tab bar
+      // Keep page content clear of the fixed tab bar, and let CSS know
+      // we're in installed-app mode (used to lift the chat widget etc.)
+      document.documentElement.classList.add("hf-standalone");
       document.body.style.paddingBottom = "calc(68px + env(safe-area-inset-bottom))";
       return () => {
+        document.documentElement.classList.remove("hf-standalone");
         document.body.style.paddingBottom = "";
       };
     }
@@ -135,13 +138,13 @@ const AppTabBar = () => {
             Platforms
           </button>
           <a
-            href="https://discord.gg/hybridfunding"
+            href="https://hybridjournal.co"
             target="_blank"
             rel="noopener noreferrer"
             className={tabClass(false)}
           >
-            <Users className="h-5 w-5" />
-            Community
+            <BookOpen className="h-5 w-5" />
+            Journal
           </a>
         </div>
       </nav>
