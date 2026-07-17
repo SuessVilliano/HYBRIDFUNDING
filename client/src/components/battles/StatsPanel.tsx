@@ -176,7 +176,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elap
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center divide-y" style={{ divideColor: "rgba(255,255,255,0.04)" }}>
+      <div className="flex-1 flex flex-col justify-center">
         {[
           { label: "WIN RATE", icon: <Target style={{ width: 12, height: 12 }} />, leftVal: `${leftWinRate}%`, rightVal: `${rightWinRate}%`, leftBetter: leftWinRate !== rightWinRate ? leftWinRate > rightWinRate : undefined },
           { label: "TRADES", icon: <BarChart2 style={{ width: 12, height: 12 }} />, leftVal: leftAgg.tradeCount, rightVal: rightAgg.tradeCount },

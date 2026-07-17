@@ -1114,8 +1114,8 @@ export default function GetFunded() {
   return (
     <div className="min-h-screen bg-[#0F0F1A] text-white">
       <SEO
-        title="Hybrid Funding — Get Funded for Forex, Crypto, Futures & Single Session Equities"
-        description="Hybrid Funding is a modern prop firm. Pass our evaluation, trade firm capital, and keep up to 90% of your profits across Forex, Crypto, Futures and Single Session Equities."
+        title="Hybrid Funding — Get Funded for Forex, Crypto, Futures, Equities & Prediction Markets"
+        description="Hybrid Funding is a modern prop firm. Pass our evaluation, trade firm capital, and keep up to 90% of your profits across Forex, Crypto, Futures, Single Session Equities and Prediction Markets."
         path="/"
         jsonLd={[organizationSchema, websiteSchema]}
       />

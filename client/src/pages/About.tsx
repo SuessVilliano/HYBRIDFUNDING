@@ -4,7 +4,7 @@ import SEO from "@/components/SEO";
 import { breadcrumbSchema, organizationSchema } from "@/lib/jsonLd";
 
 const About = () => {
-  const platforms = [
+  const platforms: { name: string; description: string; comingSoon?: boolean }[] = [
     { name: "MatchTrader", description: "Forex — advanced order types" },
     { name: "DXtrade", description: "Forex — web-based solution" },
     { name: "cTrader", description: "Forex — for international traders, scalpers & algos" },
