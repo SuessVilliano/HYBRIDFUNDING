@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { queryClient } from "./lib/queryClient";
 import Layout from "@/components/Layout";
+import AppTabBar from "@/components/AppTabBar";
 import NotFound from "@/pages/not-found";
 import PageTransition, { CyberpunkLoadingScreen } from "@/components/ui/page-transition";
 import { useState, useEffect } from "react";
@@ -98,6 +99,8 @@ function App() {
         <CyberpunkLoadingScreen isLoading={isInitialLoading} />
         <Router>
           <AppRouter />
+          {/* Bottom tab bar — renders only when running as an installed PWA */}
+          <AppTabBar />
         </Router>
         <Toaster />
       </TooltipProvider>
