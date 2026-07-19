@@ -18,16 +18,16 @@ import {
 
 const DASHBOARD_URL = "https://hybridfundingdashboard.propaccount.com/";
 
-// Platform launch links. Platforms without a universal web login route
-// through the trader dashboard (where accounts + credentials live).
+// Platform launch links
 const PLATFORMS: { name: string; note: string; url: string }[] = [
-  { name: "DXtrade", note: "Forex", url: DASHBOARD_URL },
-  { name: "DXtrade Futures", note: "Futures", url: DASHBOARD_URL },
-  { name: "cTrader", note: "Forex — web app", url: "https://app.ctrader.com/" },
-  { name: "Match-Trader", note: "Forex", url: DASHBOARD_URL },
-  { name: "Volumetrica", note: "Futures — order flow", url: DASHBOARD_URL },
-  { name: "Tradovate", note: "Futures — web app", url: "https://trader.tradovate.com/" },
-  { name: "GooeyPro", note: "Single Session Equities", url: DASHBOARD_URL },
+  { name: "DXtrade", note: "Forex", url: "https://trade.gooeytrade.com/" },
+  { name: "DXtrade Futures", note: "Futures", url: "https://tradefutures.gooeytrade.com/" },
+  { name: "Match-Trader", note: "Forex", url: "https://mtr.gooeytrade.com/login" },
+  { name: "cTrader", note: "Forex", url: "https://app.gooeytrade.com/" },
+  { name: "GooeyPro", note: "Single Session Equities", url: "https://gooeypro.gooeytrade.com/login" },
+  { name: "Volumetrica", note: "Futures — order flow", url: "https://my.deepcharts.com/identity/account/login" },
+  { name: "Rithmic", note: "Futures — R Trader Pro", url: "https://rtraderpro.rithmic.com/rtraderpro-web/" },
+  { name: "Tradovate", note: "Futures", url: "https://trader.tradovate.com/" },
 ];
 
 const isStandalone = (): boolean => {
@@ -56,7 +56,7 @@ const AppTabBar = () => {
       // Keep page content clear of the fixed tab bar, and let CSS know
       // we're in installed-app mode (used to lift the chat widget etc.)
       document.documentElement.classList.add("hf-standalone");
-      document.body.style.paddingBottom = "calc(68px + env(safe-area-inset-bottom))";
+      document.body.style.paddingBottom = "calc(56px + env(safe-area-inset-bottom))";
       return () => {
         document.documentElement.classList.remove("hf-standalone");
         document.body.style.paddingBottom = "";
@@ -67,7 +67,7 @@ const AppTabBar = () => {
   if (!standalone) return null;
 
   const tabClass = (active: boolean) =>
-    `flex flex-col items-center justify-center gap-1 flex-1 py-2 text-[10px] font-medium transition-colors ${
+    `flex flex-col items-center justify-center gap-0.5 flex-1 pt-1.5 pb-1 text-[10px] font-medium transition-colors ${
       active ? "text-accent" : "text-[#8888A8]"
     }`;
 
@@ -108,7 +108,7 @@ const AppTabBar = () => {
 
       {/* Bottom tab bar */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-[60] border-t border-white/10 bg-[#0F0F1A]/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]"
+        className="fixed bottom-0 left-0 right-0 z-[60] border-t border-white/10 bg-[#0F0F1A]/95 backdrop-blur-md pb-[max(calc(env(safe-area-inset-bottom)-14px),0px)]"
         aria-label="App navigation"
       >
         <div className="flex items-stretch max-w-lg mx-auto">
