@@ -1040,7 +1040,8 @@ function getInitialParams(): { market: MarketKey; plan: PlanKey } {
 }
 
 const NAV_LINKS: { label: string; href: string; isNew?: boolean }[] = [
-  { label: "Predictive Markets", href: "/predictive-markets", isNew: true },
+  { label: "Predictive Markets", href: "/predictive-markets" },
+  { label: "AI Radar", href: "/market-radar", isNew: true },
   { label: "Challenges", href: "/challenges" },
   { label: "Battles", href: "/battles" },
   { label: "Playbook", href: "/playbook" },

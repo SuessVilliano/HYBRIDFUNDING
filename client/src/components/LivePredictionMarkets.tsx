@@ -344,17 +344,24 @@ const LivePredictionMarkets = () => {
         )}
 
         <div className="text-center mt-10">
-          <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer">
-            <Button
-              variant="neon-filled"
-              size="xl"
-              rounded="full"
-              className="font-['Orbitron'] shadow-glow-accent"
-            >
-              SEE ALL LIVE MARKETS
-              <ExternalLink className="ml-2 h-5 w-5" />
-            </Button>
-          </a>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer">
+              <Button
+                variant="neon-filled"
+                size="xl"
+                rounded="full"
+                className="font-['Orbitron'] shadow-glow-accent"
+              >
+                SEE ALL LIVE MARKETS
+                <ExternalLink className="ml-2 h-5 w-5" />
+              </Button>
+            </a>
+            <a href="/market-radar">
+              <Button variant="neon" size="xl" rounded="full" className="font-['Orbitron']">
+                AI MARKET RADAR
+              </Button>
+            </a>
+          </div>
           <p className="mt-4 text-xs text-[#B8B8D0]">
             Live odds refresh every 60 seconds. Log in to your trader dashboard to trade them.
           </p>

@@ -14,6 +14,7 @@ import { AnimatePresence } from "framer-motion";
 import Home from "@/pages/Home";
 import Challenges from "@/pages/Challenges";
 import PredictiveMarkets from "@/pages/PredictiveMarkets";
+import MarketRadar from "@/pages/MarketRadar";
 import Webinar from "@/pages/Webinar";
 import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
@@ -52,6 +53,7 @@ function AppRouter() {
                 <Route path="/home" component={() => <PageTransition><Home /></PageTransition>} />
                 <Route path="/challenges" component={() => <PageTransition><Challenges /></PageTransition>} />
                 <Route path="/predictive-markets" component={() => <PageTransition><PredictiveMarkets /></PageTransition>} />
+                <Route path="/market-radar" component={() => <PageTransition><MarketRadar /></PageTransition>} />
                 <Route path="/about" component={() => <PageTransition><About /></PageTransition>} />
                 <Route path="/affiliate" component={() => <PageTransition><Affiliate /></PageTransition>} />
                 <Route path="/trader-portal" component={() => <PageTransition><TraderPortal /></PageTransition>} />
