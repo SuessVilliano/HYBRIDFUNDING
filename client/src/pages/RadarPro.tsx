@@ -15,27 +15,35 @@ import {
   ThumbsDown,
   MinusCircle,
   Banknote,
+  Settings,
+  Sparkles,
+  History,
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  CircleDashed,
+  X,
 } from "lucide-react";
 
 /**
  * Radar Pro — INTERNAL, passcode-gated.
  *
- * Same scan engine as the public AI Market Radar, plus a pick layer that
- * takes a stance on every surviving signal:
- *
- *   LEAN YES / LEAN NO  directional lean with a confidence score
- *   SELL BOOK           structural overpricing — sell the rich outcomes
- *   PASS                no statistical edge; explicitly weeded out
- *
- * v1 leans are pure math (favorite-longshot bias, overshoot/drift
- * heuristics, bid-sum arithmetic). No API keys, no cost, runs in-browser.
+ * v2 adds:
+ *  - Track record: every LEAN YES / LEAN NO pick is logged (first-seen price)
+ *    and auto-graded once its market resolves. History tab shows W-L + hit rates.
+ *  - BYOK AI vetting: plug in any LLM API key (OpenAI, Anthropic, Gemini, Groq,
+ *    xAI, DeepSeek, OpenRouter, or any OpenAI-compatible endpoint). Keys live in
+ *    this browser's localStorage only — never in our code or on our servers.
  */
 
 const DASHBOARD_URL = "https://hybridfundingdashboard.propaccount.com/en/prediction";
 const API = "https://gamma-api.polymarket.com/events/pagination";
+const MARKETS_API = "https://gamma-api.polymarket.com/markets";
 // SHA-256 of the access passcode (never stored in plaintext in the bundle)
 const GATE_HASH = "070489c5d58234cafcbb2284b86305c07b09c1548febc5307157e632778ea285";
 const GATE_KEY = "hf-radar-pro";
+const TRACK_KEY = "hf-rp-track";
+const AI_KEY = "hf-rp-ai";
 
 type SignalType = "MOVER" | "VOL SPIKE" | "DECISION" | "BOOK CHECK";
 type Stance = "LEAN YES" | "LEAN NO" | "SELL BOOK" | "PASS";
@@ -50,9 +58,40 @@ type ProSignal = {
   vol24: number;
   endDate?: string;
   stance: Stance;
-  confidence: number; // 50–80, honest heuristic scale
+  confidence: number;
   why: string;
+  mid?: string; // gamma market id, for track-record grading
 };
+
+type TrackedPick = {
+  key: string;
+  type: SignalType;
+  stance: "LEAN YES" | "LEAN NO";
+  confidence: number;
+  event: string;
+  market: string;
+  entryYes: number;
+  ts: number;
+  mid: string;
+  status: "pending" | "won" | "lost" | "void";
+  finalYes?: number;
+  gradedTs?: number;
+};
+
+type AiVerdict = { verdict: "CONFIRM" | "REJECT" | "UNSURE"; reason: string };
+
+type AiConfig = { provider: string; baseUrl: string; model: string; apiKey: string };
+
+const AI_PRESETS: { id: string; name: string; baseUrl: string; model: string; kind: "openai" | "anthropic" | "gemini" }[] = [
+  { id: "openai", name: "OpenAI", baseUrl: "https://api.openai.com/v1", model: "gpt-4o-mini", kind: "openai" },
+  { id: "anthropic", name: "Anthropic (Claude)", baseUrl: "https://api.anthropic.com", model: "claude-3-5-haiku-latest", kind: "anthropic" },
+  { id: "gemini", name: "Google Gemini", baseUrl: "https://generativelanguage.googleapis.com", model: "gemini-2.0-flash", kind: "gemini" },
+  { id: "groq", name: "Groq (free tier)", baseUrl: "https://api.groq.com/openai/v1", model: "llama-3.3-70b-versatile", kind: "openai" },
+  { id: "xai", name: "xAI (Grok)", baseUrl: "https://api.x.ai/v1", model: "grok-2-latest", kind: "openai" },
+  { id: "deepseek", name: "DeepSeek", baseUrl: "https://api.deepseek.com", model: "deepseek-chat", kind: "openai" },
+  { id: "openrouter", name: "OpenRouter (any model)", baseUrl: "https://openrouter.ai/api/v1", model: "meta-llama/llama-3.3-70b-instruct", kind: "openai" },
+  { id: "custom", name: "Custom (OpenAI-compatible)", baseUrl: "", model: "", kind: "openai" },
+];
 
 const num = (x: unknown, d = 0): number => {
   const v = typeof x === "string" ? parseFloat(x) : typeof x === "number" ? x : NaN;
@@ -87,6 +126,8 @@ const hoursTo = (iso?: string): number | null => {
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
+const sigKey = (s: { type: string; event: string; market: string }) => `${s.type}|${s.event}|${s.market}`;
+
 function computeProSignals(events: any[]): ProSignal[] {
   const out: ProSignal[] = [];
 
@@ -102,6 +143,7 @@ function computeProSignals(events: any[]): ProSignal[] {
         const prices = safeParse(m.outcomePrices);
         return {
           q: (m.groupItemTitle || m.question || "").trim(),
+          mid: String(m.id ?? ""),
           yes: num(prices[0], -1),
           bid: num(m.bestBid),
           vol24: num(m.volume24hr),
@@ -150,6 +192,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           stance,
           confidence,
           why,
+          mid: m.mid,
         });
       }
 
@@ -186,6 +229,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           stance,
           confidence,
           why,
+          mid: m.mid,
         });
       }
 
@@ -215,6 +259,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           stance,
           confidence,
           why,
+          mid: m.mid,
         });
       }
     }
@@ -248,12 +293,187 @@ function computeProSignals(events: any[]): ProSignal[] {
       return act(b) - act(a) || b.confidence - a.confidence || b.score - a.score;
     })
     .filter((s) => {
-      const k = `${s.type}|${s.event}|${s.market}`;
+      const k = sigKey(s);
       if (seen.has(k)) return false;
       seen.add(k);
       return true;
     });
 }
+
+// ---------- track record (localStorage) ----------
+
+const loadTrack = (): TrackedPick[] => {
+  try {
+    const raw = localStorage.getItem(TRACK_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveTrack = (t: TrackedPick[]) => {
+  try {
+    localStorage.setItem(TRACK_KEY, JSON.stringify(t.slice(-600)));
+  } catch {}
+};
+
+const recordPicks = (signals: ProSignal[]): TrackedPick[] => {
+  const track = loadTrack();
+  const known = new Set(track.map((t) => t.key));
+  for (const s of signals) {
+    if ((s.stance !== "LEAN YES" && s.stance !== "LEAN NO") || !s.mid) continue;
+    const key = sigKey(s);
+    if (known.has(key)) continue;
+    const pctMatch = s.detail.match(/at (\d+)%/) || s.detail.match(/to (\d+)%/);
+    track.push({
+      key,
+      type: s.type,
+      stance: s.stance,
+      confidence: s.confidence,
+      event: s.event,
+      market: s.market,
+      entryYes: pctMatch ? parseInt(pctMatch[1]) / 100 : -1,
+      ts: Date.now(),
+      mid: s.mid,
+      status: "pending",
+    });
+    known.add(key);
+  }
+  saveTrack(track);
+  return track;
+};
+
+const gradeTrack = async (): Promise<TrackedPick[]> => {
+  const track = loadTrack();
+  const pending = track.filter((t) => t.status === "pending" && t.mid);
+  if (!pending.length) return track;
+  const ids = Array.from(new Set(pending.map((t) => t.mid)));
+  const byId: Record<string, any> = {};
+  for (let i = 0; i < ids.length; i += 20) {
+    const chunk = ids.slice(i, i + 20);
+    try {
+      const res = await fetch(`${MARKETS_API}?${chunk.map((id) => `id=${id}`).join("&")}`);
+      if (!res.ok) continue;
+      const arr = await res.json();
+      for (const m of Array.isArray(arr) ? arr : []) byId[String(m.id)] = m;
+    } catch {}
+  }
+  for (const t of track) {
+    if (t.status !== "pending") continue;
+    const m = byId[t.mid];
+    if (!m || !m.closed) continue;
+    const finalYes = num(safeParse(m.outcomePrices)[0], -1);
+    if (finalYes < 0) continue;
+    t.finalYes = finalYes;
+    t.gradedTs = Date.now();
+    if (finalYes >= 0.95) t.status = t.stance === "LEAN YES" ? "won" : "lost";
+    else if (finalYes <= 0.05) t.status = t.stance === "LEAN NO" ? "won" : "lost";
+    else t.status = "void"; // ambiguous resolution
+  }
+  saveTrack(track);
+  return track;
+};
+
+// ---------- BYOK AI vetting ----------
+
+const loadAiCfg = (): AiConfig | null => {
+  try {
+    const raw = localStorage.getItem(AI_KEY);
+    if (!raw) return null;
+    const c = JSON.parse(raw);
+    return c && c.apiKey && c.model ? c : null;
+  } catch {
+    return null;
+  }
+};
+
+const extractJson = (text: string): any => {
+  const cleaned = text.replace(/```json/gi, "```").split("```").filter(Boolean);
+  for (const part of [text, ...cleaned]) {
+    const start = part.indexOf("[");
+    const end = part.lastIndexOf("]");
+    if (start >= 0 && end > start) {
+      try {
+        return JSON.parse(part.slice(start, end + 1));
+      } catch {}
+    }
+  }
+  return null;
+};
+
+const runAiVet = async (cfg: AiConfig, picks: ProSignal[]): Promise<Record<string, AiVerdict>> => {
+  const preset = AI_PRESETS.find((p) => p.id === cfg.provider);
+  const kind = preset?.kind || "openai";
+  const today = new Date().toDateString();
+  const list = picks
+    .map(
+      (s, i) =>
+        `${i}. [${s.stance} ${s.confidence}%] ${s.event} — ${s.market}. Data: ${s.detail}. Statistical basis: ${s.why}`,
+    )
+    .join("\n");
+  const prompt = `Today is ${today}. You are vetting statistical picks on prediction markets (probability that the named outcome happens). For each pick below, use your knowledge and reasoning to judge whether the statistical lean makes sense. If you lack current information about the event, reason from base rates and say so — do not invent news.
+
+Picks:
+${list}
+
+Respond with ONLY a JSON array, one object per pick, in the same order:
+[{"i": 0, "verdict": "CONFIRM" | "REJECT" | "UNSURE", "reason": "<one sentence, max 20 words>"}, ...]`;
+
+  let text = "";
+  if (kind === "anthropic") {
+    const res = await fetch(`${cfg.baseUrl.replace(/\/$/, "")}/v1/messages`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": cfg.apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({ model: cfg.model, max_tokens: 1500, messages: [{ role: "user", content: prompt }] }),
+    });
+    if (!res.ok) throw new Error(`Anthropic ${res.status}: ${(await res.text()).slice(0, 120)}`);
+    const j = await res.json();
+    text = j?.content?.[0]?.text || "";
+  } else if (kind === "gemini") {
+    const res = await fetch(
+      `${cfg.baseUrl.replace(/\/$/, "")}/v1beta/models/${cfg.model}:generateContent?key=${encodeURIComponent(cfg.apiKey)}`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+      },
+    );
+    if (!res.ok) throw new Error(`Gemini ${res.status}: ${(await res.text()).slice(0, 120)}`);
+    const j = await res.json();
+    text = j?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  } else {
+    const res = await fetch(`${cfg.baseUrl.replace(/\/$/, "")}/chat/completions`, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${cfg.apiKey}` },
+      body: JSON.stringify({
+        model: cfg.model,
+        temperature: 0.2,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    if (!res.ok) throw new Error(`API ${res.status}: ${(await res.text()).slice(0, 120)}`);
+    const j = await res.json();
+    text = j?.choices?.[0]?.message?.content || "";
+  }
+
+  const arr = extractJson(text);
+  if (!Array.isArray(arr)) throw new Error("Model returned unparseable output — try a different model.");
+  const out: Record<string, AiVerdict> = {};
+  for (const v of arr) {
+    const idx = num(v?.i, -1);
+    const verdict = ["CONFIRM", "REJECT", "UNSURE"].includes(v?.verdict) ? v.verdict : "UNSURE";
+    if (idx >= 0 && idx < picks.length) out[sigKey(picks[idx])] = { verdict, reason: String(v?.reason || "").slice(0, 160) };
+  }
+  return out;
+};
+
+// ---------- UI meta ----------
 
 const STANCE_META: Record<Stance, { color: string; bg: string; icon: typeof ThumbsUp }> = {
   "LEAN YES": { color: "text-emerald-400", bg: "bg-emerald-400/10 border-emerald-400/40", icon: ThumbsUp },
@@ -267,6 +487,12 @@ const TYPE_ICON: Record<SignalType, typeof Radar> = {
   "VOL SPIKE": Activity,
   DECISION: Timer,
   "BOOK CHECK": Scale,
+};
+
+const VERDICT_META: Record<AiVerdict["verdict"], { color: string; icon: typeof CheckCircle2 }> = {
+  CONFIRM: { color: "text-emerald-400", icon: CheckCircle2 },
+  REJECT: { color: "text-red-400", icon: XCircle },
+  UNSURE: { color: "text-amber-400", icon: CircleDashed },
 };
 
 const sha256Hex = async (text: string): Promise<string> => {
@@ -286,12 +512,26 @@ const RadarPro = () => {
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [hidePasses, setHidePasses] = useState(true);
+  const [tab, setTab] = useState<"picks" | "history">("picks");
+  const [track, setTrack] = useState<TrackedPick[]>([]);
+  const [aiCfg, setAiCfg] = useState<AiConfig | null>(null);
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState("");
+  const [aiResults, setAiResults] = useState<Record<string, AiVerdict>>({});
+  const [draft, setDraft] = useState<AiConfig>({ provider: "gemini", baseUrl: AI_PRESETS[2].baseUrl, model: AI_PRESETS[2].model, apiKey: "" });
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     try {
       if (localStorage.getItem(GATE_KEY) === GATE_HASH) setUnlocked(true);
     } catch {}
+    const cfg = loadAiCfg();
+    if (cfg) {
+      setAiCfg(cfg);
+      setDraft(cfg);
+    }
+    setTrack(loadTrack());
   }, []);
 
   const tryUnlock = async () => {
@@ -332,9 +572,12 @@ const RadarPro = () => {
         if (data.length < 100) break;
       }
       if (!events.length) throw new Error("empty");
-      setSignals(computeProSignals(events));
+      const sigs = computeProSignals(events);
+      setSignals(sigs);
       setScanned(events.length);
       setUpdatedAt(new Date());
+      setTrack(recordPicks(sigs));
+      gradeTrack().then(setTrack).catch(() => {});
     } catch (err: any) {
       if (err?.name !== "AbortError") setFailed(true);
     } finally {
@@ -362,6 +605,59 @@ const RadarPro = () => {
     for (const s of signals) c[s.stance]++;
     return c;
   }, [signals]);
+
+  const stats = useMemo(() => {
+    const graded = track.filter((t) => t.status === "won" || t.status === "lost");
+    const won = graded.filter((t) => t.status === "won").length;
+    const byType: Record<string, { w: number; n: number }> = {};
+    for (const t of graded) {
+      byType[t.type] = byType[t.type] || { w: 0, n: 0 };
+      byType[t.type].n++;
+      if (t.status === "won") byType[t.type].w++;
+    }
+    return {
+      graded: graded.length,
+      won,
+      lost: graded.length - won,
+      rate: graded.length ? Math.round((won / graded.length) * 100) : 0,
+      pending: track.filter((t) => t.status === "pending").length,
+      voided: track.filter((t) => t.status === "void").length,
+      byType,
+    };
+  }, [track]);
+
+  const vetNow = async () => {
+    if (!aiCfg) {
+      setAiOpen(true);
+      return;
+    }
+    const actionable = visible.filter((s) => s.stance !== "PASS").slice(0, 12);
+    if (!actionable.length) return;
+    setAiBusy(true);
+    setAiError("");
+    try {
+      const res = await runAiVet(aiCfg, actionable);
+      setAiResults((prev) => ({ ...prev, ...res }));
+    } catch (e: any) {
+      setAiError(String(e?.message || e).slice(0, 200));
+    } finally {
+      setAiBusy(false);
+    }
+  };
+
+  const saveAi = () => {
+    const cfg = { ...draft, baseUrl: draft.baseUrl.trim(), model: draft.model.trim(), apiKey: draft.apiKey.trim() };
+    try {
+      localStorage.setItem(AI_KEY, JSON.stringify(cfg));
+    } catch {}
+    setAiCfg(cfg.apiKey ? cfg : null);
+    setAiOpen(false);
+  };
+
+  const clearHistory = () => {
+    saveTrack([]);
+    setTrack([]);
+  };
 
   if (!unlocked) {
     return (
@@ -393,6 +689,83 @@ const RadarPro = () => {
     <div className="page-transition bg-[#0B1426] min-h-screen">
       <SEO title="Radar Pro — Internal Picks" description="Internal tools." path="/radar-pro" noindex />
 
+      {/* AI settings modal */}
+      {aiOpen && (
+        <div className="fixed inset-0 z-[80]" role="dialog" aria-label="AI settings">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setAiOpen(false)} />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-md glassmorphism neon-border rounded-2xl bg-[#12122A] p-6 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-['Orbitron'] text-white font-bold">AI Analyst — Bring Your Own Key</h3>
+              <button aria-label="Close" onClick={() => setAiOpen(false)} className="text-[#8888A8] p-1">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <label className="block text-xs text-[#8888A8] mb-1">Provider</label>
+            <select
+              value={draft.provider}
+              onChange={(e) => {
+                const p = AI_PRESETS.find((x) => x.id === e.target.value)!;
+                setDraft((d) => ({ ...d, provider: p.id, baseUrl: p.baseUrl || d.baseUrl, model: p.model || d.model }));
+              }}
+              className="w-full rounded-lg bg-white/5 border border-white/15 px-3 py-2.5 text-white text-sm mb-3 focus:outline-none focus:border-accent [&>option]:bg-[#12122A]"
+            >
+              {AI_PRESETS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <label className="block text-xs text-[#8888A8] mb-1">API key (stored only in this browser)</label>
+            <input
+              type="password"
+              value={draft.apiKey}
+              onChange={(e) => setDraft((d) => ({ ...d, apiKey: e.target.value }))}
+              className="w-full rounded-lg bg-white/5 border border-white/15 px-3 py-2.5 text-white text-sm mb-3 focus:outline-none focus:border-accent"
+              placeholder="sk-…"
+            />
+            <label className="block text-xs text-[#8888A8] mb-1">Model</label>
+            <input
+              value={draft.model}
+              onChange={(e) => setDraft((d) => ({ ...d, model: e.target.value }))}
+              className="w-full rounded-lg bg-white/5 border border-white/15 px-3 py-2.5 text-white text-sm mb-3 focus:outline-none focus:border-accent"
+            />
+            <label className="block text-xs text-[#8888A8] mb-1">Base URL</label>
+            <input
+              value={draft.baseUrl}
+              onChange={(e) => setDraft((d) => ({ ...d, baseUrl: e.target.value }))}
+              className="w-full rounded-lg bg-white/5 border border-white/15 px-3 py-2.5 text-white text-sm mb-4 focus:outline-none focus:border-accent"
+              placeholder="https://api.example.com/v1"
+            />
+            <p className="text-[10px] text-[#8888A8] mb-4">
+              Your key is saved in this browser's localStorage only — it never touches our servers or code. Calls go
+              straight from your device to the provider. Groq and Gemini have free tiers.
+            </p>
+            <div className="flex gap-3">
+              <Button variant="neon-filled" rounded="full" className="flex-1 font-['Orbitron']" onClick={saveAi}>
+                SAVE
+              </Button>
+              {aiCfg && (
+                <Button
+                  variant="neon"
+                  rounded="full"
+                  className="font-['Orbitron']"
+                  onClick={() => {
+                    try {
+                      localStorage.removeItem(AI_KEY);
+                    } catch {}
+                    setAiCfg(null);
+                    setDraft((d) => ({ ...d, apiKey: "" }));
+                    setAiOpen(false);
+                  }}
+                >
+                  REMOVE KEY
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <section className="relative cyberpunk-bg overflow-hidden py-10">
         <div className="absolute inset-0 grid-pattern opacity-20"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -412,17 +785,24 @@ const RadarPro = () => {
                     : `${scanned} events · ${counts["LEAN YES"] + counts["LEAN NO"] + counts["SELL BOOK"]} picks / ${counts.PASS} passes · ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · auto-refresh 2 min`}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               <button
-                onClick={() => setHidePasses((v) => !v)}
-                className={`rounded-full px-4 py-2 text-xs font-medium border transition-all ${
-                  hidePasses
-                    ? "glassmorphism neon-border text-accent"
-                    : "bg-white/5 border-white/10 text-[#B8B8D0]"
-                }`}
+                onClick={() => setAiOpen(true)}
+                className="rounded-full p-2.5 bg-white/5 border border-white/10 text-[#B8B8D0] hover:text-accent transition-colors"
+                aria-label="AI settings"
               >
-                {hidePasses ? "Showing picks only" : "Showing everything"}
+                <Settings className="h-4 w-4" />
               </button>
+              <Button
+                variant="neon"
+                rounded="full"
+                className="font-['Orbitron']"
+                onClick={vetNow}
+                disabled={aiBusy || tab !== "picks"}
+              >
+                <Sparkles className={`mr-2 h-4 w-4 ${aiBusy ? "animate-pulse" : ""}`} />
+                {aiBusy ? "VETTING…" : aiCfg ? "AI VET" : "AI VET (ADD KEY)"}
+              </Button>
               <Button variant="neon-filled" rounded="full" className="font-['Orbitron']" onClick={scan} disabled={loading}>
                 <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
                 SCAN NOW
@@ -430,23 +810,145 @@ const RadarPro = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-4">
-            {(Object.keys(counts) as Stance[]).map((st) => {
-              const Meta = STANCE_META[st];
-              return (
-                <span key={st} className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${Meta.bg} ${Meta.color}`}>
-                  <Meta.icon className="h-3.5 w-3.5" />
-                  {st}: {counts[st]}
+          {aiError && <p className="text-red-400 text-xs mt-3">AI error: {aiError}</p>}
+
+          <div className="flex flex-wrap items-center gap-2 mt-4">
+            <button
+              onClick={() => setTab("picks")}
+              className={`rounded-full px-4 py-1.5 text-xs font-bold border transition-all ${
+                tab === "picks" ? "glassmorphism neon-border text-accent" : "bg-white/5 border-white/10 text-[#B8B8D0]"
+              }`}
+            >
+              PICKS
+            </button>
+            <button
+              onClick={() => setTab("history")}
+              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold border transition-all ${
+                tab === "history" ? "glassmorphism neon-border text-accent" : "bg-white/5 border-white/10 text-[#B8B8D0]"
+              }`}
+            >
+              <History className="h-3.5 w-3.5" />
+              TRACK RECORD
+              {stats.graded > 0 && (
+                <span className="text-[10px] opacity-80">
+                  {stats.won}-{stats.lost}
                 </span>
-              );
-            })}
+              )}
+            </button>
+            {tab === "picks" && (
+              <button
+                onClick={() => setHidePasses((v) => !v)}
+                className="rounded-full px-4 py-1.5 text-xs font-medium border bg-white/5 border-white/10 text-[#B8B8D0] hover:text-white transition-all"
+              >
+                {hidePasses ? "Showing picks only" : "Showing everything"}
+              </button>
+            )}
           </div>
+
+          {tab === "picks" && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {(Object.keys(counts) as Stance[]).map((st) => {
+                const Meta = STANCE_META[st];
+                return (
+                  <span key={st} className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${Meta.bg} ${Meta.color}`}>
+                    <Meta.icon className="h-3.5 w-3.5" />
+                    {st}: {counts[st]}
+                  </span>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
       <section className="py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {failed && !signals.length ? (
+          {tab === "history" ? (
+            <div className="max-w-5xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                {[
+                  { label: "Record", value: `${stats.won}W – ${stats.lost}L` },
+                  { label: "Hit rate", value: stats.graded ? `${stats.rate}%` : "—" },
+                  { label: "Pending", value: String(stats.pending) },
+                  { label: "Logged total", value: String(track.length) },
+                ].map((s) => (
+                  <div key={s.label} className="glassmorphism rounded-xl p-4 border border-white/5 text-center">
+                    <p className="text-[#8888A8] text-[10px] uppercase tracking-wider font-bold">{s.label}</p>
+                    <p className="text-white font-['Orbitron'] text-xl font-bold mt-1">{s.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              {Object.keys(stats.byType).length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {Object.entries(stats.byType).map(([t, v]) => (
+                    <span key={t} className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-[#B8B8D0]">
+                      {t}: {v.w}/{v.n} ({Math.round((v.w / v.n) * 100)}%)
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {track.length === 0 ? (
+                <div className="glassmorphism rounded-xl p-8 text-center text-[#8888A8]">
+                  No picks logged yet. Every LEAN YES / LEAN NO from the Picks tab is recorded automatically at its
+                  first-seen price, then graded when the market resolves.
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {[...track]
+                    .sort((a, b) => (a.status === "pending" ? 1 : 0) - (b.status === "pending" ? 1 : 0) || (b.gradedTs || b.ts) - (a.gradedTs || a.ts))
+                    .slice(0, 100)
+                    .map((t) => {
+                      const Meta = STANCE_META[t.stance];
+                      return (
+                        <div key={t.key + t.ts} className="glassmorphism rounded-xl p-4 border border-white/5 flex items-center gap-3">
+                          <span
+                            className={`flex-shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold ${
+                              t.status === "won"
+                                ? "bg-emerald-400/10 border-emerald-400/40 text-emerald-400"
+                                : t.status === "lost"
+                                  ? "bg-red-400/10 border-red-400/40 text-red-400"
+                                  : t.status === "void"
+                                    ? "bg-white/5 border-white/10 text-[#8888A8]"
+                                    : "bg-amber-400/10 border-amber-400/40 text-amber-400"
+                            }`}
+                          >
+                            {t.status.toUpperCase()}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-white text-sm font-medium truncate">
+                              {t.event}
+                              {t.market && t.market !== t.event ? ` — ${t.market}` : ""}
+                            </p>
+                            <p className="text-[#8888A8] text-xs mt-0.5">
+                              <span className={Meta.color}>{t.stance}</span> · {t.confidence}% conf · {t.type} · entry{" "}
+                              {t.entryYes >= 0 ? `${Math.round(t.entryYes * 100)}%` : "—"}
+                              {t.finalYes !== undefined ? ` → resolved ${Math.round(t.finalYes * 100)}%` : ""} ·{" "}
+                              {new Date(t.ts).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+
+              {track.length > 0 && (
+                <button
+                  onClick={clearHistory}
+                  className="mt-6 inline-flex items-center gap-1.5 text-xs text-[#8888A8] hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Clear history
+                </button>
+              )}
+              <p className="mt-6 text-[11px] text-[#8888A8]">
+                History is stored on this device. Grading is automatic: a pick wins if the market resolves on its side
+                (≥95% / ≤5%); ambiguous resolutions are marked VOID and excluded from the record.
+              </p>
+            </div>
+          ) : failed && !signals.length ? (
             <div className="max-w-xl mx-auto text-center glassmorphism rounded-xl p-8">
               <p className="text-[#B8B8D0] mb-4">Couldn't reach live market data.</p>
               <Button variant="neon" rounded="full" className="font-['Orbitron']" onClick={scan}>
@@ -469,9 +971,11 @@ const RadarPro = () => {
               {visible.slice(0, 40).map((s, i) => {
                 const Meta = STANCE_META[s.stance];
                 const TypeIcon = TYPE_ICON[s.type];
+                const ai = aiResults[sigKey(s)];
+                const AiIcon = ai ? VERDICT_META[ai.verdict].icon : null;
                 return (
                   <motion.a
-                    key={`${s.type}|${s.event}|${s.market}`}
+                    key={sigKey(s)}
                     href={DASHBOARD_URL}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -518,6 +1022,14 @@ const RadarPro = () => {
                     </div>
                     <p className="text-white text-sm mt-3">{s.detail}</p>
                     <p className={`text-xs mt-2 flex-1 ${s.stance === "PASS" ? "text-[#8888A8]" : Meta.color}`}>{s.why}</p>
+                    {ai && AiIcon && (
+                      <p className={`text-xs mt-2 inline-flex items-start gap-1.5 ${VERDICT_META[ai.verdict].color}`}>
+                        <AiIcon className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+                        <span>
+                          AI {ai.verdict}: {ai.reason}
+                        </span>
+                      </p>
+                    )}
                     <p className="text-[#8888A8] text-[10px] mt-3 inline-flex items-center gap-1">
                       Open on dashboard <ExternalLink className="h-3 w-3" />
                     </p>
@@ -527,17 +1039,19 @@ const RadarPro = () => {
             </div>
           )}
 
-          {!loading && !failed && visible.length === 0 && signals.length > 0 && (
+          {tab === "picks" && !loading && !failed && visible.length === 0 && signals.length > 0 && (
             <p className="text-center text-[#8888A8] mt-8">
               Every current signal is a PASS — no statistical edge right now. That honesty is the feature.
             </p>
           )}
 
-          <p className="mt-10 text-[11px] text-[#8888A8] max-w-2xl mx-auto text-center">
-            Internal experimental tool. Leans are statistical heuristics (favorite-longshot bias, overshoot/drift
-            patterns, book arithmetic), not guarantees — confidence numbers are honest and deliberately modest.
-            Verify with research before trading. Track record logging comes next.
-          </p>
+          {tab === "picks" && (
+            <p className="mt-10 text-[11px] text-[#8888A8] max-w-2xl mx-auto text-center">
+              Internal experimental tool. Leans are statistical heuristics (favorite-longshot bias, overshoot/drift
+              patterns, book arithmetic), not guarantees. AI vetting uses your own API key and adds a second opinion —
+              still not financial advice. Every lean is logged and graded on the Track Record tab.
+            </p>
+          )}
         </div>
       </section>
     </div>
