@@ -1,0 +1,250 @@
+  );
+
+  const counts = useMemo(() => {
+    const c: Record<Stance, number> = { "LEAN YES": 0, "LEAN NO": 0, "SELL BOOK": 0, PASS: 0 };
+    for (const s of signals) c[s.stance]++;
+    return c;
+  }, [signals]);
+
+  const stats = useMemo(() => {
+    const graded = track.filter((t) => t.status === "won" || t.status === "lost");
+    const won = graded.filter((t) => t.status === "won").length;
+    const byType: Record<string, { w: number; n: number }> = {};
+    for (const t of graded) {
+      byType[t.type] = byType[t.type] || { w: 0, n: 0 };
+      byType[t.type].n++;
+      if (t.status === "won") byType[t.type].w++;
+    }
+    return {
+      graded: graded.length,
+      won,
+      lost: graded.length - won,
+      rate: graded.length ? Math.round((won / graded.length) * 100) : 0,
+      pending: track.filter((t) => t.status === "pending").length,
+      voided: track.filter((t) => t.status === "void").length,
+      byType,
+    };
+  }, [track]);
+
+  const vetNow = async () => {
+    if (!aiCfg) {
+      setAiOpen(true);
+      return;
+    }
+    const actionable = visible.filter((s) => s.stance !== "PASS").slice(0, 12);
+    if (!actionable.length) return;
+    setAiBusy(true);
+    setAiError("");
+    try {
+      const res = await runAiVet(aiCfg, actionable);
+      setAiResults((prev) => ({ ...prev, ...res }));
+    } catch (e: any) {
+      setAiError(String(e?.message || e).slice(0, 200));
+    } finally {
+      setAiBusy(false);
+    }
+  };
+
+  const saveAi = () => {
+    const cfg = { ...draft, baseUrl: draft.baseUrl.trim(), model: draft.model.trim(), apiKey: draft.apiKey.trim() };
+    try {
+      localStorage.setItem(AI_KEY, JSON.stringify(cfg));
+    } catch {}
+    setAiCfg(cfg.apiKey ? cfg : null);
+    setAiOpen(false);
+  };
+
+  const clearHistory = () => {
+    saveTrack([]);
+    setTrack([]);
+  };
+
+  if (!unlocked) {
+    return (
+      <div className="page-transition min-h-[70vh] flex items-center justify-center bg-[#0B1426] px-4">
+        <SEO title="Radar Pro" description="Internal tools." path="/radar-pro" noindex />
+        <div className="glassmorphism neon-border rounded-2xl p-8 max-w-sm w-full text-center">
+          <Lock className="h-8 w-8 text-accent mx-auto mb-4" />
+          <h1 className="font-['Orbitron'] text-xl font-bold text-white mb-2">Radar Pro</h1>
+          <p className="text-[#8888A8] text-sm mb-5">Internal access only. Enter the passcode.</p>
+          <input
+            type="password"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && tryUnlock()}
+            className="w-full rounded-lg bg-white/5 border border-white/15 px-4 py-3 text-white text-center tracking-widest focus:outline-none focus:border-accent mb-3"
+            placeholder="••••••"
+            autoFocus
+          />
+          {gateError && <p className="text-red-400 text-xs mb-3">Wrong passcode.</p>}
+          <Button variant="neon-filled" rounded="full" className="w-full font-['Orbitron']" onClick={tryUnlock}>
+            UNLOCK
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page-transition bg-[#0B1426] min-h-screen">
+      <SEO title="Radar Pro — Internal Picks" description="Internal tools." path="/radar-pro" noindex />
+
+      {/* AI settings modal */}
+      {aiOpen && (
+        <div className="fixed inset-0 z-[80]" role="dialog" aria-label="AI settings">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setAiOpen(false)} />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-md glassmorphism neon-border rounded-2xl bg-[#12122A] p-6 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-['Orbitron'] text-white font-bold">AI Analyst — Bring Your Own Key</h3>
+              <button aria-label="Close" onClick={() => setAiOpen(false)} className="text-[#8888A8] p-1">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <label className="block text-xs text-[#8888A8] mb-1">Provider</label>
+            <select
+              value={draft.provider}
+              onChange={(e) => {
+                const p = AI_PRESETS.find((x) => x.id === e.target.value)!;
+                setDraft((d) => ({ ...d, provider: p.id, baseUrl: p.baseUrl || d.baseUrl, model: p.model || d.model }));
+              }}
+              className="w-full rounded-lg bg-white/5 border border-white/15 px-3 py-2.5 text-white text-sm mb-3 focus:outline-none focus:border-accent [&>option]:bg-[#12122A]"
+            >
+              {AI_PRESETS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <label className="block text-xs text-[#8888A8] mb-1">API key (stored only in this browser)</label>
+            <input
+              type="password"
+              value={draft.apiKey}
+              onChange={(e) => setDraft((d) => ({ ...d, apiKey: e.target.value }))}
+              className="w-full rounded-lg bg-white/5 border border-white/15 px-3 py-2.5 text-white text-sm mb-3 focus:outline-none focus:border-accent"
+              placeholder="sk-…"
+            />
+            <label className="block text-xs text-[#8888A8] mb-1">Model</label>
+            <input
+              value={draft.model}
+              onChange={(e) => setDraft((d) => ({ ...d, model: e.target.value }))}
+              className="w-full rounded-lg bg-white/5 border border-white/15 px-3 py-2.5 text-white text-sm mb-3 focus:outline-none focus:border-accent"
+            />
+            <label className="block text-xs text-[#8888A8] mb-1">Base URL</label>
+            <input
+              value={draft.baseUrl}
+              onChange={(e) => setDraft((d) => ({ ...d, baseUrl: e.target.value }))}
+              className="w-full rounded-lg bg-white/5 border border-white/15 px-3 py-2.5 text-white text-sm mb-4 focus:outline-none focus:border-accent"
+              placeholder="https://api.example.com/v1"
+            />
+            <p className="text-[10px] text-[#8888A8] mb-4">
+              Your key is saved in this browser's localStorage only — it never touches our servers or code. Calls go
+              straight from your device to the provider. Groq and Gemini have free tiers.
+            </p>
+            <div className="flex gap-3">
+              <Button variant="neon-filled" rounded="full" className="flex-1 font-['Orbitron']" onClick={saveAi}>
+                SAVE
+              </Button>
+              {aiCfg && (
+                <Button
+                  variant="neon"
+                  rounded="full"
+                  className="font-['Orbitron']"
+                  onClick={() => {
+                    try {
+                      localStorage.removeItem(AI_KEY);
+                    } catch {}
+                    setAiCfg(null);
+                    setDraft((d) => ({ ...d, apiKey: "" }));
+                    setAiOpen(false);
+                  }}
+                >
+                  REMOVE KEY
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <section className="relative cyberpunk-bg overflow-hidden py-10">
+        <div className="absolute inset-0 grid-pattern opacity-20"></div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="font-['Orbitron'] text-2xl md:text-3xl font-bold text-white">
+                Radar <span className="text-accent neon-text-accent">Pro</span>
+                <span className="ml-3 align-middle rounded bg-amber-400/15 border border-amber-400/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-400">
+                  Internal
+                </span>
+              </h1>
+              <p className="text-xs text-[#8888A8] mt-2">
+                {loading && !signals.length
+                  ? "Scanning…"
+                  : failed && !signals.length
+                    ? "Scanner offline"
+                    : `${scanned} events · ${counts["LEAN YES"] + counts["LEAN NO"] + counts["SELL BOOK"]} picks / ${counts.PASS} passes · ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · auto-refresh 2 min`}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setAiOpen(true)}
+                className="rounded-full p-2.5 bg-white/5 border border-white/10 text-[#B8B8D0] hover:text-accent transition-colors"
+                aria-label="AI settings"
+              >
+                <Settings className="h-4 w-4" />
+              </button>
+              <Button
+                variant="neon"
+                rounded="full"
+                className="font-['Orbitron']"
+                onClick={vetNow}
+                disabled={aiBusy || tab !== "picks"}
+              >
+                <Sparkles className={`mr-2 h-4 w-4 ${aiBusy ? "animate-pulse" : ""}`} />
+                {aiBusy ? "VETTING…" : aiCfg ? "AI VET" : "AI VET (ADD KEY)"}
+              </Button>
+              <Button variant="neon-filled" rounded="full" className="font-['Orbitron']" onClick={scan} disabled={loading}>
+                <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                SCAN NOW
+              </Button>
+            </div>
+          </div>
+
+          {aiError && <p className="text-red-400 text-xs mt-3">AI error: {aiError}</p>}
+
+          <div className="flex flex-wrap items-center gap-2 mt-4">
+            <button
+              onClick={() => setTab("picks")}
+              className={`rounded-full px-4 py-1.5 text-xs font-bold border transition-all ${
+                tab === "picks" ? "glassmorphism neon-border text-accent" : "bg-white/5 border-white/10 text-[#B8B8D0]"
+              }`}
+            >
+              PICKS
+            </button>
+            <button
+              onClick={() => setTab("history")}
+              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold border transition-all ${
+                tab === "history" ? "glassmorphism neon-border text-accent" : "bg-white/5 border-white/10 text-[#B8B8D0]"
+              }`}
+            >
+              <History className="h-3.5 w-3.5" />
+              TRACK RECORD
+              {stats.graded > 0 && (
+                <span className="text-[10px] opacity-80">
+                  {stats.won}-{stats.lost}
+                </span>
+              )}
+            </button>
+            {tab === "picks" && (
+              <button
+                onClick={() => setHidePasses((v) => !v)}
+                className="rounded-full px-4 py-1.5 text-xs font-medium border bg-white/5 border-white/10 text-[#B8B8D0] hover:text-white transition-all"
+              >
+                {hidePasses ? "Showing picks only" : "Showing everything"}
+              </button>
+            )}
+          </div>
+
+          {tab === "picks" && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {(Object.keys(counts) as Stance[]).map((st) => {
