@@ -917,7 +917,7 @@ function PurchaseConfirmModal({
                 if (!promo) return null;
                 return (
                   <p className="text-green-400 text-xs text-center">
-                    Use code <strong>{promo.code}</strong> at checkout for {promo.discountPercent}% off
+                    Use code <strong>{promo.code}</strong> at checkout for {promo.discountPercent}% off + the 90/10 profit split add-on
                   </p>
                 );
               })()}

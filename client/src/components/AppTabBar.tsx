@@ -111,7 +111,8 @@ const AppTabBar = () => {
         className="fixed bottom-0 left-0 right-0 z-[60] border-t border-white/10 bg-[#0F0F1A]/95 backdrop-blur-md pb-[max(calc(env(safe-area-inset-bottom)-14px),0px)]"
         aria-label="App navigation"
       >
-        <div className="flex items-stretch max-w-lg mx-auto">
+        {/* pr reserves the bottom-right corner for the chat widget bubble */}
+        <div className="flex items-stretch max-w-lg mx-auto pr-[76px]">
           <Link href="/">
             <span className={tabClass(location === "/") + " cursor-pointer"}>
               <Home className="h-5 w-5" />

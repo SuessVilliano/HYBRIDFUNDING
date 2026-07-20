@@ -75,7 +75,7 @@ const ExitIntentPopup: React.FC = () => {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 pt-[max(calc(env(safe-area-inset-top)+1rem),1.5rem)] overflow-y-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -90,9 +90,9 @@ const ExitIntentPopup: React.FC = () => {
             <button
               onClick={close}
               aria-label="Close"
-              className="absolute top-3 right-3 z-10 text-white bg-white/10 hover:bg-white/20 border border-white/20 p-1.5 rounded-full transition-colors"
+              className="absolute top-3 right-3 z-20 text-white bg-white/10 hover:bg-white/20 border border-white/20 p-2.5 rounded-full transition-colors"
             >
-              <X size={20} />
+              <X size={22} />
             </button>
             <div className="p-6 md:p-8">
               <div className="text-center mb-5">

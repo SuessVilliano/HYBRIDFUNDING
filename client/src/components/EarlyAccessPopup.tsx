@@ -38,7 +38,7 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 pt-[max(calc(env(safe-area-inset-top)+1rem),1.5rem)]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

@@ -163,8 +163,5 @@
   }
 }
 
-/* Installed-PWA mode: keep the GHL chat widget clear of the bottom tab bar */
-html.hf-standalone chat-widget,
-html.hf-standalone .lc_text-widget {
-  transform: translateY(calc(-56px - env(safe-area-inset-bottom))) !important;
-}
+/* Installed-PWA mode: the tab bar reserves its bottom-right corner for the
+   GHL chat widget (see AppTabBar), so the widget sits snug beside the tabs. */
