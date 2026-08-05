@@ -1,7 +1,8 @@
 /* PROMOTION HISTORY
  * 2026-05-XX  UNITY20     — 20% off all plans
  * 2026-06-19  GOAL40/25   — 40% standard, 25% instant. Ended 2026-07-19
- * 2026-07-20  SUNNY35/20  — 35% standard, 20% instant, both + 90/10 profit split add-on. Ends 2026-08-10
+ * 2026-07-20  SUNNY35/20  — 35% standard, 20% instant, both + 90/10 profit split add-on. Ended 2026-08-10
+ * 2026-08-12  PALM40/25   — 40% standard, 25% instant, both + 90/10 profit split add-on. Ends 2026-08-31
  */
 
 export interface PromoTier {
@@ -31,27 +32,27 @@ export interface ActivePromotion {
 // ─── Edit ONLY this object to launch a new promotion ─────────────────────────
 const ACTIVE_PROMOTION: ActivePromotion = {
   active: true,
-  name: "Sunny Days Promo",
-  headline: "Sunny Days. Brighter Payouts.",
-  subtext: "Up to 35% off every plan — plus a 90/10 profit split add-on included.",
-  startDate: "2026-07-20",
-  endDate: "2026-08-10",
-  badgeText: "☀️ Sunny Promo — Valid July 20 – August 10, 2026",
-  exitPopupHeadline: "Don\'t let the sun set on this deal.",
-  exitPopupSubtext: "Use SUNNY35 for 35% off + a 90/10 profit split add-on (SUNNY20 for Instant Funding) before August 10th.",
+  name: "Palm Season Promo",
+  headline: "Turn the Scroll Into a Signup.",
+  subtext: "Up to 40% off every plan — plus a 90/10 profit split add-on included.",
+  startDate: "2026-08-12",
+  endDate: "2026-08-31",
+  badgeText: "🌴 Palm Promo — Valid August 12 – 31, 2026",
+  exitPopupHeadline: "The right offer, right now.",
+  exitPopupSubtext: "Use PALM40 for 40% off + a 90/10 profit split add-on (PALM25 for Instant Funding) before August 31st.",
   tiers: [
     {
-      code: "SUNNY35",
-      discountPercent: 35,
-      multiplier: 0.65,
-      label: "35% OFF + 90/10 SPLIT",
+      code: "PALM40",
+      discountPercent: 40,
+      multiplier: 0.60,
+      label: "40% OFF + 90/10 SPLIT",
       applicablePlans: "standard",
     },
     {
-      code: "SUNNY20",
-      discountPercent: 20,
-      multiplier: 0.80,
-      label: "20% OFF + 90/10 SPLIT",
+      code: "PALM25",
+      discountPercent: 25,
+      multiplier: 0.75,
+      label: "25% OFF + 90/10 SPLIT",
       applicablePlans: "instant",
     },
   ],
