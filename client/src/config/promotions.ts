@@ -1,8 +1,4 @@
-/* PROMOTION HISTORY
- * 2026-05-XX  UNITY20     — 20% off all plans
- * 2026-06-19  GOAL40/25   — 40% standard, 25% instant. Ended 2026-07-19
- * 2026-07-20  SUNNY35/20  — 35% standard, 20% instant, both + 90/10 profit split add-on. Ends 2026-08-10
- */
+/* CURRENT PROMOTION: September 1–30, 2026 */
 
 export interface PromoTier {
   code: string;
@@ -17,7 +13,7 @@ export interface PromoTier {
 
 export interface ActivePromotion {
   active: boolean;              // flip to false to disable all promos instantly
-  name: string;                 // e.g. "Summer Goal Promo"
+  name: string;                 // e.g. "September LEAF Event"
   headline: string;             // banner headline
   subtext: string;              // banner subtext
   startDate: string;            // ISO date string
@@ -31,27 +27,27 @@ export interface ActivePromotion {
 // ─── Edit ONLY this object to launch a new promotion ─────────────────────────
 const ACTIVE_PROMOTION: ActivePromotion = {
   active: true,
-  name: "Sunny Days Promo",
-  headline: "Sunny Days. Brighter Payouts.",
-  subtext: "Up to 35% off every plan — plus a 90/10 profit split add-on included.",
-  startDate: "2026-07-20",
-  endDate: "2026-08-10",
-  badgeText: "☀️ Sunny Promo — Valid July 20 – August 10, 2026",
-  exitPopupHeadline: "Don\'t let the sun set on this deal.",
-  exitPopupSubtext: "Use SUNNY35 for 35% off + a 90/10 profit split add-on (SUNNY20 for Instant Funding) before August 10th.",
+  name: "September LEAF Event",
+  headline: "Turn Over a New Leaf. Fund Your Next Move.",
+  subtext: "Save 40% on evaluation plans or 25% on Instant Funding and IF Lite throughout September.",
+  startDate: "2026-09-01T00:00:00-04:00",
+  endDate: "2026-09-30T23:59:59-04:00",
+  badgeText: "🍃 September LEAF Event — Valid September 1–30, 2026",
+  exitPopupHeadline: "Your next funded chapter starts here.",
+  exitPopupSubtext: "Use LEAF40 for 40% off evaluation plans, or LEAF25 for 25% off Instant Funding and IF Lite, through September 30.",
   tiers: [
     {
-      code: "SUNNY35",
-      discountPercent: 35,
-      multiplier: 0.65,
-      label: "35% OFF + 90/10 SPLIT",
+      code: "LEAF40",
+      discountPercent: 40,
+      multiplier: 0.60,
+      label: "40% OFF",
       applicablePlans: "standard",
     },
     {
-      code: "SUNNY20",
-      discountPercent: 20,
-      multiplier: 0.80,
-      label: "20% OFF + 90/10 SPLIT",
+      code: "LEAF25",
+      discountPercent: 25,
+      multiplier: 0.75,
+      label: "25% OFF",
       applicablePlans: "instant",
     },
   ],
@@ -66,7 +62,7 @@ const ACTIVE_PROMOTION: ActivePromotion = {
  *                   "instant", "instant-lite"
  */
 export function getPromoForPlan(planKey: string): PromoTier | null {
-  if (!ACTIVE_PROMOTION.active) return null;
+  if (!isPromotionActive()) return null;
   const isInstant = planKey === "instant" || planKey === "instant-lite";
   for (const tier of ACTIVE_PROMOTION.tiers) {
     if (tier.applicablePlans === "all") return tier;
@@ -74,6 +70,13 @@ export function getPromoForPlan(planKey: string): PromoTier | null {
     if (tier.applicablePlans === "standard" && !isInstant) return tier;
   }
   return null;
+}
+
+export function isPromotionActive(now = new Date()): boolean {
+  if (!ACTIVE_PROMOTION.active) return false;
+  const timestamp = now.getTime();
+  return timestamp >= new Date(ACTIVE_PROMOTION.startDate).getTime()
+    && timestamp <= new Date(ACTIVE_PROMOTION.endDate).getTime();
 }
 
 export default ACTIVE_PROMOTION;

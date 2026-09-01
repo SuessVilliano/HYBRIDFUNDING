@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 import { trackEvent } from "@/lib/analytics";
-import ACTIVE_PROMOTION from "@/config/promotions";
+import ACTIVE_PROMOTION, { isPromotionActive } from "@/config/promotions";
 
 const STORAGE_KEY = "exitIntentShown";
 
@@ -11,7 +11,7 @@ const ExitIntentPopup: React.FC = () => {
   const [open, setOpen] = useState(false);
 
   // No promo active — don't show the popup
-  if (!ACTIVE_PROMOTION.active) return null;
+  if (!isPromotionActive()) return null;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -120,4 +120,3 @@ const ExitIntentPopup: React.FC = () => {
 };
 
 export default ExitIntentPopup;
-

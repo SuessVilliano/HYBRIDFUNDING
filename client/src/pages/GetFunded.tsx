@@ -16,7 +16,7 @@ import {
   Trophy, Crown, Menu, Landmark, Globe2, Gamepad2, Bitcoin,
 } from "lucide-react";
 import { useEffect, useState, useCallback, useRef } from "react";
-import ACTIVE_PROMOTION, { getPromoForPlan } from "@/config/promotions";
+import ACTIVE_PROMOTION, { getPromoForPlan, isPromotionActive } from "@/config/promotions";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type MarketKey = "forex" | "crypto" | "futures" | "equities";
@@ -276,27 +276,18 @@ const STEPS = [
 
 // ─── Countdown Timer hook ─────────────────────────────────────────────────────
 function useCountdown() {
-  const getOrSetExpiry = () => {
-    if (typeof window === "undefined") return Date.now() + 72 * 3_600_000;
-    let expiry = parseInt(sessionStorage.getItem("goal_promo_expiry") || "0", 10);
-    if (!expiry || expiry < Date.now()) {
-      expiry = Date.now() + 72 * 3_600_000;
-      sessionStorage.setItem("goal_promo_expiry", String(expiry));
-    }
-    return expiry;
-  };
-  const [left, setLeft] = useState(() => Math.max(0, getOrSetExpiry() - Date.now()));
+  const getRemaining = () => Math.max(0, new Date(ACTIVE_PROMOTION.endDate).getTime() - Date.now());
+  const [left, setLeft] = useState(getRemaining);
   useEffect(() => {
     const id = setInterval(() => {
-      const remaining = Math.max(0, getOrSetExpiry() - Date.now());
-      setLeft(remaining);
-      if (remaining === 0) sessionStorage.removeItem("goal_promo_expiry");
+      setLeft(getRemaining());
     }, 1000);
     return () => clearInterval(id);
   }, []);
   const pad = (n: number) => String(n).padStart(2, "0");
   return {
-    h: pad(Math.floor(left / 3_600_000)),
+    d: Math.floor(left / 86_400_000),
+    h: pad(Math.floor((left % 86_400_000) / 3_600_000)),
     m: pad(Math.floor((left % 3_600_000) / 60_000)),
     s: pad(Math.floor((left % 60_000) / 1_000)),
   };
@@ -437,7 +428,7 @@ function FAQAccordion() {
 // ─── Coupon Copy Block ────────────────────────────────────────────────────────
 function CouponBlock() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const { h, m, s } = useCountdown();
+  const { d, h, m, s } = useCountdown();
   const copyCode = useCallback((code: string) => {
     navigator.clipboard.writeText(code).then(() => {
       setCopiedCode(code);
@@ -446,7 +437,7 @@ function CouponBlock() {
     });
   }, []);
 
-  if (!ACTIVE_PROMOTION.active || ACTIVE_PROMOTION.tiers.length === 0) return null;
+  if (!isPromotionActive() || ACTIVE_PROMOTION.tiers.length === 0) return null;
 
   const isOneTier = ACTIVE_PROMOTION.tiers.length === 1;
 
@@ -505,7 +496,7 @@ function CouponBlock() {
         <Clock className="h-3 w-3 text-orange-400 shrink-0" />
         <span className="text-[#B8B8D0] text-[10px] uppercase tracking-widest">Offer expires in</span>
         <span className="font-['Orbitron'] text-orange-400 text-sm font-bold tracking-wider tabular-nums">
-          {h}:{m}:{s}
+          {d}d {h}:{m}:{s}
         </span>
       </div>
     </div>
@@ -917,7 +908,7 @@ function PurchaseConfirmModal({
                 if (!promo) return null;
                 return (
                   <p className="text-green-400 text-xs text-center">
-                    Use code <strong>{promo.code}</strong> at checkout for {promo.discountPercent}% off + the 90/10 profit split add-on
+                    Use code <strong>{promo.code}</strong> at checkout for {promo.discountPercent}% off
                   </p>
                 );
               })()}
@@ -1828,4 +1819,3 @@ export default function GetFunded() {
     </div>
   );
 }
-
