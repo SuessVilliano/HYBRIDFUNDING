@@ -468,3 +468,119 @@ Hybrid Picks can use the same engine editorially:
 - "Here is what changed"
 
 That creates both trading infrastructure and content from the same data pipeline.
+
+
+---
+
+## Refresh, trigger, and credit strategy
+
+The system should be **event-driven and demand-driven**, not continuously polling expensive enrichment sources.
+
+### Tier 0 — Cached display
+When a user opens Radar:
+- show the newest cached scan immediately if it is still fresh
+- current client freshness window: **10 minutes**
+- do not invoke an LLM merely to display cached data
+
+### Tier 1 — User-triggered refresh
+Run a market-data scan when:
+- the Radar page opens and cache is stale
+- the user clicks **Scan Now**
+- a stale Radar tab becomes visible / focused again
+- the user explicitly opens a candidate and asks for deeper analysis
+
+The base Polymarket scan and the AI/news enrichment are separate operations.
+
+### Tier 2 — Cheap live triggers while a user is actively watching
+For a selected market/watchlist, a lightweight WebSocket or market-data listener may recompute the local entry score without invoking paid AI.
+
+Suggested triggers:
+- probability moves **3–5 points quickly**
+- bid/ask spread compresses below the strategy threshold
+- spread widens sharply
+- executable depth changes by **2x or more**
+- short-window volume accelerates **3x+ versus baseline**
+- a large trade materially exceeds normal trade size
+- order-book imbalance flips
+- price enters or exits the user's max-entry range
+- market crosses an Entry Window state boundary, e.g. WAIT → WATCH or WATCH → ENTER NOW
+- time-to-resolution enters key buckets: **72h, 24h, 6h, 1h**
+
+These triggers should recompute deterministic market-structure logic first. They should **not automatically spend AI credits**.
+
+### Tier 3 — Enrichment triggers
+Invoke news / official-source / AI research only when a deterministic trigger says new information could materially change fair value.
+
+Examples:
+- MOVER without an identified catalyst
+- VOL SPIKE plus a price breakout
+- official resolution-source update
+- new injury/status report for sports
+- scheduled macro release becomes available
+- correlated Futures / Forex / Crypto price makes an abnormal move
+- social narrative velocity spikes and needs verification
+- Entry Window reaches ARMED but source confidence is still insufficient
+- user clicks **AI Vet / Deep Research**
+
+### Tier 4 — Weekly global deep scan
+Run one scheduled global pass per week.
+
+Recommended starting cadence:
+- **Sunday early morning ET** before the main Hybrid Picks / NFL workflow
+
+The weekly job should:
+1. snapshot the active global market universe
+2. calculate category baselines for volume, liquidity, spreads, depth, and volatility
+3. grade resolved signals from the previous week
+4. recalibrate MOVER / VOL SPIKE / DECISION / BOOK CHECK performance
+5. measure Entry Window results by state
+6. identify categories where thresholds should differ
+7. update correlation maps
+8. compile the top research candidates for the coming week
+9. produce **one batch summary**, rather than one AI request per market
+
+### Credit policy
+
+**Free / cheap computation first. Paid intelligence last.**
+
+Order of operations:
+
+```
+CACHE
+  ↓
+POLYMARKET DATA
+  ↓
+DETERMINISTIC SIGNALS
+  ↓
+ENTRY WINDOW SCORE
+  ↓
+IS THIS IMPORTANT ENOUGH TO RESEARCH?
+  ↓ yes
+OFFICIAL SOURCES + NEWS
+  ↓
+SOCIAL SENTIMENT
+  ↓
+AI SYNTHESIS
+```
+
+An LLM should not be used to answer questions that arithmetic, the order book, timestamps, or structured APIs already answer.
+
+### Recommended data retention
+
+Do not repeatedly purchase the same reasoning.
+
+Store:
+- market snapshot timestamp
+- signal type
+- price / bid / ask
+- spread
+- liquidity / volume
+- Entry Window score
+- source facts used in analysis
+- fair-value estimate
+- model output hash / timestamp
+- final resolution
+
+If nothing material changed since the last enrichment, reuse the prior analysis.
+
+This turns AI usage from a polling cost into a **cacheable research event**.
