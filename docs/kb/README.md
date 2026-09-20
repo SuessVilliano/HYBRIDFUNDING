@@ -71,5 +71,6 @@ This produces two outputs in `dist/kb/`:
 - Two-Step Evaluation
 - Instant Funding
 - Single Session Equities (Equities Day Trading)
+- Prediction Markets
 
 Other programs (e.g. 3-Step, Instant Funding Lite) are deliberately excluded from this KB until we have published rules docs for them. Adding them prematurely creates risk of giving traders wrong information.
