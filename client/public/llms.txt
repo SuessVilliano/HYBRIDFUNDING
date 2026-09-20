@@ -1,37 +1,40 @@
 # Hybrid Funding
 
-> Hybrid Funding is a proprietary trading firm (prop firm) that funds traders across Forex, Crypto, Futures, and Single Session Equities. We provide evaluation challenges that, once passed, give traders access to firm capital with up to 90% profit splits.
+> Hybrid Funding is a proprietary trading firm platform with funded-trading programs across Forex, Crypto, Futures, Single Session Equities, and Prediction Markets. The ecosystem also includes Trader DNA, AI Market Radar, TradeHouse Battles, and partner/affiliate tools.
 
-## What we offer
+## Current market paths
 
-- **Forex challenges**: 1-Step, 2-Step, 3-Step, Instant Funding, and Instant Funding Lite. Account sizes $5K–$100K. Up to 1:50 leverage. Trading on cTrader, MatchTrader, DXTrade.
-- **Crypto challenges**: 1-Step, 2-Step, Instant Funding. BTC/ETH at 5:1 leverage, others at 2:1. 24/7 trading. 90% profit split available.
-- **Futures challenges**: 4-Phase Funded Futures Plan. Account sizes $25K–$150K. Trading on Rithmic Pro. Tradovate platform integration coming soon.
-- **Single Session Equities** (new): 1-Step, S&P 100 equities on GooeyPro. Account sizes $5K–$200K, client pricing $48–$1,828. 2:1 leverage. Trading window 09:30–15:55 ET. 10% profit target, 3% trailing max drawdown, 80/20 profit split, 14-day payouts.
-- **TradeHouse Battles**: competitive trading tournaments with live prizes.
-- **Affiliate program**: revenue-share for referring traders.
+- **Forex**: 1-Step, 2-Step, 3-Step, Instant Funding, and Instant Funding Lite options. Forex platforms include cTrader, MatchTrader, and DXtrade. Current program rules govern leverage, drawdown, and payouts.
+- **Crypto**: Crypto access through applicable funded-trading programs on supported Forex/Crypto platforms. BTC/ETH and other crypto products have program-specific leverage/risk rules.
+- **Futures**: 4-Phase Funded Futures Plan. Current public site guidance lists Tradovate, Volumetrica, and DXtrade Futures as supported platform choices.
+- **Single Session Equities**: Intraday-only S&P 100 equity products on GooeyPro. Permitted trading window is 09:30 ET through 15:55 ET; positions must be closed by the cutoff. See the current FAQ/KB for drawdown, consistency, hold-time, and payout rules.
+- **Prediction Markets**: One-step event-outcome program. Traders buy Yes or No positions on defined events. Current public rules include a 10% evaluation target, 3% daily drawdown, 6% trailing max drawdown, 0.5% max profit per event, no leverage, and a 1% opening commission. Verify current terms before trading.
+
+## Trader-development tools
+
+- **Trader Playbook**: free trader operating guide covering Trader DNA, market fit, risk process, rules, and a 30-day development plan.
+- **Trader DNA**: an 8-question assessment using Sniper, Architect, Hybrid, and Phoenix archetypes as a starting point for thinking about trading behavior and market fit.
+- **AI Market Radar**: scans live Prediction Markets and surfaces mechanically generated research candidates such as Movers, Volume Spikes, Decision Windows, and Book Checks. Radar signals are not trade recommendations or guarantees.
+- **TradeHouse Battles**: competitive trading/community experience. Current event details, eligibility, and rewards are published on the Battles page.
+- **Partner / Affiliate Program**: tracked referrals plus a TradeHouse/community-builder model. The current public Affiliate page lists tiered commissions from 5% to 20%; current partner terms govern.
 
 ## Key pages
 
-- [Home](https://www.hybridfunding.co/): brand overview and quick start.
-- [Challenges](https://www.hybridfunding.co/challenges): all challenge types, pricing, and tier details across Forex, Crypto, Futures, and Single Session Equities.
-- [FAQ](https://www.hybridfunding.co/faq): rules, payouts, leverage, drawdown calculations, and platform-specific guidance for each asset class.
-- [About](https://www.hybridfunding.co/about): company mission, values, supported trading platforms.
-- [Affiliate](https://www.hybridfunding.co/affiliate): commission tier structure for partners.
-- [Trader Portal](https://www.hybridfunding.co/trader-portal): platform access and trader dashboard.
-- [TradeHouse Battles](https://www.hybridfunding.co/battles): trading tournaments.
-- [Blog](https://www.hybridfunding.co/blog): guides, breakdowns, and rules explainers for prop traders.
-- [Contact](https://www.hybridfunding.co/contact): support.
+- [Home](https://www.hybridfunding.co/)
+- [Challenges](https://www.hybridfunding.co/challenges)
+- [Prediction Markets](https://www.hybridfunding.co/predictive-markets)
+- [AI Market Radar](https://www.hybridfunding.co/market-radar)
+- [Trader Playbook](https://www.hybridfunding.co/playbook)
+- [Trader DNA](https://www.hybridfunding.co/dna-test)
+- [FAQ](https://www.hybridfunding.co/faq)
+- [Affiliate / Partner Program](https://www.hybridfunding.co/affiliate)
+- [Trader Portal](https://www.hybridfunding.co/trader-portal)
+- [TradeHouse Battles](https://www.hybridfunding.co/battles)
+- [Blog](https://www.hybridfunding.co/blog)
+- [Contact](https://www.hybridfunding.co/contact)
 
-## Optional
+## Important interpretation notes
 
-- [Terms](https://www.hybridfunding.co/terms): legal terms and prohibited practices.
-- [Sitemap](https://www.hybridfunding.co/sitemap.xml).
-
-## Common questions answered
-
-- "How do prop firm challenges work?" — Multi-phase or single-phase evaluations measuring discipline and consistency. Passing transitions you to a Funded account with profit split. See FAQ.
-- "What is Single Session Equities?" — Day-trading S&P 100 equity products on GooeyPro with 2:1 leverage; all positions must close by 15:55 ET. See FAQ and Challenges.
-- "What platforms does Hybrid Funding support?" — cTrader, DXTrade, MatchTrader (Forex/Crypto), Rithmic Pro (Futures), GooeyPro (Equities). Tradovate coming soon.
-- "What is the profit split?" — 80% by default, upgradable to 90% with the add-on. Single Session Equities is 80%/20%.
-- "What is the maximum drawdown?" — Asset-class specific: 6% trailing (Forex 1-Step), 3% trailing (Single Session Equities), 5% trailing (Futures), etc.
+- Rules, pricing, platform access, promotions, and payout terms can change; current product pages, account terms, and agreements govern.
+- "Funded" account mechanics can differ by program. See the Notional Funding knowledge-base article for the firm's current explanation of notional funding and execution.
+- Trading involves risk. Educational tools and AI Market Radar are not financial advice and do not guarantee funding, profitability, or payouts.
