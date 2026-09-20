@@ -135,6 +135,24 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 
 const sigKey = (s: { type: string; event: string; market: string }) => `${s.type}|${s.event}|${s.market}`;
 
+const nextTriggerText = (s: ProSignal): string => {
+  if (s.entryState === "ENTER NOW") {
+    return "The window is open now. Re-scan if price, spread, or the underlying news changes before acting.";
+  }
+  if (s.entryState === "WATCH") {
+    return s.type === "VOL SPIKE"
+      ? "Wait for price to break with the flow, the spread to tighten, or fresh verified information to explain the volume."
+      : "Wait for a better executable price, tighter spread, stronger liquidity, or a confirming catalyst.";
+  }
+  if (s.entryState === "WAIT") {
+    return "The idea may be valid, but the timing is not. Re-scan after a material price move, catalyst update, or liquidity improvement.";
+  }
+  if (s.entryState === "LATE") {
+    return "Most of the price move may already be gone or resolution is too close. Do not chase; wait for a new market/setup.";
+  }
+  return "No trade setup. Radar needs a cleaner edge, better execution conditions, or materially new information.";
+};
+
 const scoreEntryWindow = (x: {
   type: SignalType;
   stance: Stance;
@@ -1179,6 +1197,10 @@ const RadarPro = () => {
                         </span>
                       </p>
                     )}
+                    <div className="mt-3 rounded-lg bg-white/[0.03] border border-white/5 px-3 py-2">
+                      <p className="text-[10px] uppercase tracking-wider font-bold text-[#8888A8]">What Radar is waiting for</p>
+                      <p className="text-[11px] text-[#B8B8D0] mt-1">{nextTriggerText(s)}</p>
+                    </div>
                     <p className="text-[#8888A8] text-[10px] mt-3 inline-flex items-center gap-1">
                       Open on dashboard <ExternalLink className="h-3 w-3" />
                     </p>
