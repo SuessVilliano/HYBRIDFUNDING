@@ -869,5 +869,5 @@ doc.fillColor(TEXT_SOFT).font("Helvetica-Oblique").fontSize(10).text(
   { align: "center" }
 );
 
-doc.end();doc.end();
+doc.end();
 console.log("Wrote", OUT);
