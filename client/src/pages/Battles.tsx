@@ -37,7 +37,7 @@ const Battles: React.FC = () => {
                 </h1>
                 
                 <p className="text-[#B8B8D0] text-lg md:text-xl max-w-3xl mx-auto mb-8">
-                  Welcome to <span className="text-accent font-bold">TradeHouse Battles</span> — the ultimate competitive trading arena built for serious traders. Compete in real-time tournaments, climb leaderboards, and win exclusive prizes including funded accounts worth up to $100,000+.
+                  Welcome to <span className="text-accent font-bold">Trade House Battles</span> — the ultimate competitive trading arena built for serious traders. Compete in real-time tournaments, climb leaderboards, and win exclusive prizes including funded accounts worth up to $100,000+.
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -231,7 +231,7 @@ const Battles: React.FC = () => {
               <div className="bg-gradient-to-r from-primary/20 to-accent/20 p-6 text-center border-b border-white/10">
                 <div className="flex items-center justify-center space-x-2 mb-4">
                   <Crown className="h-8 w-8 text-accent" />
-                  <h3 className="text-white font-['Orbitron'] font-bold text-2xl">TRADEHOUSE BATTLES</h3>
+                  <h3 className="text-white font-['Orbitron'] font-bold text-2xl">TRADE HOUSE BATTLES</h3>
                   <Crown className="h-8 w-8 text-primary" />
                 </div>
                 <p className="text-[#B8B8D0] mb-6">
@@ -246,7 +246,7 @@ const Battles: React.FC = () => {
                   </div>
                   <h4 className="text-white font-bold text-xl mb-4">Ready to Battle?</h4>
                   <p className="text-[#B8B8D0] mb-8">
-                    Click below to launch the full TradeHouse Battles platform and start competing for exclusive rewards.
+                    Click below to launch the full Trade House Battles platform and start competing for exclusive rewards.
                   </p>
                 </div>
 
