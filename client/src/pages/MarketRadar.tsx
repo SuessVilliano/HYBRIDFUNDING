@@ -30,6 +30,8 @@ import {
 
 const DASHBOARD_URL = "https://hybridfundingdashboard.propaccount.com/en/prediction";
 const API = "https://gamma-api.polymarket.com/events/pagination";
+const CACHE_KEY = "hf-market-radar-cache";
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 type SignalType = "MOVER" | "VOL SPIKE" | "DECISION" | "BOOK CHECK";
 
@@ -252,9 +254,18 @@ const MarketRadar = () => {
         if (data.length < 100) break;
       }
       if (!events.length) throw new Error("empty");
-      setSignals(computeSignals(events));
+      const computed = computeSignals(events);
+      const now = new Date();
+      setSignals(computed);
       setScanned(events.length);
-      setUpdatedAt(new Date());
+      setUpdatedAt(now);
+      try {
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify({
+          ts: now.getTime(),
+          scanned: events.length,
+          signals: computed,
+        }));
+      } catch {}
     } catch (err: any) {
       if (err?.name !== "AbortError") setFailed(true);
     } finally {
@@ -263,10 +274,40 @@ const MarketRadar = () => {
   }, []);
 
   useEffect(() => {
-    scan();
-    const interval = setInterval(scan, 120_000);
+    const getCache = () => {
+      try {
+        const raw = sessionStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed?.ts || !Array.isArray(parsed?.signals)) return null;
+        return parsed;
+      } catch {
+        return null;
+      }
+    };
+
+    const cached = getCache();
+    if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+      setSignals(cached.signals);
+      setScanned(Number(cached.scanned || 0));
+      setUpdatedAt(new Date(cached.ts));
+      setLoading(false);
+    } else {
+      scan();
+    }
+
+    const refreshIfStale = () => {
+      if (document.visibilityState !== "visible") return;
+      const latest = getCache();
+      if (!latest || Date.now() - latest.ts >= CACHE_TTL_MS) scan();
+    };
+
+    document.addEventListener("visibilitychange", refreshIfStale);
+    window.addEventListener("focus", refreshIfStale);
+
     return () => {
-      clearInterval(interval);
+      document.removeEventListener("visibilitychange", refreshIfStale);
+      window.removeEventListener("focus", refreshIfStale);
       abortRef.current?.abort();
     };
   }, [scan]);
@@ -286,7 +327,7 @@ const MarketRadar = () => {
     <div className="page-transition">
       <SEO
         title="AI Market Radar — Live Prediction Market Signals | Hybrid Funding"
-        description="Our engine scans hundreds of live prediction markets for big movers, volume spikes, closing decision windows and mispriced books — refreshed every two minutes."
+        description="Our engine scans hundreds of live prediction markets for big movers, volume spikes, closing decision windows and mispriced books — refreshed on demand."
         path="/market-radar"
         jsonLd={[
           breadcrumbSchema([
@@ -320,7 +361,7 @@ const MarketRadar = () => {
                 ? "Scanning live markets…"
                 : failed && !signals.length
                   ? "Scanner offline — retry below"
-                  : `Scanned ${scanned} live events · ${signals.length} signals · Updated ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · Auto-refreshes every 2 min`}
+                  : `Scanned ${scanned} live events · ${signals.length} signals · Updated ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · Refreshes on demand`}
             </p>
           </motion.div>
         </div>
@@ -329,6 +370,13 @@ const MarketRadar = () => {
       {/* Signals */}
       <section className="py-12 bg-[#0B1426] min-h-[50vh]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center mb-5">
+            <Button variant="neon" rounded="full" className="font-['Orbitron']" onClick={scan} disabled={loading}>
+              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              {loading ? "SCANNING…" : "SCAN NOW"}
+            </Button>
+          </div>
+
           {/* Filter chips */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">
             <button

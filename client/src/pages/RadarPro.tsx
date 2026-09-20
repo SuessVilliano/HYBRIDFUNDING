@@ -44,9 +44,12 @@ const GATE_HASH = "070489c5d58234cafcbb2284b86305c07b09c1548febc5307157e632778ea
 const GATE_KEY = "hf-radar-pro";
 const TRACK_KEY = "hf-rp-track";
 const AI_KEY = "hf-rp-ai";
+const CACHE_KEY = "hf-radar-pro-cache";
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 type SignalType = "MOVER" | "VOL SPIKE" | "DECISION" | "BOOK CHECK";
 type Stance = "LEAN YES" | "LEAN NO" | "SELL BOOK" | "PASS";
+type EntryState = "ENTER NOW" | "WATCH" | "WAIT" | "LATE" | "AVOID";
 
 type ProSignal = {
   type: SignalType;
@@ -60,6 +63,10 @@ type ProSignal = {
   stance: Stance;
   confidence: number;
   why: string;
+  entryState: EntryState;
+  entryScore: number;
+  entryWhy: string;
+  spread?: number;
   mid?: string; // gamma market id, for track-record grading
 };
 
@@ -128,6 +135,105 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 
 const sigKey = (s: { type: string; event: string; market: string }) => `${s.type}|${s.event}|${s.market}`;
 
+const nextTriggerText = (s: ProSignal): string => {
+  if (s.entryState === "ENTER NOW") {
+    return "The window is open now. Re-scan if price, spread, or the underlying news changes before acting.";
+  }
+  if (s.entryState === "WATCH") {
+    return s.type === "VOL SPIKE"
+      ? "Wait for price to break with the flow, the spread to tighten, or fresh verified information to explain the volume."
+      : "Wait for a better executable price, tighter spread, stronger liquidity, or a confirming catalyst.";
+  }
+  if (s.entryState === "WAIT") {
+    return "The idea may be valid, but the timing is not. Re-scan after a material price move, catalyst update, or liquidity improvement.";
+  }
+  if (s.entryState === "LATE") {
+    return "Most of the price move may already be gone or resolution is too close. Do not chase; wait for a new market/setup.";
+  }
+  return "No trade setup. Radar needs a cleaner edge, better execution conditions, or materially new information.";
+};
+
+const scoreEntryWindow = (x: {
+  type: SignalType;
+  stance: Stance;
+  yes: number;
+  bid: number;
+  ask: number;
+  vol24: number;
+  liq: number;
+  chg: number;
+  endh: number | null;
+}) => {
+  if (x.stance === "PASS") return { entryState: "AVOID" as EntryState, entryScore: 20, entryWhy: "No directional edge yet — keep it on the watchlist.", spread: x.ask > 0 && x.bid > 0 ? x.ask - x.bid : undefined };
+
+  const spread = x.ask > 0 && x.bid > 0 ? Math.max(0, x.ask - x.bid) : undefined;
+  let score = 48;
+  const reasons: string[] = [];
+
+  if (spread !== undefined) {
+    if (spread <= 0.02) { score += 16; reasons.push("tight spread"); }
+    else if (spread <= 0.04) { score += 10; reasons.push("tradable spread"); }
+    else if (spread <= 0.08) { score += 2; reasons.push("moderate spread"); }
+    else { score -= 18; reasons.push("wide spread"); }
+  } else {
+    score -= 4;
+    reasons.push("spread unavailable");
+  }
+
+  if (x.liq >= 100_000) { score += 12; reasons.push("deep liquidity"); }
+  else if (x.liq >= 25_000) { score += 9; reasons.push("good liquidity"); }
+  else if (x.liq >= 5_000) { score += 4; reasons.push("usable liquidity"); }
+  else { score -= 10; reasons.push("thin book"); }
+
+  if (x.vol24 >= 250_000) score += 9;
+  else if (x.vol24 >= 100_000) score += 7;
+  else if (x.vol24 >= 25_000) score += 4;
+  else if (x.vol24 < 10_000) score -= 6;
+
+  if (x.endh !== null) {
+    if (x.endh < 1) { score -= 20; reasons.push("resolution too close"); }
+    else if (x.endh <= 24) { score += 10; reasons.push("information-rich window"); }
+    else if (x.endh <= 72) { score += 7; reasons.push("decision window"); }
+    else if (x.endh > 24 * 14) { score -= 8; reasons.push("capital tied up early"); }
+  }
+
+  if (x.yes >= 0.92 || x.yes <= 0.08) { score -= 12; reasons.push("price near extreme"); }
+
+  if (x.type === "MOVER") {
+    const followingMove = (x.stance === "LEAN YES" && x.chg > 0) || (x.stance === "LEAN NO" && x.chg < 0);
+    if (followingMove && Math.abs(x.chg) <= 0.22) { score += 8; reasons.push("confirmed move not yet extreme"); }
+    if (followingMove && Math.abs(x.chg) >= 0.30) { score -= 10; reasons.push("move may be extended"); }
+    if (!followingMove && Math.abs(x.chg) >= 0.25) { score += 5; reasons.push("overshoot setup"); }
+  }
+
+  if (x.type === "VOL SPIKE" && Math.abs(x.chg) < 0.03) {
+    score -= 3;
+    reasons.push("flow not broken yet");
+  }
+
+  if (x.type === "DECISION" && x.endh !== null && x.endh >= 4 && x.endh <= 36) {
+    score += 8;
+    reasons.push("strong decision timing");
+  }
+
+  score = clamp(Math.round(score), 0, 100);
+  let entryState: EntryState =
+    score >= 78 ? "ENTER NOW" :
+    score >= 64 ? "WATCH" :
+    score >= 48 ? "WAIT" :
+    score >= 32 ? "LATE" : "AVOID";
+
+  if (x.endh !== null && x.endh < 1) entryState = "LATE";
+  if (spread !== undefined && spread > 0.12) entryState = "AVOID";
+
+  return {
+    entryState,
+    entryScore: score,
+    entryWhy: reasons.slice(0, 4).join(" · ") || "Insufficient execution data",
+    spread,
+  };
+};
+
 function computeProSignals(events: any[]): ProSignal[] {
   const out: ProSignal[] = [];
 
@@ -149,6 +255,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           vol24: num(m.volume24hr),
           liq: num(m.liquidity),
           chg: num(m.oneDayPriceChange),
+          ask: num(m.bestAsk, -1),
         };
       })
       .filter((m: any) => m.yes >= 0);
@@ -192,6 +299,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           stance,
           confidence,
           why,
+          ...scoreEntryWindow({ type: "MOVER", stance, yes: m.yes, bid: m.bid, ask: m.ask, vol24: m.vol24, liq: m.liq, chg: m.chg, endh }),
           mid: m.mid,
         });
       }
@@ -229,6 +337,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           stance,
           confidence,
           why,
+          ...scoreEntryWindow({ type: "VOL SPIKE", stance, yes: m.yes, bid: m.bid, ask: m.ask, vol24: m.vol24, liq: m.liq, chg: m.chg, endh }),
           mid: m.mid,
         });
       }
@@ -259,6 +368,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           stance,
           confidence,
           why,
+          ...scoreEntryWindow({ type: "DECISION", stance, yes: m.yes, bid: m.bid, ask: m.ask, vol24: m.vol24, liq: m.liq, chg: m.chg, endh }),
           mid: m.mid,
         });
       }
@@ -281,6 +391,9 @@ function computeProSignals(events: any[]): ProSignal[] {
           stance: "SELL BOOK",
           confidence: clamp(Math.round(60 + (bidSum - 1.03) * 400), 60, 80),
           why: `The book is mathematically overpriced by ${Math.round((bidSum - 1) * 100)} pts. Selling the richest outcomes (start with ${richest.map((r: any) => `${r.q} @ ${Math.round(r.bid * 100)}%`).join(", ")}) profits regardless of the winner — check fillable size first.`,
+          entryState: bidSum >= 1.05 ? "ENTER NOW" : "WATCH",
+          entryScore: clamp(Math.round(68 + (bidSum - 1.03) * 300), 68, 92),
+          entryWhy: "Structural pricing gap detected · verify fillable size and fees before execution",
         });
       }
     }
@@ -573,9 +686,17 @@ const RadarPro = () => {
       }
       if (!events.length) throw new Error("empty");
       const sigs = computeProSignals(events);
+      const now = new Date();
       setSignals(sigs);
       setScanned(events.length);
-      setUpdatedAt(new Date());
+      setUpdatedAt(now);
+      try {
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify({
+          ts: now.getTime(),
+          scanned: events.length,
+          signals: sigs,
+        }));
+      } catch {}
       setTrack(recordPicks(sigs));
       gradeTrack().then(setTrack).catch(() => {});
     } catch (err: any) {
@@ -587,10 +708,41 @@ const RadarPro = () => {
 
   useEffect(() => {
     if (!unlocked) return;
-    scan();
-    const interval = setInterval(scan, 120_000);
+
+    const getCache = () => {
+      try {
+        const raw = sessionStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed?.ts || !Array.isArray(parsed?.signals)) return null;
+        return parsed;
+      } catch {
+        return null;
+      }
+    };
+
+    const cached = getCache();
+    if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+      setSignals(cached.signals);
+      setScanned(Number(cached.scanned || 0));
+      setUpdatedAt(new Date(cached.ts));
+      setLoading(false);
+    } else {
+      scan();
+    }
+
+    const refreshIfStale = () => {
+      if (document.visibilityState !== "visible") return;
+      const latest = getCache();
+      if (!latest || Date.now() - latest.ts >= CACHE_TTL_MS) scan();
+    };
+
+    document.addEventListener("visibilitychange", refreshIfStale);
+    window.addEventListener("focus", refreshIfStale);
+
     return () => {
-      clearInterval(interval);
+      document.removeEventListener("visibilitychange", refreshIfStale);
+      window.removeEventListener("focus", refreshIfStale);
       abortRef.current?.abort();
     };
   }, [unlocked, scan]);
@@ -782,7 +934,7 @@ const RadarPro = () => {
                   ? "Scanning…"
                   : failed && !signals.length
                     ? "Scanner offline"
-                    : `${scanned} events · ${counts["LEAN YES"] + counts["LEAN NO"] + counts["SELL BOOK"]} picks / ${counts.PASS} passes · ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · auto-refresh 2 min`}
+                    : `${scanned} events · ${counts["LEAN YES"] + counts["LEAN NO"] + counts["SELL BOOK"]} picks / ${counts.PASS} passes · ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · on-demand refresh`}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -1021,6 +1173,21 @@ const RadarPro = () => {
                       </div>
                     </div>
                     <p className="text-white text-sm mt-3">{s.detail}</p>
+                    <div className="mt-3 rounded-lg border border-white/10 bg-black/20 px-3 py-2.5">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-[10px] uppercase tracking-wider font-bold text-[#8888A8]">Entry Window</span>
+                        <span className={`text-xs font-['Orbitron'] font-bold ${
+                          s.entryState === "ENTER NOW" ? "text-emerald-400" :
+                          s.entryState === "WATCH" ? "text-accent" :
+                          s.entryState === "WAIT" ? "text-amber-400" :
+                          s.entryState === "LATE" ? "text-orange-400" : "text-red-400"
+                        }`}>
+                          {s.entryState} · {s.entryScore}/100
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#B8B8D0] mt-1.5">{s.entryWhy}</p>
+                      {s.spread !== undefined && <p className="text-[10px] text-[#8888A8] mt-1">Spread: {Math.round(s.spread * 100)}¢</p>}
+                    </div>
                     <p className={`text-xs mt-2 flex-1 ${s.stance === "PASS" ? "text-[#8888A8]" : Meta.color}`}>{s.why}</p>
                     {ai && AiIcon && (
                       <p className={`text-xs mt-2 inline-flex items-start gap-1.5 ${VERDICT_META[ai.verdict].color}`}>
@@ -1030,6 +1197,10 @@ const RadarPro = () => {
                         </span>
                       </p>
                     )}
+                    <div className="mt-3 rounded-lg bg-white/[0.03] border border-white/5 px-3 py-2">
+                      <p className="text-[10px] uppercase tracking-wider font-bold text-[#8888A8]">What Radar is waiting for</p>
+                      <p className="text-[11px] text-[#B8B8D0] mt-1">{nextTriggerText(s)}</p>
+                    </div>
                     <p className="text-[#8888A8] text-[10px] mt-3 inline-flex items-center gap-1">
                       Open on dashboard <ExternalLink className="h-3 w-3" />
                     </p>

@@ -13,8 +13,8 @@ const doc = new PDFDocument({
   info: {
     Title: "Hybrid Funding Trader Playbook",
     Author: "Hybrid Funding",
-    Subject: "Prop trading strategy, rules, and position sizing",
-    Keywords: "prop firm, forex, crypto, futures, equities, hybrid funding",
+    Subject: "Trader operating system, market fit, risk management, rules, and funded-trading education",
+    Keywords: "prop firm, forex, crypto, futures, equities, prediction markets, trader DNA, risk management, hybrid funding",
   },
 });
 
@@ -36,125 +36,172 @@ const M_RIGHT = 64;
 const CONTENT_W = PAGE_W - M_LEFT - M_RIGHT;
 
 // ============== HELPERS ==============
+const FLOW_BOTTOM = PAGE_H - 82;
+
+function pageBreak() {
+  doc.addPage();
+  doc.y = 64;
+}
+
+function ensureSpace(height = 60) {
+  if (doc.y + height > FLOW_BOTTOM) pageBreak();
+}
+
 function h1(t) {
-  doc.moveDown(0.4).fillColor(TEXT).font("Helvetica-Bold").fontSize(28).text(t).moveDown(0.2);
+  ensureSpace(78);
+  doc.moveDown(0.3).fillColor(TEXT).font("Helvetica-Bold").fontSize(28).text(t, { width: CONTENT_W }).moveDown(0.15);
   const startY = doc.y;
   doc.rect(M_LEFT, startY, 70, 4).fill(ACCENT);
-  doc.fillColor(TEXT).moveDown(1.1);
+  doc.fillColor(TEXT);
+  doc.y = startY + 18;
 }
 function h2(t) {
-  doc.moveDown(0.6).fillColor(TEXT).font("Helvetica-Bold").fontSize(17).text(t).moveDown(0.25);
+  ensureSpace(62);
+  doc.moveDown(0.35).fillColor(TEXT).font("Helvetica-Bold").fontSize(17).text(t, { width: CONTENT_W }).moveDown(0.15);
 }
 function h3(t) {
-  doc.moveDown(0.4).fillColor(TEXT).font("Helvetica-Bold").fontSize(13).text(t).moveDown(0.15);
+  ensureSpace(48);
+  doc.moveDown(0.25).fillColor(TEXT).font("Helvetica-Bold").fontSize(13).text(t, { width: CONTENT_W }).moveDown(0.1);
 }
 function eyebrow(t) {
-  doc.moveDown(0.2).fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(t.toUpperCase(), { characterSpacing: 3 }).moveDown(0.15);
+  ensureSpace(30);
+  doc.moveDown(0.1).fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(t.toUpperCase(), { characterSpacing: 3, width: CONTENT_W }).moveDown(0.1);
   doc.fillColor(TEXT);
 }
 function p(t) {
-  doc.fillColor(TEXT).font("Helvetica").fontSize(11).text(t, { align: "left", lineGap: 3 }).moveDown(0.3);
+  doc.font("Helvetica").fontSize(11);
+  const h = doc.heightOfString(t, { width: CONTENT_W, lineGap: 3 }) + 14;
+  ensureSpace(h);
+  doc.fillColor(TEXT).text(t, { width: CONTENT_W, align: "left", lineGap: 3 }).moveDown(0.25);
 }
 function pSoft(t) {
-  doc.fillColor(TEXT_SOFT).font("Helvetica").fontSize(10.5).text(t, { align: "left", lineGap: 3 }).moveDown(0.3);
+  doc.font("Helvetica").fontSize(10.5);
+  const h = doc.heightOfString(t, { width: CONTENT_W, lineGap: 3 }) + 14;
+  ensureSpace(h);
+  doc.fillColor(TEXT_SOFT).text(t, { width: CONTENT_W, align: "left", lineGap: 3 }).moveDown(0.25);
   doc.fillColor(TEXT);
 }
 function bullet(t) {
-  doc.fillColor(TEXT).font("Helvetica").fontSize(11).text(`•  ${t}`, { indent: 12, lineGap: 3 }).moveDown(0.12);
+  doc.font("Helvetica").fontSize(10.5);
+  const w = CONTENT_W - 18;
+  const h = doc.heightOfString(`•  ${t}`, { width: w, lineGap: 2 }) + 8;
+  ensureSpace(h);
+  doc.fillColor(TEXT).text(`•  ${t}`, { width: w, indent: 12, lineGap: 2 }).moveDown(0.08);
 }
 function divider() {
-  doc.moveDown(0.5);
+  ensureSpace(24);
+  doc.moveDown(0.35);
   const y = doc.y;
   doc.rect(M_LEFT, y, CONTENT_W, 0.7).fill("#D8D8E5");
-  doc.fillColor(TEXT).moveDown(0.5);
+  doc.fillColor(TEXT);
+  doc.y = y + 14;
 }
 function callout(label, text) {
-  doc.moveDown(0.4);
-  const startY = doc.y;
-  // left accent stripe
-  const stripeH = 60;
-  doc.rect(M_LEFT, startY, 4, stripeH).fill(ACCENT);
-  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(label.toUpperCase(), M_LEFT + 16, startY + 2, { characterSpacing: 2, width: CONTENT_W - 16 });
-  doc.fillColor(TEXT_SOFT).font("Helvetica-Oblique").fontSize(10.5).text(text, M_LEFT + 16, doc.y + 2, { lineGap: 3, width: CONTENT_W - 16 });
-  doc.fillColor(TEXT).moveDown(0.4);
+  doc.font("Helvetica-Oblique").fontSize(10);
+  const textH = doc.heightOfString(text, { width: CONTENT_W - 32, lineGap: 3 });
+  const boxH = Math.max(56, textH + 34);
+  ensureSpace(boxH + 12);
+  const startY = doc.y + 6;
+  doc.rect(M_LEFT, startY, 4, boxH).fill(ACCENT);
+  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(8.5).text(label.toUpperCase(), M_LEFT + 16, startY + 3, { characterSpacing: 2, width: CONTENT_W - 32 });
+  doc.fillColor(TEXT_SOFT).font("Helvetica-Oblique").fontSize(10).text(text, M_LEFT + 16, startY + 20, { lineGap: 3, width: CONTENT_W - 32 });
+  doc.fillColor(TEXT);
+  doc.y = startY + boxH + 8;
 }
-function pageBreak() { doc.addPage(); }
 function pageNumberFooter(currentPage, totalPages) {
   doc.fillColor(SUBTLE).font("Helvetica").fontSize(8.5)
-    .text(`Hybrid Funding · Trader Playbook`, M_LEFT, PAGE_H - 40, { width: CONTENT_W / 2, align: "left" });
+    .text(`Hybrid Funding · Trader Playbook`, M_LEFT, PAGE_H - 40, { width: CONTENT_W / 2, align: "left", lineBreak: false });
   doc.fillColor(SUBTLE).font("Helvetica").fontSize(8.5)
-    .text(`${currentPage} / ${totalPages}`, PAGE_W - M_RIGHT - 60, PAGE_H - 40, { width: 60, align: "right" });
+    .text(`${currentPage} / ${totalPages}`, PAGE_W - M_RIGHT - 60, PAGE_H - 40, { width: 60, align: "right", lineBreak: false });
   doc.fillColor(TEXT);
 }
 
 /**
- * Render a table with header + rows.
+ * Render a table with dynamic row heights and repeated headers.
  * cols: [{ key, label, width, align }]
  * rows: [{ key: value, ... }]
  */
 function table(cols, rows, opts = {}) {
-  const headH = 26;
-  const rowH = opts.rowH || 22;
+  const headH = 28;
+  const minRowH = opts.rowH || 22;
   const totalW = cols.reduce((a, c) => a + c.width, 0);
-  let x = M_LEFT;
+
+  const rowHeights = rows.map((row) => {
+    let maxH = minRowH;
+    cols.forEach((c) => {
+      const val = String(row[c.key] ?? "");
+      const isHighlight = row._highlight && c.key === cols[0].key;
+      doc.font(isHighlight ? "Helvetica-Bold" : "Helvetica").fontSize(9.4);
+      const h = doc.heightOfString(val, { width: c.width - 16, lineGap: 1.5 }) + 12;
+      maxH = Math.max(maxH, h);
+    });
+    return Math.ceil(maxH);
+  });
+
+  const fullTableH = headH + rowHeights.reduce((a, b) => a + b, 0) + 10;
+  if (fullTableH < FLOW_BOTTOM - 64 && doc.y + fullTableH > FLOW_BOTTOM) pageBreak();
+
   let y = doc.y;
 
-  // ensure we have space; otherwise page break
-  const needed = headH + rowH * rows.length + 14;
-  if (y + needed > PAGE_H - 96) {
-    pageBreak();
-    y = doc.y;
-  }
+  const drawHeader = () => {
+    let x = M_LEFT;
+    doc.rect(M_LEFT, y, totalW, headH).fill(ROW_HEAD);
+    cols.forEach((c) => {
+      doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(
+        c.label, x + 8, y + 8,
+        { width: c.width - 16, align: c.align || "left", lineBreak: false }
+      );
+      x += c.width;
+    });
+    y += headH;
+  };
 
-  // header
-  doc.rect(M_LEFT, y, totalW, headH).fill(ROW_HEAD);
-  cols.forEach((c) => {
-    doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(10).text(
-      c.label,
-      x + 8,
-      y + 8,
-      { width: c.width - 16, align: c.align || "left" }
-    );
-    x += c.width;
-  });
-  y += headH;
+  drawHeader();
 
-  // rows
   rows.forEach((row, i) => {
-    if (i % 2 === 1) {
-      doc.rect(M_LEFT, y, totalW, rowH).fill(ROW_ALT);
+    const rh = rowHeights[i];
+    if (y + rh > FLOW_BOTTOM) {
+      pageBreak();
+      y = doc.y;
+      drawHeader();
     }
+    if (i % 2 === 1) doc.rect(M_LEFT, y, totalW, rh).fill(ROW_ALT);
+
     let cx = M_LEFT;
     cols.forEach((c) => {
       const val = row[c.key];
       const isHighlight = row._highlight && c.key === cols[0].key;
       doc.fillColor(isHighlight ? PRIMARY : TEXT)
         .font(isHighlight ? "Helvetica-Bold" : "Helvetica")
-        .fontSize(10)
-        .text(String(val ?? ""), cx + 8, y + 6, { width: c.width - 16, align: c.align || "left", lineGap: 2 });
+        .fontSize(9.4)
+        .text(String(val ?? ""), cx + 8, y + 6, {
+          width: c.width - 16,
+          align: c.align || "left",
+          lineGap: 1.5,
+          height: rh - 10
+        });
       cx += c.width;
     });
-    // bottom border
-    doc.rect(M_LEFT, y + rowH - 0.5, totalW, 0.4).fill("#E8E8F0");
-    y += rowH;
+    doc.rect(M_LEFT, y + rh - 0.5, totalW, 0.4).fill("#E8E8F0");
+    y += rh;
   });
 
-  doc.y = y + 6;
+  doc.y = y + 8;
   doc.fillColor(TEXT);
 }
 
 function statPanel(items) {
-  // items: [{label, value}]
   const gap = 12;
   const w = (CONTENT_W - gap * (items.length - 1)) / items.length;
   const h = 70;
+  ensureSpace(h + 14);
   const startY = doc.y;
   let x = M_LEFT;
   items.forEach((it) => {
     doc.rect(x, startY, w, h).fill("#F4F4FA");
     doc.rect(x, startY, 4, h).fill(ACCENT);
-    doc.fillColor(TEXT).font("Helvetica-Bold").fontSize(20).text(it.value, x + 14, startY + 14, { width: w - 22 });
-    doc.fillColor(SUBTLE).font("Helvetica").fontSize(9).text(it.label.toUpperCase(), x + 14, startY + 42, { width: w - 22, characterSpacing: 1.5 });
+    doc.fillColor(TEXT).font("Helvetica-Bold").fontSize(20).text(it.value, x + 14, startY + 12, { width: w - 22, height: 26 });
+    doc.fillColor(SUBTLE).font("Helvetica").fontSize(8.2).text(it.label.toUpperCase(), x + 14, startY + 41, { width: w - 22, height: 22, characterSpacing: 1 });
     x += w + gap;
   });
   doc.y = startY + h + 10;
@@ -162,14 +209,14 @@ function statPanel(items) {
 }
 
 function bigCTA(headline, subline, url) {
-  doc.moveDown(0.5);
-  const y = doc.y;
-  const h = 70;
+  const h = 76;
+  ensureSpace(h + 16);
+  const y = doc.y + 6;
   doc.rect(M_LEFT, y, CONTENT_W, h).fill(BG_DARK);
   doc.rect(M_LEFT, y, 6, h).fill(ACCENT);
-  doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(15).text(headline, M_LEFT + 18, y + 13, { width: CONTENT_W - 28 });
-  doc.fillColor("#B8B8D0").font("Helvetica").fontSize(10).text(subline, M_LEFT + 18, y + 35, { width: CONTENT_W - 28 });
-  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(10).text(url, M_LEFT + 18, y + 52, { width: CONTENT_W - 28 });
+  doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(14).text(headline, M_LEFT + 18, y + 12, { width: CONTENT_W - 28, height: 20 });
+  doc.fillColor("#B8B8D0").font("Helvetica").fontSize(9.5).text(subline, M_LEFT + 18, y + 34, { width: CONTENT_W - 28, height: 18 });
+  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(8.5).text(url, M_LEFT + 18, y + 56, { width: CONTENT_W - 28, height: 12 });
   doc.y = y + h + 10;
   doc.fillColor(TEXT);
 }
@@ -188,16 +235,16 @@ doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(11).text("HYBRID FUNDING",
 doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(54).text("The Trader", 64, 170);
 doc.fillColor(ACCENT).text("Playbook.", 64);
 doc.fillColor("#B8B8D0").font("Helvetica").fontSize(14).text(
-  "The unfair advantage we hand every trader who joins Hybrid Funding.\nRule-by-rule guides, position-sizing math, and the playbooks that pass evaluations.",
+  "A practical operating manual for trader identity, market fit, risk, and funded-program rules.\nUseful before you buy anything - and designed to stay useful after you do.",
   64, 360, { lineGap: 5, width: 480 }
 );
 
 // trust strip
 doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text("INSIDE THIS PLAYBOOK", 64, 510, { characterSpacing: 2.5 });
 const insideItems = [
-  ["The 5 rules every funded trader memorizes", "Position sizing math from $5K to $200K"],
-  ["Trailing drawdown geometry (worked examples)", "Asset-class playbooks: FX, Crypto, Futures, Equities"],
-  ["The 30-day path to your first payout", "How to earn $100K+ referring traders"],
+  ["Trader DNA + market-fit decision framework", "Position sizing + drawdown worked examples"],
+  ["Five market paths: FX, Crypto, Futures, Equities, Prediction", "AI Market Radar as a research queue"],
+  ["A 30-day practice-first trader build", "How to build a Trade House responsibly"],
 ];
 let insideY = 532;
 insideItems.forEach(([a, b]) => {
@@ -206,44 +253,46 @@ insideItems.forEach(([a, b]) => {
   insideY += 22;
 });
 
-doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(11).text("HYBRIDFUNDING.CO", 64, 720, { characterSpacing: 3 });
-doc.fillColor("#6F6F8A").font("Helvetica").fontSize(9).text("Empowering Traders. Funding Potential.", 64, 736);
+doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(11).text("HYBRIDFUNDING.CO", 64, 684, { characterSpacing: 3, lineBreak: false });
+doc.fillColor("#6F6F8A").font("Helvetica").fontSize(9).text("Know your style. Choose your market. Protect capital.", 64, 704, { lineBreak: false });
 pageBreak();
 
 // ============== TOC ==============
 h1("Table of contents");
 const tocRows = [
-  ["01", "The Quick Reference Card", "What every section looks like in one screenshot.", "3"],
-  ["02", "The 5 rules every trader memorizes", "Profit Target, Drawdown, Daily Limit, Window, Consistency.", "4"],
-  ["03", "Position sizing — the math that decides everything", "0.25–0.5% rule + sizing tables for every account size.", "6"],
-  ["04", "Trailing max drawdown — geometry of the rule that breaks traders", "Worked example, day-by-day on a $100K account.", "7"],
-  ["05", "Forex playbook", "1-Step, 2-Step, 3-Step, Instant Funding, Lite.", "8"],
-  ["06", "Crypto playbook", "Programs, leverage, daily cap, weekend rules.", "9"],
-  ["07", "Futures 4-Phase playbook", "Phase rules, contract limits, payouts, Tradovate.", "10"],
-  ["08", "Single Session Equities playbook", "GooeyPro, S&P 100, 09:30–15:55 ET.", "11"],
-  ["09", "Add-on decision tree", "Which 5 add-ons earn back their price.", "12"],
-  ["10", "How traders breach (and how not to)", "5 most common breach scenarios with fixes.", "13"],
-  ["11", "Why traders pick Hybrid Funding", "Six unfair advantages of trading with us.", "14"],
-  ["12", "The first 30 days roadmap", "Week-by-week from sign-up to first payout.", "15"],
-  ["13", "The compounding math of payouts", "How one funded account becomes five.", "16"],
-  ["14", "Get paid to refer traders", "Affiliate tiers + how to earn $5K/month from a single post.", "17"],
-  ["15", "Join the TradeHouse Battles arena", "Trader tournaments worth funded accounts.", "18"],
-  ["16", "Your next move", "Resources and links to take action right now.", "19"],
+  ["01", "Quick Reference Card", "The current market-access map and core risk concepts."],
+  ["02", "Know Your Trader DNA", "Sniper, Architect, Hybrid, Phoenix + a market-fit decision tree."],
+  ["03", "The 5 rules every trader memorizes", "Profit Target, Drawdown, Daily Limit, Window, Consistency."],
+  ["04", "Position sizing", "Risk-first sizing math and account-level examples."],
+  ["05", "Trailing max drawdown", "Worked geometry of the rule that breaks traders."],
+  ["06", "Forex playbook", "Programs, leverage, session rules, and workflow fit."],
+  ["07", "Crypto playbook", "24/7 markets, leverage, caps, and weekend behavior."],
+  ["08", "Futures 4-Phase playbook", "Phase rules, contract limits, payouts, and platforms."],
+  ["09", "Single Session Equities", "GooeyPro, S&P 100, 09:30-15:55 ET."],
+  ["10", "Prediction Markets", "Yes/No mechanics, rules, and AI Market Radar."],
+  ["11", "Add-on decision tree", "When optional features fit your actual workflow."],
+  ["12", "How traders breach", "Common failure patterns and operational fixes."],
+  ["13", "Why the Hybrid ecosystem is different", "Five market paths, tools, and transparent rule education."],
+  ["14", "30-Day Trader Build", "Observe, test, execute with limits, then decide what to buy."],
+  ["15", "Payout planning + scaling", "How to scale responsibility without fantasy income math."],
+  ["16", "Build a Trade House", "Affiliate tiers, partner standards, and community leadership."],
+  ["17", "Trade House Battles", "Use competition for reps, accountability, and community."],
+  ["18", "Your next move", "DNA, Playbook, rules, markets, Battles, and partner program."],
 ];
 table(
   [
-    { key: "no", label: "#", width: 36, align: "left" },
-    { key: "title", label: "SECTION", width: 220, align: "left" },
-    { key: "sub", label: "WHAT'S IN IT", width: 196, align: "left" },
-    { key: "page", label: "PG", width: 32, align: "right" },
+    { key: "no", label: "#", width: 40, align: "left" },
+    { key: "title", label: "SECTION", width: 210, align: "left" },
+    { key: "sub", label: "WHAT'S IN IT", width: 234, align: "left" },
   ],
-  tocRows.map(([no, title, sub, page]) => ({ no, title, sub, page })),
+  tocRows.map(([no, title, sub]) => ({ no, title, sub })),
   { rowH: 24 }
 );
 doc.moveDown(0.5);
-callout("Read time", "About 22 minutes cover-to-cover. 6 minutes if you only read the Quick Reference Card and your asset class playbook.");
+callout("How to use this guide", "Start with Trader DNA and the market-fit section. Then read the risk pages before the program pages. The goal is to choose rules that fit your process - not force your process into the cheapest plan.");
 pageBreak();
 
+// ============== QUICK REFERENCE CARD ==============
 // ============== QUICK REFERENCE CARD ==============
 h1("01  ·  The Quick Reference Card");
 eyebrow("Screenshot this page");
@@ -270,7 +319,14 @@ statPanel([
   { value: "$0.02", label: "Equities Per-Share Comm." },
 ]);
 
-h2("Asset class lineup at a glance");
+statPanel([
+  { value: "10%", label: "Prediction Eval Target" },
+  { value: "3%", label: "Prediction Daily DD" },
+  { value: "6%", label: "Prediction Max DD" },
+  { value: "0.5%", label: "Max Profit / Event" },
+]);
+
+h2("Market access lineup at a glance");
 table(
   [
     { key: "asset", label: "ASSET CLASS", width: 110, align: "left" },
@@ -281,16 +337,49 @@ table(
   [
     { asset: "Forex", platform: "cTrader · DXTrade · MatchTrader", leverage: "1:50", window: "24/5 (close 3:45pm Fri ET)" },
     { asset: "Crypto", platform: "cTrader · DXTrade · MatchTrader", leverage: "5:1 BTC/ETH · 2:1 alts", window: "24/7" },
-    { asset: "Futures", platform: "Rithmic Pro · Tradovate (soon)", leverage: "Per instrument", window: "Close by 15:10 CST" },
-    { asset: "SS Equities", platform: "GooeyPro", leverage: "2:1", window: "09:30 – 15:55 ET only" },
+    { asset: "Futures", platform: "Tradovate · Volumetrica · DXtrade Futures", leverage: "Per instrument", window: "Program/session rules apply" },
+    { asset: "SS Equities", platform: "GooeyPro", leverage: "2:1", window: "09:30 - 15:55 ET only" },
+    { asset: "Prediction Markets", platform: "Hybrid prediction dashboard", leverage: "None", window: "Market-dependent" },
   ],
 );
 
 callout("Pin this", "If you remember nothing else: don't oversize, get to your trailing-DD lock threshold first, then ladder up to the profit target. That's how the playbook ends well.");
 pageBreak();
 
+// ============== TRADER DNA ==============
+h1("02  ·  Know Your Trader DNA");
+eyebrow("Identity before product");
+p("Before choosing an account, identify how you naturally make decisions. Hybrid Funding's Trader DNA assessment uses four archetypes as a conversation starter - not a diagnosis and not a promise that one program will fit you.");
+
+table(
+  [
+    { key: "type", label: "TYPE", width: 92, align: "left" },
+    { key: "edge", label: "NATURAL EDGE", width: 140, align: "left" },
+    { key: "risk", label: "COMMON RISK", width: 130, align: "left" },
+    { key: "question", label: "ASK YOURSELF", width: 122, align: "left" },
+  ],
+  [
+    { type: "Sniper", edge: "Patience and selectivity", risk: "Too few reps / hesitation", question: "Can I wait without forcing?" },
+    { type: "Architect", edge: "Systems and repeatability", risk: "Rigidity when conditions change", question: "Do I follow tested rules?" },
+    { type: "Hybrid", edge: "Adaptability", risk: "Style sprawl / weak guardrails", question: "What stays fixed when I adapt?" },
+    { type: "Phoenix", edge: "Speed and resilience", risk: "Overtrading after emotion", question: "Can I cap aggression?" },
+  ],
+  { rowH: 34 }
+);
+
+h2("Market-fit decision tree");
+bullet("If your edge is event research, news, sports, economics, or probability: study Prediction Markets.");
+bullet("If you want U.S. large-cap stocks with a defined intraday session and no overnight positions: study Single Session Equities.");
+bullet("If you prefer CME-style products, contract sizing, and structured sessions: study Futures.");
+bullet("If you trade currencies, metals, and macro relationships: study Forex.");
+bullet("If you want 24/7 digital-asset markets and can manage continuous volatility: study Crypto.");
+
+callout("Do not let the quiz buy for you", "Trader DNA narrows the questions. Your actual choice should still be based on your tested strategy, schedule, risk tolerance, platform needs, and the current rules.");
+bigCTA("Take the Trader DNA test", "8 questions. Use the result as a starting point for market and risk-fit research.", "https://www.hybridfunding.co/dna-test");
+pageBreak();
+
 // ============== RULE 1-5 (RESTRUCTURED) ==============
-h1("02  ·  The 5 rules every trader memorizes");
+h1("03  ·  The 5 rules every trader memorizes");
 p("Memorize these before you trade a single tick. Every other rule on every program is a variation of one of these five.");
 
 h2("Rule 1 — Profit target");
@@ -306,16 +395,17 @@ table(
     { program: "Forex 1-Step", target: "10%", phases: "1", split: "80%" },
     { program: "Forex 2-Step", target: "10% → 5%", phases: "2", split: "80%" },
     { program: "Forex 3-Step", target: "5% per phase", phases: "3", split: "80%" },
-    { program: "Forex Instant Funding", target: "No target — trade firm capital", phases: "0", split: "80%" },
+    { program: "Forex Instant Funding", target: "No evaluation profit target", phases: "0", split: "80%" },
     { program: "Forex Instant Funding Lite", target: "No target", phases: "0", split: "80%" },
     { program: "Crypto 1-Step", target: "9%", phases: "1", split: "90%" },
     { program: "Crypto 2-Step", target: "6% → 9%", phases: "2", split: "90%" },
     { program: "Futures Funded (4-Phase)", target: "9% per phase", phases: "4", split: "90%" },
     { program: "Single Session Equities", target: "10% (Eval only)", phases: "1", split: "80%" },
+    { program: "Prediction Markets", target: "10% (Eval only)", phases: "1", split: "75%*" },
   ],
   { rowH: 22 }
 );
-pSoft("Profit splits shown are baseline. Add the 90% Profit Share Upgrade (15% of plan price) to lift any program to 90%.");
+pSoft("*Prediction Markets currently starts at 75/25 and offers a 90/10 add-on. Other splits and add-on pricing vary by program; verify current terms.");
 
 h2("Rule 2 — Maximum drawdown");
 p("The single most important rule. Either trailing (moves up with closed balance, then locks at starting balance) or static (fixed). A breach below max drawdown = hard breach = account terminated.");
@@ -334,6 +424,7 @@ table(
     { program: "Crypto 1-Step / 2-Step", type: "Static", amt: "6% / 9%" },
     { program: "Futures Funded (4-Phase)", type: "Trailing", amt: "5% on EOD balance" },
     { program: "Single Session Equities", type: "Trailing", amt: "3% on closed balance" },
+    { program: "Prediction Markets", type: "Trailing", amt: "6% equity high" },
   ],
 );
 
@@ -352,6 +443,7 @@ table(
     { program: "Crypto 1-Step / 2-Step", limit: "3% (bidirectional Daily Cap)" },
     { program: "Futures (per phase)", limit: "Effectively the trailing loss" },
     { program: "Single Session Equities", limit: "2.5% intraday trailing" },
+    { program: "Prediction Markets", limit: "3% EOD equity; resets 5 PM ET" },
   ],
 );
 
@@ -360,17 +452,19 @@ p("When you can have positions open. Violating the window = soft breach (auto-cl
 bullet("Forex: 24/5. All positions auto-close 3:45pm EST Friday unless Weekend Hold add-on purchased.");
 bullet("Crypto: 24/7. Weekend holds allowed.");
 bullet("Futures: All positions and orders cancelled by 15:10 CST. No overnight or weekend holds.");
-bullet("Single Session Equities: 09:30 – 15:55 ET only. Open past 15:55 = hard breach (Prohibited Practices).");
+bullet("Single Session Equities: 09:30 - 15:55 ET only. Open past 15:55 = hard breach (Prohibited Practices).");
+bullet("Prediction Markets: market availability/resolution is event-specific; evaluation timing and permitted opening-price rules still apply.");
 
 h2("Rule 5 — Consistency");
 p("Designed to filter out lucky entries. Limits how concentrated your profit can be on a single day.");
 bullet("Futures Funded: best day cannot exceed 25% of total profit (need 4+ trading days minimum to clear a phase).");
 bullet("Single Session Equities Funded phase: 25% Consistency Score.");
-bullet("Equities also requires a minimum of 3 profitable trading days at 0.50% — both Eval and Funded.");
+bullet("Equities also requires a minimum of 3 profitable trading days at 0.50% - both Eval and Funded.");
+bullet("Prediction Markets uses a 0.5% max-profit-per-event cap to limit concentration in any single event.");
 pageBreak();
 
 // ============== POSITION SIZING ==============
-h1("03  ·  Position sizing");
+h1("04  ·  Position sizing");
 p("Most failed evaluations aren't from bad trades. They're from oversized positions. Position sizing is the only knob that keeps a string of losses from becoming a hard breach.");
 
 h2("The 0.25 – 0.5% rule");
@@ -400,7 +494,7 @@ callout("The discipline trade-off", "Risking 1% per trade halves your trade coun
 pageBreak();
 
 // ============== TRAILING DRAWDOWN ==============
-h1("04  ·  Trailing max drawdown");
+h1("05  ·  Trailing max drawdown");
 p("The trailing max drawdown is calculated on closed balance, not equity. Two consequences most traders miss:");
 bullet("Open floating profit doesn't trail the DD up. Only when you close the trade does the high-water mark move.");
 bullet("Once your closed balance reaches the lock threshold (e.g. +6% on Forex 1-Step), the trailing locks at your starting balance permanently. From there, you have a hard floor.");
@@ -426,7 +520,7 @@ callout("The play", "Ladder to your lock threshold first with conservative size.
 pageBreak();
 
 // ============== FOREX ==============
-h1("05  ·  Forex playbook");
+h1("06  ·  Forex playbook");
 p("Five Forex programs. Pick by your style and your honest pass rate, not by the entry fee.");
 table(
   [
@@ -457,7 +551,7 @@ bullet("Up to 50:1 leverage. Cheaper than full Instant Funding, payout-on-breach
 pageBreak();
 
 // ============== CRYPTO ==============
-h1("06  ·  Crypto playbook");
+h1("07  ·  Crypto playbook");
 p("Crypto programs are tighter on daily moves but pay a higher baseline split (90%).");
 table(
   [
@@ -485,8 +579,8 @@ bullet("Profit split: 90% on Crypto programs, baseline.");
 pageBreak();
 
 // ============== FUTURES ==============
-h1("07  ·  Futures 4-Phase playbook");
-p("Funded Futures runs on Rithmic Pro today. Tradovate platform integration is coming soon — same rules, additional platform option.");
+h1("08  ·  Futures 4-Phase playbook");
+p("The Funded Futures path is a four-phase program. Current public site guidance lists Tradovate, Volumetrica, and DXtrade Futures as supported platform choices.");
 
 h2("Phase rules (each phase is identical)");
 bullet("Profit target: 9%");
@@ -526,12 +620,12 @@ table(
   ],
 );
 
-callout("Don't forget", "CME market data attestation must be done in R | Trader Pro desktop. Mobile/web won't work for this step. Attest as a non-professional user.");
+callout("Don't forget", "Complete the required CME market-data attestation through the desktop client for your chosen Futures platform before trading. Current site guidance says this step cannot be completed on mobile or web.");
 pageBreak();
 
 // ============== EQUITIES ==============
-h1("08  ·  Single Session Equities");
-p("Day-trade S&P 100 equity products on GooeyPro. All positions open and close within the same trading session — flat by 15:55 ET, every day. The ONLY equities prop product on the market with this structure.");
+h1("09  ·  Single Session Equities");
+p("Day-trade available S&P 100 equity products on GooeyPro. All positions open and close within the same permitted trading session - flat by 15:55 ET, every day. The structure is built for traders who prefer intraday equities without overnight exposure.");
 
 h2("Rules at a glance");
 table(
@@ -560,8 +654,53 @@ table(
 callout("Trading window", "09:30 – 15:55 ET only. Pre-market / extended hours not allowed. Position open past 15:55 ET = Prohibited Practices violation = hard breach.");
 pageBreak();
 
+// ============== PREDICTION MARKETS ==============
+h1("10  ·  Prediction Markets");
+eyebrow("Trade defined event outcomes");
+p("Prediction Markets let you take a Yes or No position on a defined real-world outcome. A share trades between $0.00 and $1.00. A winning share settles at $1.00; a losing share settles at $0.00.");
+
+h2("How the position works");
+bullet("Buy Yes if you think the event will happen.");
+bullet("Buy No if you think it will not happen. There is no conventional short selling.");
+bullet("Shares = order amount divided by contract price.");
+bullet("Opening trades are allowed between $0.20 and $0.80. You may close at other prices after entry.");
+bullet("A 1% commission applies to opening trades.");
+bullet("There is no leverage - you pay for the shares you buy.");
+
+h2("Program rules at a glance");
+table(
+  [
+    { key: "rule", label: "RULE", width: 220, align: "left" },
+    { key: "value", label: "CURRENT PUBLIC TERM", width: 264, align: "left" },
+  ],
+  [
+    { rule: "Profit Target", value: "10% - Evaluation only" },
+    { rule: "Daily Drawdown", value: "3% - EOD equity, resets 5 PM ET" },
+    { rule: "Max Drawdown", value: "6% trailing equity high" },
+    { rule: "Max Profit / Event", value: "0.5% of account, aggregated" },
+    { rule: "Evaluation Time", value: "30 days (60 with Double Time add-on)" },
+    { rule: "Opening Price Range", value: "$0.20-$0.80" },
+    { rule: "Commission", value: "1% on opening trades" },
+    { rule: "Leverage", value: "None" },
+  ],
+  { rowH: 24 }
+);
+
+h2("Worked example");
+p("Buy $1,000 of Yes at $0.25 and you hold 4,000 shares before commission. If the live price rises to $0.40, the marked value is about $1,600. If the event resolves Yes, winning shares settle at $1.00. If it resolves No, Yes shares settle at $0.00. Account-level profit caps and drawdown rules still govern.");
+
+h2("Use AI Market Radar as a research queue");
+bullet("MOVER: large 24-hour probability changes on liquid markets.");
+bullet("VOL SPIKE: unusually heavy volume relative to book depth without a large price move.");
+bullet("DECISION: near-resolution markets that remain materially uncertain.");
+bullet("BOOK CHECK: mutually exclusive outcome books whose pricing may deserve structural review.");
+callout("Research, not recommendation", "Radar signals are mechanically generated research candidates. They are not financial advice, guarantees, or instructions to trade.");
+
+bigCTA("Explore Prediction Markets", "Read the live product rules and see current markets before choosing an account.", "https://www.hybridfunding.co/predictive-markets");
+pageBreak();
+
 // ============== ADD-ONS ==============
-h1("09  ·  Add-on decision tree");
+h1("11  ·  Add-on decision tree");
 p("Five add-ons priced as a percentage of plan price. Pick based on your style — not because you're hedging your own discipline.");
 table(
   [
@@ -570,19 +709,19 @@ table(
     { key: "useif", label: "USE IT IF…", width: 204, align: "left" },
   ],
   [
-    { addon: "90% Profit Share Upgrade", cost: "15%", useif: "You intend to scale and take payouts. Pays back inside the first month for serious traders." },
+    { addon: "90% Profit Share Upgrade", cost: "15%", useif: "The incremental split fits your expected payout behavior and the current plan economics." },
     { addon: "Weekend Hold (Forex only)", cost: "10%", useif: "You swing trade Sunday → Friday. Skip if you scalp." },
     { addon: "Payout-on-Breach", cost: "25%", useif: "You're on a tight-rules program (SS Equities, Instant Funding). Real safety net." },
     { addon: "Lock-Upon-Payout Waiver", cost: "25%", useif: "You take small frequent payouts. Skip if you batch payouts." },
     { addon: "33% Consistency Threshold", cost: "20%", useif: "You want a looser consistency rule (cheaper to clear)." },
-    { addon: "50% Consistency Threshold", cost: "35%", useif: "You want to flex — tighter rule. Most traders skip both." },
+    { addon: "50% Consistency Threshold", cost: "35%", useif: "You have reviewed the exact rule mechanics and it matches your trading distribution." },
   ],
   { rowH: 28 }
 );
 pageBreak();
 
 // ============== BREACH SCENARIOS ==============
-h1("10  ·  How traders breach (and how not to)");
+h1("12  ·  How traders breach (and how not to)");
 p("The five most common breach patterns we see — and exactly how to avoid each one.");
 
 h3("1. The Friday close trap (Forex)");
@@ -604,164 +743,181 @@ callout("If you remember nothing else", "Three rules: small size, lock the trail
 pageBreak();
 
 // ============== WHY HYBRID FUNDING ==============
-h1("11  ·  Why traders pick Hybrid Funding");
-eyebrow("Six unfair advantages");
-p("We're not the only prop firm. We are the prop firm built for traders who want optionality, modern platforms, and rules that make sense.");
+h1("13  ·  Why traders use the Hybrid ecosystem");
+eyebrow("One ecosystem, multiple workflows");
+p("The value is not a single account type. It is the ability to learn, compare, and operate across different market structures without pretending every trader should trade the same way.");
 
 table(
   [
-    { key: "what", label: "ADVANTAGE", width: 170, align: "left" },
+    { key: "what", label: "CAPABILITY", width: 170, align: "left" },
     { key: "why", label: "WHAT IT MEANS FOR YOU", width: 314, align: "left" },
   ],
   [
-    { what: "4 asset classes, 1 firm", why: "Trade Forex, Crypto, Futures, and Single Session Equities under one account ecosystem. No juggling logins across firms." },
-    { what: "Single Session Equities", why: "The only prop firm with day-traded S&P 100 equities on GooeyPro. Direct Nasdaq liquidity, $0.02/share. Built for stock day-traders." },
-    { what: "Modern platform stack", why: "cTrader, DXTrade, MatchTrader, Rithmic Pro, GooeyPro — and Tradovate is coming. We integrate fast and pick platforms traders actually like." },
-    { what: "Up to 90% profit splits", why: "Industry-leading. The 90% upgrade pays for itself in your first 30 days of consistent trading." },
-    { what: "Transparent rules", why: "Full FAQ pages with worked drawdown examples on hybridfunding.co/faq. No 30-page hidden PDFs. We want you to pass." },
-    { what: "Real community", why: "TradeHouse Battles tournaments, real prizes including funded accounts. Trade your reps, win real capital." },
+    { what: "Five market paths", why: "Forex, Crypto, Futures, Single Session Equities, and Prediction Markets give traders multiple ways to express an edge." },
+    { what: "Trader DNA", why: "An identity framework that helps you ask better questions about patience, discipline, adaptability, and aggression before choosing a product." },
+    { what: "AI Market Radar", why: "A prediction-market research queue for movers, unusual volume, decision windows, and book checks - not a trade-signal promise." },
+    { what: "Multi-platform access", why: "Use supported third-party platforms that match the relevant program instead of learning one proprietary interface for everything." },
+    { what: "Transparent education", why: "Rules, worked examples, FAQs, and this playbook are designed to make the operating constraints visible before you trade." },
+    { what: "Trade House ecosystem", why: "Battles, community, and partner tools let traders practice, learn together, and build market-specific groups." },
   ],
-  { rowH: 36 }
+  { rowH: 40 }
 );
 pageBreak();
 
 // ============== 30-DAY ROADMAP ==============
-h1("12  ·  The first 30 days roadmap");
-p("From sign-up to your first payout. The exact path most successful traders follow.");
+h1("14  ·  30-Day Trader Build");
+p("This roadmap starts before purchase. The goal is to prove your process in a demo or low-stakes environment, then decide whether a funded-trading program actually fits.");
 
-h3("Week 1 — Setup & calibration");
-bullet("Pick your asset class and program (use the Add-on Decision Tree page).");
-bullet("Pay the entry, complete KYC if Eval (mandatory before Funded).");
-bullet("Install your platform. Run a single 0.25% risk test trade — confirm size math is right BEFORE you take a real position.");
+h3("Week 1 - Observe + define");
+bullet("Take the Trader DNA assessment and write what parts feel accurate vs. inaccurate.");
+bullet("Choose one primary market to study for the month.");
+bullet("Write your setup criteria, no-trade conditions, daily stop, and maximum risk per idea.");
+bullet("Read the rules for the program you are considering - do not buy yet just because of a discount.");
 
-h3("Week 2 — Lock the trailing floor");
-bullet("Risk 0.25–0.5% per trade. Stack 1.5R+ wins.");
-bullet("Goal: get to your DD lock threshold (+6% on 1-Step, +5% on 3-Step, +3% on Equities). Don't push for the target yet.");
-bullet("Once locked, you have a permanent floor. The hard part is over.");
+h3("Week 2 - Test + journal");
+bullet("Use a demo or practice environment where available.");
+bullet("Track every setup, entry reason, stop logic, exit, and rule mistake.");
+bullet("Measure average risk, average R, win rate, and maximum losing streak.");
+bullet("If you cannot follow your own rules in practice, more account size will not solve the problem.");
 
-h3("Week 3 — Ladder to target");
-bullet("Now ladder up to the profit target with the floor protecting you.");
-bullet("Maintain consistency: spread profit across days. Best day cap matters.");
-bullet("Document every trade. Most blow-ups happen here from impatience.");
+h3("Week 3 - Execute with hard limits");
+bullet("Trade only the setup(s) you documented.");
+bullet("Use a fixed daily stop and a maximum number of attempts.");
+bullet("Review drawdown geometry before each session so you know exactly where a breach threshold sits.");
+bullet("For Prediction Markets, separate research quality from position sizing - being right about an event does not excuse oversized exposure.");
 
-h3("Week 4 — Pass + first payout");
-bullet("Hit target → automatic phase pass (or transition to Funded for single-step programs).");
-bullet("Funded: request first payout on demand. Min withdrawal $100.");
-bullet("Subsequent payouts: 14–30 days depending on program.");
+h3("Week 4 - Review + decide");
+bullet("Score process compliance before P&L.");
+bullet("Identify whether your actual schedule and holding behavior fit the market/program rules.");
+bullet("Choose a program only if the constraints match the process you just tested.");
+bullet("If the fit is poor, change the market or keep practicing. A no-purchase decision can be the correct outcome.");
 
-callout("Realistic timeline", "1-Step Forex with disciplined sizing typically clears in 2–4 weeks. Single Session Equities clears in 3–5 weeks (more session days needed for consistency).");
+callout("The goal", "At Day 30 you should have a written trading operating system. Funding is optional. Process is not.");
 pageBreak();
 
 // ============== COMPOUNDING MATH ==============
-h1("13  ·  The compounding math of payouts");
-p("One funded account is fine. The math gets interesting when you understand how funded accounts compound on themselves.");
+h1("15  ·  Payout planning + scaling");
+p("Scaling should be earned by process quality, not projected income. More accounts create more rules, more correlation, and more operational risk.");
 
-h2("Worked example — the scaling ladder");
-p("Trader Sarah passes a $25K Forex 1-Step in week 3. She holds the funded account. Here's what year one looks like:");
+h2("A responsible scaling ladder");
 table(
   [
-    { key: "month", label: "MONTH", width: 70, align: "left" },
-    { key: "events", label: "WHAT HAPPENED", width: 254, align: "left" },
-    { key: "earned", label: "PAYOUT", width: 80, align: "right" },
-    { key: "total", label: "TOTAL", width: 80, align: "right" },
+    { key: "stage", label: "STAGE", width: 100, align: "left" },
+    { key: "proof", label: "PROOF REQUIRED", width: 230, align: "left" },
+    { key: "next", label: "NEXT ACTION", width: 154, align: "left" },
   ],
   [
-    { month: "M1", events: "Passed $25K. Paid 80% on +6% over month: $1,200.", earned: "$1,200", total: "$1,200" },
-    { month: "M2", events: "Passed $50K (re-invested some). +5% on each, two payouts.", earned: "$3,000", total: "$4,200" },
-    { month: "M3", events: "Added $100K Single Session Equities. +4% all accounts.", earned: "$5,200", total: "$9,400" },
-    { month: "M6", events: "Three funded accounts: $25K + $100K Forex + $100K Equities. Steady.", earned: "$5,800", total: "$28,000" },
-    { month: "M12", events: "Stable across three asset classes. Year one cash from prop firm trading:", earned: "—", total: "$72,000+" },
+    { stage: "Practice", proof: "You follow a written setup and daily stop.", next: "Keep journaling." },
+    { stage: "One account", proof: "You can operate inside the rules without rule surprises.", next: "Protect consistency." },
+    { stage: "First payout", proof: "You can reach eligibility without changing your risk behavior.", next: "Review, don't celebrate with size." },
+    { stage: "Second account", proof: "The first account is operationally boring and repeatable.", next: "Add only if correlation is managed." },
+    { stage: "Multi-market", proof: "You have a distinct edge and process for each market.", next: "Avoid duplicated exposure." },
   ],
-  { rowH: 26 }
+  { rowH: 30 }
 );
-pSoft("This is a worked example, not a guarantee. Your numbers depend on your strategy, discipline, and time in market. The point: passing one Eval and stopping is leaving money on the table.");
 
-h2("Why most traders never get past month one");
-bullet("They blow the funded account chasing big size after passing.");
-bullet("They skip the 90% upgrade and lose 11% of every payout.");
-bullet("They don't add a second account — but the entry on a second program is now a tax-deductible cost against payout income for most jurisdictions.");
+h2("Questions before you add size");
+bullet("Am I adding capital because my process is stable, or because I want to recover faster?");
+bullet("Do my accounts share the same directional risk at the same time?");
+bullet("Can I monitor every platform's drawdown, session, and payout rules without confusion?");
+bullet("Would one bad day across correlated positions create multiple breaches?");
+bullet("Is the additional fee justified by a tested operating plan rather than an earnings projection?");
+
+callout("No fantasy math", "This playbook intentionally avoids annual-income projections. Your job is to build a repeatable process and understand the current payout rules; results vary and losses are possible.");
 pageBreak();
 
 // ============== AFFILIATE ==============
-h1("14  ·  Get paid to refer traders");
-eyebrow("Affiliate program");
-p("This is the easy money play. If your network has any traders, you should be running our affiliate program. 5–20% commissions, weekly payouts, no cap.");
+h1("16  ·  Build a Trade House");
+eyebrow("Affiliate + community model");
+p("The next-level affiliate model is not 'drop a link.' Build a trader organization that is useful even when a member never purchases a challenge.");
 
-h2("Tier structure");
+h2("The Trade House flywheel");
+p("Education -> Identity -> Specialization -> Accountability -> Competition -> Funding -> Referral -> Leadership");
+bullet("Education: start every member with the free Trader Playbook.");
+bullet("Identity: use Trader DNA as a discussion framework.");
+bullet("Specialization: create rooms for Forex, Crypto, Futures, Single Session Equities, and Prediction Markets.");
+bullet("Accountability: require a written risk plan and weekly review.");
+bullet("Competition: use Trade House Battles as structured reps and community events.");
+bullet("Leadership: members can grow into contributors, market captains, and Trade House leaders.");
+
+h2("Current public affiliate tiers");
 table(
   [
-    { key: "tier", label: "TIER", width: 90, align: "left" },
-    { key: "sales", label: "SALES VOLUME", width: 134, align: "left" },
-    { key: "rate", label: "COMMISSION", width: 130, align: "center" },
-    { key: "annual", label: "AT 5 SALES/MO", width: 130, align: "right" },
+    { key: "tier", label: "TIER", width: 110, align: "left" },
+    { key: "sales", label: "SALES VOLUME", width: 220, align: "left" },
+    { key: "rate", label: "COMMISSION", width: 154, align: "right" },
   ],
   [
-    { tier: "Tier 1", sales: "First 1–9 sales", rate: "5%", annual: "$300/yr" },
-    { tier: "Tier 2", sales: "10–49 sales", rate: "10%", annual: "$3,000/yr" },
-    { tier: "Tier 3", sales: "50–100 sales", rate: "15%", annual: "$9,000/yr" },
-    { tier: "Tier 4", sales: "100+ sales", rate: "20%", annual: "$24,000+/yr" },
+    { tier: "Tier 1", sales: "First 1-9 sales", rate: "5%" },
+    { tier: "Tier 2", sales: "10-49 sales", rate: "10%" },
+    { tier: "Tier 3", sales: "50-100 sales", rate: "15%" },
+    { tier: "Tier 4", sales: "100+ sales", rate: "20%" },
   ],
-  { rowH: 22 }
+  { rowH: 24 }
 );
-pSoft("Math assumes ~$500 average plan price. A trader with a 5,000-follower trading Discord can hit Tier 3 inside a single quarter.");
+pSoft("The current public Affiliate page also advertises weekly payouts. Your affiliate dashboard, partner agreement, and current published terms govern if the program changes.");
 
-h2("How to start in 30 seconds");
-bullet("Visit hybridfunding.co/affiliate, sign up.");
-bullet("Get your trackable link. Drop it in your trading content (YouTube, Discord, X, IG).");
-bullet("Real-time dashboard shows clicks, conversions, and unpaid balance.");
-bullet("Weekly automatic payouts — no chasing.");
+h2("Partner standard");
+bullet("Disclose the affiliate relationship clearly near endorsements and links.");
+bullet("Use current rules, prices, platforms, and payout terms.");
+bullet("Never promise funding, profitability, payouts, pass rates, or risk-free outcomes.");
+bullet("Label hypothetical payout or earnings math as an example - never as an expected result.");
+bullet("Describe AI Market Radar as a research tool, not a prediction guarantee.");
+bullet("Use email and SMS only with the permissions, opt-outs, and advertising disclosures required for your audience.");
 
-bigCTA("Start the affiliate program in 30 seconds", "Tier 4 traders earn $24K+/year referring traders to programs they were going to use anyway.", "https://www.hybridfunding.co/affiliate");
+bigCTA("Apply to the partner program", "Build an audience, a website placement, or a Trade House around education-first market access.", "https://www.hybridfunding.co/affiliate");
 pageBreak();
 
 // ============== BATTLES ==============
-h1("15  ·  Join the TradeHouse Battles arena");
-eyebrow("Trade live, win funded accounts");
-p("TradeHouse Battles is the competitive trading arena built for serious traders. Real-time tournaments. Live leaderboards. Prizes including funded accounts worth $100,000+. Free to enter many events.");
+h1("17  ·  Trade House Battles");
+eyebrow("Competition as practice");
+p("Trade House Battles is Hybrid Funding's competitive trading arena. Use it as a community and accountability layer: practice decision-making under pressure, compare performance, and participate in current published events.");
 
-h2("What you can win");
-bullet("Funded accounts ($25K – $100K+) directly from the leaderboard.");
-bullet("Cash prizes paid weekly.");
-bullet("Free upgrades to higher-tier programs.");
-bullet("Custom merch and trading tool credits.");
+h2("How to use Battles well");
+bullet("Treat the event rules like an evaluation rulebook: read them before the first trade.");
+bullet("Score discipline and risk control, not just leaderboard position.");
+bullet("Review your best and worst decisions after the event.");
+bullet("Use team formats to create Trade House accountability and market-specific crews.");
+bullet("Check the current event page for active formats, eligibility, and published prizes - these can change.");
 
-h2("Why traders love Battles");
-bullet("It's live and public — you build a track record other traders can verify.");
-bullet("Tournament discipline is identical to passing an Eval. Reps for both.");
-bullet("Network with other competitive traders. Trading is a lonely game; Battles fixes that.");
+callout("Competition is not permission to overtrade", "A leaderboard can reward aggression emotionally. Keep the same daily stop and risk limits you would use outside the event.");
 
-bigCTA("Enter the next Battle", "New tournaments every week. Free events monthly.", "https://www.hybridfunding.co/battles");
+bigCTA("See current Battles", "Review the live event details, rules, and available rewards.", "https://www.hybridfunding.co/battles");
 pageBreak();
 
 // ============== NEXT MOVE ==============
-h1("16  ·  Your next move");
-p("Pick one. All five paths work. Most traders start with #1.");
+h1("18  ·  Your next move");
+p("Choose the next step that solves your actual problem. You do not need to buy anything to keep learning.");
 
-h2("1. Pick your challenge tier");
-pSoft("All programs, all asset classes, full pricing.");
-bigCTA("Start a challenge", "Forex · Crypto · Futures · Single Session Equities", "https://www.hybridfunding.co/challenges");
+h2("1. Learn your Trader DNA");
+pSoft("Use the assessment to surface your decision-making tendencies and risk questions.");
+bigCTA("Take Trader DNA", "Sniper · Architect · Hybrid · Phoenix", "https://www.hybridfunding.co/dna-test");
 
-h2("2. Read the full FAQ");
-pSoft("Every rule, every program, with worked examples — by asset class.");
-bigCTA("Read the FAQ", "Hands-on rules guide for every program we run.", "https://www.hybridfunding.co/faq");
+h2("2. Compare the five market paths");
+pSoft("Forex · Crypto · Futures · Single Session Equities · Prediction Markets");
+bigCTA("Explore current programs", "Read the market and program details before choosing an account.", "https://www.hybridfunding.co/challenges");
 
-h2("3. Earn from referrals");
-pSoft("5–20% commissions on every referral. Weekly payouts.");
-bigCTA("Become an affiliate", "Most active affiliates clear $5K–$20K/month.", "https://www.hybridfunding.co/affiliate");
+h2("3. Study Prediction Markets + Radar");
+pSoft("Learn Yes/No mechanics, then use AI Market Radar as a research queue.");
+bigCTA("Explore Prediction Markets", "Live markets, rules, and research tools.", "https://www.hybridfunding.co/predictive-markets");
 
-h2("4. Compete in TradeHouse Battles");
-pSoft("Win funded accounts on the leaderboard.");
-bigCTA("Enter the arena", "Free entry events every month. Funded accounts on the line.", "https://www.hybridfunding.co/battles");
+h2("4. Read the current FAQ");
+pSoft("Rules and platform details can change. The live FAQ should beat an old screenshot.");
+bigCTA("Read the FAQ", "Cross-check targets, drawdowns, payouts, and platform rules.", "https://www.hybridfunding.co/faq");
 
-h2("5. Read the blog");
-pSoft("Strategy guides, rule explainers, and asset-class deep dives. New posts weekly.");
-bigCTA("Read the blog", "Free, no email required.", "https://www.hybridfunding.co/blog");
+h2("5. Join or build a Trade House");
+pSoft("Use the Playbook, market rooms, weekly scorecards, and Battles to build accountability.");
+bigCTA("See Trade House Battles", "Competition + community without replacing your risk plan.", "https://www.hybridfunding.co/battles");
+
+h2("6. Become a partner");
+pSoft("If you already teach, publish, run a community, or own a trading website, use the partner program to build a tracked education-first funnel.");
+bigCTA("Explore the partner program", "Current public tiers, partner tools, and Trade House model.", "https://www.hybridfunding.co/affiliate");
 
 h2("Share this playbook");
-p("If this helped you — please send it to one trading friend. Forwarding link:");
+p("If this helped you, send it to one trading friend. Forwarding link:");
 doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(12).text("hybridfunding.co/playbook", { align: "center" }).moveDown(0.6);
 doc.fillColor(TEXT_SOFT).font("Helvetica-Oblique").fontSize(10).text(
-  "This playbook is not investment advice. Trading involves risk of loss. © Hybrid Funding LLC.",
+  "Educational material only. Trading involves risk of loss. Program rules and availability can change; verify current terms at hybridfunding.co. © Hybrid Funding LLC.",
   { align: "center" }
 );
 

@@ -4,14 +4,14 @@ A next-generation proprietary trading firm website that revolutionizes how trade
 
 ## Overview
 
-Hybrid Funding combines traditional funding programs with innovative competitive trading experiences through our TradeHouse Battles arena. Based in Delaware and focused on HUBZone and underserved community development, we provide multiple pathways to trading success.
+Hybrid Funding combines traditional funding programs with innovative competitive trading experiences through our Trade House Battles arena. Based in Delaware and focused on HUBZone and underserved community development, we provide multiple pathways to trading success.
 
 ## Recent Updates (January 2025)
 
 ### Platform Enhancements
 - ✅ Fixed duplicate header rendering issues across all pages
 - ✅ Eliminated DOM nesting warnings for improved performance
-- ✅ Updated TradeHouse Battles embed to new domain: `battles.hybridfunding.co`
+- ✅ Updated Trade House Battles embed to new domain: `battles.hybridfunding.co`
 - ✅ Enhanced affiliate dashboard with realistic earnings examples ($8,450/month with 142 referrals)
 
 ### Contact Information Updates
@@ -25,7 +25,7 @@ Hybrid Funding combines traditional funding programs with innovative competitive
 
 ### Documentation Updates
 - ✅ Updated complete knowledge base with new contact information
-- ✅ Enhanced TradeHouse Battles documentation with new platform access details
+- ✅ Enhanced Trade House Battles documentation with new platform access details
 - ✅ Added comprehensive contact information section
 - ✅ Updated support bot response templates
 
@@ -42,7 +42,7 @@ Hybrid Funding combines traditional funding programs with innovative competitive
 - **Crypto**: Cryptocurrency trading with specialized rules
 - **Futures**: Commodity and index futures trading
 
-### TradeHouse Battles
+### Trade House Battles
 - Revolutionary competitive trading arena
 - Real-time tournaments and leaderboards
 - Exclusive rewards including funded accounts up to $100,000+
@@ -80,7 +80,7 @@ Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are
 ## Platform Links
 
 - **Main Website**: https://hybridfunding.co
-- **TradeHouse Battles**: https://battles.hybridfunding.co
+- **Trade House Battles**: https://battles.hybridfunding.co
 - **Terms & Conditions**: https://dashboardanalytix.com/client-terms-and-policies/
 
 ## Development Notes
