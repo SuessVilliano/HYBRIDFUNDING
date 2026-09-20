@@ -13,7 +13,7 @@ const benefits = [
   "Position-sizing, expectancy, daily-loss, and drawdown math you can reuse anywhere",
   "Prediction Markets walkthrough + how to use AI Market Radar as a research queue",
   "Daily checklist, weekly scorecard, and a 30-day trader-development roadmap",
-  "TradeHouse + affiliate framework for traders who want to build a community",
+  "Trade House + affiliate framework for traders who want to build a community",
 ];
 
 const PDF_URL = "/trader-playbook.pdf";
