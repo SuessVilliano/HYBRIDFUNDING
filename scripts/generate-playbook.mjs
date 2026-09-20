@@ -244,7 +244,7 @@ doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text("INSIDE THIS PLAYB
 const insideItems = [
   ["Trader DNA + market-fit decision framework", "Position sizing + drawdown worked examples"],
   ["Five market paths: FX, Crypto, Futures, Equities, Prediction", "AI Market Radar as a research queue"],
-  ["A 30-day practice-first trader build", "How to build a TradeHouse responsibly"],
+  ["A 30-day practice-first trader build", "How to build a Trade House responsibly"],
 ];
 let insideY = 532;
 insideItems.forEach(([a, b]) => {
@@ -275,8 +275,8 @@ const tocRows = [
   ["13", "Why the Hybrid ecosystem is different", "Five market paths, tools, and transparent rule education."],
   ["14", "30-Day Trader Build", "Observe, test, execute with limits, then decide what to buy."],
   ["15", "Payout planning + scaling", "How to scale responsibility without fantasy income math."],
-  ["16", "Build a TradeHouse", "Affiliate tiers, partner standards, and community leadership."],
-  ["17", "TradeHouse Battles", "Use competition for reps, accountability, and community."],
+  ["16", "Build a Trade House", "Affiliate tiers, partner standards, and community leadership."],
+  ["17", "Trade House Battles", "Use competition for reps, accountability, and community."],
   ["18", "Your next move", "DNA, Playbook, rules, markets, Battles, and partner program."],
 ];
 table(
@@ -758,7 +758,7 @@ table(
     { what: "AI Market Radar", why: "A prediction-market research queue for movers, unusual volume, decision windows, and book checks - not a trade-signal promise." },
     { what: "Multi-platform access", why: "Use supported third-party platforms that match the relevant program instead of learning one proprietary interface for everything." },
     { what: "Transparent education", why: "Rules, worked examples, FAQs, and this playbook are designed to make the operating constraints visible before you trade." },
-    { what: "TradeHouse ecosystem", why: "Battles, community, and partner tools let traders practice, learn together, and build market-specific groups." },
+    { what: "Trade House ecosystem", why: "Battles, community, and partner tools let traders practice, learn together, and build market-specific groups." },
   ],
   { rowH: 40 }
 );
@@ -827,18 +827,18 @@ callout("No fantasy math", "This playbook intentionally avoids annual-income pro
 pageBreak();
 
 // ============== AFFILIATE ==============
-h1("16  ·  Build a TradeHouse");
+h1("16  ·  Build a Trade House");
 eyebrow("Affiliate + community model");
 p("The next-level affiliate model is not 'drop a link.' Build a trader organization that is useful even when a member never purchases a challenge.");
 
-h2("The TradeHouse flywheel");
+h2("The Trade House flywheel");
 p("Education -> Identity -> Specialization -> Accountability -> Competition -> Funding -> Referral -> Leadership");
 bullet("Education: start every member with the free Trader Playbook.");
 bullet("Identity: use Trader DNA as a discussion framework.");
 bullet("Specialization: create rooms for Forex, Crypto, Futures, Single Session Equities, and Prediction Markets.");
 bullet("Accountability: require a written risk plan and weekly review.");
-bullet("Competition: use TradeHouse Battles as structured reps and community events.");
-bullet("Leadership: members can grow into contributors, market captains, and TradeHouse leaders.");
+bullet("Competition: use Trade House Battles as structured reps and community events.");
+bullet("Leadership: members can grow into contributors, market captains, and Trade House leaders.");
 
 h2("Current public affiliate tiers");
 table(
@@ -865,19 +865,19 @@ bullet("Label hypothetical payout or earnings math as an example - never as an e
 bullet("Describe AI Market Radar as a research tool, not a prediction guarantee.");
 bullet("Use email and SMS only with the permissions, opt-outs, and advertising disclosures required for your audience.");
 
-bigCTA("Apply to the partner program", "Build an audience, a website placement, or a TradeHouse around education-first market access.", "https://www.hybridfunding.co/affiliate");
+bigCTA("Apply to the partner program", "Build an audience, a website placement, or a Trade House around education-first market access.", "https://www.hybridfunding.co/affiliate");
 pageBreak();
 
 // ============== BATTLES ==============
-h1("17  ·  TradeHouse Battles");
+h1("17  ·  Trade House Battles");
 eyebrow("Competition as practice");
-p("TradeHouse Battles is Hybrid Funding's competitive trading arena. Use it as a community and accountability layer: practice decision-making under pressure, compare performance, and participate in current published events.");
+p("Trade House Battles is Hybrid Funding's competitive trading arena. Use it as a community and accountability layer: practice decision-making under pressure, compare performance, and participate in current published events.");
 
 h2("How to use Battles well");
 bullet("Treat the event rules like an evaluation rulebook: read them before the first trade.");
 bullet("Score discipline and risk control, not just leaderboard position.");
 bullet("Review your best and worst decisions after the event.");
-bullet("Use team formats to create TradeHouse accountability and market-specific crews.");
+bullet("Use team formats to create Trade House accountability and market-specific crews.");
 bullet("Check the current event page for active formats, eligibility, and published prizes - these can change.");
 
 callout("Competition is not permission to overtrade", "A leaderboard can reward aggression emotionally. Keep the same daily stop and risk limits you would use outside the event.");
@@ -905,13 +905,13 @@ h2("4. Read the current FAQ");
 pSoft("Rules and platform details can change. The live FAQ should beat an old screenshot.");
 bigCTA("Read the FAQ", "Cross-check targets, drawdowns, payouts, and platform rules.", "https://www.hybridfunding.co/faq");
 
-h2("5. Join or build a TradeHouse");
+h2("5. Join or build a Trade House");
 pSoft("Use the Playbook, market rooms, weekly scorecards, and Battles to build accountability.");
-bigCTA("See TradeHouse Battles", "Competition + community without replacing your risk plan.", "https://www.hybridfunding.co/battles");
+bigCTA("See Trade House Battles", "Competition + community without replacing your risk plan.", "https://www.hybridfunding.co/battles");
 
 h2("6. Become a partner");
 pSoft("If you already teach, publish, run a community, or own a trading website, use the partner program to build a tracked education-first funnel.");
-bigCTA("Explore the partner program", "Current public tiers, partner tools, and TradeHouse model.", "https://www.hybridfunding.co/affiliate");
+bigCTA("Explore the partner program", "Current public tiers, partner tools, and Trade House model.", "https://www.hybridfunding.co/affiliate");
 
 h2("Share this playbook");
 p("If this helped you, send it to one trading friend. Forwarding link:");
