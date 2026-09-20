@@ -23,8 +23,8 @@ const Affiliate = () => {
     },
     {
       icon: <Users className="h-5 w-5 text-accent" />,
-      title: "Build a TradeHouse",
-      description: "Organize a trader community around market specialization, accountability, education, and TradeHouse Battles."
+      title: "Build a Trade House",
+      description: "Organize a trader community around market specialization, accountability, education, and Trade House Battles."
     },
     {
       icon: <BarChart3 className="h-5 w-5 text-accent" />,
@@ -48,8 +48,8 @@ const Affiliate = () => {
   return (
     <section className="py-20 cyberpunk-bg page-transition">
       <SEO
-        title="Hybrid Funding Partner Program — Build a TradeHouse"
-        description="Partner with Hybrid Funding using trackable referrals, tiered commissions, education-first campaigns, website placements, and a TradeHouse community model."
+        title="Hybrid Funding Partner Program — Build a Trade House"
+        description="Partner with Hybrid Funding using trackable referrals, tiered commissions, education-first campaigns, website placements, and a Trade House community model."
         path="/affiliate"
         jsonLd={breadcrumbSchema([
           { name: "Home", path: "/" },
@@ -68,7 +68,7 @@ const Affiliate = () => {
               Partner Growth Program
             </span>
             <h1 className="font-['Orbitron'] text-3xl md:text-5xl font-bold text-white mb-4">
-              Don't Just Share a Link. <span className="text-accent neon-text-accent">Build a TradeHouse.</span>
+              Don't Just Share a Link. <span className="text-accent neon-text-accent">Build a Trade House.</span>
             </h1>
             <p className="text-[#B8B8D0] max-w-3xl mx-auto text-lg">
               Build an audience or trader community with useful education, five-market access, approved marketing assets,
