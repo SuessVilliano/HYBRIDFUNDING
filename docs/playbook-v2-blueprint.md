@@ -19,7 +19,7 @@ Know Your Trader DNA. Choose Your Market. Protect Capital. Build Your Process.
 - The back third becomes more promotional than educational, including affiliate-income and projected-payout examples that can read like expected results.
 - The public affiliate page lists 5%-20% commission tiers and weekly payouts, while the canonical KB says commission structure and payout cadence are only provided after acceptance.
 - The affiliate page includes illustrative monthly earnings and referral numbers presented as dashboard statistics without labeling them as examples.
-- The repo already contains a Trader DNA assessment, AI Market Radar, Single Session Equities documentation, TradeHouse Battles, and Prediction Markets educational copy. These should be connected into one learning system.
+- The repo already contains a Trader DNA assessment, AI Market Radar, Single Session Equities documentation, Trade House Battles, and Prediction Markets educational copy. These should be connected into one learning system.
 
 ## Content architecture
 
@@ -55,7 +55,7 @@ Each market section should answer:
 15. AI Market Radar
 16. Platform selection / demos
 17. Trader dashboard
-18. TradeHouse Battles
+18. Trade House Battles
 
 For AI Market Radar, explain the four existing research-candidate classes:
 - MOVER
@@ -97,8 +97,8 @@ Always state that signals are mechanically generated research candidates, not tr
 
 V2 should not assume the reader buys a challenge on Day 1.
 
-### Part VII - Build a TradeHouse
-39. What a TradeHouse is
+### Part VII - Build a Trade House
+39. What a Trade House is
 40. Build a team by market specialization
 41. Weekly operating rhythm
 42. Use Battles for competition + accountability
@@ -107,7 +107,7 @@ V2 should not assume the reader buys a challenge on Day 1.
 45. How to promote ethically
 46. Website placement / Partner Growth Hub
 47. Partner disclosure examples
-48. Member -> contributor -> market captain -> TradeHouse leader
+48. Member -> contributor -> market captain -> Trade House leader
 
 ### Part VIII - Resources
 49. Rule glossary
