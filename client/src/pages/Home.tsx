@@ -430,7 +430,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* TradeHouse Battles Highlight */}
+      {/* Trade House Battles Highlight */}
       <section className="py-20 bg-gradient-to-r from-primary/20 via-[#1A1A2E] to-accent/20 relative overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-10"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
