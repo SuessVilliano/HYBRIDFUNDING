@@ -44,6 +44,8 @@ const GATE_HASH = "070489c5d58234cafcbb2284b86305c07b09c1548febc5307157e632778ea
 const GATE_KEY = "hf-radar-pro";
 const TRACK_KEY = "hf-rp-track";
 const AI_KEY = "hf-rp-ai";
+const CACHE_KEY = "hf-radar-pro-cache";
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 type SignalType = "MOVER" | "VOL SPIKE" | "DECISION" | "BOOK CHECK";
 type Stance = "LEAN YES" | "LEAN NO" | "SELL BOOK" | "PASS";
@@ -666,9 +668,17 @@ const RadarPro = () => {
       }
       if (!events.length) throw new Error("empty");
       const sigs = computeProSignals(events);
+      const now = new Date();
       setSignals(sigs);
       setScanned(events.length);
-      setUpdatedAt(new Date());
+      setUpdatedAt(now);
+      try {
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify({
+          ts: now.getTime(),
+          scanned: events.length,
+          signals: sigs,
+        }));
+      } catch {}
       setTrack(recordPicks(sigs));
       gradeTrack().then(setTrack).catch(() => {});
     } catch (err: any) {
@@ -680,10 +690,41 @@ const RadarPro = () => {
 
   useEffect(() => {
     if (!unlocked) return;
-    scan();
-    const interval = setInterval(scan, 120_000);
+
+    const getCache = () => {
+      try {
+        const raw = sessionStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed?.ts || !Array.isArray(parsed?.signals)) return null;
+        return parsed;
+      } catch {
+        return null;
+      }
+    };
+
+    const cached = getCache();
+    if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+      setSignals(cached.signals);
+      setScanned(Number(cached.scanned || 0));
+      setUpdatedAt(new Date(cached.ts));
+      setLoading(false);
+    } else {
+      scan();
+    }
+
+    const refreshIfStale = () => {
+      if (document.visibilityState !== "visible") return;
+      const latest = getCache();
+      if (!latest || Date.now() - latest.ts >= CACHE_TTL_MS) scan();
+    };
+
+    document.addEventListener("visibilitychange", refreshIfStale);
+    window.addEventListener("focus", refreshIfStale);
+
     return () => {
-      clearInterval(interval);
+      document.removeEventListener("visibilitychange", refreshIfStale);
+      window.removeEventListener("focus", refreshIfStale);
       abortRef.current?.abort();
     };
   }, [unlocked, scan]);
@@ -875,7 +916,7 @@ const RadarPro = () => {
                   ? "Scanning…"
                   : failed && !signals.length
                     ? "Scanner offline"
-                    : `${scanned} events · ${counts["LEAN YES"] + counts["LEAN NO"] + counts["SELL BOOK"]} picks / ${counts.PASS} passes · ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · auto-refresh 2 min`}
+                    : `${scanned} events · ${counts["LEAN YES"] + counts["LEAN NO"] + counts["SELL BOOK"]} picks / ${counts.PASS} passes · ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · on-demand refresh`}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
