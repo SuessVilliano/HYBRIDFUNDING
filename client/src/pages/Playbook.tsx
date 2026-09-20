@@ -8,12 +8,12 @@ import { CheckCircle2, FileText, Download } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 
 const benefits = [
-  "Rule-by-rule walkthrough for every Hybrid Funding challenge type",
-  "Position sizing math worked through on $5K–$200K accounts",
-  "Trailing drawdown geometry — where most traders blow up",
-  "Asset-class playbooks: Forex, Crypto, Futures, Single Session Equities",
-  "Add-on decision tree (90% split, weekend hold, payout-on-breach, lock waiver)",
-  "Free 20% off code for your first challenge",
+  "Find your Trader DNA: Sniper, Architect, Hybrid, or Phoenix",
+  "Compare five market paths: Forex, Crypto, Futures, Single Session Equities, and Prediction Markets",
+  "Position-sizing, expectancy, daily-loss, and drawdown math you can reuse anywhere",
+  "Prediction Markets walkthrough + how to use AI Market Radar as a research queue",
+  "Daily checklist, weekly scorecard, and a 30-day trader-development roadmap",
+  "TradeHouse + affiliate framework for traders who want to build a community",
 ];
 
 const PDF_URL = "/trader-playbook.pdf";
@@ -24,7 +24,6 @@ const Playbook: React.FC = () => {
   const handleSuccess = () => {
     setUnlocked(true);
     trackEvent("playbook_unlocked");
-    // Trigger immediate browser download as well
     const a = document.createElement("a");
     a.href = PDF_URL;
     a.download = "Hybrid-Funding-Trader-Playbook.pdf";
@@ -36,8 +35,8 @@ const Playbook: React.FC = () => {
   return (
     <section className="py-20 cyberpunk-bg page-transition">
       <SEO
-        title="Free Trader Playbook PDF — Hybrid Funding"
-        description="Download the Hybrid Funding Trader Playbook free. Rules, position sizing, drawdown math, and asset-class strategies for prop traders."
+        title="Free Trader Operating Playbook — Hybrid Funding"
+        description="Download the Hybrid Funding Trader Operating Playbook free. Trader DNA, market-fit guidance, risk math, Prediction Markets, AI Market Radar, and funded-trading rules."
         path="/playbook"
         jsonLd={breadcrumbSchema([
           { name: "Home", path: "/" },
@@ -53,13 +52,14 @@ const Playbook: React.FC = () => {
           >
             <div className="inline-flex items-center gap-2 bg-accent/15 border border-accent/40 text-accent rounded-full px-3 py-1 mb-4">
               <FileText className="h-4 w-4" />
-              <span className="text-xs font-['Orbitron'] uppercase tracking-widest">Free PDF</span>
+              <span className="text-xs font-['Orbitron'] uppercase tracking-widest">Free Trader Operating Manual</span>
             </div>
             <h1 className="font-['Orbitron'] text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
-              The Hybrid Funding <span className="text-accent neon-text-accent">Trader Playbook</span>
+              Know Your Style. Choose Your Market. <span className="text-accent neon-text-accent">Protect Capital.</span>
             </h1>
             <p className="text-[#B8B8D0] text-lg mb-6">
-              50 pages of rule-by-rule strategy, position-sizing math, and asset-class breakdowns from the team behind Hybrid Funding. Free for traders who join our list.
+              A practical playbook built to make you a more informed trader before you buy anything. Learn your Trader DNA,
+              compare market access, write your risk process, and understand the Hybrid Funding ecosystem from one guide.
             </p>
             <ul className="space-y-3 mb-6">
               {benefits.map((b) => (
@@ -70,7 +70,7 @@ const Playbook: React.FC = () => {
               ))}
             </ul>
             <p className="text-[#6F6F8A] text-xs flex items-center gap-1.5">
-              <Download className="h-3 w-3" /> We'll text you the download link + 20% off code.
+              <Download className="h-3 w-3" /> Free download. Trading involves risk; the playbook is educational, not financial advice.
             </p>
           </motion.div>
 
@@ -87,17 +87,13 @@ const Playbook: React.FC = () => {
                   You're in.
                 </h2>
                 <p className="text-[#B8B8D0] mb-5">
-                  Your download should have started automatically. We've also texted
-                  the link plus your 20% off code.
+                  Your download should have started automatically. Use the button below if your browser blocked it.
                 </p>
                 <a href={PDF_URL} download="Hybrid-Funding-Trader-Playbook.pdf">
                   <Button variant="neon-filled" size="lg" rounded="full" className="font-['Orbitron']">
                     <Download className="mr-2 h-5 w-5" /> Download Playbook (PDF)
                   </Button>
                 </a>
-                <p className="text-[#6F6F8A] text-xs mt-4">
-                  Didn't start? Tap the button above.
-                </p>
               </div>
             ) : (
               <>
@@ -105,7 +101,7 @@ const Playbook: React.FC = () => {
                   Get the Playbook
                 </h2>
                 <p className="text-[#B8B8D0] text-sm text-center mb-4">
-                  Drop your info and we'll start the download instantly + text you the link and discount code.
+                  Drop your info and we'll unlock the download immediately.
                 </p>
                 <A2PCompliantOptInForm
                   showResourceLinks={false}
