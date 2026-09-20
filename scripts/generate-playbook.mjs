@@ -36,125 +36,172 @@ const M_RIGHT = 64;
 const CONTENT_W = PAGE_W - M_LEFT - M_RIGHT;
 
 // ============== HELPERS ==============
+const FLOW_BOTTOM = PAGE_H - 82;
+
+function pageBreak() {
+  doc.addPage();
+  doc.y = 64;
+}
+
+function ensureSpace(height = 60) {
+  if (doc.y + height > FLOW_BOTTOM) pageBreak();
+}
+
 function h1(t) {
-  doc.moveDown(0.4).fillColor(TEXT).font("Helvetica-Bold").fontSize(28).text(t).moveDown(0.2);
+  ensureSpace(78);
+  doc.moveDown(0.3).fillColor(TEXT).font("Helvetica-Bold").fontSize(28).text(t, { width: CONTENT_W }).moveDown(0.15);
   const startY = doc.y;
   doc.rect(M_LEFT, startY, 70, 4).fill(ACCENT);
-  doc.fillColor(TEXT).moveDown(1.1);
+  doc.fillColor(TEXT);
+  doc.y = startY + 18;
 }
 function h2(t) {
-  doc.moveDown(0.6).fillColor(TEXT).font("Helvetica-Bold").fontSize(17).text(t).moveDown(0.25);
+  ensureSpace(62);
+  doc.moveDown(0.35).fillColor(TEXT).font("Helvetica-Bold").fontSize(17).text(t, { width: CONTENT_W }).moveDown(0.15);
 }
 function h3(t) {
-  doc.moveDown(0.4).fillColor(TEXT).font("Helvetica-Bold").fontSize(13).text(t).moveDown(0.15);
+  ensureSpace(48);
+  doc.moveDown(0.25).fillColor(TEXT).font("Helvetica-Bold").fontSize(13).text(t, { width: CONTENT_W }).moveDown(0.1);
 }
 function eyebrow(t) {
-  doc.moveDown(0.2).fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(t.toUpperCase(), { characterSpacing: 3 }).moveDown(0.15);
+  ensureSpace(30);
+  doc.moveDown(0.1).fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(t.toUpperCase(), { characterSpacing: 3, width: CONTENT_W }).moveDown(0.1);
   doc.fillColor(TEXT);
 }
 function p(t) {
-  doc.fillColor(TEXT).font("Helvetica").fontSize(11).text(t, { align: "left", lineGap: 3 }).moveDown(0.3);
+  doc.font("Helvetica").fontSize(11);
+  const h = doc.heightOfString(t, { width: CONTENT_W, lineGap: 3 }) + 14;
+  ensureSpace(h);
+  doc.fillColor(TEXT).text(t, { width: CONTENT_W, align: "left", lineGap: 3 }).moveDown(0.25);
 }
 function pSoft(t) {
-  doc.fillColor(TEXT_SOFT).font("Helvetica").fontSize(10.5).text(t, { align: "left", lineGap: 3 }).moveDown(0.3);
+  doc.font("Helvetica").fontSize(10.5);
+  const h = doc.heightOfString(t, { width: CONTENT_W, lineGap: 3 }) + 14;
+  ensureSpace(h);
+  doc.fillColor(TEXT_SOFT).text(t, { width: CONTENT_W, align: "left", lineGap: 3 }).moveDown(0.25);
   doc.fillColor(TEXT);
 }
 function bullet(t) {
-  doc.fillColor(TEXT).font("Helvetica").fontSize(11).text(`•  ${t}`, { indent: 12, lineGap: 3 }).moveDown(0.12);
+  doc.font("Helvetica").fontSize(10.5);
+  const w = CONTENT_W - 18;
+  const h = doc.heightOfString(`•  ${t}`, { width: w, lineGap: 2 }) + 8;
+  ensureSpace(h);
+  doc.fillColor(TEXT).text(`•  ${t}`, { width: w, indent: 12, lineGap: 2 }).moveDown(0.08);
 }
 function divider() {
-  doc.moveDown(0.5);
+  ensureSpace(24);
+  doc.moveDown(0.35);
   const y = doc.y;
   doc.rect(M_LEFT, y, CONTENT_W, 0.7).fill("#D8D8E5");
-  doc.fillColor(TEXT).moveDown(0.5);
+  doc.fillColor(TEXT);
+  doc.y = y + 14;
 }
 function callout(label, text) {
-  doc.moveDown(0.4);
-  const startY = doc.y;
-  // left accent stripe
-  const stripeH = 60;
-  doc.rect(M_LEFT, startY, 4, stripeH).fill(ACCENT);
-  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(label.toUpperCase(), M_LEFT + 16, startY + 2, { characterSpacing: 2, width: CONTENT_W - 16 });
-  doc.fillColor(TEXT_SOFT).font("Helvetica-Oblique").fontSize(10.5).text(text, M_LEFT + 16, doc.y + 2, { lineGap: 3, width: CONTENT_W - 16 });
-  doc.fillColor(TEXT).moveDown(0.4);
+  doc.font("Helvetica-Oblique").fontSize(10);
+  const textH = doc.heightOfString(text, { width: CONTENT_W - 32, lineGap: 3 });
+  const boxH = Math.max(56, textH + 34);
+  ensureSpace(boxH + 12);
+  const startY = doc.y + 6;
+  doc.rect(M_LEFT, startY, 4, boxH).fill(ACCENT);
+  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(8.5).text(label.toUpperCase(), M_LEFT + 16, startY + 3, { characterSpacing: 2, width: CONTENT_W - 32 });
+  doc.fillColor(TEXT_SOFT).font("Helvetica-Oblique").fontSize(10).text(text, M_LEFT + 16, startY + 20, { lineGap: 3, width: CONTENT_W - 32 });
+  doc.fillColor(TEXT);
+  doc.y = startY + boxH + 8;
 }
-function pageBreak() { doc.addPage(); }
 function pageNumberFooter(currentPage, totalPages) {
   doc.fillColor(SUBTLE).font("Helvetica").fontSize(8.5)
-    .text(`Hybrid Funding · Trader Playbook`, M_LEFT, PAGE_H - 40, { width: CONTENT_W / 2, align: "left" });
+    .text(`Hybrid Funding · Trader Playbook`, M_LEFT, PAGE_H - 40, { width: CONTENT_W / 2, align: "left", lineBreak: false });
   doc.fillColor(SUBTLE).font("Helvetica").fontSize(8.5)
-    .text(`${currentPage} / ${totalPages}`, PAGE_W - M_RIGHT - 60, PAGE_H - 40, { width: 60, align: "right" });
+    .text(`${currentPage} / ${totalPages}`, PAGE_W - M_RIGHT - 60, PAGE_H - 40, { width: 60, align: "right", lineBreak: false });
   doc.fillColor(TEXT);
 }
 
 /**
- * Render a table with header + rows.
+ * Render a table with dynamic row heights and repeated headers.
  * cols: [{ key, label, width, align }]
  * rows: [{ key: value, ... }]
  */
 function table(cols, rows, opts = {}) {
-  const headH = 26;
-  const rowH = opts.rowH || 22;
+  const headH = 28;
+  const minRowH = opts.rowH || 22;
   const totalW = cols.reduce((a, c) => a + c.width, 0);
-  let x = M_LEFT;
+
+  const rowHeights = rows.map((row) => {
+    let maxH = minRowH;
+    cols.forEach((c) => {
+      const val = String(row[c.key] ?? "");
+      const isHighlight = row._highlight && c.key === cols[0].key;
+      doc.font(isHighlight ? "Helvetica-Bold" : "Helvetica").fontSize(9.4);
+      const h = doc.heightOfString(val, { width: c.width - 16, lineGap: 1.5 }) + 12;
+      maxH = Math.max(maxH, h);
+    });
+    return Math.ceil(maxH);
+  });
+
+  const fullTableH = headH + rowHeights.reduce((a, b) => a + b, 0) + 10;
+  if (fullTableH < FLOW_BOTTOM - 64 && doc.y + fullTableH > FLOW_BOTTOM) pageBreak();
+
   let y = doc.y;
 
-  // ensure we have space; otherwise page break
-  const needed = headH + rowH * rows.length + 14;
-  if (y + needed > PAGE_H - 96) {
-    pageBreak();
-    y = doc.y;
-  }
+  const drawHeader = () => {
+    let x = M_LEFT;
+    doc.rect(M_LEFT, y, totalW, headH).fill(ROW_HEAD);
+    cols.forEach((c) => {
+      doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(
+        c.label, x + 8, y + 8,
+        { width: c.width - 16, align: c.align || "left", lineBreak: false }
+      );
+      x += c.width;
+    });
+    y += headH;
+  };
 
-  // header
-  doc.rect(M_LEFT, y, totalW, headH).fill(ROW_HEAD);
-  cols.forEach((c) => {
-    doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(10).text(
-      c.label,
-      x + 8,
-      y + 8,
-      { width: c.width - 16, align: c.align || "left" }
-    );
-    x += c.width;
-  });
-  y += headH;
+  drawHeader();
 
-  // rows
   rows.forEach((row, i) => {
-    if (i % 2 === 1) {
-      doc.rect(M_LEFT, y, totalW, rowH).fill(ROW_ALT);
+    const rh = rowHeights[i];
+    if (y + rh > FLOW_BOTTOM) {
+      pageBreak();
+      y = doc.y;
+      drawHeader();
     }
+    if (i % 2 === 1) doc.rect(M_LEFT, y, totalW, rh).fill(ROW_ALT);
+
     let cx = M_LEFT;
     cols.forEach((c) => {
       const val = row[c.key];
       const isHighlight = row._highlight && c.key === cols[0].key;
       doc.fillColor(isHighlight ? PRIMARY : TEXT)
         .font(isHighlight ? "Helvetica-Bold" : "Helvetica")
-        .fontSize(10)
-        .text(String(val ?? ""), cx + 8, y + 6, { width: c.width - 16, align: c.align || "left", lineGap: 2 });
+        .fontSize(9.4)
+        .text(String(val ?? ""), cx + 8, y + 6, {
+          width: c.width - 16,
+          align: c.align || "left",
+          lineGap: 1.5,
+          height: rh - 10
+        });
       cx += c.width;
     });
-    // bottom border
-    doc.rect(M_LEFT, y + rowH - 0.5, totalW, 0.4).fill("#E8E8F0");
-    y += rowH;
+    doc.rect(M_LEFT, y + rh - 0.5, totalW, 0.4).fill("#E8E8F0");
+    y += rh;
   });
 
-  doc.y = y + 6;
+  doc.y = y + 8;
   doc.fillColor(TEXT);
 }
 
 function statPanel(items) {
-  // items: [{label, value}]
   const gap = 12;
   const w = (CONTENT_W - gap * (items.length - 1)) / items.length;
   const h = 70;
+  ensureSpace(h + 14);
   const startY = doc.y;
   let x = M_LEFT;
   items.forEach((it) => {
     doc.rect(x, startY, w, h).fill("#F4F4FA");
     doc.rect(x, startY, 4, h).fill(ACCENT);
-    doc.fillColor(TEXT).font("Helvetica-Bold").fontSize(20).text(it.value, x + 14, startY + 14, { width: w - 22 });
-    doc.fillColor(SUBTLE).font("Helvetica").fontSize(9).text(it.label.toUpperCase(), x + 14, startY + 42, { width: w - 22, characterSpacing: 1.5 });
+    doc.fillColor(TEXT).font("Helvetica-Bold").fontSize(20).text(it.value, x + 14, startY + 12, { width: w - 22, height: 26 });
+    doc.fillColor(SUBTLE).font("Helvetica").fontSize(8.2).text(it.label.toUpperCase(), x + 14, startY + 41, { width: w - 22, height: 22, characterSpacing: 1 });
     x += w + gap;
   });
   doc.y = startY + h + 10;
@@ -162,14 +209,14 @@ function statPanel(items) {
 }
 
 function bigCTA(headline, subline, url) {
-  doc.moveDown(0.5);
-  const y = doc.y;
-  const h = 70;
+  const h = 76;
+  ensureSpace(h + 16);
+  const y = doc.y + 6;
   doc.rect(M_LEFT, y, CONTENT_W, h).fill(BG_DARK);
   doc.rect(M_LEFT, y, 6, h).fill(ACCENT);
-  doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(15).text(headline, M_LEFT + 18, y + 13, { width: CONTENT_W - 28 });
-  doc.fillColor("#B8B8D0").font("Helvetica").fontSize(10).text(subline, M_LEFT + 18, y + 35, { width: CONTENT_W - 28 });
-  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(10).text(url, M_LEFT + 18, y + 52, { width: CONTENT_W - 28 });
+  doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(14).text(headline, M_LEFT + 18, y + 12, { width: CONTENT_W - 28, height: 20 });
+  doc.fillColor("#B8B8D0").font("Helvetica").fontSize(9.5).text(subline, M_LEFT + 18, y + 34, { width: CONTENT_W - 28, height: 18 });
+  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(8.5).text(url, M_LEFT + 18, y + 56, { width: CONTENT_W - 28, height: 12 });
   doc.y = y + h + 10;
   doc.fillColor(TEXT);
 }
@@ -188,16 +235,16 @@ doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(11).text("HYBRID FUNDING",
 doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(54).text("The Trader", 64, 170);
 doc.fillColor(ACCENT).text("Playbook.", 64);
 doc.fillColor("#B8B8D0").font("Helvetica").fontSize(14).text(
-  "The unfair advantage we hand every trader who joins Hybrid Funding.\nRule-by-rule guides, position-sizing math, and the playbooks that pass evaluations.",
+  "A practical operating manual for trader identity, market fit, risk, and funded-program rules.\nUseful before you buy anything - and designed to stay useful after you do.",
   64, 360, { lineGap: 5, width: 480 }
 );
 
 // trust strip
 doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text("INSIDE THIS PLAYBOOK", 64, 510, { characterSpacing: 2.5 });
 const insideItems = [
-  ["The 5 rules every funded trader memorizes", "Position sizing math from $5K to $200K"],
-  ["Trailing drawdown geometry (worked examples)", "Asset-class playbooks: FX, Crypto, Futures, Equities"],
-  ["The 30-day path to your first payout", "How to earn $100K+ referring traders"],
+  ["Trader DNA + market-fit decision framework", "Position sizing + drawdown worked examples"],
+  ["Five market paths: FX, Crypto, Futures, Equities, Prediction", "AI Market Radar as a research queue"],
+  ["A 30-day practice-first trader build", "How to build a TradeHouse responsibly"],
 ];
 let insideY = 532;
 insideItems.forEach(([a, b]) => {
@@ -206,8 +253,8 @@ insideItems.forEach(([a, b]) => {
   insideY += 22;
 });
 
-doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(11).text("HYBRIDFUNDING.CO", 64, 720, { characterSpacing: 3 });
-doc.fillColor("#6F6F8A").font("Helvetica").fontSize(9).text("Empowering Traders. Funding Potential.", 64, 736);
+doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(11).text("HYBRIDFUNDING.CO", 64, 684, { characterSpacing: 3, lineBreak: false });
+doc.fillColor("#6F6F8A").font("Helvetica").fontSize(9).text("Know your style. Choose your market. Protect capital.", 64, 704, { lineBreak: false });
 pageBreak();
 
 // ============== TOC ==============
@@ -348,16 +395,17 @@ table(
     { program: "Forex 1-Step", target: "10%", phases: "1", split: "80%" },
     { program: "Forex 2-Step", target: "10% → 5%", phases: "2", split: "80%" },
     { program: "Forex 3-Step", target: "5% per phase", phases: "3", split: "80%" },
-    { program: "Forex Instant Funding", target: "No target — trade firm capital", phases: "0", split: "80%" },
+    { program: "Forex Instant Funding", target: "No evaluation profit target", phases: "0", split: "80%" },
     { program: "Forex Instant Funding Lite", target: "No target", phases: "0", split: "80%" },
     { program: "Crypto 1-Step", target: "9%", phases: "1", split: "90%" },
     { program: "Crypto 2-Step", target: "6% → 9%", phases: "2", split: "90%" },
     { program: "Futures Funded (4-Phase)", target: "9% per phase", phases: "4", split: "90%" },
     { program: "Single Session Equities", target: "10% (Eval only)", phases: "1", split: "80%" },
+    { program: "Prediction Markets", target: "10% (Eval only)", phases: "1", split: "75%*" },
   ],
   { rowH: 22 }
 );
-pSoft("Profit splits shown are baseline. Add the 90% Profit Share Upgrade (15% of plan price) to lift any program to 90%.");
+pSoft("*Prediction Markets currently starts at 75/25 and offers a 90/10 add-on. Other splits and add-on pricing vary by program; verify current terms.");
 
 h2("Rule 2 — Maximum drawdown");
 p("The single most important rule. Either trailing (moves up with closed balance, then locks at starting balance) or static (fixed). A breach below max drawdown = hard breach = account terminated.");
@@ -376,6 +424,7 @@ table(
     { program: "Crypto 1-Step / 2-Step", type: "Static", amt: "6% / 9%" },
     { program: "Futures Funded (4-Phase)", type: "Trailing", amt: "5% on EOD balance" },
     { program: "Single Session Equities", type: "Trailing", amt: "3% on closed balance" },
+    { program: "Prediction Markets", type: "Trailing", amt: "6% equity high" },
   ],
 );
 
@@ -394,6 +443,7 @@ table(
     { program: "Crypto 1-Step / 2-Step", limit: "3% (bidirectional Daily Cap)" },
     { program: "Futures (per phase)", limit: "Effectively the trailing loss" },
     { program: "Single Session Equities", limit: "2.5% intraday trailing" },
+    { program: "Prediction Markets", limit: "3% EOD equity; resets 5 PM ET" },
   ],
 );
 
@@ -402,13 +452,15 @@ p("When you can have positions open. Violating the window = soft breach (auto-cl
 bullet("Forex: 24/5. All positions auto-close 3:45pm EST Friday unless Weekend Hold add-on purchased.");
 bullet("Crypto: 24/7. Weekend holds allowed.");
 bullet("Futures: All positions and orders cancelled by 15:10 CST. No overnight or weekend holds.");
-bullet("Single Session Equities: 09:30 – 15:55 ET only. Open past 15:55 = hard breach (Prohibited Practices).");
+bullet("Single Session Equities: 09:30 - 15:55 ET only. Open past 15:55 = hard breach (Prohibited Practices).");
+bullet("Prediction Markets: market availability/resolution is event-specific; evaluation timing and permitted opening-price rules still apply.");
 
 h2("Rule 5 — Consistency");
 p("Designed to filter out lucky entries. Limits how concentrated your profit can be on a single day.");
 bullet("Futures Funded: best day cannot exceed 25% of total profit (need 4+ trading days minimum to clear a phase).");
 bullet("Single Session Equities Funded phase: 25% Consistency Score.");
-bullet("Equities also requires a minimum of 3 profitable trading days at 0.50% — both Eval and Funded.");
+bullet("Equities also requires a minimum of 3 profitable trading days at 0.50% - both Eval and Funded.");
+bullet("Prediction Markets uses a 0.5% max-profit-per-event cap to limit concentration in any single event.");
 pageBreak();
 
 // ============== POSITION SIZING ==============
