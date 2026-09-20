@@ -2,14 +2,14 @@
 
 ## Overview
 
-Hybrid Funding is a next-generation proprietary trading firm platform that provides traders with access to capital through evaluation challenges across Forex, Crypto, Futures, and Single Session Equities markets. The platform features a revolutionary competitive trading arena called "TradeHouse Battles" where traders compete in real-time tournaments for funded accounts and rewards.
+Hybrid Funding is a next-generation proprietary trading firm platform that provides traders with access to capital through evaluation challenges across Forex, Crypto, Futures, and Single Session Equities markets. The platform features a revolutionary competitive trading arena called "Trade House Battles" where traders compete in real-time tournaments for funded accounts and rewards.
 
 **Core Purpose:** Democratize access to trading capital by funding talented traders who demonstrate skill and discipline through structured evaluation programs.
 
 **Key Differentiators:**
 - Multiple challenge types (One-Step, Two-Step, Three-Step, Four-Phase, Instant Funding, Instant Funding Lite)
 - Multi-asset class support (Forex, Crypto, Futures, Single Session Equities)
-- TradeHouse Battles competitive gaming arena
+- Trade House Battles competitive gaming arena
 - Flexible profit splits (up to 90%)
 - Comprehensive affiliate program with tiered commissions
 
@@ -39,9 +39,9 @@ Preferred communication style: Simple, everyday language.
 - Responsive-first approach with mobile breakpoint at 768px
 
 **Key Pages:**
-- Home: Hero section with CTAs, features showcase, TradeHouse Battles promotion
+- Home: Hero section with CTAs, features showcase, Trade House Battles promotion
 - Challenges: Multi-tab interface for different asset classes and challenge types
-- Battles: Embedded TradeHouse Battles arena at `battles.hybridfunding.co`
+- Battles: Embedded Trade House Battles arena at `battles.hybridfunding.co`
 - About: Company information, mission, values
 - Affiliate: Program details with tiered commission structure
 - FAQ: Categorized accordion-style Q&A
@@ -106,7 +106,7 @@ Preferred communication style: Simple, everyday language.
    - **Futures:** Tradovate (https://trader.tradovate.com/), Volumetrica (https://my.deepcharts.com/identity/account/login), DXtrade Futures
    - **Single Session Equities:** GooeyPro (https://gooeypro.gooeytrade.com/login)
 
-3. **TradeHouse Battles:**
+3. **Trade House Battles:**
    - Embedded arena at `battles.hybridfunding.co`
    - Real-time tournament system
    - Rewards up to $100,000+ funded accounts
