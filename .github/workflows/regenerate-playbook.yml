@@ -1,0 +1,63 @@
+name: Regenerate Trader Playbook
+
+on:
+  pull_request:
+    paths:
+      - "scripts/generate-playbook.mjs"
+      - "docs/kb/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/regenerate-playbook.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/generate-playbook.mjs"
+      - "docs/kb/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/regenerate-playbook.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-playbook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate playbook PDF
+        run: npm run build:playbook
+
+      - name: Upload generated PDF for review
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: hybrid-funding-trader-playbook
+          path: client/public/trader-playbook.pdf
+
+      - name: Commit regenerated PDF on main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          if git diff --quiet -- client/public/trader-playbook.pdf; then
+            echo "Playbook PDF is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/public/trader-playbook.pdf
+          git commit -m "build: regenerate trader playbook PDF"
+          git push
