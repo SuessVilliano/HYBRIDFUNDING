@@ -81,7 +81,7 @@ const EarlyAccessPopup: React.FC<EarlyAccessPopupProps> = ({
                       <span className="text-accent mr-2">💰</span> Exclusive flash discounts & promo codes
                     </li>
                     <li className="flex items-center justify-center">
-                      <span className="text-accent mr-2">🏆</span> TradeHouse Battles prize alerts
+                      <span className="text-accent mr-2">🏆</span> Trade House Battles prize alerts
                     </li>
                     <li className="flex items-center justify-center">
                       <span className="text-accent mr-2">⚡</span> VIP access to new features first
