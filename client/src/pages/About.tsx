@@ -25,7 +25,7 @@ const About = () => {
   const innovations = [
     { 
       icon: Trophy, 
-      title: "TradeHouse Battles", 
+      title: "Trade House Battles", 
       description: "Revolutionary competitive trading arena where traders battle in real-time tournaments for exclusive rewards and funded accounts."
     },
     { 
@@ -95,7 +95,7 @@ const About = () => {
                 </p>
                 
                 <p className="text-[#B8B8D0] leading-relaxed">
-                  We've pioneered the integration of competitive gaming elements into professional trading through our TradeHouse Battles arena, where traders compete in real-time tournaments for exclusive rewards including funded accounts worth up to $100,000+. This gamification approach makes skill development engaging while maintaining professional trading standards.
+                  We've pioneered the integration of competitive gaming elements into professional trading through our Trade House Battles arena, where traders compete in real-time tournaments for exclusive rewards including funded accounts worth up to $100,000+. This gamification approach makes skill development engaging while maintaining professional trading standards.
                 </p>
                 
                 <p className="text-[#B8B8D0] leading-relaxed">
