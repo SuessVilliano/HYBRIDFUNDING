@@ -1,8 +1,8 @@
 ---
 title: Trading Platforms Overview
 category: platforms
-tags: [platforms, dxtrade, matchtrader, ctrader, gooeypro]
-last_updated: 2026-05-11
+tags: [platforms, dxtrade, matchtrader, ctrader, tradovate, volumetrica, dxtrade-futures, gooeypro, prediction-markets]
+last_updated: 2026-09-20
 ---
 
 ## Platforms we support
@@ -12,26 +12,38 @@ last_updated: 2026-05-11
 | DXtrade | One-Step, Two-Step, Instant Funding | Forex, CFD Indices, Metals, Cryptocurrencies |
 | MatchTrader | One-Step, Two-Step, Instant Funding | Forex, CFD Indices, Metals, Cryptocurrencies |
 | cTrader | One-Step, Two-Step, Instant Funding | Forex, CFD Indices, Metals, Cryptocurrencies |
+| Tradovate | Funded Futures Plan | Futures |
+| Volumetrica | Funded Futures Plan | Futures |
+| DXtrade Futures | Funded Futures Plan | Futures |
 | GooeyPro | Single Session Equities | S&P 100 equities |
+| Hybrid Prediction Dashboard | Prediction Markets | Event-outcome markets |
 
 ## How to pick a platform
 
-There is no "best" platform — pick the one that matches your workflow. Each has its own charting, order-entry, and automation feature set. Try the free demos provided by each platform vendor if you're undecided.
+There is no universal "best" platform. Pick the platform and program that match your market, workflow, order-entry needs, charting preferences, and automation requirements. Use a vendor demo or practice environment where available before committing to a workflow.
 
-## How to find trading hours for each instrument
+Prediction Markets use the Hybrid Funding prediction dashboard rather than the Forex/Crypto/Futures/Equities platforms above.
 
-Trading hours are generally set by the liquidity provider, unless overridden by Hybrid Funding rules. Hybrid Funding does not change the hours.
+## How to find trading hours
+
+Trading hours depend on the instrument and program rules. Program-specific rules override a venue's broader available session.
 
 - **DXtrade** — Right-click the symbol → select **Instrument Info**
 - **MatchTrader** — Click the symbol to expand → select **Info**
-- **cTrader** — Open the Symbol Window → scroll to **Market Hours** for the selected symbol
+- **cTrader** — Open the Symbol Window → scroll to **Market Hours**
+- **Single Session Equities** — Hybrid Funding permits trading only from **09:30 ET through 15:55 ET**
+- **Futures** — Follow the current Funded Futures program/session rules for the selected platform
+- **Prediction Markets** — Availability and resolution timing are market-specific; follow the Prediction Markets program rules
 
-Holidays may also impact available trading hours.
+Holidays and venue schedules may also affect availability.
 
 ## Common questions
 
-**Q:** Can I switch platforms after I buy a plan?
-**A:** Each evaluation plan is tied to a specific platform at checkout. Contact support if you need to make a change.
+**Q:** Can I switch platforms after I buy a plan?  
+**A:** A purchased plan is tied to its selected/assigned platform. Contact support before assuming a platform can be changed.
 
-**Q:** Are spreads, commissions, and execution different across platforms?
-**A:** Pricing and commissions come from the liquidity provider and are not marked up by Hybrid Funding. There may be minor differences in spread or execution speed between platforms; check live conditions in each platform's demo to compare.
+**Q:** Are spreads, commissions, and execution identical across platforms?  
+**A:** Platform and venue conditions can differ. Review the current program documentation and live/demo conditions for the platform you plan to use.
+
+**Q:** Does AI Market Radar execute Prediction Market trades?  
+**A:** No. AI Market Radar surfaces research candidates. Trading takes place in the Prediction Markets dashboard and remains the trader's decision.
