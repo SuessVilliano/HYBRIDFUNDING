@@ -20,6 +20,7 @@ const leadSchema = z.object({
   marketingConsent: z.boolean().optional().default(false),
   source: z.string().trim().max(120).optional(),
   traderType: z.enum(["sniper", "architect", "hybrid", "phoenix"]).optional(),
+  marketPath: z.enum(["forex", "crypto", "futures", "equities", "predictive"]).optional(),
   referralCode: z.string().trim().max(60).optional(),
   utmSource: z.string().trim().max(80).optional(),
   utmCampaign: z.string().trim().max(120).optional(),
@@ -64,6 +65,7 @@ app.post("/api/lead", async (req: Request, res: Response) => {
   const tags = ["web-optin", "sms-consent"];
   if (data.marketingConsent) tags.push("marketing-consent");
   if (data.traderType) tags.push("trader-dna", `trader-dna-${data.traderType}`);
+  if (data.marketPath) tags.push(`market-interest-${data.marketPath}`);
   if (data.referralCode) tags.push("affiliate-referred", `affiliate-ref-${cleanTag(data.referralCode)}`);
   if (data.utmSource) tags.push(`utm-source-${cleanTag(data.utmSource)}`);
   if (data.utmCampaign) tags.push(`utm-campaign-${cleanTag(data.utmCampaign)}`);
