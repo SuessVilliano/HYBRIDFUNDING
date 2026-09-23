@@ -21,7 +21,7 @@ const webinarCopy = {
   bullets: [
     "The #1 reason traders fail prop firm challenges (and exactly how to avoid it)",
     "Which funding program is the fastest path to your first payout (1-Step vs. 2-Step vs. Instant)",
-    "How to trade funded capital on YOUR preferred platform — cTrader, DXtrade, MatchTrader, Tradovate, or Volumetrica",
+    "How to trade funded capital on YOUR preferred platform — cTrader, DXtrade, MatchTrader, Tradovate, Volumetrica, or Tickblaze",
     "The daily routine of traders who consistently pass evaluations",
     "How the Hybrid Funding ecosystem gives you tools your competition doesn't have",
   ],
@@ -97,7 +97,7 @@ const Webinar = () => {
     <section className="py-16 sm:py-20 cyberpunk-bg page-transition min-h-screen">
       <SEO
         title="Free Training: How to Get a Funded Trading Account | Hybrid Funding"
-        description="Watch the free training that walks serious traders through the exact system to pass prop firm evaluations and reach funded payouts — across cTrader, DXtrade, MatchTrader, Tradovate, and Volumetrica."
+        description="Watch the free training that walks serious traders through the exact system to pass prop firm evaluations and reach funded payouts — across cTrader, DXtrade, MatchTrader, Tradovate, Volumetrica, and Tickblaze."
         path="/webinar"
         jsonLd={breadcrumbSchema([
           { name: "Home", path: "/" },
