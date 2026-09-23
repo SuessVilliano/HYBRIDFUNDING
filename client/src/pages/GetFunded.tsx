@@ -175,7 +175,7 @@ const MARKETS: Market[] = [
     label: "Futures",
     emoji: "📈",
     tagline: "Trade CME futures through 4 phases — get paid after each one, then graduate to a Live Funded account",
-    platforms: ["DXtrade Futures", "Volumetrica"],
+    platforms: ["DXtrade Futures", "Volumetrica", "Tickblaze (Launching)"],
     plans: [
       {
         key: "four-phase",
@@ -256,18 +256,19 @@ const PLATFORMS = [
   { name: "DXtrade",          markets: "Forex, Crypto, Futures", color: "text-purple-400" },
   { name: "cTrader",          markets: "Forex (International)", color: "text-cyan-400" },
   { name: "Volumetrica",      markets: "Futures", color: "text-orange-400" },
+  { name: "Tickblaze",        markets: "Futures · Launching", color: "text-primary" },
   { name: "GooeyPro",         markets: "Single Session Equities", color: "text-green-400" },
 ];
 
 const TRUST = [
-  { icon: Users,      stat: "10K+", label: "Funded Traders" },
+  { icon: Users,      stat: "5",    label: "Market Paths" },
   { icon: TrendingUp, stat: "90%",  label: "Max Profit Split" },
   { icon: Star,       stat: "$48",  label: "Starting at" },
-  { icon: Zap,        stat: "4",    label: "Asset Classes" },
+  { icon: Zap,        stat: "6",    label: "Trading Platforms" },
 ];
 
 const STEPS = [
-  { num: "01", title: "Choose Your Market",  desc: "Forex, Crypto, Futures, or Single Session Equities — pick what you know best." },
+  { num: "01", title: "Choose Your Market",  desc: "Forex, Crypto, Futures, Equities, or Predictive Markets — pick the market you understand best." },
   { num: "02", title: "Pick Your Plan",       desc: "Choose your challenge type and account size. Evaluation, Instant, or Instant Lite." },
   { num: "03", title: "Learn the Rules",      desc: "Clear profit targets and drawdown limits. No hidden rules, no surprises." },
   { num: "04", title: "Pass & Get Funded",    desc: "Hit your target, stay within drawdown. We fund your live account." },
@@ -291,52 +292,6 @@ function useCountdown() {
     m: pad(Math.floor((left % 3_600_000) / 60_000)),
     s: pad(Math.floor((left % 60_000) / 1_000)),
   };
-}
-
-// ─── Recently Funded data + ticker ───────────────────────────────────────────
-const RECENT_FUNDED = [
-  { name: "Marcus T.", city: "Atlanta, GA",      plan: "$50K Futures" },
-  { name: "Darius W.", city: "Houston, TX",      plan: "$25K Forex 1-Step" },
-  { name: "Kezia M.",  city: "Chicago, IL",      plan: "$100K Futures" },
-  { name: "Jordan P.", city: "Miami, FL",        plan: "$50K Forex 2-Step" },
-  { name: "Brianna L.",city: "Los Angeles, CA",  plan: "$25K Futures" },
-  { name: "Anthony R.",city: "Dallas, TX",       plan: "$100K Forex 1-Step" },
-  { name: "Simone K.", city: "New York, NY",     plan: "$150K Futures" },
-  { name: "Devon H.",  city: "Phoenix, AZ",      plan: "$50K Crypto 1-Step" },
-  { name: "Aaliyah J.",city: "Detroit, MI",      plan: "$25K Forex 1-Step" },
-  { name: "Malik C.",  city: "Charlotte, NC",    plan: "$100K Futures" },
-  { name: "Tiana B.",  city: "Atlanta, GA",      plan: "$50K Futures" },
-  { name: "Carlos V.", city: "San Antonio, TX",  plan: "$25K Crypto 2-Step" },
-  { name: "Yemi A.",   city: "Baltimore, MD",    plan: "$50K Forex 1-Step" },
-  { name: "Rashida P.",city: "Memphis, TN",      plan: "$100K Futures" },
-  { name: "Tyler S.",  city: "Denver, CO",       plan: "$25K Forex 3-Step" },
-];
-
-function RecentlyFunded() {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setIdx(i => (i + 1) % RECENT_FUNDED.length), 3200);
-    return () => clearInterval(id);
-  }, []);
-  const entry = RECENT_FUNDED[idx];
-  return (
-    <div className="flex items-center justify-center gap-2 py-2.5 px-4 bg-green-500/8 border border-green-500/20 rounded-full max-w-md mx-auto overflow-hidden">
-      <span className="w-2 h-2 bg-green-400 rounded-full shrink-0 animate-pulse" />
-      <AnimatePresence mode="wait">
-        <motion.p
-          key={idx}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.3 }}
-          className="text-xs text-[#B8B8D0] whitespace-nowrap"
-        >
-          <span className="text-green-400 font-bold">{entry.name}</span> from {entry.city} just got funded —{" "}
-          <span className="text-white font-medium">{entry.plan}</span>
-        </motion.p>
-      </AnimatePresence>
-    </div>
-  );
 }
 
 // ─── FAQ Accordion ────────────────────────────────────────────────────────────
@@ -1152,11 +1107,6 @@ export default function GetFunded() {
         </div>
       </section>
 
-      {/* ── Recently funded ticker ── */}
-      <div className="py-4 bg-[#0B1426] border-b border-white/5">
-        <RecentlyFunded />
-      </div>
-
       {/* ── Social Proof ── */}
       <SocialProof />
 
@@ -1220,6 +1170,14 @@ export default function GetFunded() {
                 <span>{m.emoji}</span> {m.label}
               </button>
             ))}
+            <Link href="/predictive-markets">
+              <span
+                onClick={() => trackEvent("lp_market_tab", { market: "predictive-markets" })}
+                className="flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-transparent px-5 py-2.5 font-['Orbitron'] text-sm font-bold text-[#B8B8D0] transition-all hover:border-accent/40 hover:text-white"
+              >
+                <span>🔮</span> Predictive Markets
+              </span>
+            </Link>
           </div>
 
           <AnimatePresence mode="wait">
@@ -1335,7 +1293,7 @@ export default function GetFunded() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="font-['Orbitron'] text-2xl font-bold text-white mb-2">
-              Trade on <span className="text-primary neon-text-primary">5 Professional Platforms</span>
+              Trade on <span className="text-primary neon-text-primary">6 Professional Platforms</span>
             </h2>
             <p className="text-[#B8B8D0] text-sm">Industry-standard platforms — use the one you already know</p>
           </div>
@@ -1382,7 +1340,7 @@ export default function GetFunded() {
               { icon: DollarSign, color: "text-accent",   title: "Live Drawdown Tracker",           desc: "Always know exactly where your trailing max drawdown sits — never breach by surprise." },
               { icon: BookOpen,   color: "text-primary",  title: "Trade Journal & Replay",          desc: "Auto-capture every trade with chart context, tags, and notes. Review what worked and what didn't." },
               { icon: Newspaper,  color: "text-accent",   title: "AI Trade Insights",               desc: "Pattern detection, consistency scoring, and personalized coaching from our AI trade agent." },
-              { icon: Zap,        color: "text-primary",  title: "Multi-Platform Access",           desc: "Trade on MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, and GooeyPro." },
+              { icon: Zap,        color: "text-primary",  title: "Multi-Platform Access",           desc: "Trade on MatchTrader, DXtrade, cTrader, Volumetrica, Tickblaze (launching), DXtrade Futures, and GooeyPro." },
             ].map((t, i) => {
               const Icon = t.icon;
               return (
