@@ -5,6 +5,7 @@ import AccordionItem from "@/components/AccordionItem";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import SEO from "@/components/SEO";
+import FeatureUpdateBanner from "@/components/FeatureUpdateBanner";
 import { breadcrumbSchema, faqPageSchema, productSchema } from "@/lib/jsonLd";
 
 const Challenges = () => {
@@ -365,6 +366,7 @@ const Challenges = () => {
       />
     <section className="py-20 cyberpunk-bg page-transition">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <FeatureUpdateBanner />
         <motion.div 
           className="text-center mb-10"
           initial={{ opacity: 0, y: 20 }}
