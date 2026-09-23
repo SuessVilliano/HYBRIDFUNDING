@@ -7,8 +7,9 @@ export type BrainLiveMarket = {
   spread?: number;
   bidDepth: number;
   askDepth: number;
-  buyFlow: number;
-  sellFlow: number;
+  tradeBuyVolume: number;
+  tradeSellVolume: number;
+  tradeCount: number;
   lastTradePrice?: number;
   lastTradeSize?: number;
   lastTradeSide?: "BUY" | "SELL";
@@ -164,10 +165,10 @@ const scoreSignal = (
       const bookImbalance = live.bidDepth / bookTotal;
       score += clamp((bookImbalance - 0.5) * 12, -5, 5);
     }
-    const flowTotal = live.buyFlow + live.sellFlow;
-    if (flowTotal >= 100) {
-      const flowImbalance = live.buyFlow / flowTotal;
-      score += clamp((flowImbalance - 0.5) * 8, -3, 3);
+    const tradeTotal = live.tradeBuyVolume + live.tradeSellVolume;
+    if (live.tradeCount >= 2 && tradeTotal >= 25) {
+      const tradeImbalance = live.tradeBuyVolume / tradeTotal;
+      score += clamp((tradeImbalance - 0.5) * 8, -3, 3);
     }
     const ageMs = Date.now() - live.updatedAt;
     if (ageMs < 15_000) score += 3;
@@ -193,7 +194,9 @@ const scoreSignal = (
     `${fmtMoney(vol)} 24h volume`,
     liq ? `${fmtMoney(liq)} liquidity` : null,
     spread >= 0 ? `${Math.round(spread * 100)}¢ spread` : null,
-    live ? `LIVE CLOB depth ${Math.round(live.bidDepth)}/${Math.round(live.askDepth)} · flow ${Math.round(live.buyFlow)}/${Math.round(live.sellFlow)}` : "waiting for live CLOB",
+    live
+      ? `LIVE CLOB book ${Math.round(live.bidDepth)}/${Math.round(live.askDepth)} bid/ask · 5m executed trades ${Math.round(live.tradeBuyVolume)}/${Math.round(live.tradeSellVolume)} BUY/SELL across ${live.tradeCount} trades`
+      : "waiting for live CLOB",
     hist.n ? `${Math.round(hist.rate * 100)}% calibrated hit rate across ${hist.n} graded ${s.type.toLowerCase()} ${entry.side} picks` : "no graded history yet",
   ].filter(Boolean);
 
