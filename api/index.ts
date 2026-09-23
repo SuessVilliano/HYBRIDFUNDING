@@ -155,6 +155,78 @@ app.post("/api/lead", async (req: Request, res: Response) => {
   }
 });
 
+app.post("/api/newsletter", async (req: Request, res: Response) => {
+  const emailResult = z.string().trim().toLowerCase().email().safeParse(req.body?.email);
+  if (!emailResult.success) {
+    return res.status(400).json({ error: "Valid email required" });
+  }
+
+  const email = emailResult.data;
+  const token = process.env.GHL_PIT_TOKEN;
+  const locationId = process.env.GHL_LOCATION_ID || "wAgobr9TOihDZxQ2G3a5";
+  if (!token) return res.status(500).json({ error: "Subscription service is not configured" });
+
+  const tags = ["newsletter-subscriber", "updates-subscriber"];
+  const payload = {
+    locationId,
+    email,
+    source: "hybridfunding-news-updates",
+    tags,
+    dnd: false,
+  };
+
+  try {
+    const ghlRes = await fetch("https://services.leadconnectorhq.com/contacts/", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Version: "2021-07-28",
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const bodyText = await ghlRes.text();
+    let body: any = {};
+    try { body = JSON.parse(bodyText); } catch { /* ignore */ }
+
+    const isDuplicate =
+      ghlRes.status === 409 ||
+      (ghlRes.status === 400 && typeof body?.message === "string" && /duplicat/i.test(body.message));
+
+    if (!ghlRes.ok && !isDuplicate) {
+      console.error("[newsletter] GHL error", ghlRes.status, bodyText);
+      return res.status(502).json({ error: "Unable to subscribe at this time. Please try again." });
+    }
+
+    const contactId: string | undefined =
+      body?.contact?.id || body?.id || body?.meta?.contactId;
+
+    if (isDuplicate && contactId) {
+      try {
+        await fetch(`https://services.leadconnectorhq.com/contacts/${contactId}/tags`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Version: "2021-07-28",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ tags }),
+        });
+      } catch (tagErr) {
+        console.error("[newsletter] tag-on-duplicate failed", tagErr);
+      }
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    console.error("[newsletter] error", err);
+    return res.status(502).json({ error: "Unable to subscribe at this time. Please try again." });
+  }
+});
+
 // Privacy-safe recent activity for the public site.
 // Returns no names, email addresses, phone numbers, contact IDs, or individual locations.
 app.get("/api/activity", async (_req: Request, res: Response) => {
