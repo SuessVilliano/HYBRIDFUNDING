@@ -11,6 +11,7 @@ const About = () => {
     { name: "Tradovate", description: "Futures trading platform" },
     { name: "Volumetrica", description: "Futures — volume & order-flow tools" },
     { name: "DXtrade Futures", description: "Futures on DXtrade" },
+    { name: "Tickblaze", description: "Futures platform — launching" },
     { name: "GooeyPro", description: "Single Session Equities platform" }
   ];
 
@@ -49,7 +50,7 @@ const About = () => {
     <section className="py-20 cyberpunk-bg page-transition">
       <SEO
         title="About Hybrid Funding — Mission, Values & Supported Trading Platforms"
-        description="Hybrid Funding is a modern prop firm built by traders, for traders. Funding talent across Forex, Crypto, Futures, and Single Session Equities on MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, and GooeyPro."
+        description="Hybrid Funding is a modern prop firm built by traders, for traders. Funding talent across Forex, Crypto, Futures, and Single Session Equities on MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, GooeyPro, and Tickblaze (launching)."
         path="/about"
         jsonLd={[
           breadcrumbSchema([
