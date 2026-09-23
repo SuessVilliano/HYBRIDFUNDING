@@ -8,11 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
   const { toast } = useToast();
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !email.includes('@')) {
+    if (!email.trim() || !email.includes("@")) {
       toast({
         title: "Invalid email",
         description: "Please enter a valid email address",
@@ -21,12 +22,30 @@ const Footer = () => {
       return;
     }
 
-    // Subscribe logic would go here in a real implementation
-    toast({
-      title: "Subscription successful!",
-      description: "Thank you for subscribing to our newsletter",
-    });
-    setEmail("");
+    setIsSubscribing(true);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body?.error || "Unable to subscribe");
+
+      toast({
+        title: "You're subscribed",
+        description: "We'll send Hybrid Funding product updates, promotions, events, and trader news.",
+      });
+      setEmail("");
+    } catch (error) {
+      toast({
+        title: "Subscription failed",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubscribing(false);
+    }
   };
 
   return (
@@ -178,12 +197,17 @@ const Footer = () => {
                 variant="gradient"
                 size="icon"
                 className="rounded-l-none"
+                disabled={isSubscribing}
+                aria-label="Subscribe to Hybrid Funding updates"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </Button>
             </form>
+            <p className="mt-2 text-[10px] leading-relaxed text-[#6F6F8A]">
+              By subscribing, you agree to receive Hybrid Funding email updates. Unsubscribe anytime.
+            </p>
           </div>
         </div>
 
