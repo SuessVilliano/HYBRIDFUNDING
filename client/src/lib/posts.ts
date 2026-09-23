@@ -248,6 +248,18 @@ export const posts: PostMeta[] = [
     tags: ["Product History","Promotion","Archive"],
     excerpt: "The SUNNY campaign followed GOAL and extended Hybrid Funding's seasonal promotion cadence.",
   },
+
+  {
+    slug: "trader-dna-test-launch",
+    title: "Trader DNA Test Launches",
+    description: "Hybrid Funding launched the Trader DNA Test to identify trading archetypes and connect traders to a more suitable funding path.",
+    publishedAt: "2026-09-23",
+    historicalEventDate: "2026-06-15",
+    archive: true,
+    readingMinutes: 3,
+    tags: ["Product History", "Trader DNA", "Education", "Archive"],
+    excerpt: "The Sniper, Architect, Hybrid, and Phoenix profiles turned trader behavior into a personalized education and funding experience.",
+  },
 ];
 
 export function getPostBySlug(slug: string): PostMeta | undefined {
