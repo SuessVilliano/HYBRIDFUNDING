@@ -218,7 +218,7 @@ function computeSignals(events: any[]): Signal[] {
     });
 }
 
-const MarketRadar = () => {
+const MarketRadar = ({ embedded = false }: { embedded?: boolean }) => {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [scanned, setScanned] = useState(0);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
@@ -281,6 +281,85 @@ const MarketRadar = () => {
     for (const s of signals) c[s.type] = (c[s.type] || 0) + 1;
     return c;
   }, [signals]);
+
+  if (embedded) {
+    return (
+      <section id="ai-radar" className="py-20 bg-gradient-to-b from-[#101629] to-[#0B1426]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center mb-10">
+            <span className="inline-flex items-center gap-2 rounded-full glassmorphism neon-border px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent font-['Orbitron']">
+              <Sparkles className="h-3.5 w-3.5" />
+              Built Into Predictive Markets
+            </span>
+            <h2 className="font-['Orbitron'] text-3xl md:text-4xl font-bold text-white mt-5 mb-4">
+              AI Market <span className="text-accent neon-text-accent">Radar</span>
+            </h2>
+            <p className="text-[#B8B8D0] text-lg">
+              The Radar is the research layer for Predictive Markets. It scans live events for movers,
+              unusual volume, decision windows, and book imbalances so traders can find what deserves
+              deeper research before opening the market.
+            </p>
+            <p className="mt-3 text-xs text-[#8888A8]">
+              {loading && !signals.length
+                ? "Scanning live markets…"
+                : failed && !signals.length
+                  ? "Live scan unavailable — use the full Radar to retry"
+                  : `Scanned ${scanned} live events · ${signals.length} signals · Updated ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"}`}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
+            {loading && !signals.length
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="glassmorphism rounded-xl p-5 border border-white/5 animate-pulse">
+                    <div className="h-4 bg-white/10 rounded w-1/4 mb-4" />
+                    <div className="h-4 bg-white/10 rounded w-3/4 mb-3" />
+                    <div className="h-3 bg-white/10 rounded w-full" />
+                  </div>
+                ))
+              : visible.slice(0, 6).map((s) => {
+                  const Meta = TYPE_META[s.type];
+                  return (
+                    <a
+                      key={`${s.type}|${s.event}|${s.market}`}
+                      href={DASHBOARD_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group glassmorphism rounded-xl p-5 border border-white/5 hover:border-accent/50 transition-all duration-300"
+                    >
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <span className="inline-flex items-center gap-1.5 rounded bg-gradient-to-r from-primary/30 to-accent/30 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-accent font-['Orbitron']">
+                          <Meta.icon className="h-3 w-3" />
+                          {Meta.label}
+                        </span>
+                        <span className="text-[#8888A8] text-xs">{fmtVol(s.vol24)} 24h</span>
+                      </div>
+                      <h3 className="font-['Orbitron'] text-sm font-bold text-white mb-2">{s.event}</h3>
+                      <p className="text-[#B8B8D0] text-sm">{s.detail}</p>
+                    </a>
+                  );
+                })}
+          </div>
+
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link href="/market-radar">
+              <Button variant="neon-filled" size="lg" rounded="full" className="font-['Orbitron']">
+                OPEN FULL AI RADAR
+                <Radar className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <Button variant="neon" size="lg" rounded="full" className="font-['Orbitron']" onClick={scan}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              REFRESH SCAN
+            </Button>
+          </div>
+          <p className="mt-4 text-center text-xs text-[#777792]">
+            Radar signals are research candidates, not trade recommendations.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <div className="page-transition">
