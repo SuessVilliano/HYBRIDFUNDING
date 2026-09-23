@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import SEO from "@/components/SEO";
+import { buildBrainQueue } from "@/lib/radarBrain";
+import { usePolymarketClob } from "@/lib/usePolymarketClob";
 import {
   Radar,
   TrendingUp,
@@ -40,7 +42,7 @@ const DASHBOARD_URL = "https://hybridfundingdashboard.propaccount.com/en/predict
 const API = "https://gamma-api.polymarket.com/events/pagination";
 const MARKETS_API = "https://gamma-api.polymarket.com/markets";
 // SHA-256 of the access passcode (never stored in plaintext in the bundle)
-const GATE_HASH = "070489c5d58234cafcbb2284b86305c07b09c1548febc5307157e632778ea285";
+const GATE_HASH = "05dbf112f970bf8ff1ffa5ad235f45b48a20a99b913c22b55fd29596e8acc919";
 const GATE_KEY = "hf-radar-pro";
 const TRACK_KEY = "hf-rp-track";
 const AI_KEY = "hf-rp-ai";
@@ -61,6 +63,13 @@ type ProSignal = {
   confidence: number;
   why: string;
   mid?: string; // gamma market id, for track-record grading
+  yesPrice?: number;
+  bestBid?: number;
+  bestAsk?: number;
+  spread?: number;
+  liq?: number;
+  yesTokenId?: string;
+  noTokenId?: string;
 };
 
 type TrackedPick = {
@@ -141,22 +150,46 @@ function computeProSignals(events: any[]): ProSignal[] {
       .filter((m: any) => m && m.active && !m.closed)
       .map((m: any) => {
         const prices = safeParse(m.outcomePrices);
+        const outcomes = safeParse(m.outcomes).map((x) => x.toLowerCase());
+        const clobIds = safeParse(m.clobTokenIds);
+        const yesIndex = Math.max(0, outcomes.findIndex((x) => x === "yes"));
+        const noFound = outcomes.findIndex((x) => x === "no");
+        const noIndex = noFound >= 0 ? noFound : 1;
         return {
           q: (m.groupItemTitle || m.question || "").trim(),
           mid: String(m.id ?? ""),
           yes: num(prices[0], -1),
-          bid: num(m.bestBid),
+          bid: num(m.bestBid, -1),
+          ask: num(m.bestAsk, -1),
+          spread: num(m.spread, -1),
           vol24: num(m.volume24hr),
           liq: num(m.liquidity),
           chg: num(m.oneDayPriceChange),
+          acceptingOrders: m.acceptingOrders !== false,
+          yesTokenId: clobIds[yesIndex] || clobIds[0],
+          noTokenId: clobIds[noIndex] || clobIds[1],
         };
       })
-      .filter((m: any) => m.yes >= 0);
+      .filter((m: any) => m.yes >= 0 && m.acceptingOrders);
 
     if (!ms.length) continue;
 
     for (const m of ms) {
       const pct = Math.round(m.yes * 100);
+      const marketMeta = {
+        yesPrice: m.yes,
+        bestBid: m.bid >= 0 ? m.bid : undefined,
+        bestAsk: m.ask >= 0 ? m.ask : undefined,
+        spread:
+          m.spread >= 0
+            ? m.spread
+            : m.ask >= 0 && m.bid >= 0 && m.ask >= m.bid
+              ? m.ask - m.bid
+              : undefined,
+        liq: m.liq,
+        yesTokenId: m.yesTokenId,
+        noTokenId: m.noTokenId,
+      };
 
       // MOVER — overshoot vs drift
       if (Math.abs(m.chg) >= 0.1 && m.vol24 >= 25_000 && m.yes >= 0.03 && m.yes <= 0.97) {
@@ -193,6 +226,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           confidence,
           why,
           mid: m.mid,
+          ...marketMeta,
         });
       }
 
@@ -230,6 +264,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           confidence,
           why,
           mid: m.mid,
+          ...marketMeta,
         });
       }
 
@@ -260,6 +295,7 @@ function computeProSignals(events: any[]): ProSignal[] {
           confidence,
           why,
           mid: m.mid,
+          ...marketMeta,
         });
       }
     }
@@ -600,6 +636,34 @@ const RadarPro = () => {
     [signals, hidePasses],
   );
 
+  const clobTokenIds = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          signals
+            .filter((s) => s.stance === "LEAN YES" || s.stance === "LEAN NO")
+            .flatMap((s) => [s.yesTokenId, s.noTokenId].filter(Boolean) as string[]),
+        ),
+      ).slice(0, 100),
+    [signals],
+  );
+  const {
+    liveByToken,
+    connected: clobConnected,
+    subscribed: clobSubscribed,
+    liveCount: clobLiveCount,
+    lastMessageAt: clobLastMessageAt,
+  } = usePolymarketClob(clobTokenIds);
+
+  const brainQueue = useMemo(
+    () => buildBrainQueue(signals, track, 10, liveByToken),
+    [signals, track, liveByToken],
+  );
+  const brainQualified = useMemo(
+    () => brainQueue.filter((p) => p.decision === "QUALIFIED"),
+    [brainQueue],
+  );
+
   const counts = useMemo(() => {
     const c: Record<Stance, number> = { "LEAN YES": 0, "LEAN NO": 0, "SELL BOOK": 0, PASS: 0 };
     for (const s of signals) c[s.stance]++;
@@ -782,7 +846,7 @@ const RadarPro = () => {
                   ? "Scanning…"
                   : failed && !signals.length
                     ? "Scanner offline"
-                    : `${scanned} events · ${counts["LEAN YES"] + counts["LEAN NO"] + counts["SELL BOOK"]} picks / ${counts.PASS} passes · ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · auto-refresh 2 min`}
+                    : `${scanned} events · ${brainQualified.length} brain-qualified · ${counts["LEAN YES"] + counts["LEAN NO"] + counts["SELL BOOK"]} raw picks / ${counts.PASS} passes · ${updatedAt ? updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "—"} · auto-refresh 2 min`}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -863,6 +927,98 @@ const RadarPro = () => {
 
       <section className="py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {tab === "picks" && (
+            <div className="max-w-6xl mx-auto mb-8">
+              <div className="glassmorphism rounded-2xl border border-accent/20 p-5 md:p-6">
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-5">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-accent font-bold">Radar Brain v3</p>
+                    <h2 className="font-['Orbitron'] text-xl md:text-2xl font-bold text-white mt-1">Auto-Pick Queue</h2>
+                    <p className="text-[#8888A8] text-xs mt-2 max-w-3xl">
+                      Challenge-aware ranking: side selection, $0.20–$0.80 entry gate, volume/liquidity/spread quality,
+                      time-to-resolution, one pick per event, and self-calibration from your graded Radar Pro history.
+                    </p>
+                  </div>
+                  <div className="text-left md:text-right text-xs">
+                    <p className="text-white font-bold">{brainQualified.length} qualified now</p>
+                    <p className={clobConnected ? "text-emerald-400" : "text-amber-400"}>
+                      {clobConnected
+                        ? `● CLOB LIVE · ${clobLiveCount}/${clobSubscribed} tokens`
+                        : clobSubscribed
+                          ? "○ CLOB CONNECTING…"
+                          : "○ CLOB WAITING FOR PICKS"}
+                    </p>
+                    <p className="text-[#8888A8]">
+                      {clobLastMessageAt
+                        ? `Last tick ${new Date(clobLastMessageAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" })}`
+                        : "10% target ÷ 0.5% max/event = 20 full-cap winning events minimum"}
+                    </p>
+                  </div>
+                </div>
+
+                {brainQueue.length === 0 ? (
+                  <p className="text-[#8888A8] text-sm">No YES/NO candidates cleared the raw signal engine yet.</p>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    {brainQueue.map((p, i) => (
+                      <a
+                        key={`${p.event}|${p.market}|${p.side}`}
+                        href={DASHBOARD_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-xl border border-white/10 bg-white/[0.035] p-4 hover:border-accent/40 transition-colors"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[#8888A8] text-[10px] font-bold">#{i + 1}</span>
+                            <span
+                              className={`rounded-full border px-2.5 py-1 text-[10px] font-bold ${
+                                p.decision === "QUALIFIED"
+                                  ? "bg-emerald-400/10 border-emerald-400/40 text-emerald-400"
+                                  : p.decision === "WATCH"
+                                    ? "bg-amber-400/10 border-amber-400/40 text-amber-400"
+                                    : "bg-white/5 border-white/10 text-[#8888A8]"
+                              }`}
+                            >
+                              {p.decision}
+                            </span>
+                            <span className={`text-xs font-bold ${p.side === "YES" ? "text-emerald-400" : "text-red-400"}`}>
+                              {p.side}
+                            </span>
+                          </div>
+                          <span className="text-white font-['Orbitron'] text-sm font-bold">Brain {p.brainScore}</span>
+                        </div>
+                        <p className="text-white text-sm font-semibold mt-3 leading-snug">{p.event}</p>
+                        {p.market && p.market !== p.event && <p className="text-[#B8B8D0] text-xs mt-1">{p.market}</p>}
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] mt-3">
+                          <span className="text-accent">Entry ~{Math.round(p.entryPrice * 100)}¢</span>
+                          <span className="text-[#B8B8D0]">{p.type}</span>
+                          <span className="text-[#B8B8D0]">Raw conf {p.confidence}%</span>
+                          {p.live && <span className="text-emerald-400">LIVE CLOB</span>}
+                        </div>
+                        {p.live && (
+                          <p className="text-[#B8B8D0] text-[10px] mt-2">
+                            bid {p.live.bestBid !== undefined ? Math.round(p.live.bestBid * 100) + "¢" : "—"} · ask{" "}
+                            {p.live.bestAsk !== undefined ? Math.round(p.live.bestAsk * 100) + "¢" : "—"} · top-5 depth{" "}
+                            {Math.round(p.live.bidDepth)}/{Math.round(p.live.askDepth)} · flow{" "}
+                            {Math.round(p.live.buyFlow)}/{Math.round(p.live.sellFlow)}
+                          </p>
+                        )}
+                        <p className="text-[#8888A8] text-[11px] mt-2 leading-relaxed">{p.reason}</p>
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                <p className="text-[#8888A8] text-[10px] mt-4">
+                  Brain score is a screening score, not a probability forecast. Live CLOB data comes directly from
+                  Polymarket's market websocket and continuously re-ranks the queue. It never places orders. Use the
+                  dashboard link to review the contract and submit any order yourself.
+                </p>
+              </div>
+            </div>
+          )}
+
           {tab === "history" ? (
             <div className="max-w-5xl mx-auto">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
