@@ -42,7 +42,7 @@ const DASHBOARD_URL = "https://hybridfundingdashboard.propaccount.com/en/predict
 const API = "https://gamma-api.polymarket.com/events/pagination";
 const MARKETS_API = "https://gamma-api.polymarket.com/markets";
 // SHA-256 of the access passcode (never stored in plaintext in the bundle)
-const GATE_HASH = "070489c5d58234cafcbb2284b86305c07b09c1548febc5307157e632778ea285";
+const GATE_HASH = "05dbf112f970bf8ff1ffa5ad235f45b48a20a99b913c22b55fd29596e8acc919";
 const GATE_KEY = "hf-radar-pro";
 const TRACK_KEY = "hf-rp-track";
 const AI_KEY = "hf-rp-ai";
