@@ -1,14 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Trophy, Zap, Target, Users, Star, Award, Gift, Crown } from "lucide-react";
 
 const Battles: React.FC = () => {
   return (
-    <Layout>
-      <div className="page-transition">
+    <div className="page-transition">
         {/* Hero Section */}
         <section className="relative min-h-[70vh] flex items-center cyberpunk-bg overflow-hidden">
           <div className="absolute inset-0 opacity-30">
@@ -319,8 +317,7 @@ const Battles: React.FC = () => {
             </motion.div>
           </div>
         </section>
-      </div>
-    </Layout>
+    </div>
   );
 };
 
