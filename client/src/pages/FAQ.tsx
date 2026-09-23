@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import Layout from "@/components/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccordionItem from "@/components/AccordionItem";
 import SEO from "@/components/SEO";
@@ -42,6 +41,26 @@ const FAQ: React.FC = () => {
     {
       question: "What trading platforms do you support?",
       answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is the platform we offer to international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures. Single Session Equities trades exclusively on GooeyPro. Our technology is integrated with each platform to monitor your trading performance in real-time."
+    },
+    {
+      question: "What are Challenge Bundles?",
+      answer: "Challenge Bundles are a new checkout option rolling out on the new dashboard. Buy 3 eligible challenges together and receive the Bi-Weekly Rapid Payout add-on at no extra charge, or buy 5 and receive the Weekly Rapid Payout add-on. Each challenge remains its own account with its own login, dashboard, and rules. The $1M maximum customer allocation still applies, so 3-packs are unavailable above $250K starting balance and 5-packs are unavailable above $150K."
+    },
+    {
+      question: "How does Customer Credit work?",
+      answer: "Customer Credit lets you take an eligible payout as Hybrid Funding credit for future challenges. Choosing credit adds 10 percentage points to the trader profit share (for example, an 80/20 split becomes 90/10). Credit is valid for 365 days, can be used partially, and can stack with eligible discount codes."
+    },
+    {
+      question: "What is the Rapid Payout add-on?",
+      answer: "Rapid Payout is a new paid option for faster payout frequency. Bi-weekly costs +5%, weekly costs +10%, and daily costs +15%. Eligible 3-challenge bundles include bi-weekly Rapid Payout and eligible 5-challenge bundles include weekly Rapid Payout at no extra charge."
+    },
+    {
+      question: "Can I buy more than one item in a single checkout?",
+      answer: "Yes. The new Cart feature lets traders add multiple eligible items and pay once instead of completing separate transactions for every purchase."
+    },
+    {
+      question: "When will Bundles, Customer Credit, Rapid Payout and Cart be available?",
+      answer: "These features were announced on September 23, 2026 and are being enabled during a 10-business-day rollout. They require the new dashboard experience, so individual availability may appear at different points during that rollout window."
     },
     {
       question: "Are there any geographic restrictions?",
@@ -276,7 +295,7 @@ const FAQ: React.FC = () => {
   const allFaqs = [...generalFaqs, ...forexFaqs, ...cryptoFaqs, ...futuresFaqs, ...equitiesFaqs];
 
   return (
-    <Layout>
+    <>
       <SEO
         title="Hybrid Funding FAQ — Rules, Payouts, Leverage & Drawdown Explained"
         description="Answers about Hybrid Funding evaluations, profit splits, leverage, max drawdown, payouts, and platform-specific rules for Forex, Crypto, Futures, and Single Session Equities."
@@ -425,7 +444,7 @@ const FAQ: React.FC = () => {
           </motion.div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 
