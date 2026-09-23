@@ -5,6 +5,7 @@ import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 import TrustpilotWidget from "@/components/TrustpilotWidget";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 import SocialProof from "@/components/SocialProof";
+import RecentTraderActivity from "@/components/RecentTraderActivity";
 import FeatureCard from "@/components/FeatureCard";
 import SEO from "@/components/SEO";
 import { organizationSchema, websiteSchema } from "@/lib/jsonLd";
@@ -1106,6 +1107,9 @@ export default function GetFunded() {
           </div>
         </div>
       </section>
+
+      {/* ── Live community activity / Trader DNA fallback ── */}
+      <RecentTraderActivity />
 
       {/* ── Social Proof ── */}
       <SocialProof />
