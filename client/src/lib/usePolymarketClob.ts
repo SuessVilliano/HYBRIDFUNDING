@@ -51,6 +51,7 @@ export function usePolymarketClob(rawTokenIds: string[]) {
   const [lastMessageAt, setLastMessageAt] = useState<number | null>(null);
   const liveRef = useRef<LiveMap>({});
   const flushRef = useRef<number | null>(null);
+  const lastAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!tokenIds.length) {
@@ -68,6 +69,7 @@ export function usePolymarketClob(rawTokenIds: string[]) {
       flushRef.current = window.setTimeout(() => {
         flushRef.current = null;
         setLiveByToken({ ...liveRef.current });
+        setLastMessageAt(lastAtRef.current);
       }, 250);
     };
 
@@ -87,7 +89,7 @@ export function usePolymarketClob(rawTokenIds: string[]) {
         tokenId,
         updatedAt: Date.now(),
       };
-      setLastMessageAt(Date.now());
+      lastAtRef.current = Date.now();
       flush();
     };
 
