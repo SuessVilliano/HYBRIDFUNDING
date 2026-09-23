@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import SEO from "@/components/SEO";
 import { buildBrainQueue } from "@/lib/radarBrain";
+import { usePolymarketClob } from "@/lib/usePolymarketClob";
 import {
   Radar,
   TrendingUp,
@@ -67,6 +68,8 @@ type ProSignal = {
   bestAsk?: number;
   spread?: number;
   liq?: number;
+  yesTokenId?: string;
+  noTokenId?: string;
 };
 
 type TrackedPick = {
@@ -147,6 +150,11 @@ function computeProSignals(events: any[]): ProSignal[] {
       .filter((m: any) => m && m.active && !m.closed)
       .map((m: any) => {
         const prices = safeParse(m.outcomePrices);
+        const outcomes = safeParse(m.outcomes).map((x) => x.toLowerCase());
+        const clobIds = safeParse(m.clobTokenIds);
+        const yesIndex = Math.max(0, outcomes.findIndex((x) => x === "yes"));
+        const noFound = outcomes.findIndex((x) => x === "no");
+        const noIndex = noFound >= 0 ? noFound : 1;
         return {
           q: (m.groupItemTitle || m.question || "").trim(),
           mid: String(m.id ?? ""),
@@ -158,6 +166,8 @@ function computeProSignals(events: any[]): ProSignal[] {
           liq: num(m.liquidity),
           chg: num(m.oneDayPriceChange),
           acceptingOrders: m.acceptingOrders !== false,
+          yesTokenId: clobIds[yesIndex] || clobIds[0],
+          noTokenId: clobIds[noIndex] || clobIds[1],
         };
       })
       .filter((m: any) => m.yes >= 0 && m.acceptingOrders);
@@ -177,6 +187,8 @@ function computeProSignals(events: any[]): ProSignal[] {
               ? m.ask - m.bid
               : undefined,
         liq: m.liq,
+        yesTokenId: m.yesTokenId,
+        noTokenId: m.noTokenId,
       };
 
       // MOVER — overshoot vs drift
@@ -624,7 +636,29 @@ const RadarPro = () => {
     [signals, hidePasses],
   );
 
-  const brainQueue = useMemo(() => buildBrainQueue(signals, track, 10), [signals, track]);
+  const clobTokenIds = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          signals
+            .filter((s) => s.stance === "LEAN YES" || s.stance === "LEAN NO")
+            .flatMap((s) => [s.yesTokenId, s.noTokenId].filter(Boolean) as string[]),
+        ),
+      ).slice(0, 100),
+    [signals],
+  );
+  const {
+    liveByToken,
+    connected: clobConnected,
+    subscribed: clobSubscribed,
+    liveCount: clobLiveCount,
+    lastMessageAt: clobLastMessageAt,
+  } = usePolymarketClob(clobTokenIds);
+
+  const brainQueue = useMemo(
+    () => buildBrainQueue(signals, track, 10, liveByToken),
+    [signals, track, liveByToken],
+  );
   const brainQualified = useMemo(
     () => brainQueue.filter((p) => p.decision === "QUALIFIED"),
     [brainQueue],
@@ -907,7 +941,18 @@ const RadarPro = () => {
                   </div>
                   <div className="text-left md:text-right text-xs">
                     <p className="text-white font-bold">{brainQualified.length} qualified now</p>
-                    <p className="text-[#8888A8]">10% target ÷ 0.5% max/event = 20 full-cap winning events minimum</p>
+                    <p className={clobConnected ? "text-emerald-400" : "text-amber-400"}>
+                      {clobConnected
+                        ? `● CLOB LIVE · ${clobLiveCount}/${clobSubscribed} tokens`
+                        : clobSubscribed
+                          ? "○ CLOB CONNECTING…"
+                          : "○ CLOB WAITING FOR PICKS"}
+                    </p>
+                    <p className="text-[#8888A8]">
+                      {clobLastMessageAt
+                        ? `Last tick ${new Date(clobLastMessageAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" })}`
+                        : "10% target ÷ 0.5% max/event = 20 full-cap winning events minimum"}
+                    </p>
                   </div>
                 </div>
 
@@ -915,7 +960,7 @@ const RadarPro = () => {
                   <p className="text-[#8888A8] text-sm">No YES/NO candidates cleared the raw signal engine yet.</p>
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                    {brainQueue.slice(0, 8).map((p, i) => (
+                    {brainQueue.map((p, i) => (
                       <a
                         key={`${p.event}|${p.market}|${p.side}`}
                         href={DASHBOARD_URL}
@@ -949,7 +994,16 @@ const RadarPro = () => {
                           <span className="text-accent">Entry ~{Math.round(p.entryPrice * 100)}¢</span>
                           <span className="text-[#B8B8D0]">{p.type}</span>
                           <span className="text-[#B8B8D0]">Raw conf {p.confidence}%</span>
+                          {p.live && <span className="text-emerald-400">LIVE CLOB</span>}
                         </div>
+                        {p.live && (
+                          <p className="text-[#B8B8D0] text-[10px] mt-2">
+                            bid {p.live.bestBid !== undefined ? Math.round(p.live.bestBid * 100) + "¢" : "—"} · ask{" "}
+                            {p.live.bestAsk !== undefined ? Math.round(p.live.bestAsk * 100) + "¢" : "—"} · top-5 depth{" "}
+                            {Math.round(p.live.bidDepth)}/{Math.round(p.live.askDepth)} · flow{" "}
+                            {Math.round(p.live.buyFlow)}/{Math.round(p.live.sellFlow)}
+                          </p>
+                        )}
                         <p className="text-[#8888A8] text-[11px] mt-2 leading-relaxed">{p.reason}</p>
                       </a>
                     ))}
@@ -957,8 +1011,9 @@ const RadarPro = () => {
                 )}
 
                 <p className="text-[#8888A8] text-[10px] mt-4">
-                  Brain score is a screening score, not a probability forecast. It never places orders. Use the dashboard
-                  link to review the contract and submit any order yourself.
+                  Brain score is a screening score, not a probability forecast. Live CLOB data comes directly from
+                  Polymarket's market websocket and continuously re-ranks the queue. It never places orders. Use the
+                  dashboard link to review the contract and submit any order yourself.
                 </p>
               </div>
             </div>
