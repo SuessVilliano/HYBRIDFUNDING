@@ -35,3 +35,16 @@
 - "What platforms does Hybrid Funding support?" — cTrader, DXTrade, MatchTrader (Forex/Crypto), Rithmic Pro (Futures), GooeyPro (Equities). Tradovate coming soon.
 - "What is the profit split?" — 80% by default, upgradable to 90% with the add-on. Single Session Equities is 80%/20%.
 - "What is the maximum drawdown?" — Asset-class specific: 6% trailing (Forex 1-Step), 3% trailing (Single Session Equities), 5% trailing (Futures), etc.
+
+## Latest Product Updates — September 23, 2026
+
+Hybrid Funding is rolling out four new checkout and payout features on the new dashboard:
+- **Challenge Bundles**: Buy 3 eligible challenges and receive Bi-Weekly Rapid Payout at no extra charge, or buy 5 and receive Weekly Rapid Payout at no extra charge. The $1M maximum customer allocation still applies; 3-packs are unavailable above $250K starting balance and 5-packs are unavailable above $150K.
+- **Customer Credit**: Eligible payouts can be taken as account credit for future challenges with 10 additional percentage points of trader profit share. Credit is valid 365 days, can be partially used, and can stack with eligible discount codes.
+- **Rapid Payout add-on**: Bi-weekly +5%, weekly +10%, daily +15%.
+- **Cart**: Add multiple eligible items and pay once.
+- **Rollout**: Announced September 23, 2026 and scheduled to be enabled within 10 business days. Availability requires the new dashboard experience.
+
+Official update: https://www.hybridfunding.co/blog/bundles-customer-credit-rapid-payout-cart
+Current September promotion: https://www.hybridfunding.co/blog/september-2026-leaf-event
+
