@@ -7,16 +7,16 @@ import { motion, AnimatePresence } from "framer-motion";
 const primaryLinks = [
   { name: "Challenges", path: "/challenges" },
   { name: "Predictive Markets", path: "/predictive-markets" },
-  { name: "AI Radar", path: "/market-radar", isNew: true },
-  { name: "Battles", path: "/battles" },
+  { name: "Playbook", path: "/playbook" },
+  { name: "Affiliate", path: "/affiliate" },
   { name: "Updates", path: "/blog" },
 ];
 
 const moreLinks = [
+  { name: "AI Radar", path: "/market-radar", isNew: true },
+  { name: "Battles", path: "/battles" },
   { name: "Free Training", path: "/webinar" },
-  { name: "Playbook", path: "/playbook" },
   { name: "About", path: "/about" },
-  { name: "Affiliate", path: "/affiliate" },
   { name: "FAQ", path: "/faq" },
   { name: "Contact", path: "/contact" },
 ];
@@ -79,7 +79,14 @@ const Navbar = () => {
                       isActive(link.path) ? "bg-white/5 text-accent" : "text-[#B8B8D0] hover:bg-white/5 hover:text-accent"
                     }`}
                   >
-                    {link.name}
+                    <span className="inline-flex items-center gap-1.5">
+                      {link.name}
+                      {link.isNew && (
+                        <span className="rounded bg-accent px-1 py-px font-['Orbitron'] text-[8px] font-bold text-[#0F0F1A]">
+                          NEW
+                        </span>
+                      )}
+                    </span>
                   </Link>
                 ))}
               </div>
