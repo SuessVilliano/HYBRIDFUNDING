@@ -19,6 +19,10 @@ const leadSchema = z.object({
   }),
   marketingConsent: z.boolean().optional().default(false),
   source: z.string().trim().max(120).optional(),
+  traderType: z.enum(["sniper", "architect", "hybrid", "phoenix"]).optional(),
+  referralCode: z.string().trim().max(60).optional(),
+  utmSource: z.string().trim().max(80).optional(),
+  utmCampaign: z.string().trim().max(120).optional(),
 });
 
 function toE164(raw: string): string | null {
@@ -54,8 +58,15 @@ app.post("/api/lead", async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Lead service is not configured" });
   }
 
+  const cleanTag = (raw: string) =>
+    raw.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 70);
+
   const tags = ["web-optin", "sms-consent"];
   if (data.marketingConsent) tags.push("marketing-consent");
+  if (data.traderType) tags.push("trader-dna", `trader-dna-${data.traderType}`);
+  if (data.referralCode) tags.push("affiliate-referred", `affiliate-ref-${cleanTag(data.referralCode)}`);
+  if (data.utmSource) tags.push(`utm-source-${cleanTag(data.utmSource)}`);
+  if (data.utmCampaign) tags.push(`utm-campaign-${cleanTag(data.utmCampaign)}`);
 
   const source = data.source || "website-get-started-today";
   if (/webinar/i.test(source)) {
@@ -139,6 +150,85 @@ app.post("/api/lead", async (req: Request, res: Response) => {
   } catch (err) {
     console.error("[lead] network error", err);
     return res.status(502).json({ error: "Unable to submit at this time. Please try again." });
+  }
+});
+
+// Privacy-safe recent activity for the public site.
+// Returns no names, email addresses, phone numbers, contact IDs, or individual locations.
+app.get("/api/activity", async (_req: Request, res: Response) => {
+  const token = process.env.GHL_PIT_TOKEN;
+  const locationId = process.env.GHL_LOCATION_ID || "wAgobr9TOihDZxQ2G3a5";
+
+  if (!token) return res.status(200).json({ events: [], regions: [] });
+
+  try {
+    const upstream = await fetch(
+      `https://services.leadconnectorhq.com/contacts/?locationId=${encodeURIComponent(locationId)}&limit=100`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Version: "2021-07-28",
+          Accept: "application/json",
+        },
+      },
+    );
+
+    if (!upstream.ok) {
+      console.error("[activity] GHL error", upstream.status, await upstream.text());
+      return res.status(200).json({ events: [], regions: [] });
+    }
+
+    const body: any = await upstream.json();
+    const contacts = Array.isArray(body?.contacts) ? body.contacts : [];
+    const now = Date.now();
+    const windowMs = 30 * 24 * 60 * 60 * 1000;
+
+    const recent = contacts
+      .filter((c: any) => {
+        const t = new Date(c?.dateAdded || c?.createdAt || 0).getTime();
+        return Number.isFinite(t) && now - t >= 0 && now - t <= windowMs;
+      })
+      .sort((a: any, b: any) =>
+        new Date(b?.dateAdded || b?.createdAt || 0).getTime() -
+        new Date(a?.dateAdded || a?.createdAt || 0).getTime()
+      );
+
+    const sourceLabel = (source: string) => {
+      const x = String(source || "").toLowerCase();
+      if (x.includes("dna")) return "Trader DNA Test";
+      if (x.includes("webinar")) return "Free Training";
+      if (x.includes("affiliate")) return "Affiliate Partner";
+      if (x.includes("predict")) return "Predictive Markets";
+      if (x.includes("playbook")) return "Trader Playbook";
+      return "HybridFunding.co";
+    };
+
+    const events = recent.slice(0, 8).map((c: any) => ({
+      type: "community_join",
+      label: "New trader joined the Hybrid Funding community",
+      source: sourceLabel(c?.source),
+      at: c?.dateAdded || c?.createdAt || null,
+    }));
+
+    // Only surface regional activity when 3+ recent contacts share a state.
+    // This prevents a public message from revealing an individual lead's location.
+    const stateCounts = new Map<string, number>();
+    for (const c of recent) {
+      const state = String(c?.state || "").trim();
+      if (!state) continue;
+      stateCounts.set(state, (stateCounts.get(state) || 0) + 1);
+    }
+    const regions = [...stateCounts.entries()]
+      .filter(([, count]) => count >= 3)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([state, count]) => ({ state, count }));
+
+    res.setHeader("Cache-Control", "public, max-age=60, s-maxage=120");
+    return res.status(200).json({ events, regions });
+  } catch (err) {
+    console.error("[activity] error", err);
+    return res.status(200).json({ events: [], regions: [] });
   }
 });
 
