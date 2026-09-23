@@ -25,6 +25,8 @@ import {
   XCircle,
   CircleDashed,
   X,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 /**
@@ -548,6 +550,7 @@ const RadarPro = () => {
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [hidePasses, setHidePasses] = useState(true);
+  const [discoveryOpen, setDiscoveryOpen] = useState(false);
   const [tab, setTab] = useState<"picks" | "history">("picks");
   const [track, setTrack] = useState<TrackedPick[]>([]);
   const [aiCfg, setAiCfg] = useState<AiConfig | null>(null);
@@ -904,7 +907,7 @@ const RadarPro = () => {
                 onClick={() => setHidePasses((v) => !v)}
                 className="rounded-full px-4 py-1.5 text-xs font-medium border bg-white/5 border-white/10 text-[#B8B8D0] hover:text-white transition-all"
               >
-                {hidePasses ? "Showing picks only" : "Showing everything"}
+                {hidePasses ? "Discovery: picks only" : "Discovery: all signals"}
               </button>
             )}
           </div>
@@ -932,11 +935,12 @@ const RadarPro = () => {
               <div className="glassmorphism rounded-2xl border border-accent/20 p-5 md:p-6">
                 <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-5">
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-accent font-bold">Radar Brain v3</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-accent font-bold">Radar Brain v4</p>
                     <h2 className="font-['Orbitron'] text-xl md:text-2xl font-bold text-white mt-1">Auto-Pick Queue</h2>
                     <p className="text-[#8888A8] text-xs mt-2 max-w-3xl">
-                      Challenge-aware ranking: side selection, $0.20–$0.80 entry gate, volume/liquidity/spread quality,
-                      time-to-resolution, one pick per event, and self-calibration from your graded Radar Pro history.
+                      Challenge-aware ranking with live CLOB book pressure and real executed-trade flow: side selection,
+                      $0.20–$0.80 entry gate, volume/liquidity/spread quality, time-to-resolution, one pick per event,
+                      and self-calibration from graded Radar Pro history.
                     </p>
                   </div>
                   <div className="text-left md:text-right text-xs">
@@ -996,14 +1000,28 @@ const RadarPro = () => {
                           <span className="text-[#B8B8D0]">Raw conf {p.confidence}%</span>
                           {p.live && <span className="text-emerald-400">LIVE CLOB</span>}
                         </div>
-                        {p.live && (
-                          <p className="text-[#B8B8D0] text-[10px] mt-2">
-                            bid {p.live.bestBid !== undefined ? Math.round(p.live.bestBid * 100) + "¢" : "—"} · ask{" "}
-                            {p.live.bestAsk !== undefined ? Math.round(p.live.bestAsk * 100) + "¢" : "—"} · top-5 depth{" "}
-                            {Math.round(p.live.bidDepth)}/{Math.round(p.live.askDepth)} · flow{" "}
-                            {Math.round(p.live.buyFlow)}/{Math.round(p.live.sellFlow)}
-                          </p>
-                        )}
+                        {p.live && (() => {
+                          const bookTotal = p.live.bidDepth + p.live.askDepth;
+                          const bidPressure = bookTotal > 0 ? Math.round((p.live.bidDepth / bookTotal) * 100) : 0;
+                          const askPressure = bookTotal > 0 ? 100 - bidPressure : 0;
+                          return (
+                            <div className="text-[#B8B8D0] text-[10px] mt-2 space-y-1">
+                              <p>
+                                bid {p.live.bestBid !== undefined ? Math.round(p.live.bestBid * 100) + "¢" : "—"} · ask{" "}
+                                {p.live.bestAsk !== undefined ? Math.round(p.live.bestAsk * 100) + "¢" : "—"} · spread{" "}
+                                {p.live.spread !== undefined ? Math.round(p.live.spread * 100) + "¢" : "—"}
+                              </p>
+                              <p>
+                                Book pressure: {bidPressure}% bid / {askPressure}% ask · top-5 depth{" "}
+                                {Math.round(p.live.bidDepth)}/{Math.round(p.live.askDepth)}
+                              </p>
+                              <p>
+                                Executed trades (5m): BUY {Math.round(p.live.tradeBuyVolume)} / SELL{" "}
+                                {Math.round(p.live.tradeSellVolume)} · {p.live.tradeCount} trades
+                              </p>
+                            </div>
+                          );
+                        })()}
                         <p className="text-[#8888A8] text-[11px] mt-2 leading-relaxed">{p.reason}</p>
                       </a>
                     ))}
@@ -1011,9 +1029,9 @@ const RadarPro = () => {
                 )}
 
                 <p className="text-[#8888A8] text-[10px] mt-4">
-                  Brain score is a screening score, not a probability forecast. Live CLOB data comes directly from
-                  Polymarket's market websocket and continuously re-ranks the queue. It never places orders. Use the
-                  dashboard link to review the contract and submit any order yourself.
+                  Brain score is a screening score, not a probability forecast. Book pressure comes from live order-book
+                  depth; executed flow only counts actual CLOB trade events from the rolling 5-minute window. Live data
+                  continuously re-ranks the queue. It never places orders.
                 </p>
               </div>
             </div>
@@ -1123,8 +1141,32 @@ const RadarPro = () => {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
-              {visible.slice(0, 40).map((s, i) => {
+            <div className="max-w-5xl mx-auto">
+              <button
+                type="button"
+                onClick={() => setDiscoveryOpen((v) => !v)}
+                className="w-full glassmorphism rounded-xl border border-white/10 px-5 py-4 flex items-center justify-between gap-4 text-left hover:border-accent/30 transition-colors"
+              >
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#8888A8] font-bold">
+                    Candidate Pool
+                  </p>
+                  <h3 className="font-['Orbitron'] text-base md:text-lg font-bold text-white mt-1">
+                    Discovery Feed — Raw Signals
+                  </h3>
+                  <p className="text-[#8888A8] text-xs mt-1">
+                    The two-minute Gamma scan that discovers MOVER, DECISION, VOL SPIKE and BOOK CHECK candidates before
+                    the live Radar Brain filters and ranks them.
+                  </p>
+                </div>
+                <span className="flex-shrink-0 text-accent">
+                  {discoveryOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                </span>
+              </button>
+
+              {discoveryOpen && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  {visible.slice(0, 40).map((s, i) => {
                 const Meta = STANCE_META[s.stance];
                 const TypeIcon = TYPE_ICON[s.type];
                 const ai = aiResults[sigKey(s)];
@@ -1191,7 +1233,9 @@ const RadarPro = () => {
                     </p>
                   </motion.a>
                 );
-              })}
+                  })}
+                </div>
+              )}
             </div>
           )}
 
