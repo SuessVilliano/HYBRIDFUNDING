@@ -431,6 +431,44 @@
 
   .form-input::placeholder { color: rgba(255,255,255,0.3); }
 
+  .form-select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--white);
+    width: 100%;
+    min-height: 54px;
+  }
+
+  .form-select option { color: #111; }
+
+  .consent-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+    color: rgba(255,255,255,0.62);
+    font-size: 12px;
+    line-height: 1.55;
+    padding: 2px 2px 0;
+  }
+
+  .consent-row input {
+    margin-top: 3px;
+    accent-color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .form-status {
+    min-height: 18px;
+    font-size: 12px;
+    color: #ffb4b4;
+    text-align: center;
+  }
+
   .btn-reveal {
     background: linear-gradient(135deg, var(--gold), var(--gold-light));
     color: #0A0E1A;
@@ -728,23 +766,6 @@
   gtag('js', new Date());
   gtag('config', 'G-21JK717FGX');
 </script>
-<!-- Meta Pixel -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', 'PIXEL_ID_PLACEHOLDER');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=PIXEL_ID_PLACEHOLDER&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel -->
 <!-- End Google Analytics 4 -->
 <!-- End Microsoft Clarity -->
 
@@ -906,11 +927,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <p class="gate-title">Your DNA profile<br>is ready.</p>
       <p class="gate-sub">Enter your details to see your trader type + your recommended challenge.</p>
       <form class="lead-form" id="leadForm">
-        <input class="form-input" type="text" placeholder="First Name" id="fname" required autocomplete="given-name">
+        <input class="form-input" type="text" placeholder="Full Name" id="fname" required autocomplete="name">
         <input class="form-input" type="email" placeholder="Email Address" id="femail" required autocomplete="email">
-        <button type="submit" class="btn-reveal">REVEAL MY TRADER DNA &rarr;</button>
+        <input class="form-input" type="tel" placeholder="Mobile Number" id="fphone" required autocomplete="tel">
+        <select class="form-select" id="fmarket" required aria-label="Primary market">
+          <option value="" selected disabled>What do you primarily trade?</option>
+          <option value="forex">Forex</option>
+          <option value="crypto">Crypto</option>
+          <option value="futures">Futures</option>
+          <option value="equities">Equities</option>
+          <option value="predictive">Predictive Markets</option>
+        </select>
+        <label class="consent-row">
+          <input type="checkbox" id="smsConsent" required>
+          <span>I consent to receive SMS notifications and alerts from Hybrid Funding. Message frequency varies. Message &amp; data rates may apply. Reply STOP to unsubscribe.</span>
+        </label>
+        <label class="consent-row">
+          <input type="checkbox" id="marketingConsent">
+          <span>Optional: send me occasional Hybrid Funding offers, product updates, and education.</span>
+        </label>
+        <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+        <button type="submit" class="btn-reveal" id="revealBtn">REVEAL MY TRADER DNA &rarr;</button>
       </form>
-      <p class="fine-print">No spam. We'll also send your personalized funding roadmap.</p>
+      <p class="fine-print">Your result is saved to your Hybrid Funding profile so we can personalize follow-up. <a href="/privacy" style="color:var(--blue)">Privacy</a> · <a href="/terms" style="color:var(--blue)">Terms</a></p>
     </div>
   </div>
 </section>
@@ -1032,6 +1071,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var leadForm = document.getElementById('leadForm');
   var results = document.getElementById('results');
   var confettiEl = document.getElementById('confettiContainer');
+  var formStatus = document.getElementById('formStatus');
+  var revealBtn = document.getElementById('revealBtn');
+  var params = new URLSearchParams(window.location.search);
+  var referralCode = params.get('ref') || params.get('affiliate') || params.get('aff') || '';
+  var utmSource = params.get('utm_source') || '';
+  var utmCampaign = params.get('utm_campaign') || '';
+
+  function decorateOutboundLinks() {
+    var keep = ['ref','affiliate','aff','utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+    document.querySelectorAll('a[href*="hybridfunding.co/get-funded"], a[href*="leadconnectorhq.com/widget/booking"]').forEach(function (a) {
+      try {
+        var url = new URL(a.href);
+        keep.forEach(function (key) {
+          var value = params.get(key);
+          if (value) url.searchParams.set(key, value);
+        });
+        a.href = url.toString();
+      } catch (_) {}
+    });
+  }
+
+  decorateOutboundLinks();
 
   function getSlide(q) { return document.querySelector('.question-slide[data-q="' + q + '"]'); }
 
@@ -1055,13 +1116,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     nextBtn.addEventListener('click', function () {
       if (!chosen) return;
       answers.push(chosen);
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'quiz_question_answered',
-          question_number: qNum,
-          answer_type: chosen
-        });
       var qNum = parseInt(slide.getAttribute('data-q'));
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'quiz_question_answered',
+        question_number: qNum,
+        answer_type: chosen
+      });
       if (qNum < totalQ) {
         slide.classList.remove('active');
         getSlide(qNum + 1).classList.add('active');
@@ -1082,15 +1143,72 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   updateProgress(1);
 
-  leadForm.addEventListener('submit', function (e) {
+  leadForm.addEventListener('submit', async function (e) {
     e.preventDefault();
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
-              event: 'lead_captured',
-              trader_type: determineType()
-            });
-            fbq('track', 'Lead');
-    showResults();
+    formStatus.textContent = '';
+
+    var fullName = document.getElementById('fname').value.trim();
+    var email = document.getElementById('femail').value.trim();
+    var phone = document.getElementById('fphone').value.trim();
+    var marketPath = document.getElementById('fmarket').value;
+    var smsConsent = document.getElementById('smsConsent').checked;
+    var marketingConsent = document.getElementById('marketingConsent').checked;
+    var typeCode = determineType();
+    var typeMap = { S: 'sniper', A: 'architect', H: 'hybrid', P: 'phoenix' };
+    var traderType = typeMap[typeCode];
+
+    if (!fullName || !email || !phone || !marketPath || !smsConsent) {
+      formStatus.textContent = 'Please complete all required fields and SMS consent.';
+      return;
+    }
+
+    var parts = fullName.split(/\s+/);
+    var firstName = parts.shift() || fullName;
+    var lastName = parts.join(' ') || firstName;
+
+    revealBtn.disabled = true;
+    revealBtn.textContent = 'SAVING YOUR DNA...';
+
+    try {
+      var res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phone: phone,
+          smsConsent: true,
+          marketingConsent: marketingConsent,
+          source: 'trader-dna-test',
+          traderType: traderType,
+          marketPath: marketPath,
+          referralCode: referralCode || undefined,
+          utmSource: utmSource || undefined,
+          utmCampaign: utmCampaign || undefined
+        })
+      });
+
+      var body = await res.json().catch(function () { return {}; });
+      if (!res.ok) throw new Error(body.error || 'Unable to save your result. Please try again.');
+
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'lead_captured',
+        funnel: 'trader_dna',
+        trader_type: traderType,
+        market_path: marketPath,
+        referral_code: referralCode || undefined
+      });
+      if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
+
+      showResults();
+    } catch (err) {
+      formStatus.textContent = err && err.message ? err.message : 'Unable to save your result. Please try again.';
+    } finally {
+      revealBtn.disabled = false;
+      revealBtn.innerHTML = 'REVEAL MY TRADER DNA &rarr;';
+    }
   });
 
   function countType(type) { return answers.filter(function (a) { return a === type; }).length; }
