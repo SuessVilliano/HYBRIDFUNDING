@@ -14,6 +14,29 @@ export interface PostMeta {
 
 export const posts: PostMeta[] = [
   {
+    slug: "bundles-customer-credit-rapid-payout-cart",
+    title: "New at Hybrid Funding: Bundles, Customer Credit, Rapid Payout & Cart",
+    description:
+      "Four major Hybrid Funding checkout and payout upgrades are rolling out: challenge bundles, Customer Credit, Rapid Payout options, and a multi-item cart.",
+    publishedAt: "2026-09-23",
+    readingMinutes: 6,
+    tags: ["Update", "New Features", "Payouts"],
+    excerpt:
+      "Buy multiple challenges together, turn payouts into higher-value account credit, choose faster payout frequencies, and check out multiple items at once.",
+  },
+  {
+    slug: "september-2026-leaf-event",
+    title: "September LEAF Event: 40% Off Evaluations & 25% Off Instant Funding",
+    description:
+      "Hybrid Funding's September 2026 LEAF Event: LEAF40 for eligible evaluation plans and LEAF25 for Instant Funding and Instant Funding Lite through September 30.",
+    publishedAt: "2026-09-01",
+    updatedAt: "2026-09-23",
+    readingMinutes: 2,
+    tags: ["Promotion", "September", "Savings"],
+    excerpt:
+      "Two September codes, two plan groups: LEAF40 for eligible evaluations and LEAF25 for Instant Funding and IF Lite through September 30.",
+  },
+  {
     slug: "how-to-pass-a-1-step-forex-challenge",
     title: "How to Pass a 1-Step Forex Challenge (Hybrid Funding Edition)",
     description:
