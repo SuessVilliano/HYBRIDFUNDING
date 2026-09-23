@@ -126,7 +126,7 @@ const Challenges = () => {
   const assetClassDescriptions = {
     "forex": "Trade major, minor and exotic currency pairs with up to 1:50 leverage. All positions must be closed by Friday 3:45pm EST unless you purchase the weekend holding add-on.",
     "crypto": "Trade Bitcoin, Ethereum and other cryptocurrencies with up to 5:1 leverage for BTC/ETH and 2:1 for others. Trading available 24/7 including weekends.",
-    "futures": "Trade indices, commodities, and more with specific leverage ratios per instrument. Our risk management system enforces consistent trading discipline. Choose your platform: Tradovate, Volumetrica, or DXtrade Futures.",
+    "futures": "Trade indices, commodities, and more with specific leverage ratios per instrument. Our risk management system enforces consistent trading discipline. Choose your platform: Tradovate, Volumetrica, or DXtrade Futures, with Tickblaze joining the futures lineup.",
     "equities": "Single Session Equities — trade S&P 100 equity products with 2:1 leverage on the GooeyPro platform. All positions open and close within the same session (09:30–15:55 ET); no overnight or weekend holds."
   };
 
@@ -142,7 +142,7 @@ const Challenges = () => {
     },
     {
       question: "What trading platforms do you support?",
-      answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is for international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures. Single Session Equities runs exclusively on GooeyPro. Our technology integrates with each platform to monitor your trading performance in real-time."
+      answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is for international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures, with Tickblaze launching as an additional futures option. Single Session Equities runs exclusively on GooeyPro. Our technology integrates with each platform to monitor your trading performance in real-time."
     },
     {
       question: "Do I need to complete KYC verification?",
