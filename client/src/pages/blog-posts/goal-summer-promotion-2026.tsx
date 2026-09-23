@@ -6,6 +6,7 @@ export default function GoalSummerPromotion2026() {
       <p className="lead">
         On June 12, 2026, Hybrid Funding prepared the GOAL summer promotion for the June 19 through July 19 campaign window.
       </p>
+      <p><strong>Historical promotion:</strong> this offer has ended and is preserved here as part of Hybrid Funding's Product History.
       <h2>Two codes for two plan groups</h2>
       <ul>
         <li><strong>GOAL40:</strong> 40% off eligible plans outside Instant Funding and Instant Funding Lite.</li>
