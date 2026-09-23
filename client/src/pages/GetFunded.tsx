@@ -13,7 +13,7 @@ import {
   CheckCircle, ArrowRight, ChevronDown, ChevronUp,
   Star, Users, TrendingUp, Zap, Info, Copy, Check, Clock, X,
   Calendar, BarChart3, DollarSign, BookOpen, Newspaper,
-  Trophy, Crown, Menu, Landmark, Globe2, Gamepad2, Bitcoin,
+  Trophy, Crown, Landmark, Globe2, Gamepad2, Bitcoin,
 } from "lucide-react";
 import { useEffect, useState, useCallback, useRef } from "react";
 import ACTIVE_PROMOTION, { getPromoForPlan, isPromotionActive } from "@/config/promotions";
@@ -1030,24 +1030,10 @@ function getInitialParams(): { market: MarketKey; plan: PlanKey } {
   };
 }
 
-const NAV_LINKS: { label: string; href: string; isNew?: boolean }[] = [
-  { label: "Predictive Markets", href: "/predictive-markets" },
-  { label: "AI Radar", href: "/market-radar", isNew: true },
-  { label: "Challenges", href: "/challenges" },
-  { label: "Battles", href: "/battles" },
-  { label: "Playbook", href: "/playbook" },
-  { label: "Blog", href: "/blog" },
-  { label: "FAQ", href: "/faq" },
-  { label: "About", href: "/about" },
-  { label: "Affiliate", href: "/affiliate" },
-  { label: "Contact", href: "/contact" },
-];
-
 export default function GetFunded() {
   const { market: initMarket, plan: initPlan } = getInitialParams();
   const [activeMarket, setActiveMarket] = useState<MarketKey>(initMarket);
   const [activePlan, setActivePlan] = useState<PlanKey>(initPlan);
-  const [menuOpen, setMenuOpen] = useState(false);
   const isFirstMarketChange = useRef(true);
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [selection, setSelection] = useState<Selection | null>(null);
@@ -1112,81 +1098,9 @@ export default function GetFunded() {
         jsonLd={[organizationSchema, websiteSchema]}
       />
 
-      {/* ── Sticky header with quick nav ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0F0F1A]/95 backdrop-blur-sm pt-[env(safe-area-inset-top)]">
-        <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <Link href="/">
-            <span className="font-['Orbitron'] text-lg font-bold text-white tracking-wider cursor-pointer whitespace-nowrap">
-              HYBRID <span className="text-accent neon-text-accent">FUNDING</span>
-            </span>
-          </Link>
-
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
-            {NAV_LINKS.slice(0, 6).map((l) => (
-              <Link key={l.href} href={l.href}>
-                <span className="inline-flex items-center gap-1.5 text-sm text-[#B8B8D0] hover:text-accent transition-colors cursor-pointer whitespace-nowrap">
-                  {l.label}
-                  {l.isNew && (
-                    <span className="rounded bg-accent px-1 py-px text-[9px] font-bold text-[#0F0F1A] font-['Orbitron']">
-                      NEW
-                    </span>
-                  )}
-                </span>
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <a href="#choose-program" onClick={() => trackEvent("lp_header_cta_click")}
-              className="font-['Orbitron'] text-xs font-bold px-4 py-2 rounded-full border border-accent text-accent hover:bg-accent hover:text-[#0F0F1A] transition-all whitespace-nowrap">
-              GET STARTED
-            </a>
-            {/* Mobile menu toggle */}
-            <button
-              className="lg:hidden text-white p-2 -mr-2"
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              onClick={() => setMenuOpen((v) => !v)}
-            >
-              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu panel */}
-        {menuOpen && (
-          <nav className="lg:hidden border-t border-white/5 bg-[#0F0F1A]/98 backdrop-blur-sm max-h-[calc(100vh-4rem)] overflow-y-auto">
-            <div className="container mx-auto px-4 sm:px-6 py-4 flex flex-col">
-              {NAV_LINKS.map((l) => (
-                <Link key={l.href} href={l.href}>
-                  <span
-                    className="flex items-center justify-between py-3 border-b border-white/5 last:border-0 text-[#B8B8D0] hover:text-accent transition-colors cursor-pointer"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {l.label}
-                    {l.isNew && (
-                      <span className="rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold text-[#0F0F1A] font-['Orbitron']">
-                        NEW
-                      </span>
-                    )}
-                  </span>
-                </Link>
-              ))}
-              <Link href="/trader-portal">
-                <span
-                  className="mt-4 text-center font-['Orbitron'] text-xs font-bold px-4 py-3 rounded-full border border-accent text-accent hover:bg-accent hover:text-[#0F0F1A] transition-all cursor-pointer block"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  TRADER PORTAL
-                </span>
-              </Link>
-            </div>
-          </nav>
-        )}
-      </header>
 
       {/* ── Hero ── */}
-      <section className="relative pt-[calc(8rem+env(safe-area-inset-top))] pb-10 overflow-hidden">
+      <section className="relative pt-12 md:pt-16 pb-10 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-10" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-accent/5 rounded-full blur-3xl" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -1778,44 +1692,26 @@ export default function GetFunded() {
         }}
       />
 
-      {/* ── Footer ── */}
-      <footer className="py-10 bg-[#0F0F1A]/90 border-t border-white/5">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
-          <p className="text-[#B8B8D0] text-xs text-center leading-relaxed">
-            <strong className="text-white">DISCLAIMER:</strong> Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are provided by Prop Account, LLC and all assessment fees are paid to Prop Account, LLC. If you qualify for a Funded Account, you will be required to enter into a Trader Agreement with Prop Account LC. Neither Prop Account, LLC nor Prop Account LC provides any trading education or other services. All such services are provided by Hybrid Funding. For complete terms and conditions, please visit{" "}
+      {/* ── Legal disclosure ── */}
+      <section className="border-t border-white/5 bg-[#0F0F1A]/90 py-8">
+        <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-xs leading-relaxed text-[#B8B8D0]">
+            <strong className="text-white">DISCLAIMER:</strong> Hybrid Funding is an affiliate of Prop Account, LLC. All funding assessments are provided by Prop Account, LLC and all assessment fees are paid to Prop Account, LLC. If you qualify for a Funded Account, you will be required to enter into a Trader Agreement with Prop Account LC. Neither Prop Account, LLC nor Prop Account LC provides trading education or other Hybrid Funding services. For complete terms and conditions, visit{" "}
             <a
               href="https://dashboardanalytix.com/client-terms-and-policies/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent hover:text-primary transition-colors underline"
+              className="text-accent underline transition-colors hover:text-primary"
             >
               Terms and Conditions
-            </a>{" "}or our{" "}
-            <Link href="/terms">
-              <span className="text-accent hover:text-primary transition-colors underline cursor-pointer">site terms</span>
+            </a>{" "}
+            or our{" "}
+            <Link href="/terms" className="text-accent underline transition-colors hover:text-primary">
+              site terms
             </Link>.
           </p>
-          <p className="text-white/30 text-xs text-center mt-4">
-            © {new Date().getFullYear()} Hybrid Funding. All rights reserved.{" "}
-            <Link href="/"><span className="hover:text-accent transition-colors cursor-pointer">hybridfunding.co</span></Link>
-          </p>
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: '48px', paddingTop: '24px' }}>
-  <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', flexWrap: 'wrap', marginBottom: '12px' }}>
-    <a href="/challenges" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Challenges</a>
-    <a href="/battles" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Battles</a>
-    <a href="/webinar" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Free Training</a>
-    <a href="/blog" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Blog</a>
-    <a href="/about" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>About</a>
-    <a href="/affiliate" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Affiliate</a>
-    <a href="/faq" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>FAQ</a>
-    <a href="/contact" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Contact</a>
-  </div>
-  <div style={{ display: 'flex', justifyContent: 'center' }}>
-    <a href="/trader-portal" style={{ color: '#C9A84C', fontSize: '13px', fontWeight: 700, textDecoration: 'none', letterSpacing: '1.5px', textTransform: 'uppercase', border: '1px solid rgba(201,168,76,0.4)', padding: '8px 20px', borderRadius: '4px' }}>Trader Portal Login</a>
-  </div>
-</div>
         </div>
-      </footer>
+      </section>
     </div>
   );
 }
