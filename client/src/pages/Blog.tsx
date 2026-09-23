@@ -6,6 +6,11 @@ import { posts } from "@/lib/posts";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 
 const Blog: React.FC = () => {
+  const latestPosts = posts.filter((p) => !p.archive);
+  const historyPosts = posts
+    .filter((p) => p.archive)
+    .sort((a, b) => (b.historicalEventDate || "").localeCompare(a.historicalEventDate || ""));
+
   return (
     <section className="py-20 cyberpunk-bg page-transition">
       <SEO
@@ -22,7 +27,7 @@ const Blog: React.FC = () => {
             "@type": "Blog",
             name: "Hybrid Funding News & Updates",
             url: "https://www.hybridfunding.co/blog",
-            blogPost: posts.map((p) => ({
+            blogPost: latestPosts.map((p) => ({
               "@type": "BlogPosting",
               headline: p.title,
               url: `https://www.hybridfunding.co/blog/${p.slug}`,
@@ -58,7 +63,7 @@ const Blog: React.FC = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {posts.map((p, i) => (
+          {latestPosts.map((p, i) => (
             <motion.article
               key={p.slug}
               className="glassmorphism rounded-xl overflow-hidden flex flex-col hover:scale-[1.015] transition-transform"
@@ -75,9 +80,7 @@ const Blog: React.FC = () => {
                     </span>
                   ))}
                 </div>
-                <h2 className="font-['Orbitron'] text-xl font-bold text-white mb-2 leading-snug">
-                  {p.title}
-                </h2>
+                <h2 className="font-['Orbitron'] text-xl font-bold text-white mb-2 leading-snug">{p.title}</h2>
                 <p className="text-[#B8B8D0] text-sm flex-1">{p.excerpt}</p>
                 <div className="flex items-center gap-4 text-[#6F6F8A] text-xs mt-4">
                   <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(p.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
@@ -89,6 +92,46 @@ const Blog: React.FC = () => {
               </div>
             </motion.article>
           ))}
+        </div>
+
+        <div className="max-w-6xl mx-auto mt-20">
+          <div className="text-center mb-10">
+            <p className="text-primary font-['Orbitron'] uppercase tracking-widest text-xs mb-3">From the Archive</p>
+            <h2 className="font-['Orbitron'] text-3xl md:text-4xl font-bold text-white mb-3">
+              Hybrid Funding <span className="text-primary neon-text-primary">Product History</span>
+            </h2>
+            <p className="text-[#B8B8D0] max-w-3xl mx-auto">
+              Reconstructed from verified repository history. The dates below are the original ship or campaign dates; these archive entries were added to the newsroom on September 23, 2026.
+            </p>
+          </div>
+
+          <div className="relative max-w-4xl mx-auto">
+            <div className="absolute left-3 md:left-1/2 top-0 bottom-0 w-px bg-white/10" />
+            <div className="space-y-6">
+              {historyPosts.map((p, i) => (
+                <motion.article
+                  key={p.slug}
+                  className={`relative md:w-[calc(50%-2rem)] ${i % 2 === 0 ? "md:mr-auto" : "md:ml-auto"} ml-10 md:ml-0`}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="absolute -left-[2.2rem] md:left-auto md:right-[-2.55rem] top-5 h-3 w-3 rounded-full bg-primary shadow-[0_0_12px_rgba(124,58,237,0.7)]" />
+                  {i % 2 === 1 && <div className="hidden md:block absolute left-[-2.55rem] right-auto top-5 h-3 w-3 rounded-full bg-primary shadow-[0_0_12px_rgba(124,58,237,0.7)]" />}
+                  <div className="glassmorphism rounded-xl p-5 border border-white/5">
+                    <div className="text-primary text-xs font-['Orbitron'] mb-2">
+                      {new Date(p.historicalEventDate || p.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                    </div>
+                    <h3 className="font-['Orbitron'] text-lg font-bold text-white mb-2">{p.title}</h3>
+                    <p className="text-[#B8B8D0] text-sm">{p.excerpt}</p>
+                    <Link href={`/blog/${p.slug}`} className="mt-4 inline-flex items-center gap-1 text-primary font-semibold text-sm">
+                      Read archive entry <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
