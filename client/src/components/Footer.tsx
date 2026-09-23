@@ -79,12 +79,17 @@ const Footer = () => {
               </li>
               <li>
                 <Link href="/blog" className="text-[#B8B8D0] hover:text-accent transition duration-200">
-                  Blog
+                  News & Updates
                 </Link>
               </li>
               <li>
                 <Link href="/playbook" className="text-[#B8B8D0] hover:text-accent transition duration-200">
                   Free Trader Playbook
+                </Link>
+              </li>
+              <li>
+                <Link href="/dna-test" className="text-[#B8B8D0] hover:text-accent transition duration-200">
+                  Trader DNA Test
                 </Link>
               </li>
               <li>
@@ -184,7 +189,7 @@ const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-accent/10">
           <p className="text-center text-[#B8B8D0] text-sm font-['Orbitron'] uppercase tracking-wider mb-4">
-            Trusted by traders worldwide
+            Reviews & trader feedback
           </p>
           <div className="max-w-2xl mx-auto mb-8">
             <TrustpilotWidget />
