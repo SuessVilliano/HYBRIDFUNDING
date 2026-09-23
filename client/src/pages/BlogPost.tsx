@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import type { ComponentType } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import SEO from "@/components/SEO";
@@ -7,7 +7,17 @@ import { getPostBySlug, getRelatedPosts } from "@/lib/posts";
 import { Calendar, Clock, ArrowRight, ChevronLeft } from "lucide-react";
 import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 
-const postModules = import.meta.glob("./blog-posts/*.tsx");
+const postModules = import.meta.glob("./blog-posts/*.tsx", { eager: true }) as Record<
+  string,
+  { default: ComponentType }
+>;
+
+const formatLongDate = (iso: string) =>
+  new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
 interface BlogPostProps {
   slug: string;
@@ -26,10 +36,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ slug }) => {
     );
   }
 
-  const loader = postModules[`./blog-posts/${slug}.tsx`];
-  const PostBody = loader
-    ? lazy(() => loader().then((m: any) => ({ default: m.default })))
-    : null;
+  const PostBody = postModules[`./blog-posts/${slug}.tsx`]?.default ?? null;
 
   const related = getRelatedPosts(slug, 3);
 
@@ -75,20 +82,26 @@ const BlogPost: React.FC<BlogPostProps> = ({ slug }) => {
               </span>
             ))}
           </div>
+          {meta.archive && meta.historicalEventDate && (
+            <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-[#B8B8D0]">
+              <span className="font-['Orbitron'] text-xs font-bold uppercase tracking-wider text-primary">Product History</span>
+              <p className="mt-1">
+                Originally shipped <strong className="text-white">{formatLongDate(meta.historicalEventDate)}</strong>. This archive entry was added to the newsroom on {formatLongDate(meta.publishedAt)} from verified repository history.
+              </p>
+            </div>
+          )}
           <h1 className="font-['Orbitron'] text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
             {meta.title}
           </h1>
           <p className="text-[#B8B8D0] text-lg mb-4">{meta.description}</p>
           <div className="flex items-center gap-4 text-[#6F6F8A] text-sm">
-            <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {new Date(meta.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+            <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {formatLongDate(meta.publishedAt)}</span>
             <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4" /> {meta.readingMinutes} min read</span>
           </div>
         </motion.header>
 
         <div className="max-w-3xl mx-auto glassmorphism rounded-xl p-6 md:p-10 prose-content">
-          <Suspense fallback={<div className="text-[#B8B8D0]">Loading article…</div>}>
-            {PostBody ? <PostBody /> : <p className="text-[#B8B8D0]">Article content unavailable.</p>}
-          </Suspense>
+          {PostBody ? <PostBody /> : <p className="text-[#B8B8D0]">Article content unavailable.</p>}
         </div>
 
         {/* Inline lead-magnet — capture readers at high intent */}
