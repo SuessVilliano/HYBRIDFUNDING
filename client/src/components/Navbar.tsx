@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const primaryLinks = [
+type NavItem = { name: string; path: string; isNew?: boolean };
+
+const primaryLinks: NavItem[] = [
   { name: "Challenges", path: "/challenges" },
   { name: "Predictive Markets", path: "/predictive-markets" },
   { name: "Playbook", path: "/playbook" },
@@ -12,7 +14,7 @@ const primaryLinks = [
   { name: "Updates", path: "/blog" },
 ];
 
-const moreLinks = [
+const moreLinks: NavItem[] = [
   { name: "AI Radar", path: "/market-radar", isNew: true },
   { name: "Battles", path: "/battles" },
   { name: "Trader DNA", path: "/dna-test" },
