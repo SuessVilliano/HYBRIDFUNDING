@@ -15,6 +15,7 @@ const primaryLinks = [
 const moreLinks = [
   { name: "AI Radar", path: "/market-radar", isNew: true },
   { name: "Battles", path: "/battles" },
+  { name: "Trader DNA", path: "/dna-test" },
   { name: "Free Training", path: "/webinar" },
   { name: "About", path: "/about" },
   { name: "FAQ", path: "/faq" },
