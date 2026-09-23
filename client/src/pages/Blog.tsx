@@ -5,6 +5,12 @@ import { breadcrumbSchema } from "@/lib/jsonLd";
 import { posts } from "@/lib/posts";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 
+const formatDate = (iso: string) =>
+  new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+const formatLongDate = (iso: string) =>
+  new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
 const Blog: React.FC = () => {
   const latestPosts = posts.filter((p) => !p.archive);
   const historyPosts = posts
@@ -83,7 +89,7 @@ const Blog: React.FC = () => {
                 <h2 className="font-['Orbitron'] text-xl font-bold text-white mb-2 leading-snug">{p.title}</h2>
                 <p className="text-[#B8B8D0] text-sm flex-1">{p.excerpt}</p>
                 <div className="flex items-center gap-4 text-[#6F6F8A] text-xs mt-4">
-                  <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(p.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                  <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {formatDate(p.publishedAt)}</span>
                   <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {p.readingMinutes} min read</span>
                 </div>
                 <Link href={`/blog/${p.slug}`} className="mt-5 inline-flex items-center gap-1 text-accent font-semibold text-sm hover:gap-2 transition-all">
@@ -116,11 +122,10 @@ const Blog: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                 >
-                  <div className="absolute -left-[2.2rem] md:left-auto md:right-[-2.55rem] top-5 h-3 w-3 rounded-full bg-primary shadow-[0_0_12px_rgba(124,58,237,0.7)]" />
-                  {i % 2 === 1 && <div className="hidden md:block absolute left-[-2.55rem] right-auto top-5 h-3 w-3 rounded-full bg-primary shadow-[0_0_12px_rgba(124,58,237,0.7)]" />}
+                  <div className={`absolute -left-[2.2rem] top-5 h-3 w-3 rounded-full bg-primary shadow-[0_0_12px_rgba(124,58,237,0.7)] ${i % 2 === 0 ? "md:left-auto md:right-[-2.55rem]" : "md:left-[-2.55rem] md:right-auto"}`} />
                   <div className="glassmorphism rounded-xl p-5 border border-white/5">
                     <div className="text-primary text-xs font-['Orbitron'] mb-2">
-                      {new Date(p.historicalEventDate || p.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                      {formatLongDate(p.historicalEventDate || p.publishedAt)}
                     </div>
                     <h3 className="font-['Orbitron'] text-lg font-bold text-white mb-2">{p.title}</h3>
                     <p className="text-[#B8B8D0] text-sm">{p.excerpt}</p>
