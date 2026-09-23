@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import SEO from "@/components/SEO";
+import MarketRadar from "@/pages/MarketRadar";
 import LivePredictionMarkets from "@/components/LivePredictionMarkets";
 import { breadcrumbSchema, faqPageSchema, productSchema } from "@/lib/jsonLd";
 import {
@@ -206,6 +207,9 @@ const PredictiveMarkets = () => {
 
       {/* Live markets preview */}
       <LivePredictionMarkets />
+
+      {/* AI Radar is part of the Predictive Markets workflow */}
+      <MarketRadar embedded />
 
       {/* What it is */}
       <section id="how-it-works" className="py-20 bg-[#0B1426]">
