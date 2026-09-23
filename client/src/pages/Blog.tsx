@@ -9,18 +9,18 @@ const Blog: React.FC = () => {
   return (
     <section className="py-20 cyberpunk-bg page-transition">
       <SEO
-        title="Hybrid Funding Blog — Prop Trading Guides & Rules Explained"
-        description="Strategy guides, rule breakdowns, and asset-class deep dives for Forex, Crypto, Futures, and Single Session Equities prop traders."
+        title="Hybrid Funding News & Updates — Features, Promotions, Events & Trader Guides"
+        description="Official Hybrid Funding product updates, promotions, events, platform news, rule explainers, and trader education in one documented hub."
         path="/blog"
         jsonLd={[
           breadcrumbSchema([
             { name: "Home", path: "/" },
-            { name: "Blog", path: "/blog" },
+            { name: "News & Updates", path: "/blog" },
           ]),
           {
             "@context": "https://schema.org",
             "@type": "Blog",
-            name: "Hybrid Funding Blog",
+            name: "Hybrid Funding News & Updates",
             url: "https://www.hybridfunding.co/blog",
             blogPost: posts.map((p) => ({
               "@type": "BlogPosting",
@@ -40,14 +40,21 @@ const Blog: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <p className="text-accent font-['Orbitron'] uppercase tracking-widest text-xs mb-3">
-            Trader Knowledge Base
+            Official Newsroom + Knowledge Base
           </p>
           <h1 className="font-['Orbitron'] text-4xl md:text-5xl font-bold text-white mb-4">
-            Hybrid Funding <span className="text-accent neon-text-accent">Blog</span>
+            Hybrid Funding <span className="text-accent neon-text-accent">News & Updates</span>
           </h1>
           <p className="text-[#B8B8D0] max-w-2xl mx-auto text-lg">
-            Strategy guides, rule explainers, and honest takes on prop trading.
+            Product launches, promotions, events, platform news, rule explainers, and trader education — documented in one place.
           </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-2">
+            {["Product Updates", "Promotions", "Events", "Trader Education"].map((label) => (
+              <span key={label} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[#B8B8D0]">
+                {label}
+              </span>
+            ))}
+          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
