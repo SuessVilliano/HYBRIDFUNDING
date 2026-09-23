@@ -39,11 +39,9 @@ function AppRouter() {
       <Route path="/battles/lobby" component={() => <BattleLobby />} />
       <Route path="/battles/room/:roomId" component={() => <BattleRoom />} />
 
-      {/* ── Homepage uses the GetFunded conversion page (no navbar, own footer) ──
-          Restored from fc1b85f — this was accidentally reverted to Home in the
-          June 26 battles rewrite (248e492). ── */}
-      <Route path="/" component={() => <GetFunded />} />
-      <Route path="/get-funded" component={() => <GetFunded />} />
+      {/* ── Homepage uses the same site shell as every public marketing page ── */}
+      <Route path="/" component={() => <Layout><GetFunded /></Layout>} />
+      <Route path="/get-funded" component={() => <Layout><GetFunded /></Layout>} />
 
       {/* ── Main site routes with Layout ── */}
       <Route>
