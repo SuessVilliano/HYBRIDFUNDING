@@ -1,77 +1,103 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+const primaryLinks = [
+  { name: "Challenges", path: "/challenges" },
+  { name: "Predictive Markets", path: "/predictive-markets" },
+  { name: "AI Radar", path: "/market-radar", isNew: true },
+  { name: "Battles", path: "/battles" },
+  { name: "Updates", path: "/blog" },
+];
+
+const moreLinks = [
+  { name: "Free Training", path: "/webinar" },
+  { name: "Playbook", path: "/playbook" },
+  { name: "About", path: "/about" },
+  { name: "Affiliate", path: "/affiliate" },
+  { name: "FAQ", path: "/faq" },
+  { name: "Contact", path: "/contact" },
+];
+
+const mobileLinks = [
+  { name: "Home", path: "/" },
+  ...primaryLinks,
+  ...moreLinks,
+];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
 
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Challenges", path: "/challenges" },
-    { name: "Predictive Markets", path: "/predictive-markets" },
-    { name: "Battles", path: "/battles" },
-    { name: "Free Training", path: "/webinar" },
-    { name: "Blog", path: "/blog" },
-    { name: "About", path: "/about" },
-    { name: "Affiliate", path: "/affiliate" },
-    { name: "FAQ", path: "/faq" },
-    { name: "Contact", path: "/contact" },
-  ];
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  // Close mobile menu when navigation happens
-  const closeMenu = () => {
-    if (isOpen) {
-      setIsOpen(false);
-    }
-  };
-
-  const isActive = (path: string) => {
-    return location === path ? "active" : "";
-  };
+  const closeMenu = () => setIsOpen(false);
+  const isActive = (path: string) =>
+    path === "/" ? location === "/" : location === path || location.startsWith(`${path}/`);
 
   return (
     <header className="sticky top-0 z-50 glassmorphism shadow-lg pt-[env(safe-area-inset-top)]">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center">
-                <span className="font-['Orbitron'] font-bold text-white">HF</span>
+        <div className="flex h-16 items-center justify-between gap-4">
+          <Link href="/" className="flex shrink-0 items-center space-x-2" onClick={closeMenu}>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent">
+              <span className="font-['Orbitron'] text-sm font-bold text-white">HF</span>
+            </div>
+            <span className="hidden font-['Orbitron'] text-lg font-bold text-white sm:inline xl:text-xl">
+              HYBRID<span className="text-accent">FUNDING</span>
+            </span>
+          </Link>
+
+          <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+            {primaryLinks.map((link) => (
+              <Link
+                key={link.path}
+                href={link.path}
+                className={`nav-link inline-flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors xl:px-3 ${
+                  isActive(link.path) ? "bg-white/5 text-accent" : "text-white hover:bg-white/5 hover:text-accent"
+                }`}
+              >
+                {link.name}
+                {link.isNew && (
+                  <span className="rounded bg-accent px-1 py-px font-['Orbitron'] text-[8px] font-bold text-[#0F0F1A]">
+                    NEW
+                  </span>
+                )}
+              </Link>
+            ))}
+
+            <details className="group relative">
+              <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5 hover:text-accent [&::-webkit-details-marker]:hidden">
+                More <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+              </summary>
+              <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-white/10 bg-[#0F0F1A]/98 p-2 shadow-2xl backdrop-blur-xl">
+                {moreLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    href={link.path}
+                    className={`block rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                      isActive(link.path) ? "bg-white/5 text-accent" : "text-[#B8B8D0] hover:bg-white/5 hover:text-accent"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
               </div>
-              <span className="font-['Orbitron'] font-bold text-white text-xl">
-                HYBRID<span className="text-accent">FUNDING</span>
-              </span>
+            </details>
+
+            <Link href="/trader-portal">
+              <Button variant="neon" size="lg" rounded="full" className="ml-1 font-['Orbitron'] text-xs font-semibold xl:text-sm">
+                TRADER PORTAL
+              </Button>
             </Link>
           </div>
 
-          <div className="hidden md:block">
-            <div className="flex items-center space-x-8">
-              {navLinks.map((link) => (
-                <Link key={link.path} href={link.path} className={`nav-link text-white hover:text-accent font-medium ${isActive(link.path)}`} onClick={closeMenu}>
-                  {link.name}
-                </Link>
-              ))}
-              <Link href="/trader-portal" onClick={closeMenu}>
-                <Button variant="neon" size="lg" rounded="full" className="font-['Orbitron'] font-semibold">
-                  TRADER PORTAL
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          <div className="md:hidden flex items-center">
+          <div className="flex items-center lg:hidden">
             <Button
               variant="ghost"
               size="icon"
               aria-label="Toggle mobile menu"
-              onClick={toggleMenu}
+              onClick={() => setIsOpen((v) => !v)}
               className="text-white hover:text-accent focus:outline-none"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -83,20 +109,34 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="md:hidden glassmorphism"
+            className="border-t border-white/5 bg-[#0F0F1A]/98 lg:hidden"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.25 }}
           >
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navLinks.map((link) => (
-                <Link key={link.path} href={link.path} className="block px-3 py-2 rounded-md text-white hover:bg-primary/20 hover:text-accent" onClick={closeMenu}>
-                  {link.name}
+            <div className="max-h-[calc(100vh-5rem)] overflow-y-auto px-4 py-3">
+              {mobileLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  href={link.path}
+                  className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                    isActive(link.path) ? "bg-white/5 text-accent" : "text-white hover:bg-white/5 hover:text-accent"
+                  }`}
+                  onClick={closeMenu}
+                >
+                  <span>{link.name}</span>
+                  {"isNew" in link && link.isNew && (
+                    <span className="rounded bg-accent px-1.5 py-0.5 font-['Orbitron'] text-[9px] font-bold text-[#0F0F1A]">
+                      NEW
+                    </span>
+                  )}
                 </Link>
               ))}
-              <Link href="/trader-portal" className="block px-3 py-2 rounded-md text-accent hover:bg-primary/20" onClick={closeMenu}>
-                Trader Portal
+              <Link href="/trader-portal" className="mt-2 block" onClick={closeMenu}>
+                <Button variant="neon" size="lg" rounded="full" className="w-full font-['Orbitron'] font-semibold">
+                  TRADER PORTAL
+                </Button>
               </Link>
             </div>
           </motion.div>
