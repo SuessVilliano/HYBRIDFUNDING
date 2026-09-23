@@ -1,30 +1,30 @@
 import { motion } from "framer-motion";
-import { TrendingUp, Users, DollarSign, Shield } from "lucide-react";
+import { TrendingUp, Layers3, DollarSign, Shield } from "lucide-react";
 
 const stats = [
   {
-    icon: Users,
-    label: "Funded Traders",
-    value: "10,000+",
-    sub: "Across 80+ countries",
+    icon: Layers3,
+    label: "Market Paths",
+    value: "5",
+    sub: "Forex · Crypto · Futures · Equities · Predictive",
   },
   {
     icon: DollarSign,
-    label: "Profit Splits Paid",
-    value: "Up to 90%",
-    sub: "Industry-leading payouts",
+    label: "Max Profit Split",
+    value: "90%",
+    sub: "Available on eligible programs and options",
   },
   {
     icon: TrendingUp,
-    label: "Asset Classes",
-    value: "4",
-    sub: "Forex · Crypto · Futures · Equities",
+    label: "Program Structures",
+    value: "6+",
+    sub: "1-Step · 2-Step · 3-Step · 4-Phase · Instant · IF Lite",
   },
   {
     icon: Shield,
-    label: "Trusted Platforms",
-    value: "7",
-    sub: "MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, GooeyPro",
+    label: "Platform Choice",
+    value: "Multi",
+    sub: "MatchTrader · DXtrade · cTrader · Volumetrica · GooeyPro · Tickblaze launching",
   },
 ];
 
@@ -34,10 +34,10 @@ const SocialProof: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <p className="text-accent font-['Orbitron'] uppercase tracking-widest text-xs mb-3">
-            Built by traders, trusted by thousands
+            Built for traders. Expanding continuously.
           </p>
           <h2 className="font-['Orbitron'] text-2xl md:text-3xl font-bold text-white">
-            Why traders choose <span className="text-accent neon-text-accent">Hybrid Funding</span>
+            Why traders explore <span className="text-accent neon-text-accent">Hybrid Funding</span>
           </h2>
         </div>
 
@@ -54,9 +54,7 @@ const SocialProof: React.FC = () => {
                 transition={{ duration: 0.4, delay: i * 0.08 }}
               >
                 <Icon className="h-7 w-7 text-accent mx-auto mb-2" />
-                <div className="font-['Orbitron'] text-2xl md:text-3xl font-bold text-white">
-                  {s.value}
-                </div>
+                <div className="font-['Orbitron'] text-2xl md:text-3xl font-bold text-white">{s.value}</div>
                 <div className="text-[#B8B8D0] text-sm font-semibold mt-1">{s.label}</div>
                 <div className="text-[#6F6F8A] text-[11px] mt-1 leading-tight">{s.sub}</div>
               </motion.div>
