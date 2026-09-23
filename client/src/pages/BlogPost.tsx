@@ -21,7 +21,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ slug }) => {
       <section className="py-32 cyberpunk-bg page-transition text-center">
         <SEO title="Post not found" description="This post doesn't exist." path={`/blog/${slug}`} noindex />
         <h1 className="font-['Orbitron'] text-3xl text-white mb-4">Post not found</h1>
-        <Link href="/blog" className="text-accent underline">Back to the blog</Link>
+        <Link href="/blog" className="text-accent underline">Back to Updates</Link>
       </section>
     );
   }
@@ -45,7 +45,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ slug }) => {
         jsonLd={[
           breadcrumbSchema([
             { name: "Home", path: "/" },
-            { name: "Blog", path: "/blog" },
+            { name: "News & Updates", path: "/blog" },
             { name: meta.title, path: `/blog/${slug}` },
           ]),
           articleSchema({
@@ -66,7 +66,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ slug }) => {
           transition={{ duration: 0.5 }}
         >
           <Link href="/blog" className="inline-flex items-center gap-1 text-[#B8B8D0] hover:text-accent text-sm mb-6">
-            <ChevronLeft className="h-4 w-4" /> Back to blog
+            <ChevronLeft className="h-4 w-4" /> Back to Updates
           </Link>
           <div className="flex flex-wrap gap-2 mb-4">
             {meta.tags.map((t) => (
@@ -98,7 +98,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ slug }) => {
             Want our full Trader Playbook (PDF) — free?
           </h3>
           <p className="text-[#B8B8D0] mb-4">
-            We'll text you a download link plus a 20% off code for your first challenge.
+            We'll text you the download link plus current Hybrid Funding offers and product updates.
           </p>
           <A2PCompliantOptInForm showResourceLinks={false} compactMode />
         </div>
