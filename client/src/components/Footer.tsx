@@ -158,7 +158,7 @@ const Footer = () => {
 
           <div>
             <h3 className="font-['Orbitron'] text-lg font-bold text-white mb-4">Subscribe</h3>
-            <p className="text-[#B8B8D0] mb-4">Stay updated with our latest offerings and news.</p>
+            <p className="text-[#B8B8D0] mb-4">Get product updates, promotions, events, and trader news.</p>
 
             <form className="flex" onSubmit={handleSubscribe}>
               <Input
