@@ -40,7 +40,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "What trading platforms do you support?",
-      answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is the platform we offer to international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures. Single Session Equities trades exclusively on GooeyPro. Our technology is integrated with each platform to monitor your trading performance in real-time."
+      answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is the platform we offer to international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures, with Tickblaze launching as an additional futures option. Single Session Equities trades exclusively on GooeyPro. Our technology is integrated with each platform to monitor your trading performance in real-time."
     },
     {
       question: "What are Challenge Bundles?",
@@ -188,7 +188,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "Which platforms can I use for Futures trading?",
-      answer: "Futures traders can choose from Tradovate (https://trader.tradovate.com/), Volumetrica (https://my.deepcharts.com/identity/account/login), and DXtrade Futures. All three are supported for Funded Futures Plan accounts."
+      answer: "Futures traders can use Tradovate, Volumetrica, and DXtrade Futures. Tickblaze is also being added to the futures lineup and will be marked available once the production launch is complete."
     },
     {
       question: "How do I complete the CME market data attestation for Futures trading?",
@@ -394,6 +394,9 @@ const FAQ: React.FC = () => {
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-[#171728] border border-accent/30 text-[#B8B8D0] rounded-full px-3 py-1">
                       DXtrade Futures
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-primary/15 border border-primary/40 text-primary rounded-full px-3 py-1">
+                      Tickblaze · Launching
                     </span>
                   </div>
                   {futuresFaqs.map((faq, index) => (
