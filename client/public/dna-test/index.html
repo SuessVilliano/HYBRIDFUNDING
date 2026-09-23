@@ -1078,17 +1078,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var utmSource = params.get('utm_source') || '';
   var utmCampaign = params.get('utm_campaign') || '';
 
+  var trackingKeys = ['ref','affiliate','aff','utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+
+  function withTracking(rawUrl) {
+    try {
+      var url = new URL(rawUrl, window.location.origin);
+      trackingKeys.forEach(function (key) {
+        var value = params.get(key);
+        if (value) url.searchParams.set(key, value);
+      });
+      return url.toString();
+    } catch (_) {
+      return rawUrl;
+    }
+  }
+
   function decorateOutboundLinks() {
-    var keep = ['ref','affiliate','aff','utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
     document.querySelectorAll('a[href*="hybridfunding.co/get-funded"], a[href*="leadconnectorhq.com/widget/booking"]').forEach(function (a) {
-      try {
-        var url = new URL(a.href);
-        keep.forEach(function (key) {
-          var value = params.get(key);
-          if (value) url.searchParams.set(key, value);
-        });
-        a.href = url.toString();
-      } catch (_) {}
+      a.href = withTracking(a.href);
     });
   }
 
@@ -1220,11 +1227,58 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return winner;
   }
 
+  function personalizeResultCta(activeResult, type, marketPath) {
+    var configs = {
+      predictive: {
+        url: 'https://hybridfunding.co/predictive-markets',
+        label: 'Explore Predictive Markets →',
+        text: 'Predictive Markets — apply your Trader DNA to event-driven Yes/No markets, with AI Radar built into the research workflow.'
+      },
+      futures: {
+        url: 'https://hybridfunding.co/get-funded?market=futures&plan=four-phase',
+        label: 'View Futures Funding →',
+        text: '4-Phase Funded Futures — structured phase targets, phase payouts, and a path to a Live Funded account.'
+      },
+      equities: {
+        url: 'https://hybridfunding.co/get-funded?market=equities&plan=one-step',
+        label: 'View Equities Funding →',
+        text: 'Single Session Equities — a one-step intraday structure with no overnight positions.'
+      },
+      crypto: {
+        url: 'https://hybridfunding.co/get-funded?market=crypto&plan=' + (type === 'A' ? 'two-step' : 'one-step'),
+        label: 'View Crypto Funding →',
+        text: type === 'A'
+          ? 'Crypto 2-Step — a structured path with more drawdown room for process-driven traders.'
+          : 'Crypto 1-Step — one evaluation phase with 24/7 crypto market access.'
+      },
+      forex: {
+        url: 'https://hybridfunding.co/get-funded?market=forex&plan=' + (type === 'A' ? 'two-step' : type === 'H' ? 'instant' : 'one-step'),
+        label: type === 'H' ? 'View Instant Funding →' : 'View Forex Funding →',
+        text: type === 'A'
+          ? 'Forex 2-Step — structured targets and more breathing room for system-based traders.'
+          : type === 'H'
+            ? 'Forex Instant Funding — skip the evaluation and move directly into a funded structure.'
+            : 'Forex 1-Step — one evaluation phase with no fixed time limit.'
+      }
+    };
+
+    var config = configs[marketPath] || configs.forex;
+    var primary = activeResult.querySelector('.btn-primary');
+    var challengeText = activeResult.querySelector('.challenge-text');
+    if (primary) {
+      primary.href = withTracking(config.url);
+      primary.textContent = config.label;
+    }
+    if (challengeText) challengeText.textContent = config.text;
+  }
+
   function showResults() {
     var type = determineType();
+    var marketPath = document.getElementById('fmarket').value || 'forex';
     results.classList.add('active');
     var activeResult = document.getElementById('result-' + type);
     activeResult.classList.add('active');
+    personalizeResultCta(activeResult, type, marketPath);
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
           event: 'result_revealed',
