@@ -1,4 +1,26 @@
 import type { ComponentType } from "react";
+import AffiliateProgramExpansionJune2025 from "./blog-posts/affiliate-program-expansion-june-2025";
+import AiMarketRadarLaunchJuly2026 from "./blog-posts/ai-market-radar-launch-july-2026";
+import BundlesCustomerCreditRapidPayoutCart from "./blog-posts/bundles-customer-credit-rapid-payout-cart";
+import FreeTrainingWebinarLaunch from "./blog-posts/free-training-webinar-launch";
+import FuturesPropFirmRules from "./blog-posts/futures-prop-firm-rules";
+import GoalSummerPromotion2026 from "./blog-posts/goal-summer-promotion-2026";
+import HowToPassA1StepForexChallenge from "./blog-posts/how-to-pass-a-1-step-forex-challenge";
+import HybridFundingPwaLaunch from "./blog-posts/hybrid-funding-pwa-launch";
+import HybridFundingVsOtherPropFirms from "./blog-posts/hybrid-funding-vs-other-prop-firms";
+import InstantFundingLiteLaunch from "./blog-posts/instant-funding-lite-launch";
+import InstantFundingVsEvaluation from "./blog-posts/instant-funding-vs-evaluation";
+import PlatformFoundationMay2025 from "./blog-posts/platform-foundation-may-2025";
+import PredictiveMarketsLaunchJuly2026 from "./blog-posts/predictive-markets-launch-july-2026";
+import September2026LeafEvent from "./blog-posts/september-2026-leaf-event";
+import SingleSessionEquitiesExplained from "./blog-posts/single-session-equities-explained";
+import SingleSessionEquitiesLaunch from "./blog-posts/single-session-equities-launch";
+import SunnySummerPromotion2026 from "./blog-posts/sunny-summer-promotion-2026";
+import TradehouseBattlesFirstPreview from "./blog-posts/tradehouse-battles-first-preview";
+import TradehouseLiveArenaLaunch from "./blog-posts/tradehouse-live-arena-launch";
+import TraderDnaTestLaunch from "./blog-posts/trader-dna-test-launch";
+import TraderPlaybookLaunch from "./blog-posts/trader-playbook-launch";
+import Unity20PromotionJune2026 from "./blog-posts/unity20-promotion-june-2026";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import SEO from "@/components/SEO";
@@ -7,10 +29,30 @@ import { getPostBySlug, getRelatedPosts } from "@/lib/posts";
 import { Calendar, Clock, ArrowRight, ChevronLeft } from "lucide-react";
 import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 
-const postModules = import.meta.glob("./blog-posts/*.tsx", { eager: true }) as Record<
-  string,
-  { default: ComponentType }
->;
+const postComponents: Record<string, ComponentType> = {
+  "affiliate-program-expansion-june-2025": AffiliateProgramExpansionJune2025,
+  "ai-market-radar-launch-july-2026": AiMarketRadarLaunchJuly2026,
+  "bundles-customer-credit-rapid-payout-cart": BundlesCustomerCreditRapidPayoutCart,
+  "free-training-webinar-launch": FreeTrainingWebinarLaunch,
+  "futures-prop-firm-rules": FuturesPropFirmRules,
+  "goal-summer-promotion-2026": GoalSummerPromotion2026,
+  "how-to-pass-a-1-step-forex-challenge": HowToPassA1StepForexChallenge,
+  "hybrid-funding-pwa-launch": HybridFundingPwaLaunch,
+  "hybrid-funding-vs-other-prop-firms": HybridFundingVsOtherPropFirms,
+  "instant-funding-lite-launch": InstantFundingLiteLaunch,
+  "instant-funding-vs-evaluation": InstantFundingVsEvaluation,
+  "platform-foundation-may-2025": PlatformFoundationMay2025,
+  "predictive-markets-launch-july-2026": PredictiveMarketsLaunchJuly2026,
+  "september-2026-leaf-event": September2026LeafEvent,
+  "single-session-equities-explained": SingleSessionEquitiesExplained,
+  "single-session-equities-launch": SingleSessionEquitiesLaunch,
+  "sunny-summer-promotion-2026": SunnySummerPromotion2026,
+  "tradehouse-battles-first-preview": TradehouseBattlesFirstPreview,
+  "tradehouse-live-arena-launch": TradehouseLiveArenaLaunch,
+  "trader-dna-test-launch": TraderDnaTestLaunch,
+  "trader-playbook-launch": TraderPlaybookLaunch,
+  "unity20-promotion-june-2026": Unity20PromotionJune2026,
+};
 
 const formatLongDate = (iso: string) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", {
@@ -36,7 +78,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ slug }) => {
     );
   }
 
-  const PostBody = postModules[`./blog-posts/${slug}.tsx`]?.default ?? null;
+  const PostBody = postComponents[slug] ?? null;
 
   const related = getRelatedPosts(slug, 3);
 
