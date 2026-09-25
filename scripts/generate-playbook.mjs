@@ -638,8 +638,67 @@ table(
 callout("Trading window", "09:30 – 15:55 ET only. Pre-market / extended hours not allowed. Position open past 15:55 ET = Prohibited Practices violation = hard breach.");
 pageBreak();
 
+// ============== PREDICTIVE MARKETS ==============
+h1("09  ·  Predictive Markets");
+p("Trade the outcome of real-world events with a funded account. Instead of buying a currency pair or futures contract, you buy Yes or No shares tied to a clearly defined event question.");
+
+h2("How the contract works");
+bullet("Buy Yes if you believe the event will happen; buy No if you believe it will not.");
+bullet("Shares are priced between $0.00 and $1.00. A 25-cent share costs $0.25.");
+bullet("Winning shares settle at $1.00. Losing shares settle at $0.00.");
+bullet("There is no short selling and no leverage. To take the opposite view, buy the other side.");
+bullet("Opening trades are allowed between $0.20 and $0.80. Positions may be closed later at any available price.");
+bullet("Commission is 1% on opening trades only.");
+
+h2("Worked example");
+p("Buy $1,000 of Yes at $0.25 and you hold 4,000 shares. If the market moves to $0.40, the position is worth about $1,600. If the event ultimately resolves Yes, 4,000 winning shares settle at $4,000. If it resolves No, they settle at $0. The full amount committed to an event can be lost, so event sizing matters.");
+
+callout("Research layer", "AI Market Radar is built into the Predictive Markets workflow to help traders scan event markets, volume, movement, and timing. It is a research tool, not a guarantee of outcome.");
+pageBreak();
+
+h1("09  ·  Predictive Markets - Rules & Payouts");
+table(
+  [
+    { key: "rule", label: "RULE", width: 220, align: "left" },
+    { key: "value", label: "VALUE", width: 264, align: "left" },
+  ],
+  [
+    { rule: "Profit Target", value: "10% - Evaluation only" },
+    { rule: "Daily Drawdown", value: "3% EOD equity; resets 5 PM ET" },
+    { rule: "Max Drawdown", value: "6% trailing equity high" },
+    { rule: "Max Profit / Event", value: "0.5% of account, aggregated" },
+    { rule: "Evaluation Time", value: "30 days; 60 with Double Time" },
+    { rule: "Commission", value: "1% on opening trades only" },
+    { rule: "Opening Price Range", value: "$0.20-$0.80" },
+    { rule: "Leverage", value: "None" },
+  ]
+);
+
+h2("Funded payout terms");
+bullet("Funded split starts at 75/25 and can be upgraded to 90/10.");
+bullet("First payout is available 7 days after funding; subsequent requests are every 7 days.");
+bullet("Minimum payout is 2% of starting balance.");
+bullet("Eligible profits are requested as a full withdrawal and there must be no open positions.");
+
+h2("Evaluation pricing");
+table(
+  [
+    { key: "size", label: "ACCOUNT SIZE", width: 160, align: "left" },
+    { key: "fee", label: "ENTRY FEE", width: 160, align: "right" },
+    { key: "target", label: "10% TARGET", width: 164, align: "right" },
+  ],
+  [
+    { size: "$5K", fee: "$98", target: "$500" },
+    { size: "$10K", fee: "$188", target: "$1,000" },
+    { size: "$25K", fee: "$528", target: "$2,500" },
+    { size: "$50K", fee: "$988", target: "$5,000" },
+    { size: "$100K", fee: "$1,888", target: "$10,000" },
+  ]
+);
+pageBreak();
+
 // ============== ADD-ONS ==============
-h1("09  ·  Add-on decision tree");
+h1("10  ·  Add-on decision tree");
 p("Five add-ons priced as a percentage of plan price. Pick based on your style — not because you're hedging your own discipline.");
 table(
   [
@@ -660,7 +719,7 @@ table(
 pageBreak();
 
 // ============== BREACH SCENARIOS ==============
-h1("10  ·  How traders breach (and how not to)");
+h1("11  ·  How traders breach (and how not to)");
 p("The five most common breach patterns we see — and exactly how to avoid each one.");
 
 h3("1. The Friday close trap (Forex)");
@@ -682,7 +741,7 @@ callout("If you remember nothing else", "Three rules: small size, lock the trail
 pageBreak();
 
 // ============== WHY HYBRID FUNDING ==============
-h1("11  ·  Why traders pick Hybrid Funding");
+h1("12  ·  Why traders pick Hybrid Funding");
 eyebrow("Six unfair advantages");
 p("We're not the only prop firm. We are the prop firm built for traders who want optionality, modern platforms, and rules that make sense.");
 
@@ -704,7 +763,7 @@ table(
 pageBreak();
 
 // ============== 30-DAY ROADMAP ==============
-h1("12  ·  The first 30 days roadmap");
+h1("13  ·  The first 30 days roadmap");
 p("From sign-up to your first payout. The exact path most successful traders follow.");
 
 h3("Week 1 — Setup & calibration");
@@ -731,7 +790,7 @@ callout("Realistic timeline", "1-Step Forex with disciplined sizing typically cl
 pageBreak();
 
 // ============== COMPOUNDING MATH ==============
-h1("13  ·  The compounding math of payouts");
+h1("14  ·  The compounding math of payouts");
 p("One funded account is fine. The math gets interesting when you understand how funded accounts compound on themselves.");
 
 h2("Worked example — the scaling ladder");
@@ -761,7 +820,7 @@ bullet("They don't add a second account — but the entry on a second program is
 pageBreak();
 
 // ============== AFFILIATE ==============
-h1("14  ·  Get paid to refer traders");
+h1("15  ·  Get paid to refer traders");
 eyebrow("Affiliate program");
 p("This is the easy money play. If your network has any traders, you should be running our affiliate program. 5–20% commissions, weekly payouts, no cap.");
 
@@ -793,7 +852,7 @@ bigCTA("Start the affiliate program in 30 seconds", "Tier 4 traders earn $24K+/y
 pageBreak();
 
 // ============== BATTLES ==============
-h1("15  ·  Join the TradeHouse Battles arena");
+h1("16  ·  Join the TradeHouse Battles arena");
 eyebrow("Trade live, win funded accounts");
 p("TradeHouse Battles is the competitive trading arena built for serious traders. Real-time tournaments. Live leaderboards. Prizes including funded accounts worth $100,000+. Free to enter many events.");
 
@@ -812,12 +871,12 @@ bigCTA("Enter the next Battle", "New tournaments every week. Free events monthly
 pageBreak();
 
 // ============== NEXT MOVE ==============
-h1("16  ·  Your next move");
-p("Pick one. All five paths work. Most traders start with #1.");
+h1("17  ·  Your next move");
+p("Choose your next move. Hybrid Funding now supports five market paths: Forex, Crypto, Futures, Single Session Equities, and Predictive Markets.");
 
 h2("1. Pick your challenge tier");
 pSoft("All programs, all asset classes, full pricing.");
-bigCTA("Start a challenge", "Forex · Crypto · Futures · Single Session Equities", "https://www.hybridfunding.co/challenges");
+bigCTA("Start a challenge", "Forex · Crypto · Futures · Single Session Equities · Predictive Markets", "https://www.hybridfunding.co/challenges");
 
 h2("2. Read the full FAQ");
 pSoft("Every rule, every program, with worked examples — by asset class.");
@@ -837,7 +896,8 @@ bigCTA("Read the blog", "Free, no email required.", "https://www.hybridfunding.c
 
 h2("Share this playbook");
 p("If this helped you — please send it to one trading friend. Forwarding link:");
-doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(12).text("hybridfunding.co/playbook", { align: "center" }).moveDown(0.6);
+resetCursor();
+doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(12).text("hybridfunding.co/playbook", M_LEFT, doc.y, { width: CONTENT_W, align: "center" }).moveDown(0.6);
 doc.fillColor(TEXT_SOFT).font("Helvetica-Oblique").fontSize(10).text(
   "This playbook is not investment advice. Trading involves risk of loss. © Hybrid Funding LLC.",
   { align: "center" }
