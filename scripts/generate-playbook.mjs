@@ -36,49 +36,107 @@ const M_RIGHT = 64;
 const CONTENT_W = PAGE_W - M_LEFT - M_RIGHT;
 
 // ============== HELPERS ==============
+function resetCursor() {
+  doc.x = M_LEFT;
+}
+function remainingHeight() {
+  return PAGE_H - 72 - doc.y;
+}
+function ensureSpace(height = 40) {
+  if (remainingHeight() < height) pageBreak();
+  resetCursor();
+}
 function h1(t) {
-  doc.moveDown(0.4).fillColor(TEXT).font("Helvetica-Bold").fontSize(28).text(t).moveDown(0.2);
+  ensureSpace(70);
+  doc.fillColor(TEXT).font("Helvetica-Bold").fontSize(28);
+  doc.text(t, M_LEFT, doc.y, { width: CONTENT_W, lineGap: 1 });
+  resetCursor();
+  doc.moveDown(0.2);
   const startY = doc.y;
   doc.rect(M_LEFT, startY, 70, 4).fill(ACCENT);
-  doc.fillColor(TEXT).moveDown(1.1);
+  doc.fillColor(TEXT);
+  doc.y = startY + 24;
+  resetCursor();
 }
 function h2(t) {
-  doc.moveDown(0.6).fillColor(TEXT).font("Helvetica-Bold").fontSize(17).text(t).moveDown(0.25);
+  doc.font("Helvetica-Bold").fontSize(17);
+  const h = doc.heightOfString(t, { width: CONTENT_W, lineGap: 1 });
+  ensureSpace(h + 24);
+  doc.fillColor(TEXT).text(t, M_LEFT, doc.y, { width: CONTENT_W, lineGap: 1 });
+  resetCursor();
+  doc.moveDown(0.25);
 }
 function h3(t) {
-  doc.moveDown(0.4).fillColor(TEXT).font("Helvetica-Bold").fontSize(13).text(t).moveDown(0.15);
+  doc.font("Helvetica-Bold").fontSize(13);
+  const h = doc.heightOfString(t, { width: CONTENT_W });
+  ensureSpace(h + 18);
+  doc.fillColor(TEXT).text(t, M_LEFT, doc.y, { width: CONTENT_W });
+  resetCursor();
+  doc.moveDown(0.15);
 }
 function eyebrow(t) {
-  doc.moveDown(0.2).fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(t.toUpperCase(), { characterSpacing: 3 }).moveDown(0.15);
+  ensureSpace(24);
+  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9)
+    .text(t.toUpperCase(), M_LEFT, doc.y, { width: CONTENT_W, characterSpacing: 3 });
+  resetCursor();
+  doc.moveDown(0.15);
   doc.fillColor(TEXT);
 }
 function p(t) {
-  doc.fillColor(TEXT).font("Helvetica").fontSize(11).text(t, { align: "left", lineGap: 3 }).moveDown(0.3);
+  doc.font("Helvetica").fontSize(11);
+  const h = doc.heightOfString(t, { width: CONTENT_W, align: "left", lineGap: 3 });
+  ensureSpace(h + 12);
+  doc.fillColor(TEXT).text(t, M_LEFT, doc.y, { width: CONTENT_W, align: "left", lineGap: 3 });
+  resetCursor();
+  doc.moveDown(0.3);
 }
 function pSoft(t) {
-  doc.fillColor(TEXT_SOFT).font("Helvetica").fontSize(10.5).text(t, { align: "left", lineGap: 3 }).moveDown(0.3);
+  doc.font("Helvetica").fontSize(10.5);
+  const h = doc.heightOfString(t, { width: CONTENT_W, align: "left", lineGap: 3 });
+  ensureSpace(h + 12);
+  doc.fillColor(TEXT_SOFT).text(t, M_LEFT, doc.y, { width: CONTENT_W, align: "left", lineGap: 3 });
+  resetCursor();
+  doc.moveDown(0.3);
   doc.fillColor(TEXT);
 }
 function bullet(t) {
-  doc.fillColor(TEXT).font("Helvetica").fontSize(11).text(`•  ${t}`, { indent: 12, lineGap: 3 }).moveDown(0.12);
+  const value = "•  " + t;
+  doc.font("Helvetica").fontSize(11);
+  const h = doc.heightOfString(value, { width: CONTENT_W - 12, lineGap: 3 });
+  ensureSpace(h + 8);
+  doc.fillColor(TEXT).text(value, M_LEFT, doc.y, { width: CONTENT_W, indent: 12, lineGap: 3 });
+  resetCursor();
+  doc.moveDown(0.12);
 }
 function divider() {
-  doc.moveDown(0.5);
+  ensureSpace(18);
+  doc.moveDown(0.35);
   const y = doc.y;
   doc.rect(M_LEFT, y, CONTENT_W, 0.7).fill("#D8D8E5");
-  doc.fillColor(TEXT).moveDown(0.5);
+  doc.fillColor(TEXT);
+  doc.y = y + 12;
+  resetCursor();
 }
 function callout(label, text) {
-  doc.moveDown(0.4);
+  doc.font("Helvetica-Oblique").fontSize(10.5);
+  const textH = doc.heightOfString(text, { width: CONTENT_W - 32, lineGap: 3 });
+  const h = Math.max(56, textH + 34);
+  ensureSpace(h + 14);
   const startY = doc.y;
-  // left accent stripe
-  const stripeH = 60;
-  doc.rect(M_LEFT, startY, 4, stripeH).fill(ACCENT);
-  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text(label.toUpperCase(), M_LEFT + 16, startY + 2, { characterSpacing: 2, width: CONTENT_W - 16 });
-  doc.fillColor(TEXT_SOFT).font("Helvetica-Oblique").fontSize(10.5).text(text, M_LEFT + 16, doc.y + 2, { lineGap: 3, width: CONTENT_W - 16 });
-  doc.fillColor(TEXT).moveDown(0.4);
+  doc.rect(M_LEFT, startY, 4, h).fill(ACCENT);
+  doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9)
+    .text(label.toUpperCase(), M_LEFT + 16, startY + 3, { characterSpacing: 2, width: CONTENT_W - 24 });
+  doc.fillColor(TEXT_SOFT).font("Helvetica-Oblique").fontSize(10.5)
+    .text(text, M_LEFT + 16, startY + 20, { lineGap: 3, width: CONTENT_W - 28 });
+  doc.y = startY + h + 10;
+  resetCursor();
+  doc.fillColor(TEXT);
 }
-function pageBreak() { doc.addPage(); }
+function pageBreak() {
+  doc.addPage();
+  doc.x = M_LEFT;
+  doc.y = 64;
+}
 function pageNumberFooter(currentPage, totalPages) {
   doc.fillColor(SUBTLE).font("Helvetica").fontSize(8.5)
     .text(`Hybrid Funding · Trader Playbook`, M_LEFT, PAGE_H - 40, { width: CONTENT_W / 2, align: "left" });
@@ -93,57 +151,68 @@ function pageNumberFooter(currentPage, totalPages) {
  * rows: [{ key: value, ... }]
  */
 function table(cols, rows, opts = {}) {
-  const headH = 26;
-  const rowH = opts.rowH || 22;
+  const headH = 28;
+  const minRowH = opts.rowH || 22;
   const totalW = cols.reduce((a, c) => a + c.width, 0);
-  let x = M_LEFT;
-  let y = doc.y;
 
-  // ensure we have space; otherwise page break
-  const needed = headH + rowH * rows.length + 14;
-  if (y + needed > PAGE_H - 96) {
-    pageBreak();
-    y = doc.y;
+  function drawHeader(y) {
+    doc.rect(M_LEFT, y, totalW, headH).fill(ROW_HEAD);
+    let x = M_LEFT;
+    cols.forEach((c) => {
+      doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9)
+        .text(c.label, x + 8, y + 8, { width: c.width - 16, align: c.align || "left", lineGap: 1 });
+      x += c.width;
+    });
+    return y + headH;
   }
 
-  // header
-  doc.rect(M_LEFT, y, totalW, headH).fill(ROW_HEAD);
-  cols.forEach((c) => {
-    doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(10).text(
-      c.label,
-      x + 8,
-      y + 8,
-      { width: c.width - 16, align: c.align || "left" }
-    );
-    x += c.width;
-  });
-  y += headH;
+  ensureSpace(headH + minRowH + 8);
+  let y = drawHeader(doc.y);
 
-  // rows
   rows.forEach((row, i) => {
-    if (i % 2 === 1) {
-      doc.rect(M_LEFT, y, totalW, rowH).fill(ROW_ALT);
+    let rowH = minRowH;
+    cols.forEach((c) => {
+      const val = String(row[c.key] ?? "");
+      const isHighlight = row._highlight && c.key === cols[0].key;
+      doc.font(isHighlight ? "Helvetica-Bold" : "Helvetica").fontSize(9.5);
+      const h = doc.heightOfString(val, { width: c.width - 16, align: c.align || "left", lineGap: 1.5 });
+      rowH = Math.max(rowH, h + 12);
+    });
+
+    if (y + rowH > PAGE_H - 72) {
+      pageBreak();
+      y = drawHeader(doc.y);
     }
+
+    if (i % 2 === 1) doc.rect(M_LEFT, y, totalW, rowH).fill(ROW_ALT);
+
     let cx = M_LEFT;
     cols.forEach((c) => {
-      const val = row[c.key];
+      const val = String(row[c.key] ?? "");
       const isHighlight = row._highlight && c.key === cols[0].key;
       doc.fillColor(isHighlight ? PRIMARY : TEXT)
         .font(isHighlight ? "Helvetica-Bold" : "Helvetica")
-        .fontSize(10)
-        .text(String(val ?? ""), cx + 8, y + 6, { width: c.width - 16, align: c.align || "left", lineGap: 2 });
+        .fontSize(9.5)
+        .text(val, cx + 8, y + 6, {
+          width: c.width - 16,
+          align: c.align || "left",
+          lineGap: 1.5,
+        });
       cx += c.width;
     });
-    // bottom border
+
     doc.rect(M_LEFT, y + rowH - 0.5, totalW, 0.4).fill("#E8E8F0");
     y += rowH;
   });
 
-  doc.y = y + 6;
+  doc.y = y + 8;
+  resetCursor();
   doc.fillColor(TEXT);
 }
 
 function statPanel(items) {
+  ensureSpace(90);
+  resetCursor();
   // items: [{label, value}]
   const gap = 12;
   const w = (CONTENT_W - gap * (items.length - 1)) / items.length;
@@ -162,6 +231,8 @@ function statPanel(items) {
 }
 
 function bigCTA(headline, subline, url) {
+  ensureSpace(90);
+  resetCursor();
   doc.moveDown(0.5);
   const y = doc.y;
   const h = 70;
