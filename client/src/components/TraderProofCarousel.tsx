@@ -217,7 +217,7 @@ export default function TraderProofCarousel() {
             type="button"
             aria-label="Previous certificate"
             onClick={() => setIndex((i) => (i - 1 + proofItems.length) % proofItems.length)}
-            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/15 bg-[#0F0F1A]/85 p-2 text-white shadow-lg backdrop-blur hover:border-accent hover:text-accent md:left-[calc(50%-410px)]"
+            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/15 bg-[#0F0F1A]/85 p-2 text-white shadow-lg backdrop-blur hover:border-accent hover:text-accent md:left-[7%]"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -225,7 +225,7 @@ export default function TraderProofCarousel() {
             type="button"
             aria-label="Next certificate"
             onClick={() => setIndex((i) => (i + 1) % proofItems.length)}
-            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/15 bg-[#0F0F1A]/85 p-2 text-white shadow-lg backdrop-blur hover:border-accent hover:text-accent md:right-[calc(50%-410px)]"
+            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/15 bg-[#0F0F1A]/85 p-2 text-white shadow-lg backdrop-blur hover:border-accent hover:text-accent md:right-[7%]"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
