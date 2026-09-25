@@ -267,7 +267,7 @@ doc.fillColor("#B8B8D0").font("Helvetica").fontSize(14).text(
 doc.fillColor(ACCENT).font("Helvetica-Bold").fontSize(9).text("INSIDE THIS PLAYBOOK", 64, 510, { characterSpacing: 2.5 });
 const insideItems = [
   ["The 5 rules every funded trader memorizes", "Position sizing math from $5K to $200K"],
-  ["Trailing drawdown geometry (worked examples)", "Asset-class playbooks: FX, Crypto, Futures, Equities"],
+  ["Trailing drawdown geometry (worked examples)", "Five market paths: FX, Crypto, Futures, Equities, Predictive Markets"],
   ["The 30-day path to your first payout", "How to earn $100K+ referring traders"],
 ];
 let insideY = 532;
@@ -284,23 +284,24 @@ pageBreak();
 // ============== TOC ==============
 h1("Table of contents");
 const tocRows = [
-  ["01", "The Quick Reference Card", "What every section looks like in one screenshot.", "3"],
+  ["01", "The Quick Reference Card", "Every major rule in one screenshot.", "3"],
   ["02", "The 5 rules every trader memorizes", "Profit Target, Drawdown, Daily Limit, Window, Consistency.", "4"],
-  ["03", "Position sizing — the math that decides everything", "0.25–0.5% rule + sizing tables for every account size.", "6"],
-  ["04", "Trailing max drawdown — geometry of the rule that breaks traders", "Worked example, day-by-day on a $100K account.", "7"],
+  ["03", "Position sizing", "0.25-0.5% risk rule + sizing tables.", "6"],
+  ["04", "Trailing max drawdown", "Worked example on a $100K account.", "7"],
   ["05", "Forex playbook", "1-Step, 2-Step, 3-Step, Instant Funding, Lite.", "8"],
   ["06", "Crypto playbook", "Programs, leverage, daily cap, weekend rules.", "9"],
-  ["07", "Futures 4-Phase playbook", "Phase rules, contract limits, payouts, Tradovate.", "10"],
-  ["08", "Single Session Equities playbook", "PropX, S&P 100, 09:30–15:55 ET.", "11"],
-  ["09", "Add-on decision tree", "Which 5 add-ons earn back their price.", "12"],
-  ["10", "How traders breach (and how not to)", "5 most common breach scenarios with fixes.", "13"],
-  ["11", "Why traders pick Hybrid Funding", "Six unfair advantages of trading with us.", "14"],
-  ["12", "The first 30 days roadmap", "Week-by-week from sign-up to first payout.", "15"],
-  ["13", "The compounding math of payouts", "How one funded account becomes five.", "16"],
-  ["14", "Get paid to refer traders", "Affiliate tiers + how to earn $5K/month from a single post.", "17"],
-  ["15", "Join the TradeHouse Battles arena", "Trader tournaments worth funded accounts.", "18"],
-  ["16", "Your next move", "Resources and links to take action right now.", "19"],
-];
+  ["07", "Futures 4-Phase playbook", "Rules, contract limits, payouts, platforms.", "10"],
+  ["08", "Single Session Equities", "PropX, S&P 100, 09:30-15:55 ET.", "11"],
+  ["09", "Predictive Markets", "Yes/No event markets, risk rules, payouts, AI Radar.", "12"],
+  ["10", "Add-on decision tree", "Which upgrades fit different trading styles.", "14"],
+  ["11", "How traders breach", "Common breach scenarios with fixes.", "15"],
+  ["12", "Why traders pick Hybrid Funding", "Five market paths and modern platform options.", "16"],
+  ["13", "The first 30 days roadmap", "Week-by-week execution plan.", "17"],
+  ["14", "The compounding math of payouts", "Worked payout scaling example.", "18"],
+  ["15", "Get paid to refer traders", "Affiliate tiers and workflow.", "19"],
+  ["16", "Join TradeHouse Battles", "Competitive trading and prizes.", "20"],
+  ["17", "Your next move", "Resources and links to take action.", "21"],
+]
 table(
   [
     { key: "no", label: "#", width: 36, align: "left" },
@@ -353,7 +354,8 @@ table(
     { asset: "Forex", platform: "cTrader · DXTrade · MatchTrader", leverage: "1:50", window: "24/5 (close 3:45pm Fri ET)" },
     { asset: "Crypto", platform: "cTrader · DXTrade · MatchTrader", leverage: "5:1 BTC/ETH · 2:1 alts", window: "24/7" },
     { asset: "Futures", platform: "Rithmic Pro · Tradovate (soon)", leverage: "Per instrument", window: "Close by 15:10 CST" },
-    { asset: "SS Equities", platform: "PropX", leverage: "2:1", window: "09:30 – 15:55 ET only" },
+    { asset: "SS Equities", platform: "PropX", leverage: "2:1", window: "09:30 - 15:55 ET only" },
+    { asset: "Predictive", platform: "Hybrid dashboard", leverage: "None", window: "Event-market hours" },
   ],
 );
 
@@ -382,7 +384,8 @@ table(
     { program: "Crypto 1-Step", target: "9%", phases: "1", split: "90%" },
     { program: "Crypto 2-Step", target: "6% → 9%", phases: "2", split: "90%" },
     { program: "Futures Funded (4-Phase)", target: "9% per phase", phases: "4", split: "90%" },
-    { program: "Single Session Equities", target: "10% (Eval only)", phases: "1", split: "80%" },
+    { program: "Single Session Equities", target: "10% (Eval only)", phases: "1", split: "75-80%" },
+    { program: "Predictive Markets", target: "10% (Eval only)", phases: "1", split: "75% (90% add-on)" },
   ],
   { rowH: 22 }
 );
@@ -405,6 +408,7 @@ table(
     { program: "Crypto 1-Step / 2-Step", type: "Static", amt: "6% / 9%" },
     { program: "Futures Funded (4-Phase)", type: "Trailing", amt: "5% on EOD balance" },
     { program: "Single Session Equities", type: "Trailing", amt: "3% on closed balance" },
+    { program: "Predictive Markets", type: "Trailing", amt: "6% trailing equity high" },
   ],
 );
 
@@ -423,6 +427,7 @@ table(
     { program: "Crypto 1-Step / 2-Step", limit: "3% (bidirectional Daily Cap)" },
     { program: "Futures (per phase)", limit: "Effectively the trailing loss" },
     { program: "Single Session Equities", limit: "2.5% intraday trailing" },
+    { program: "Predictive Markets", limit: "3% EOD equity; resets 5 PM ET" },
   ],
 );
 
@@ -431,13 +436,15 @@ p("When you can have positions open. Violating the window = soft breach (auto-cl
 bullet("Forex: 24/5. All positions auto-close 3:45pm EST Friday unless Weekend Hold add-on purchased.");
 bullet("Crypto: 24/7. Weekend holds allowed.");
 bullet("Futures: All positions and orders cancelled by 15:10 CST. No overnight or weekend holds.");
-bullet("Single Session Equities: 09:30 – 15:55 ET only. Open past 15:55 = hard breach (Prohibited Practices).");
+bullet("Single Session Equities: 09:30-15:55 ET only. Open past 15:55 = hard breach (Prohibited Practices).");
+bullet("Predictive Markets: event availability follows each listed market; no leverage, and payouts require no open positions.");
 
 h2("Rule 5 — Consistency");
 p("Designed to filter out lucky entries. Limits how concentrated your profit can be on a single day.");
 bullet("Futures Funded: best day cannot exceed 25% of total profit (need 4+ trading days minimum to clear a phase).");
 bullet("Single Session Equities Funded phase: 25% Consistency Score.");
-bullet("Equities also requires a minimum of 3 profitable trading days at 0.50% — both Eval and Funded.");
+bullet("Equities also requires a minimum of 3 profitable trading days at 0.50% - both Eval and Funded.");
+bullet("Predictive Markets caps maximum profit per event at 0.5% of account value, aggregated across positions on that event.");
 pageBreak();
 
 // ============== POSITION SIZING ==============
@@ -557,7 +564,7 @@ pageBreak();
 
 // ============== FUTURES ==============
 h1("07  ·  Futures 4-Phase playbook");
-p("Funded Futures runs on Rithmic Pro today. Tradovate platform integration is coming soon — same rules, additional platform option.");
+p("Hybrid Funding Futures supports DXtrade Futures and Volumetrica, with Tickblaze launching as an additional Futures platform option.");
 
 h2("Phase rules (each phase is identical)");
 bullet("Profit target: 9%");
@@ -597,7 +604,7 @@ table(
   ],
 );
 
-callout("Don't forget", "CME market data attestation must be done in R | Trader Pro desktop. Mobile/web won't work for this step. Attest as a non-professional user.");
+callout("Don't forget", "Futures platform availability can vary by launch stage. DXtrade Futures and Volumetrica are supported; Tickblaze is marked Launching until go-live is confirmed.");
 pageBreak();
 
 // ============== EQUITIES ==============
