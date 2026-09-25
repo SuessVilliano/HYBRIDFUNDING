@@ -16,6 +16,17 @@ export interface PostMeta {
 
 export const posts: PostMeta[] = [
   {
+    slug: "propx-rebrand-october-2026-promotion",
+    title: "GooeyPro is Now PropX + October Launch Promo: Up to 50% Off",
+    description:
+      "GooeyPro is now PropX. Existing accounts, challenges, and support carry over, while Hybrid Funding launches four October promo codes across PropX and all other platforms.",
+    publishedAt: "2026-09-25",
+    readingMinutes: 4,
+    tags: ["Update", "PropX", "Promotion", "Platforms"],
+    excerpt:
+      "Same platform, new name — plus PROPX50, PROPX25, CORE40, and CORE20 from October 1–25.",
+  },
+  {
     slug: "bundles-customer-credit-rapid-payout-cart",
     title: "New at Hybrid Funding: Bundles, Customer Credit, Rapid Payout & Cart",
     description:
