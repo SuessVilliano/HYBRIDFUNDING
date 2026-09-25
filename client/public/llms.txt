@@ -7,7 +7,7 @@
 - **Forex challenges**: 1-Step, 2-Step, 3-Step, Instant Funding, and Instant Funding Lite. Account sizes $5K–$100K. Up to 1:50 leverage. Trading on cTrader, MatchTrader, DXTrade.
 - **Crypto challenges**: 1-Step, 2-Step, Instant Funding. BTC/ETH at 5:1 leverage, others at 2:1. 24/7 trading. 90% profit split available.
 - **Futures challenges**: 4-Phase Funded Futures Plan. Account sizes $25K–$150K. Trading on Rithmic Pro. Tradovate platform integration coming soon.
-- **Single Session Equities** (new): 1-Step, S&P 100 equities on GooeyPro. Account sizes $5K–$200K, client pricing $48–$1,828. 2:1 leverage. Trading window 09:30–15:55 ET. 10% profit target, 3% trailing max drawdown, 80/20 profit split, 14-day payouts.
+- **Single Session Equities** (new): 1-Step, S&P 100 equities on PropX. Account sizes $5K–$200K, client pricing $48–$1,828. 2:1 leverage. Trading window 09:30–15:55 ET. 10% profit target, 3% trailing max drawdown, 80/20 profit split, 14-day payouts.
 - **TradeHouse Battles**: competitive trading tournaments with live prizes.
 - **Affiliate program**: revenue-share for referring traders.
 
@@ -31,10 +31,20 @@
 ## Common questions answered
 
 - "How do prop firm challenges work?" — Multi-phase or single-phase evaluations measuring discipline and consistency. Passing transitions you to a Funded account with profit split. See FAQ.
-- "What is Single Session Equities?" — Day-trading S&P 100 equity products on GooeyPro with 2:1 leverage; all positions must close by 15:55 ET. See FAQ and Challenges.
-- "What platforms does Hybrid Funding support?" — cTrader, DXTrade, MatchTrader (Forex/Crypto), Rithmic Pro (Futures), GooeyPro (Equities). Tradovate coming soon.
+- "What is Single Session Equities?" — Day-trading S&P 100 equity products on PropX with 2:1 leverage; all positions must close by 15:55 ET. See FAQ and Challenges.
+- "What platforms does Hybrid Funding support?" — cTrader, DXTrade, MatchTrader (Forex/Crypto), Rithmic Pro (Futures), PropX (Equities). Tradovate coming soon.
 - "What is the profit split?" — 80% by default, upgradable to 90% with the add-on. Single Session Equities is 80%/20%.
 - "What is the maximum drawdown?" — Asset-class specific: 6% trailing (Forex 1-Step), 3% trailing (Single Session Equities), 5% trailing (Futures), etc.
+
+## Latest Platform Update — September 25, 2026
+
+- **GooeyPro is now PropX**: same platform and trader experience, with a new name and visual identity. Existing accounts, active challenges, and support carry over.
+- **PropX launch promotion (October 1–25, 2026)**:
+  - PROPX50: 50% off eligible non-Instant PropX challenges at $100K and below.
+  - PROPX25: 25% off eligible Instant Funding plans on PropX at $100K and below.
+  - CORE40: 40% off eligible non-Instant challenges on all other platforms.
+  - CORE20: 20% off Instant Funding plans on all other platforms.
+- Official announcement: https://www.hybridfunding.co/blog/propx-rebrand-october-2026-promotion
 
 ## Latest Product Updates — September 23, 2026
 

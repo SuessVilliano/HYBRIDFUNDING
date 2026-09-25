@@ -11,7 +11,7 @@ export default function SingleSessionEquitiesLaunch() {
         The program introduced S&P 100 equity trading with a session-based structure, giving traders who preferred stocks a purpose-built alternative to Forex, Crypto, and Futures.
       </p>
       <p>
-        GooeyPro was added for Single Session Equities, while the futures roadmap was also expanded with additional platform work.
+        PropX (then branded GooeyPro) was added for Single Session Equities, while the futures roadmap was also expanded with additional platform work.
       </p>
       <p><Link href="/challenges">View the current Equities program</Link>.</p>
     </>

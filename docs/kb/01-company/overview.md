@@ -22,7 +22,7 @@ Each program is detailed in its own article under `02-programs/`.
 
 ## Markets and platforms
 
-Hybrid Funding supports trading on **DXtrade**, **MatchTrader**, and **cTrader** for Forex, CFD Indices, Metals, and Cryptocurrencies. Our **Single Session Equities** program runs on the **GooeyPro** trading platform exclusively.
+Hybrid Funding supports trading on **DXtrade**, **MatchTrader**, and **cTrader** for Forex, CFD Indices, Metals, and Cryptocurrencies. Our **Single Session Equities** program runs on the **PropX** trading platform exclusively.
 
 ## How we make money
 

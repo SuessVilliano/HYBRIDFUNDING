@@ -40,7 +40,15 @@ const FAQ: React.FC = () => {
     },
     {
       question: "What trading platforms do you support?",
-      answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is the platform we offer to international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures, with Tickblaze launching as an additional futures option. Single Session Equities trades exclusively on GooeyPro. Our technology is integrated with each platform to monitor your trading performance in real-time."
+      answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is the platform we offer to international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures, with Tickblaze launching as an additional futures option. Single Session Equities trades exclusively on PropX. Our technology is integrated with each platform to monitor your trading performance in real-time."
+    },
+    {
+      question: "What happened to GooeyPro?",
+      answer: "GooeyPro has been rebranded as PropX. It is the same platform Hybrid Funding traders already know and use; existing accounts, active challenges, and support carry over. Only the platform name and visual identity are changing."
+    },
+    {
+      question: "What are the October PropX launch promo codes?",
+      answer: "From October 1–25, 2026: PROPX50 gives 50% off eligible non-Instant PropX challenges at $100K and below; PROPX25 gives 25% off eligible Instant Funding plans on PropX at $100K and below; CORE40 gives 40% off eligible non-Instant challenges on all other platforms; and CORE20 gives 20% off Instant Funding plans on all other platforms."
     },
     {
       question: "What are Challenge Bundles?",
@@ -216,7 +224,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "What platform is available for Single Session Equities trading?",
-      answer: "Single Session Equities trading is available via the GooeyPro trading platform only."
+      answer: "Single Session Equities trading is available via the PropX trading platform only."
     },
     {
       question: "What leverage is available for Single Session Equities?",
@@ -414,7 +422,7 @@ const FAQ: React.FC = () => {
                       Single Session Equities
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-[#171728] border border-accent/30 text-[#B8B8D0] rounded-full px-3 py-1">
-                      GooeyPro Platform
+                      PropX Platform
                     </span>
                   </div>
                   {equitiesFaqs.map((faq, index) => (

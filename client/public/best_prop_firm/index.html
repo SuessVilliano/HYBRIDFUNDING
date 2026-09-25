@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hybrid Funding | Get Funded. No Activation Fee. Keep Up To 90%.</title>
-  <meta name="description" content="The prop firm that doesn't charge you for winning. Get funded, trade, and keep up to 90% of your profits &#8212; with zero hidden costs. Use LEAF40 for 40% off evaluation plans this September.">
+  <meta name="description" content="Hybrid Funding offers funded trading paths across Forex, Crypto, Futures, Equities and Predictive Markets, with current promotional offers shown on-site.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://www.hybridfunding.co/best_prop_firm/">
   <meta property="og:title" content="Hybrid Funding | Get Funded. No Activation Fee.">
@@ -172,7 +172,7 @@ src="https://www.facebook.com/tr?id=PIXEL_ID_PLACEHOLDER&ev=PageView&noscript=1"
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MDMQVJVC" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-<div class="promo-banner">
+<div class="promo-banner" id="promo-banner">
   &#127811; SEPTEMBER LEAF EVENT: 40% OFF EVALUATION PLANS &#8212; Code LEAF40 &nbsp;|&nbsp; Ends September 30
 </div>
 
@@ -190,7 +190,7 @@ src="https://www.facebook.com/tr?id=PIXEL_ID_PLACEHOLDER&ev=PageView&noscript=1"
   <div class="hero-inner">
     <h1>The Prop Firm That Doesn&#8217;t Charge You For <span>Winning.</span></h1>
     <p class="hero-sub">Most prop firms hit you with an activation fee after you pass. We don&#8217;t. Get funded, trade, and keep up to 90% of your profits &#8212; with zero hidden costs.</p>
-    <div class="goal-badge">Turn over a new leaf: LEAF40 takes 40% off evaluation plans through September 30</div>
+    <div class="goal-badge" id="promo-goal">Turn over a new leaf: LEAF40 takes 40% off evaluation plans through September 30</div>
     <div class="hero-ctas">
       <a href="#plans" class="btn-primary" onclick="window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:'cta_click',cta_type:'view_plans',section:'hero'});">View Funding Plans &#8594;</a>
       <a href="https://www.hybridfunding.co/dna-test" class="btn-secondary">Take the Trader DNA Test &#8594;</a>
@@ -293,20 +293,20 @@ src="https://www.facebook.com/tr?id=PIXEL_ID_PLACEHOLDER&ev=PageView&noscript=1"
       <div class="market-card"><div class="market-icon">&#127757;</div><div class="market-name">Forex</div><p class="market-desc">Major, minor, and exotic pairs. The most liquid market in the world.</p></div>
       <div class="market-card"><div class="market-icon">&#8383;</div><div class="market-name">Crypto</div><p class="market-desc">Bitcoin, Ethereum, and more. 24/7 markets.</p></div>
       <div class="market-card"><div class="market-icon">&#128202;</div><div class="market-name">Futures</div><p class="market-desc">MNQ, ES, CL, GC and more. Phase payouts included.</p></div>
-      <div class="market-card"><div class="market-icon">&#128241;</div><div class="market-name">Single Session Equities</div><p class="market-desc">US stocks, single session format. Sized for focused traders.</p></div>
+      <div class="market-card"><div class="market-icon">&#128241;</div><div class="market-name">Single Session Equities · PropX</div><p class="market-desc">US stocks, single session format on PropX (formerly GooeyPro). Same trader accounts and challenges under the new name.</p></div>
     </div>
   </div>
 </section>
 
 <section class="promo-section">
   <div class="promo-inner">
-    <h2 class="section-heading">September Savings, Built for Every Trader</h2>
-    <p class="section-sub">This is the lowest price we&#8217;ve ever offered. No extensions. No exceptions.</p>
-    <div class="promo-codes">
+    <h2 class="section-heading" id="promo-heading">September Savings, Built for Every Trader</h2>
+    <p class="section-sub" id="promo-sub">Two September codes cover eligible evaluation and Instant Funding plans through September 30.</p>
+    <div class="promo-codes" id="promo-codes">
       <div class="promo-code-badge"><div class="promo-code-value">LEAF40</div><div class="promo-code-desc">40% off all plans except Instant Funding &amp; IF Lite</div></div>
       <div class="promo-code-badge"><div class="promo-code-value">LEAF25</div><div class="promo-code-desc">25% off Instant Funding &amp; IF Lite only</div></div>
     </div>
-    <a href="https://www.hybridfunding.co/get-funded" class="btn-promo" onclick="window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:fbq('track', 'InitiateCheckout');'cta_click',cta_type:'claim_promo',section:'leaf_event'});">Claim Your September Discount &#8594;</a>
+    <a href="https://www.hybridfunding.co/get-funded" class="btn-promo" id="promo-cta" onclick="window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:'cta_click',cta_type:'claim_promo',section:'active_promo'});if(typeof fbq==='function'){fbq('track','InitiateCheckout');}">Claim Your September Discount &#8594;</a>
     <div class="countdown-wrapper" id="countdown">
       <div class="countdown-unit"><div class="countdown-num" id="cd-days">--</div><div class="countdown-label">Days</div></div>
       <div class="countdown-unit"><div class="countdown-num" id="cd-hours">--</div><div class="countdown-label">Hours</div></div>
@@ -354,8 +354,8 @@ src="https://www.facebook.com/tr?id=PIXEL_ID_PLACEHOLDER&ev=PageView&noscript=1"
         <div class="faq-answer"><p>Forex, Crypto, Futures (MNQ, ES, CL, GC and more), and Single Session Equities. Each market has tailored plan options available.</p></div>
       </div>
       <div class="faq-item">
-        <button class="faq-question" aria-expanded="false">Which September coupon applies to my plan?<span class="faq-chevron">&#8964;</span></button>
-        <div class="faq-answer"><p>LEAF40 gives 40% off all plans except Instant Funding and IF Lite. LEAF25 gives 25% off Instant Funding and IF Lite only. Both codes are valid September 1 &#8211; 30, 2026.</p></div>
+        <button class="faq-question" id="promo-faq-q" aria-expanded="false">Which September coupon applies to my plan?<span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-answer"><p id="promo-faq-a">LEAF40 gives 40% off eligible non-Instant plans. LEAF25 gives 25% off Instant Funding and IF Lite. Both codes are valid September 1 &#8211; 30, 2026.</p></div>
       </div>
     </div>
   </div>
@@ -389,9 +389,58 @@ src="https://www.facebook.com/tr?id=PIXEL_ID_PLACEHOLDER&ev=PageView&noscript=1"
 
 <script>
   (window.dataLayer=window.dataLayer||[]).push({event:'lp_view',page:'best_prop_firm'});
-  var deadline=new Date('2026-07-19T23:59:59Z').getTime();
+  var septemberEnd=new Date('2026-09-30T23:59:59-04:00').getTime();
+  var octoberStart=new Date('2026-10-01T00:00:00-04:00').getTime();
+  var octoberEnd=new Date('2026-10-25T23:59:59-04:00').getTime();
+  var deadline=septemberEnd;
+
   function pad(n){return n<10?'0'+n:n;}
+
+  function syncPromotion(){
+    var now=Date.now();
+    var banner=document.getElementById('promo-banner');
+    var goal=document.getElementById('promo-goal');
+    var heading=document.getElementById('promo-heading');
+    var sub=document.getElementById('promo-sub');
+    var codes=document.getElementById('promo-codes');
+    var cta=document.getElementById('promo-cta');
+    var faqQ=document.getElementById('promo-faq-q');
+    var faqA=document.getElementById('promo-faq-a');
+    var countdown=document.getElementById('countdown');
+
+    if(now>=octoberStart && now<=octoberEnd){
+      deadline=octoberEnd;
+      banner.innerHTML='&#9889; PROPX LAUNCH EVENT: UP TO 50% OFF &#8212; October 1&#8211;25 &nbsp;|&nbsp; <a href="/blog/propx-rebrand-october-2026-promotion" style="color:inherit;text-decoration:underline;">See Details</a>';
+      goal.textContent='GooeyPro is now PropX — same platform, new name, special October launch pricing.';
+      heading.textContent='PropX Launch Savings — October 1–25';
+      sub.textContent='Use PropX codes on eligible PropX plans, or CORE codes across the rest of our platform lineup.';
+      codes.innerHTML=
+        '<div class="promo-code-badge"><div class="promo-code-value">PROPX50</div><div class="promo-code-desc">50% off eligible non-Instant PropX challenges, $100K and below</div></div>'+
+        '<div class="promo-code-badge"><div class="promo-code-value">PROPX25</div><div class="promo-code-desc">25% off eligible PropX Instant Funding, $100K and below</div></div>'+
+        '<div class="promo-code-badge"><div class="promo-code-value">CORE40</div><div class="promo-code-desc">40% off eligible non-Instant challenges on other platforms</div></div>'+
+        '<div class="promo-code-badge"><div class="promo-code-value">CORE20</div><div class="promo-code-desc">20% off Instant Funding on other platforms</div></div>';
+      cta.innerHTML='Claim Your October Discount &#8594;';
+      faqQ.innerHTML='Which October promo code should I use?<span class="faq-chevron">&#8964;</span>';
+      faqA.textContent='October 1–25: PROPX50 is 50% off eligible non-Instant PropX challenges at $100K and below; PROPX25 is 25% off eligible Instant Funding on PropX at $100K and below; CORE40 is 40% off eligible non-Instant challenges on all other platforms; CORE20 is 20% off Instant Funding on all other platforms.';
+      countdown.style.display='';
+    } else if(now>octoberEnd){
+      deadline=octoberEnd;
+      banner.innerHTML='Current Hybrid Funding offers are shown on Get Funded.';
+      goal.textContent='Choose your market and plan — current offers are applied where eligible.';
+      heading.textContent='Current Hybrid Funding Offers';
+      sub.textContent='Visit Get Funded to see any active promotional pricing.';
+      codes.innerHTML='';
+      cta.innerHTML='See Current Offers &#8594;';
+      faqQ.innerHTML='Where can I find current promotion codes?<span class="faq-chevron">&#8964;</span>';
+      faqA.textContent='Current Hybrid Funding offers are displayed on the Get Funded page when a promotion is active.';
+      countdown.style.display='none';
+    } else {
+      deadline=septemberEnd;
+    }
+  }
+
   function updateCountdown(){
+    syncPromotion();
     var now=Date.now(),diff=deadline-now;
     if(diff<=0){document.getElementById('cd-days').textContent='00';document.getElementById('cd-hours').textContent='00';document.getElementById('cd-mins').textContent='00';document.getElementById('cd-secs').textContent='00';return;}
     document.getElementById('cd-days').textContent=pad(Math.floor(diff/86400000));

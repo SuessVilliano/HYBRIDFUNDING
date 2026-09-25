@@ -379,7 +379,7 @@ const Home = () => {
                 icon: Zap,
                 color: "text-primary",
                 title: "Multi-Platform Access",
-                desc: "Trade on MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, and GooeyPro.",
+                desc: "Trade on MatchTrader, DXtrade, cTrader, Tradovate, Volumetrica, DXtrade Futures, and PropX.",
               },
             ].map((t, i) => {
               const Icon = t.icon;

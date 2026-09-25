@@ -127,7 +127,7 @@ const Challenges = () => {
     "forex": "Trade major, minor and exotic currency pairs with up to 1:50 leverage. All positions must be closed by Friday 3:45pm EST unless you purchase the weekend holding add-on.",
     "crypto": "Trade Bitcoin, Ethereum and other cryptocurrencies with up to 5:1 leverage for BTC/ETH and 2:1 for others. Trading available 24/7 including weekends.",
     "futures": "Trade indices, commodities, and more with specific leverage ratios per instrument. Our risk management system enforces consistent trading discipline. Choose your platform: Tradovate, Volumetrica, or DXtrade Futures, with Tickblaze joining the futures lineup.",
-    "equities": "Single Session Equities — trade S&P 100 equity products with 2:1 leverage on the GooeyPro platform. All positions open and close within the same session (09:30–15:55 ET); no overnight or weekend holds."
+    "equities": "Single Session Equities — trade S&P 100 equity products with 2:1 leverage on the PropX platform. All positions open and close within the same session (09:30–15:55 ET); no overnight or weekend holds."
   };
 
   // Common FAQ questions across all asset classes
@@ -142,7 +142,7 @@ const Challenges = () => {
     },
     {
       question: "What trading platforms do you support?",
-      answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is for international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures, with Tickblaze launching as an additional futures option. Single Session Equities runs exclusively on GooeyPro. Our technology integrates with each platform to monitor your trading performance in real-time."
+      answer: "Forex traders use MatchTrader, DXtrade, or cTrader (cTrader is for international Forex traders). Futures traders can choose between Tradovate, Volumetrica, and DXtrade Futures, with Tickblaze launching as an additional futures option. Single Session Equities runs exclusively on PropX. Our technology integrates with each platform to monitor your trading performance in real-time."
     },
     {
       question: "Do I need to complete KYC verification?",
@@ -238,7 +238,7 @@ const Challenges = () => {
     },
     {
       question: "What platform is available for Single Session Equities trading?",
-      answer: "Single Session Equities trading is available via the GooeyPro trading platform only."
+      answer: "Single Session Equities trading is available via the PropX trading platform only."
     },
     {
       question: "What leverage is available for Single Session Equities?",
@@ -430,7 +430,7 @@ const Challenges = () => {
                   Single Session Equities
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-xs font-['Orbitron'] uppercase tracking-wide bg-[#171728] border border-accent/30 text-[#B8B8D0] rounded-full px-3 py-1">
-                  GooeyPro Platform
+                  PropX Platform
                 </span>
               </div>
               <p className="text-[#B8B8D0]">{assetClassDescriptions.equities}</p>

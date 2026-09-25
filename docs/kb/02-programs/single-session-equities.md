@@ -3,12 +3,12 @@ title: Single Session Equities Program
 category: programs
 tags: [sse, equities, day-trading, intraday]
 applies_to: [single-session-equities]
-last_updated: 2026-05-11
+last_updated: 2026-09-25
 ---
 
 ## What it is
 
-Single Session Equities is an intraday-only program. You open and close all positions within the same trading session — no overnight or multi-day holds. The program runs on the **GooeyPro** trading platform and is built around the U.S. equities Regular Market session.
+PropX is the platform formerly known as GooeyPro; existing accounts and challenges carry over under the new name.\n\nSingle Session Equities is an intraday-only program. You open and close all positions within the same trading session — no overnight or multi-day holds. The program runs on the **PropX** trading platform and is built around the U.S. equities Regular Market session.
 
 ## Trading session
 
@@ -24,7 +24,7 @@ You may trade any **S&P 100** equity products made available on the platform.
 
 ## Platform, leverage, and pricing
 
-- **Platform:** GooeyPro only
+- **Platform:** PropX only
 - **Leverage:** 2:1
 - **Commissions:** $0.02 per share per side, with a **$0.50 minimum commission per transaction**
 - **Liquidity, pricing, and execution:** sourced directly from **Nasdaq**
@@ -81,4 +81,4 @@ See [SSE Payouts](../06-funding-and-payouts/sse-payouts.md), [Lock Upon Payout](
 **A:** No. Only the 09:30 ET – 15:55 ET window is permitted.
 
 **Q:** What's the platform?
-**A:** GooeyPro — and only GooeyPro — for Single Session Equities.
+**A:** PropX — and only PropX — for Single Session Equities.

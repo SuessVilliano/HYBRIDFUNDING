@@ -104,7 +104,7 @@ Preferred communication style: Simple, everyday language.
 2. **Trading Platforms:**
    - **Forex:** MatchTrader (advanced order types), DXtrade (web-based), cTrader (international Forex traders, scalping/algos)
    - **Futures:** Tradovate (https://trader.tradovate.com/), Volumetrica (https://my.deepcharts.com/identity/account/login), DXtrade Futures
-   - **Single Session Equities:** GooeyPro (https://gooeypro.gooeytrade.com/login)
+   - **Single Session Equities:** PropX (https://gooeypro.gooeytrade.com/login)
 
 3. **TradeHouse Battles:**
    - Embedded arena at `battles.hybridfunding.co`

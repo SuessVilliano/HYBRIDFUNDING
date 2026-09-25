@@ -17,9 +17,9 @@ export interface PostMeta {
 export const posts: PostMeta[] = [
   {
     slug: "propx-rebrand-october-2026-promotion",
-    title: "GooeyPro is Now PropX + October Launch Promo: Up to 50% Off",
+    title: "PropX is Now PropX + October Launch Promo: Up to 50% Off",
     description:
-      "GooeyPro is now PropX. Existing accounts, challenges, and support carry over, while Hybrid Funding launches four October promo codes across PropX and all other platforms.",
+      "PropX is now PropX. Existing accounts, challenges, and support carry over, while Hybrid Funding launches four October promo codes across PropX and all other platforms.",
     publishedAt: "2026-09-25",
     readingMinutes: 4,
     tags: ["Update", "PropX", "Promotion", "Platforms"],
@@ -64,10 +64,10 @@ export const posts: PostMeta[] = [
     slug: "single-session-equities-explained",
     title: "Single Session Equities Explained — A New Way to Trade S&P 100",
     description:
-      "Hybrid Funding's Single Session Equities program lets traders day-trade S&P 100 names on GooeyPro with 2:1 leverage. Full rules, drawdown math, and a worked example.",
+      "Hybrid Funding's Single Session Equities program lets traders day-trade S&P 100 names on PropX with 2:1 leverage. Full rules, drawdown math, and a worked example.",
     publishedAt: "2026-04-22",
     readingMinutes: 7,
-    tags: ["Equities", "GooeyPro", "Day Trading"],
+    tags: ["Equities", "PropX", "Day Trading"],
     excerpt:
       "10% profit target. 3% trailing max drawdown. 09:30–15:55 ET window. $0.02 per share commission. Here's how Single Session Equities actually works.",
   },
@@ -152,7 +152,7 @@ export const posts: PostMeta[] = [
   {
     slug: "single-session-equities-launch",
     title: "Single Session Equities Joins Hybrid Funding",
-    description: "Hybrid Funding added Single Session Equities, GooeyPro support, and a dedicated path for stock traders.",
+    description: "Hybrid Funding added Single Session Equities, PropX support, and a dedicated path for stock traders.",
     publishedAt: "2026-09-23",
     historicalEventDate: "2026-05-01",
     archive: true,

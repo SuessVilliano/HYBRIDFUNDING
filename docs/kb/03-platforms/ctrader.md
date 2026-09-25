@@ -16,5 +16,5 @@ Open the Symbol Window → scroll down to **Market Hours** for the selected symb
 
 ## Notes
 
-- cTrader is not available for Single Session Equities. SSE is on GooeyPro only.
+- cTrader is not available for Single Session Equities. SSE is on PropX only.
 - Holidays can affect available trading hours.

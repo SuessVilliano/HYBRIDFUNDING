@@ -27,7 +27,7 @@ When you purchase a plan, you receive access to a **trader dashboard**. The dash
 ## Common questions
 
 **Q:** Is there a mobile app?
-**A:** The trader dashboard is web-based and accessible from mobile browsers. Trading happens in the platform (DXtrade, MatchTrader, cTrader, or GooeyPro), each of which has its own mobile app.
+**A:** The trader dashboard is web-based and accessible from mobile browsers. Trading happens in the platform (DXtrade, MatchTrader, cTrader, or PropX), each of which has its own mobile app.
 
 **Q:** What if the dashboard shows the wrong balance?
 **A:** Dashboard data is updated in near real time but may briefly lag the platform during high-volume periods. If the discrepancy persists, contact support@hybridfunding.io with timestamps and screenshots.
