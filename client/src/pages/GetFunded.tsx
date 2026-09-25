@@ -17,7 +17,7 @@ import {
   Trophy, Crown, Landmark, Globe2, Gamepad2, Bitcoin,
 } from "lucide-react";
 import { useEffect, useState, useCallback, useRef } from "react";
-import ACTIVE_PROMOTION, { getPromoForPlan, isPromotionActive } from "@/config/promotions";
+import { getActivePromotion, getPromoForSelection } from "@/config/promotions";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type MarketKey = "forex" | "crypto" | "futures" | "equities";
@@ -231,7 +231,7 @@ const MARKETS: Market[] = [
     label: "Equities",
     emoji: "🏛️",
     tagline: "Trade S&P 100 stocks within a single session (9:30–15:55 ET) — no overnight risk",
-    platforms: ["GooeyPro"],
+    platforms: ["PropX"],
     plans: [
       {
         key: "one-step",
@@ -258,7 +258,7 @@ const PLATFORMS = [
   { name: "cTrader",          markets: "Forex (International)", color: "text-cyan-400" },
   { name: "Volumetrica",      markets: "Futures", color: "text-orange-400" },
   { name: "Tickblaze",        markets: "Futures · Launching", color: "text-primary" },
-  { name: "GooeyPro",         markets: "Single Session Equities", color: "text-green-400" },
+  { name: "PropX",            markets: "Single Session Equities", color: "text-green-400" },
 ];
 
 const TRUST = [
@@ -278,16 +278,21 @@ const STEPS = [
 
 // ─── Countdown Timer hook ─────────────────────────────────────────────────────
 function useCountdown() {
-  const getRemaining = () => Math.max(0, new Date(ACTIVE_PROMOTION.endDate).getTime() - Date.now());
-  const [left, setLeft] = useState(getRemaining);
+  const [now, setNow] = useState(() => Date.now());
+
   useEffect(() => {
-    const id = setInterval(() => {
-      setLeft(getRemaining());
-    }, 1000);
+    const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  const promotion = getActivePromotion(new Date(now));
+  const left = promotion
+    ? Math.max(0, new Date(promotion.endDate).getTime() - now)
+    : 0;
+
   const pad = (n: number) => String(n).padStart(2, "0");
   return {
+    promotion,
     d: Math.floor(left / 86_400_000),
     h: pad(Math.floor((left % 86_400_000) / 3_600_000)),
     m: pad(Math.floor((left % 3_600_000) / 60_000)),
@@ -384,7 +389,7 @@ function FAQAccordion() {
 // ─── Coupon Copy Block ────────────────────────────────────────────────────────
 function CouponBlock() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const { d, h, m, s } = useCountdown();
+  const { promotion, d, h, m, s } = useCountdown();
   const copyCode = useCallback((code: string) => {
     navigator.clipboard.writeText(code).then(() => {
       setCopiedCode(code);
@@ -393,24 +398,25 @@ function CouponBlock() {
     });
   }, []);
 
-  if (!isPromotionActive() || ACTIVE_PROMOTION.tiers.length === 0) return null;
+  if (!promotion || promotion.tiers.length === 0) return null;
 
-  const isOneTier = ACTIVE_PROMOTION.tiers.length === 1;
+  const isOneTier = promotion.tiers.length === 1;
 
   return (
     <div className="bg-accent/8 border border-accent/30 rounded-xl px-5 py-4 max-w-lg mx-auto space-y-3">
-      {ACTIVE_PROMOTION.badgeText && (
+      {promotion.badgeText && (
         <p className="text-center text-[#B8B8D0] text-[10px] uppercase tracking-widest font-bold">
-          {ACTIVE_PROMOTION.badgeText}
+          {promotion.badgeText}
         </p>
       )}
       <div className={`grid gap-3 ${isOneTier ? "grid-cols-1" : "grid-cols-2"}`}>
-        {ACTIVE_PROMOTION.tiers.map((promo) => {
+        {promotion.tiers.map((promo) => {
           const isAccentTier = promo.applicablePlans !== "instant";
           const planLabel =
-            promo.applicablePlans === "standard" ? "All Plans (excl. Instant)" :
-            promo.applicablePlans === "instant"  ? "Instant Funding & IF Lite"  :
-            "All Plans";
+            promo.scopeLabel ??
+            (promo.applicablePlans === "standard" ? "All Plans (excl. Instant)" :
+             promo.applicablePlans === "instant" ? "Instant Funding Plans" :
+             "All Plans");
           return (
             <div
               key={promo.code}
@@ -485,6 +491,7 @@ const cardItem = {
 // ─── Tier Card (dense — dollar amounts, accurate futures payouts) ─────────────
 function TierCard({
   tier,
+  marketKey,
   planKey = "one-step",
   isMultiPhase = false,
   isSelected = false,
@@ -492,6 +499,7 @@ function TierCard({
   onGetStarted,
 }: {
   tier: Tier;
+  marketKey: MarketKey;
   planKey?: PlanKey;
   isMultiPhase?: boolean;
   isSelected?: boolean;
@@ -540,7 +548,7 @@ function TierCard({
 
       {/* Price header */}
       {(() => {
-        const promo = getPromoForPlan(planKey);
+        const promo = getPromoForSelection(planKey, marketKey, tier.size);
         const discountedPrice = promo ? Math.round(tier.price * promo.multiplier) : tier.price;
         return (
           <div>
@@ -762,6 +770,7 @@ function FuturesLiveRules() {
 // ─── Purchase Confirm Modal ───────────────────────────────────────────────────
 interface ModalTier {
   size: string;
+  marketKey: MarketKey;
   marketLabel: string;
   planLabel: string;
   planKey: string;
@@ -860,7 +869,7 @@ function PurchaseConfirmModal({
 
               {/* Coupon reminder */}
               {(() => {
-                const promo = getPromoForPlan(tier.planKey);
+                const promo = getPromoForSelection(tier.planKey, tier.marketKey, tier.size);
                 if (!promo) return null;
                 return (
                   <p className="text-green-400 text-xs text-center">
@@ -998,19 +1007,20 @@ export default function GetFunded() {
   const market = MARKETS.find(m => m.key === activeMarket)!;
   const plan = market.plans.find(p => p.key === activePlan) ?? market.plans[0];
 
-  const getDiscount = (planKey: PlanKey) => {
-    const promo = getPromoForPlan(planKey);
+  const getDiscount = (planKey: PlanKey, marketKey: MarketKey, size: string) => {
+    const promo = getPromoForSelection(planKey, marketKey, size);
     return promo ? 1 - promo.multiplier : 0;
   };
 
-  const getPromoCode = (planKey: PlanKey) => {
-    return getPromoForPlan(planKey)?.code ?? "";
+  const getPromoCode = (planKey: PlanKey, marketKey: MarketKey, size: string) => {
+    return getPromoForSelection(planKey, marketKey, size)?.code ?? "";
   };
 
   const openModal = (tier: Tier) => {
-    const discount = getDiscount(plan.key);
+    const discount = getDiscount(plan.key, activeMarket, tier.size);
     setModalTier({
       size: tier.size,
+      marketKey: activeMarket,
       marketLabel: market.label,
       planLabel: plan.label,
       planKey: plan.key,
@@ -1253,18 +1263,19 @@ export default function GetFunded() {
                       <TierCard
                         key={tier.size}
                         tier={tier}
+                        marketKey={activeMarket}
                         planKey={plan.key}
                         isMultiPhase={plan.key === "four-phase"}
                         isSelected={selectedTier === `${activeMarket}-${activePlan}-${tier.size}`}
                         onSelect={() => {
-                          const discount = getDiscount(plan.key);
+                          const discount = getDiscount(plan.key, activeMarket, tier.size);
                           setSelectedTier(`${activeMarket}-${activePlan}-${tier.size}`);
                           setSelection({
                             marketLabel: market.label,
                             planLabel: plan.label,
                             tierSize: tier.size,
                             discountedPrice: Math.round(tier.price * (1 - discount)),
-                            promoCode: getPromoCode(plan.key),
+                            promoCode: getPromoCode(plan.key, activeMarket, tier.size),
                           });
                           trackEvent("lp_tier_click", { market: activeMarket, plan: activePlan, size: tier.size });
                         }}
@@ -1344,7 +1355,7 @@ export default function GetFunded() {
               { icon: DollarSign, color: "text-accent",   title: "Live Drawdown Tracker",           desc: "Always know exactly where your trailing max drawdown sits — never breach by surprise." },
               { icon: BookOpen,   color: "text-primary",  title: "Trade Journal & Replay",          desc: "Auto-capture every trade with chart context, tags, and notes. Review what worked and what didn't." },
               { icon: Newspaper,  color: "text-accent",   title: "AI Trade Insights",               desc: "Pattern detection, consistency scoring, and personalized coaching from our AI trade agent." },
-              { icon: Zap,        color: "text-primary",  title: "Multi-Platform Access",           desc: "Trade on MatchTrader, DXtrade, cTrader, Volumetrica, Tickblaze (launching), DXtrade Futures, and GooeyPro." },
+              { icon: Zap,        color: "text-primary",  title: "Multi-Platform Access",           desc: "Trade on MatchTrader, DXtrade, cTrader, Volumetrica, Tickblaze (launching), DXtrade Futures, and PropX." },
             ].map((t, i) => {
               const Icon = t.icon;
               return (
