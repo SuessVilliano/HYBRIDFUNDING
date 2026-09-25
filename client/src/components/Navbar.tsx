@@ -41,7 +41,7 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 glassmorphism shadow-lg pt-[env(safe-area-inset-top)]">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-4">
+        <div className="relative flex h-16 items-center justify-between gap-4">
           <Link href="/" className="flex shrink-0 items-center space-x-2" onClick={closeMenu}>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent">
               <span className="font-['Orbitron'] text-sm font-bold text-white">HF</span>
@@ -101,6 +101,21 @@ const Navbar = () => {
               </Button>
             </Link>
           </div>
+
+          <a
+            href="/#choose-program"
+            className="absolute left-1/2 -translate-x-1/2 lg:hidden"
+            aria-label="Get started with a Hybrid Funding challenge"
+          >
+            <Button
+              variant="neon-filled"
+              size="sm"
+              rounded="full"
+              className="h-9 px-4 font-['Orbitron'] text-[10px] font-bold shadow-glow-accent sm:px-5 sm:text-xs"
+            >
+              GET STARTED
+            </Button>
+          </a>
 
           <div className="flex items-center lg:hidden">
             <Button
