@@ -9,11 +9,11 @@ import { trackEvent } from "@/lib/analytics";
 
 const benefits = [
   "Rule-by-rule walkthrough for every Hybrid Funding challenge type",
-  "Position sizing math worked through on $5K–$200K accounts",
-  "Trailing drawdown geometry — where most traders blow up",
-  "Asset-class playbooks: Forex, Crypto, Futures, Single Session Equities",
-  "Add-on decision tree (90% split, weekend hold, payout-on-breach, lock waiver)",
-  "Free 20% off code for your first challenge",
+  "Position sizing math worked through on $5K-$200K accounts",
+  "Trailing drawdown geometry and worked risk examples",
+  "Five market paths: Forex, Crypto, Futures, Single Session Equities, Predictive Markets",
+  "Predictive Markets rules, Yes/No contract math, payouts, and AI Market Radar",
+  "Current platform lineup including PropX and Tickblaze (Launching)",
 ];
 
 const PDF_URL = "/trader-playbook.pdf";
@@ -59,7 +59,7 @@ const Playbook: React.FC = () => {
               The Hybrid Funding <span className="text-accent neon-text-accent">Trader Playbook</span>
             </h1>
             <p className="text-[#B8B8D0] text-lg mb-6">
-              50 pages of rule-by-rule strategy, position-sizing math, and asset-class breakdowns from the team behind Hybrid Funding. Free for traders who join our list.
+              A rebuilt 21-page guide to Hybrid Funding rules, position-sizing math, payouts, platforms, and all five market paths. Free for traders who join our list.
             </p>
             <ul className="space-y-3 mb-6">
               {benefits.map((b) => (
@@ -70,7 +70,7 @@ const Playbook: React.FC = () => {
               ))}
             </ul>
             <p className="text-[#6F6F8A] text-xs flex items-center gap-1.5">
-              <Download className="h-3 w-3" /> We'll text you the download link + 20% off code.
+              <Download className="h-3 w-3" /> We'll text you the download link + current Hybrid Funding updates.
             </p>
           </motion.div>
 
@@ -88,7 +88,7 @@ const Playbook: React.FC = () => {
                 </h2>
                 <p className="text-[#B8B8D0] mb-5">
                   Your download should have started automatically. We've also texted
-                  the link plus your 20% off code.
+                  the link plus current Hybrid Funding updates.
                 </p>
                 <a href={PDF_URL} download="Hybrid-Funding-Trader-Playbook.pdf">
                   <Button variant="neon-filled" size="lg" rounded="full" className="font-['Orbitron']">
@@ -105,7 +105,7 @@ const Playbook: React.FC = () => {
                   Get the Playbook
                 </h2>
                 <p className="text-[#B8B8D0] text-sm text-center mb-4">
-                  Drop your info and we'll start the download instantly + text you the link and discount code.
+                  Drop your info and we'll start the download instantly + text you the link.
                 </p>
                 <A2PCompliantOptInForm
                   showResourceLinks={false}
