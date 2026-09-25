@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-type NavItem = { name: string; path: string; isNew?: boolean };
+type NavItem = { name: string; path: string; isNew?: boolean; hardNavigate?: boolean };
 
 const primaryLinks: NavItem[] = [
   { name: "Challenges", path: "/challenges" },
@@ -17,7 +17,7 @@ const primaryLinks: NavItem[] = [
 const moreLinks: NavItem[] = [
   { name: "AI Radar", path: "/market-radar", isNew: true },
   { name: "Battles", path: "/battles" },
-  { name: "Trader DNA", path: "/dna-test" },
+  { name: "Trader DNA", path: "/dna-test", hardNavigate: true },
   { name: "Free Training", path: "/webinar" },
   { name: "About", path: "/about" },
   { name: "FAQ", path: "/faq" },
@@ -69,19 +69,16 @@ const Navbar = () => {
               </Link>
             ))}
 
-            <details className="group relative">
+            <details className="group relative z-[80]">
               <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5 hover:text-accent [&::-webkit-details-marker]:hidden">
                 More <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
               </summary>
-              <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-white/10 bg-[#0F0F1A]/98 p-2 shadow-2xl backdrop-blur-xl">
-                {moreLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    href={link.path}
-                    className={`block rounded-lg px-3 py-2.5 text-sm transition-colors ${
-                      isActive(link.path) ? "bg-white/5 text-accent" : "text-[#B8B8D0] hover:bg-white/5 hover:text-accent"
-                    }`}
-                  >
+              <div className="absolute right-0 top-full z-[100] mt-2 w-56 overflow-hidden rounded-xl border border-accent/20 bg-[#0B1426] p-2 shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
+                {moreLinks.map((link) => {
+                  const className = `block rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                    isActive(link.path) ? "bg-white/5 text-accent" : "text-[#B8B8D0] hover:bg-white/5 hover:text-accent"
+                  }`;
+                  const content = (
                     <span className="inline-flex items-center gap-1.5">
                       {link.name}
                       {link.isNew && (
@@ -90,8 +87,18 @@ const Navbar = () => {
                         </span>
                       )}
                     </span>
-                  </Link>
-                ))}
+                  );
+
+                  return link.hardNavigate ? (
+                    <a key={link.path} href={link.path} className={className}>
+                      {content}
+                    </a>
+                  ) : (
+                    <Link key={link.path} href={link.path} className={className}>
+                      {content}
+                    </Link>
+                  );
+                })}
               </div>
             </details>
 
@@ -141,23 +148,31 @@ const Navbar = () => {
             transition={{ duration: 0.25 }}
           >
             <div className="max-h-[calc(100vh-5rem)] overflow-y-auto px-4 py-3">
-              {mobileLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  href={link.path}
-                  className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${
-                    isActive(link.path) ? "bg-white/5 text-accent" : "text-white hover:bg-white/5 hover:text-accent"
-                  }`}
-                  onClick={closeMenu}
-                >
-                  <span>{link.name}</span>
-                  {"isNew" in link && link.isNew && (
-                    <span className="rounded bg-accent px-1.5 py-0.5 font-['Orbitron'] text-[9px] font-bold text-[#0F0F1A]">
-                      NEW
-                    </span>
-                  )}
-                </Link>
-              ))}
+              {mobileLinks.map((link) => {
+                const className = `flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                  isActive(link.path) ? "bg-white/5 text-accent" : "text-white hover:bg-white/5 hover:text-accent"
+                }`;
+                const content = (
+                  <>
+                    <span>{link.name}</span>
+                    {"isNew" in link && link.isNew && (
+                      <span className="rounded bg-accent px-1.5 py-0.5 font-['Orbitron'] text-[9px] font-bold text-[#0F0F1A]">
+                        NEW
+                      </span>
+                    )}
+                  </>
+                );
+
+                return "hardNavigate" in link && link.hardNavigate ? (
+                  <a key={link.path} href={link.path} className={className} onClick={closeMenu}>
+                    {content}
+                  </a>
+                ) : (
+                  <Link key={link.path} href={link.path} className={className} onClick={closeMenu}>
+                    {content}
+                  </Link>
+                );
+              })}
               <Link href="/trader-portal" className="mt-2 block" onClick={closeMenu}>
                 <Button variant="neon" size="lg" rounded="full" className="w-full font-['Orbitron'] font-semibold">
                   TRADER PORTAL
