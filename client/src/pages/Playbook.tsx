@@ -59,7 +59,7 @@ const Playbook: React.FC = () => {
               The Hybrid Funding <span className="text-accent neon-text-accent">Trader Playbook</span>
             </h1>
             <p className="text-[#B8B8D0] text-lg mb-6">
-              A rebuilt 21-page guide to Hybrid Funding rules, position-sizing math, payouts, platforms, and all five market paths. Free for traders who join our list.
+              A rebuilt guide to Hybrid Funding rules, position-sizing math, payouts, platforms, and all five market paths. Free for traders who join our list.
             </p>
             <ul className="space-y-3 mb-6">
               {benefits.map((b) => (
