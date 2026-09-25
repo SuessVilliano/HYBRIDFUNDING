@@ -32,6 +32,22 @@ import Battles from "@/pages/Battles";
 import BattleLobby from "@/pages/BattleLobby";
 import BattleRoom from "@/pages/BattleRoom";
 
+function TraderDnaRedirect() {
+  useEffect(() => {
+    const target = `/dna-test/index.html${window.location.search}${window.location.hash}`;
+    window.location.replace(target);
+  }, []);
+
+  return (
+    <div className="min-h-[60vh] bg-[#0B1426] flex items-center justify-center px-4">
+      <div className="text-center">
+        <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+        <p className="font-['Orbitron'] text-sm text-accent">OPENING TRADER DNA...</p>
+      </div>
+    </div>
+  );
+}
+
 function AppRouter() {
   return (
     <Switch>
@@ -62,6 +78,7 @@ function AppRouter() {
                 <Route path="/thank-you" component={() => <PageTransition><ThankYou /></PageTransition>} />
                 <Route path="/faq" component={() => <PageTransition><FAQ /></PageTransition>} />
                 <Route path="/battles" component={() => <PageTransition><Battles /></PageTransition>} />
+                <Route path="/dna-test" component={() => <PageTransition><TraderDnaRedirect /></PageTransition>} />
                 <Route path="/webinar" component={() => <PageTransition><Webinar /></PageTransition>} />
                 <Route path="/playbook" component={() => <PageTransition><Playbook /></PageTransition>} />
                 <Route path="/blog" component={() => <PageTransition><Blog /></PageTransition>} />
