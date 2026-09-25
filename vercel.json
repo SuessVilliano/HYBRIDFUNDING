@@ -2,21 +2,46 @@
   "redirects": [
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "battles.hybridfunding.co" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "battles.hybridfunding.co"
+        }
+      ],
       "destination": "/battles/lobby",
       "permanent": false
     }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" },
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/dna-test",
+      "destination": "/dna-test/index.html"
+    },
+    {
+      "source": "/dna-test/",
+      "destination": "/dna-test/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
   ],
   "headers": [
     {
       "source": "/battles/(.*)",
       "headers": [
-        { "key": "X-Frame-Options", "value": "ALLOWALL" },
-        { "key": "Content-Security-Policy", "value": "frame-ancestors *" }
+        {
+          "key": "X-Frame-Options",
+          "value": "ALLOWALL"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors *"
+        }
       ]
     }
   ]
