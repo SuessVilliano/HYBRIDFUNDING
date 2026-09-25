@@ -90,11 +90,11 @@ const Navbar = () => {
                   );
 
                   return link.hardNavigate ? (
-                    <a key={link.path} href={link.path} className={className}>
+                    <a key={link.path} href={link.path} className={className} onClick={(e) => e.currentTarget.closest("details")?.removeAttribute("open")}>
                       {content}
                     </a>
                   ) : (
-                    <Link key={link.path} href={link.path} className={className}>
+                    <Link key={link.path} href={link.path} className={className} onClick={(e) => e.currentTarget.closest("details")?.removeAttribute("open")}>
                       {content}
                     </Link>
                   );
