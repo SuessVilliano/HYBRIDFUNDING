@@ -18,13 +18,13 @@ export default function FeatureUpdateBanner({ compact = false }: FeatureUpdateBa
       <div className="border-b border-accent/20 bg-gradient-to-r from-accent/10 via-primary/10 to-accent/10">
         <div className="container mx-auto flex flex-col items-center justify-center gap-2 px-4 py-3 text-center sm:flex-row sm:gap-3">
           <span className="rounded-full border border-accent/40 bg-accent/15 px-2.5 py-1 font-['Orbitron'] text-[10px] font-bold uppercase tracking-widest text-accent">
-            New • Rolling Out
+            New • PropX Launch
           </span>
           <span className="text-sm text-white">
-            Bundles, Customer Credit, Rapid Payout & Cart are coming online.
+            GooeyPro is now PropX. October 1–25 launch offers save up to 50%.
           </span>
-          <Link href="/blog/bundles-customer-credit-rapid-payout-cart" className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-primary">
-            Read the update <ArrowRight className="h-3.5 w-3.5" />
+          <Link href="/blog/propx-rebrand-october-2026-promotion" className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-primary">
+            Read the announcement <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </div>
