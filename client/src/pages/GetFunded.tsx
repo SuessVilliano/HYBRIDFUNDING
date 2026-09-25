@@ -5,6 +5,7 @@ import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 import TrustpilotWidget from "@/components/TrustpilotWidget";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 import SocialProof from "@/components/SocialProof";
+import TraderProofCarousel from "@/components/TraderProofCarousel";
 import RecentTraderActivity from "@/components/RecentTraderActivity";
 import FeatureCard from "@/components/FeatureCard";
 import SEO from "@/components/SEO";
@@ -1159,7 +1160,7 @@ export default function GetFunded() {
       </section>
 
       {/* ── Program Selector ── */}
-      <section id="choose-program" className="py-20 bg-[#0F0F1A]">
+      <section id="choose-program" className="scroll-mt-24 py-20 bg-[#0F0F1A]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <span className="text-accent font-['Orbitron'] text-xs tracking-widest uppercase mb-3 block">Step 1 of 2</span>
@@ -1607,6 +1608,9 @@ export default function GetFunded() {
           </div>
         </div>
       </section>
+
+      {/* ── Historical Trader Milestones ── */}
+      <TraderProofCarousel />
 
       {/* ── FAQ ── */}
       <FAQAccordion />
