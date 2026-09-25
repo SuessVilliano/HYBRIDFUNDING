@@ -695,6 +695,56 @@
     color: var(--white);
   }
 
+  .next-steps {
+    margin-top: 34px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .next-steps-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 14px;
+  }
+
+  .next-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .next-step-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 12px 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.035);
+    color: rgba(255,255,255,0.78);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .next-step-link:hover {
+    border-color: rgba(0,212,255,0.5);
+    color: var(--white);
+    background: rgba(0,212,255,0.06);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 640px) {
+    .next-steps-grid { grid-template-columns: 1fr 1fr; }
+  }
+
   .confetti-container {
     position: fixed;
     top: 0; left: 0;
@@ -982,7 +1032,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="challenge-box"><p class="challenge-label">Recommended Challenge</p><p class="challenge-text">1-Step Evaluation &mdash; No time pressure. Trade when YOUR setup appears. Keep up to 90% of profits.</p></div>
       <div class="cta-row">
         <a href="https://hybridfunding.co/get-funded?market=forex&plan=one-step" class="btn-primary" target="_blank" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'start_challenge', trader_type: 'SNIPER'});">Start 1-Step Eval &rarr;</a>
-        <a href="https://api.leadconnectorhq.com/widget/booking/KvSCBKaQ4b7lqTVv9hey" class="btn-secondary" target="_blank" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'book_call', trader_type: 'SNIPER'});">Book a Strategy Call &rarr;</a>
+        <a href="/playbook" class="btn-secondary" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'trader_playbook', trader_type: 'SNIPER'});">Get Trader Playbook &rarr;</a>
+      </div>
+      <div class="next-steps">
+        <p class="next-steps-label">Keep Going</p>
+        <div class="next-steps-grid">
+          <a href="/challenges" class="next-step-link" data-resource="all_challenges">All Challenges</a>
+          <a href="/predictive-markets" class="next-step-link" data-resource="predictive_markets">Predictive Markets</a>
+          <a href="/market-radar" class="next-step-link" data-resource="ai_radar">AI Market Radar</a>
+          <a href="/blog" class="next-step-link" data-resource="updates">News & Updates</a>
+        </div>
       </div>
     </div>
     <div class="result-type" id="result-A">
@@ -1005,7 +1064,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="challenge-box"><p class="challenge-label">Recommended Challenge</p><p class="challenge-text">2-Step Evaluation &mdash; Structured targets. Process-based metrics. Built for traders who follow systems.</p></div>
       <div class="cta-row">
         <a href="https://hybridfunding.co/get-funded?market=forex&plan=two-step" class="btn-primary" target="_blank" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'start_challenge', trader_type: 'ARCHITECT'});">Start 2-Step Eval &rarr;</a>
-        <a href="https://api.leadconnectorhq.com/widget/booking/KvSCBKaQ4b7lqTVv9hey" class="btn-secondary" target="_blank" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'book_call', trader_type: 'ARCHITECT'});">Book a Strategy Call &rarr;</a>
+        <a href="/playbook" class="btn-secondary" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'trader_playbook', trader_type: 'ARCHITECT'});">Get Trader Playbook &rarr;</a>
+      </div>
+      <div class="next-steps">
+        <p class="next-steps-label">Keep Going</p>
+        <div class="next-steps-grid">
+          <a href="/challenges" class="next-step-link" data-resource="all_challenges">All Challenges</a>
+          <a href="/predictive-markets" class="next-step-link" data-resource="predictive_markets">Predictive Markets</a>
+          <a href="/market-radar" class="next-step-link" data-resource="ai_radar">AI Market Radar</a>
+          <a href="/blog" class="next-step-link" data-resource="updates">News & Updates</a>
+        </div>
       </div>
     </div>
     <div class="result-type" id="result-H">
@@ -1028,7 +1096,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="challenge-box"><p class="challenge-label">Recommended Challenge</p><p class="challenge-text">Instant Funding &mdash; Skip the evaluation. Get funded directly. Built for traders who've already proven they can adapt.</p></div>
       <div class="cta-row">
         <a href="https://hybridfunding.co/get-funded?market=forex&plan=instant" class="btn-primary" target="_blank" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'start_challenge', trader_type: 'HYBRID'});">Get Instant Funding &rarr;</a>
-        <a href="https://api.leadconnectorhq.com/widget/booking/KvSCBKaQ4b7lqTVv9hey" class="btn-secondary" target="_blank" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'book_call', trader_type: 'HYBRID'});">Book a Strategy Call &rarr;</a>
+        <a href="/playbook" class="btn-secondary" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'trader_playbook', trader_type: 'HYBRID'});">Get Trader Playbook &rarr;</a>
+      </div>
+      <div class="next-steps">
+        <p class="next-steps-label">Keep Going</p>
+        <div class="next-steps-grid">
+          <a href="/challenges" class="next-step-link" data-resource="all_challenges">All Challenges</a>
+          <a href="/predictive-markets" class="next-step-link" data-resource="predictive_markets">Predictive Markets</a>
+          <a href="/market-radar" class="next-step-link" data-resource="ai_radar">AI Market Radar</a>
+          <a href="/blog" class="next-step-link" data-resource="updates">News & Updates</a>
+        </div>
       </div>
     </div>
     <div class="result-type" id="result-P">
@@ -1051,7 +1128,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="challenge-box"><p class="challenge-label">Recommended Challenge</p><p class="challenge-text">1-Step High Capital ($50K&ndash;$200K) &mdash; Room to breathe. Sized for traders who need capital to express their edge.</p></div>
       <div class="cta-row">
         <a href="https://hybridfunding.co/get-funded?market=futures&plan=four-phase" class="btn-primary" target="_blank" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'start_challenge', trader_type: 'PHOENIX'});">Start High-Capital Challenge &rarr;</a>
-        <a href="https://api.leadconnectorhq.com/widget/booking/KvSCBKaQ4b7lqTVv9hey" class="btn-secondary" target="_blank" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'book_call', trader_type: 'PHOENIX'});">Book a Strategy Call &rarr;</a>
+        <a href="/playbook" class="btn-secondary" onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'cta_click', cta_type: 'trader_playbook', trader_type: 'PHOENIX'});">Get Trader Playbook &rarr;</a>
+      </div>
+      <div class="next-steps">
+        <p class="next-steps-label">Keep Going</p>
+        <div class="next-steps-grid">
+          <a href="/challenges" class="next-step-link" data-resource="all_challenges">All Challenges</a>
+          <a href="/predictive-markets" class="next-step-link" data-resource="predictive_markets">Predictive Markets</a>
+          <a href="/market-radar" class="next-step-link" data-resource="ai_radar">AI Market Radar</a>
+          <a href="/blog" class="next-step-link" data-resource="updates">News & Updates</a>
+        </div>
       </div>
     </div>
   </div>
@@ -1100,8 +1186,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   function decorateOutboundLinks() {
-    document.querySelectorAll('a[href*="hybridfunding.co/get-funded"], a[href*="leadconnectorhq.com/widget/booking"]').forEach(function (a) {
-      a.href = withTracking(a.href);
+    document.querySelectorAll(
+      'a[href*="hybridfunding.co/get-funded"], a[href^="/get-funded"], a[href^="/challenges"], a[href^="/playbook"], a[href^="/predictive-markets"], a[href^="/market-radar"], a[href^="/blog"]'
+    ).forEach(function (a) {
+      a.href = withTracking(a.getAttribute('href') || a.href);
     });
   }
 
@@ -1285,6 +1373,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var activeResult = document.getElementById('result-' + type);
     activeResult.classList.add('active');
     personalizeResultCta(activeResult, type, marketPath);
+    decorateOutboundLinks();
+
+    activeResult.querySelectorAll('.next-step-link').forEach(function (link) {
+      link.addEventListener('click', function () {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'cta_click',
+          cta_type: link.getAttribute('data-resource') || 'dna_resource',
+          trader_type: type,
+          market_path: marketPath
+        });
+      }, { once: true });
+    });
+
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
           event: 'result_revealed',
