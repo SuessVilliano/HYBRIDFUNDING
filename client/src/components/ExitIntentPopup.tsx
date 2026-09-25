@@ -3,24 +3,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import A2PCompliantOptInForm from "@/components/A2PCompliantOptInForm";
 import { trackEvent } from "@/lib/analytics";
-import ACTIVE_PROMOTION, { isPromotionActive } from "@/config/promotions";
-
-const STORAGE_KEY = "exitIntentShown";
+import { getActivePromotion } from "@/config/promotions";
 
 const ExitIntentPopup: React.FC = () => {
   const [open, setOpen] = useState(false);
-
-  // No promo active — don't show the popup
-  if (!isPromotionActive()) return null;
+  const [now, setNow] = useState(() => Date.now());
+  const promotion = getActivePromotion(new Date(now));
+  const storageKey = promotion ? `exitIntentShown:${promotion.name}` : "exitIntentShown:none";
 
   useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    if (!promotion) return;
     if (typeof window === "undefined") return;
-    if (sessionStorage.getItem(STORAGE_KEY)) return;
+    if (sessionStorage.getItem(storageKey)) return;
 
     const onMouseLeave = (e: MouseEvent) => {
       // Only fire when cursor leaves out the top of the viewport (intent to close)
-      if (e.clientY <= 0 && !sessionStorage.getItem(STORAGE_KEY)) {
-        sessionStorage.setItem(STORAGE_KEY, "1");
+      if (e.clientY <= 0 && !sessionStorage.getItem(storageKey)) {
+        sessionStorage.setItem(storageKey, "1");
         setOpen(true);
         trackEvent("exit_intent_shown");
       }
@@ -31,8 +35,8 @@ const ExitIntentPopup: React.FC = () => {
     const armInactivity = () => {
       window.clearTimeout(inactivityTimer);
       inactivityTimer = window.setTimeout(() => {
-        if (!sessionStorage.getItem(STORAGE_KEY)) {
-          sessionStorage.setItem(STORAGE_KEY, "1");
+        if (!sessionStorage.getItem(storageKey)) {
+          sessionStorage.setItem(storageKey, "1");
           setOpen(true);
           trackEvent("exit_intent_shown_inactivity");
         }
@@ -50,7 +54,7 @@ const ExitIntentPopup: React.FC = () => {
       document.removeEventListener("scroll", armInactivity);
       window.clearTimeout(inactivityTimer);
     };
-  }, []);
+  }, [promotion?.name, storageKey]);
 
 
   // Dismiss on Escape key
@@ -70,6 +74,8 @@ const ExitIntentPopup: React.FC = () => {
     setOpen(false);
     trackEvent("exit_intent_dismissed");
   };
+
+  if (!promotion) return null;
 
   return (
     <AnimatePresence>
@@ -100,10 +106,10 @@ const ExitIntentPopup: React.FC = () => {
                   Wait — before you go
                 </p>
                 <h2 className="font-['Orbitron'] text-2xl md:text-3xl font-bold text-white mb-2">
-                  {ACTIVE_PROMOTION.exitPopupHeadline ?? ACTIVE_PROMOTION.headline}
+                  {promotion.exitPopupHeadline ?? promotion.headline}
                 </h2>
                 <p className="text-[#B8B8D0]">
-                  {ACTIVE_PROMOTION.exitPopupSubtext ?? ACTIVE_PROMOTION.subtext}
+                  {promotion.exitPopupSubtext ?? promotion.subtext}
                 </p>
               </div>
               <A2PCompliantOptInForm
