@@ -153,14 +153,16 @@ function CertificateCard({ item, compact = false }: { item: ProofItem; compact?:
 
       {/* CEO signature */}
       <div className="absolute bottom-[8.5%] right-[11%] w-[35%] text-center">
-        <div className="font-['Orbitron'] text-base italic leading-none text-black sm:text-3xl">J. Johnson</div>
+        <svg
+          viewBox="20 8 145 84"
+          aria-label="Jamaur Johnson signature"
+          className="mx-auto h-8 w-auto overflow-visible sm:h-14"
+          role="img"
+        >
+          <path d="M 72 51 L 72 54 L 74 54 L 74 51 Z M 48 16 L 47 17 L 47 23 L 46 24 L 46 27 L 45 28 L 45 30 L 44 31 L 44 32 L 43 33 L 43 35 L 42 36 L 42 37 L 40 39 L 40 40 L 39 41 L 39 42 L 37 44 L 37 45 L 35 47 L 35 48 L 30 53 L 29 53 L 28 54 L 26 54 L 26 55 L 25 56 L 29 56 L 30 55 L 32 55 L 36 51 L 36 50 L 37 49 L 37 48 L 40 45 L 40 44 L 41 43 L 41 42 L 42 41 L 42 40 L 44 38 L 44 36 L 45 35 L 45 34 L 46 33 L 47 34 L 47 35 L 48 36 L 47 37 L 48 38 L 48 43 L 49 44 L 49 53 L 50 54 L 50 55 L 49 56 L 48 56 L 47 57 L 46 57 L 45 58 L 44 58 L 43 59 L 42 59 L 41 60 L 40 60 L 39 61 L 38 61 L 36 63 L 35 63 L 33 65 L 33 66 L 31 68 L 31 69 L 30 70 L 30 71 L 29 72 L 29 78 L 30 79 L 30 81 L 33 84 L 34 84 L 35 85 L 37 85 L 38 86 L 45 86 L 46 85 L 47 85 L 48 84 L 49 84 L 53 80 L 53 66 L 52 65 L 52 58 L 54 56 L 55 56 L 56 55 L 55 54 L 54 54 L 53 55 L 52 55 L 51 54 L 51 46 L 50 45 L 50 37 L 49 36 L 49 17 Z M 133 13 L 130 16 L 130 17 L 128 19 L 128 20 L 127 21 L 127 22 L 121 28 L 121 29 L 114 36 L 114 37 L 111 40 L 110 40 L 109 41 L 107 41 L 106 42 L 104 42 L 103 43 L 102 43 L 101 44 L 100 43 L 100 37 L 99 36 L 99 31 L 98 30 L 98 26 L 97 25 L 97 21 L 96 20 L 96 18 L 95 17 L 95 16 L 92 16 L 92 20 L 91 21 L 91 27 L 90 28 L 90 31 L 89 32 L 89 35 L 88 36 L 88 38 L 87 39 L 87 41 L 86 42 L 86 44 L 85 45 L 85 46 L 84 47 L 84 49 L 83 50 L 83 52 L 80 55 L 80 56 L 82 56 L 85 53 L 85 52 L 86 51 L 86 49 L 87 48 L 87 45 L 88 44 L 88 43 L 89 42 L 89 40 L 90 39 L 90 36 L 91 35 L 91 32 L 92 31 L 92 28 L 93 27 L 93 24 L 94 23 L 95 24 L 95 26 L 96 27 L 96 31 L 97 32 L 97 36 L 98 37 L 98 46 L 90 54 L 90 55 L 88 57 L 88 58 L 87 59 L 87 60 L 86 61 L 86 62 L 85 63 L 85 64 L 84 65 L 84 82 L 85 83 L 85 87 L 86 88 L 86 89 L 89 89 L 88 88 L 88 86 L 87 85 L 87 81 L 86 80 L 86 66 L 87 65 L 87 64 L 88 63 L 88 62 L 89 61 L 89 60 L 91 58 L 91 57 L 93 55 L 93 54 L 98 49 L 99 50 L 99 54 L 96 57 L 96 58 L 95 59 L 95 60 L 94 61 L 94 67 L 96 69 L 97 69 L 99 71 L 99 87 L 97 89 L 100 89 L 101 88 L 101 87 L 102 86 L 102 71 L 104 69 L 106 69" fill="#000000" />
+        </svg>
         <div className="mt-1.5 h-px w-full bg-white/80" />
         <div className="mt-1 text-[7px] text-white/80 sm:text-xs">Hybrid Funding CEO</div>
-      </div>
-
-      {/* Disclosure */}
-      <div className="absolute inset-x-[8%] bottom-[1.8%] text-center text-[4.5px] text-white/55 sm:text-[8px]">
-        Historical replacement certificate — date reconstructed from legacy pass-order records.
       </div>
     </div>
   );
@@ -193,10 +195,6 @@ export default function TraderProofCarousel() {
           <h2 className="font-['Orbitron'] text-3xl font-bold text-white sm:text-4xl">
             Passes & <span className="text-accent neon-text-accent">Payout History</span>
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-[#B8B8D0] sm:text-base">
-            Historical replacement certificates recreated from legacy pass-order records after our platform migration.
-            Names reflect real trader records; reconstructed dates follow the preserved sequence where the original timestamp was unavailable.
-          </p>
         </div>
 
         <div
