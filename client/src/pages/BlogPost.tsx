@@ -12,6 +12,7 @@ import InstantFundingLiteLaunch from "./blog-posts/instant-funding-lite-launch";
 import InstantFundingVsEvaluation from "./blog-posts/instant-funding-vs-evaluation";
 import PlatformFoundationMay2025 from "./blog-posts/platform-foundation-may-2025";
 import PredictiveMarketsLaunchJuly2026 from "./blog-posts/predictive-markets-launch-july-2026";
+import PropXLaunchOctober2026 from "./blog-posts/propx-rebrand-october-2026-promotion";
 import September2026LeafEvent from "./blog-posts/september-2026-leaf-event";
 import SingleSessionEquitiesExplained from "./blog-posts/single-session-equities-explained";
 import SingleSessionEquitiesLaunch from "./blog-posts/single-session-equities-launch";
@@ -43,6 +44,7 @@ const postComponents: Record<string, ComponentType> = {
   "instant-funding-vs-evaluation": InstantFundingVsEvaluation,
   "platform-foundation-may-2025": PlatformFoundationMay2025,
   "predictive-markets-launch-july-2026": PredictiveMarketsLaunchJuly2026,
+  "propx-rebrand-october-2026-promotion": PropXLaunchOctober2026,
   "september-2026-leaf-event": September2026LeafEvent,
   "single-session-equities-explained": SingleSessionEquitiesExplained,
   "single-session-equities-launch": SingleSessionEquitiesLaunch,
