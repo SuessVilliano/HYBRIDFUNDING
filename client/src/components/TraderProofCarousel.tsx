@@ -48,6 +48,9 @@ function CertificateCard({ item, compact = false }: { item: ProofItem; compact?:
       <div className="absolute inset-x-0 top-[41%] h-[42%] bg-gradient-to-r from-[#1a9c8c] via-[#14b8a6] to-[#1a9c8c]" />
       <div className="absolute inset-x-0 bottom-0 h-[17%] bg-[#0B3A56]" />
       <div className="absolute inset-0 opacity-10 [background-image:linear-gradient(90deg,transparent_48%,rgba(255,255,255,.5)_49%,transparent_50%)] [background-size:42px_100%]" />
+      <div className="absolute right-2 top-2 rounded-full border border-white/15 bg-black/35 px-2 py-1 text-[7px] font-bold uppercase tracking-widest text-white/75 sm:text-[9px]">
+        Historical replacement
+      </div>
 
       <div className="absolute left-1/2 top-[7%] flex -translate-x-1/2 items-center gap-2 whitespace-nowrap">
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent font-['Orbitron'] text-[9px] font-bold text-white">
