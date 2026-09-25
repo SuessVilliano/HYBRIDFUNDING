@@ -37,65 +37,130 @@ const proofItems: ProofItem[] = [
 
 function CertificateCard({ item, compact = false }: { item: ProofItem; compact?: boolean }) {
   const withdrawal = item.type === "withdrawal";
+
   return (
     <div
       className={
-        "relative aspect-[1.48/1] overflow-hidden rounded-xl border bg-[#0B3A56] shadow-2xl " +
+        "relative aspect-[4/3] overflow-hidden rounded-xl border bg-[#083a56] shadow-2xl " +
         (compact ? "border-white/10 opacity-45" : "border-accent/35 shadow-accent/10")
       }
     >
-      <div className="absolute inset-x-0 top-0 h-[41%] bg-[#0B3A56]" />
-      <div className="absolute inset-x-0 top-[41%] h-[42%] bg-gradient-to-r from-[#1a9c8c] via-[#14b8a6] to-[#1a9c8c]" />
-      <div className="absolute inset-x-0 bottom-0 h-[17%] bg-[#0B3A56]" />
-      <div className="absolute inset-0 opacity-10 [background-image:linear-gradient(90deg,transparent_48%,rgba(255,255,255,.5)_49%,transparent_50%)] [background-size:42px_100%]" />
-      <div className="absolute right-2 top-2 rounded-full border border-white/15 bg-black/35 px-2 py-1 text-[7px] font-bold uppercase tracking-widest text-white/75 sm:text-[9px]">
-        Historical replacement
+      {/* Background bands */}
+      <div className="absolute inset-x-0 top-0 h-[37%] bg-gradient-to-b from-[#06354f] to-[#083e5d]" />
+      <div className="absolute inset-x-0 top-[37%] h-[35%] bg-gradient-to-r from-[#13a693] via-[#12baa7] to-[#149d8e]" />
+      <div className="absolute inset-x-0 bottom-0 h-[28%] bg-gradient-to-b from-[#083a56] to-[#06334d]" />
+
+      {/* Subtle trading-chart texture */}
+      <div className="absolute inset-x-0 top-[37%] h-[35%] opacity-20">
+        <div className="absolute left-[7%] top-[55%] h-[25%] w-[2%] bg-white/35" />
+        <div className="absolute left-[14%] top-[40%] h-[38%] w-[2%] bg-white/35" />
+        <div className="absolute left-[21%] top-[26%] h-[48%] w-[2%] bg-white/35" />
+        <div className="absolute left-[30%] top-[14%] h-[52%] w-[2%] bg-white/35" />
+        <div className="absolute left-[39%] top-[31%] h-[39%] w-[2%] bg-white/35" />
+        <div className="absolute left-[48%] top-[18%] h-[48%] w-[2%] bg-white/35" />
+        <div className="absolute left-[58%] top-[35%] h-[35%] w-[2%] bg-white/35" />
+        <div className="absolute left-[68%] top-[10%] h-[52%] w-[2%] bg-white/35" />
+        <div className="absolute left-[78%] top-[24%] h-[42%] w-[2%] bg-white/35" />
+        <div className="absolute left-[88%] top-[14%] h-[48%] w-[2%] bg-white/35" />
       </div>
 
-      <div className="absolute left-1/2 top-[7%] flex -translate-x-1/2 items-center gap-2 whitespace-nowrap">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent font-['Orbitron'] text-[9px] font-bold text-white">
+      {/* Border */}
+      <div className="absolute inset-[1.5%] rounded-sm border border-white/55" />
+
+      {/* Brand */}
+      <div className="absolute left-1/2 top-[5.5%] flex -translate-x-1/2 items-center gap-2 whitespace-nowrap sm:gap-3">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary via-blue-500 to-accent font-['Orbitron'] text-[9px] font-bold text-white sm:h-9 sm:w-9 sm:text-xs">
           HF
         </span>
-        <span className="font-['Orbitron'] text-[10px] font-bold text-white sm:text-xs">
+        <span className="font-['Orbitron'] text-[10px] font-bold tracking-wide text-white sm:text-base">
           HYBRID<span className="text-accent">FUNDING</span>
         </span>
       </div>
 
-      <div className="absolute inset-x-4 top-[18%] text-center">
+      {/* Title */}
+      <div className="absolute inset-x-[5%] top-[14%] text-center">
         {withdrawal ? (
           <>
-            <div className="font-['Orbitron'] text-sm tracking-wide text-white sm:text-xl">CERTIFICATE OF</div>
-            <div className="font-['Orbitron'] text-xl font-black tracking-wide text-[#16b8ab] sm:text-3xl">WITHDRAWAL</div>
+            <div className="font-['Orbitron'] text-base font-medium tracking-wide text-white sm:text-2xl">
+              CERTIFICATE OF
+            </div>
+            <div className="font-['Orbitron'] text-2xl font-black tracking-wide text-[#16b8ab] sm:text-4xl">
+              WITHDRAWAL
+            </div>
           </>
         ) : (
           <>
-            <div className="font-['Orbitron'] text-xl font-black tracking-wide text-white sm:text-3xl">CONGRATULATIONS!</div>
-            <div className="font-['Orbitron'] text-xs tracking-wide text-[#13c6ba] sm:text-base">YOU PASSED THE ASSESSMENT</div>
+            <div className="font-['Orbitron'] text-2xl font-black tracking-wide text-white sm:text-5xl">
+              CONGRATULATIONS!
+            </div>
+            <div className="mt-1 font-['Orbitron'] text-xs tracking-wide text-[#13c6ba] sm:text-xl">
+              YOU PASSED THE ASSESSMENT
+            </div>
           </>
         )}
       </div>
 
-      <div className="absolute inset-x-[12%] top-[49%] text-center">
-        {withdrawal && <div className="mb-2 text-[10px] uppercase tracking-[.14em] text-white/90 sm:text-sm">Presented to:</div>}
-        <div className="border-b border-white/70 pb-2 font-['Orbitron'] text-base font-bold text-white sm:text-2xl">
+      {/* Seal */}
+      {!withdrawal && (
+        <div className="absolute left-1/2 top-[31%] z-10 -translate-x-1/2">
+          <div className="relative h-12 w-12 rounded-full border-[5px] border-[#d9d9d9] bg-gradient-to-br from-white via-[#bfc3c7] to-[#8e9398] shadow-lg sm:h-20 sm:w-20 sm:border-[8px]">
+            <div className="absolute -bottom-[18%] left-1/2 h-[24%] w-[90%] -translate-x-1/2 bg-gradient-to-r from-purple-700 via-fuchsia-600 to-purple-700" />
+          </div>
+        </div>
+      )}
+
+      {/* Name / payout area */}
+      <div className={`absolute inset-x-[12%] text-center ${withdrawal ? "top-[40%]" : "top-[49%]"}`}>
+        {withdrawal && (
+          <div className="mb-2 text-[9px] uppercase tracking-[.12em] text-white/95 sm:text-base">
+            Presented to:
+          </div>
+        )}
+
+        <div className="font-['Orbitron'] text-xl font-bold text-white sm:text-4xl">
           {item.name}
         </div>
+        <div className="mx-auto mt-2 h-px w-[88%] bg-white/80" />
+
         {withdrawal && item.amount && (
-          <div className="mx-auto mt-4 w-1/2 border-b border-white/80 pb-1 font-['Orbitron'] text-sm font-bold text-white sm:text-lg">
-            {item.amount}
-            <div className="mt-0.5 text-[8px] font-normal text-white/80 sm:text-[10px]">Payout</div>
+          <div className="mx-auto mt-4 w-[46%] sm:mt-5">
+            <div className="font-['Orbitron'] text-base font-bold text-white sm:text-2xl">
+              {item.amount}
+            </div>
+            <div className="mt-1 h-px w-full bg-white/85" />
+            <div className="mt-1 text-[8px] text-white/80 sm:text-xs">Payout</div>
           </div>
+        )}
+
+        {!withdrawal && (
+          <p className="mx-auto mt-2 max-w-[92%] text-[6px] leading-[1.25] text-white/95 sm:mt-3 sm:text-[11px] sm:leading-[1.3]">
+            You have successfully passed the Hybrid Funding Assessment. During these assessment periods the trader has
+            demonstrated the necessary skills to comply with the rules and objectives of the assessment. Their good risk
+            management and knowledge have allowed them to take this very important step that brings the trader ever closer
+            to achieving their financial goals.
+          </p>
         )}
       </div>
 
-      <div className="absolute bottom-[5%] left-[13%] text-center">
-        <div className="border-b border-white/70 px-2 pb-0.5 text-[8px] font-bold text-white sm:text-xs">{item.date}</div>
-        <div className="text-[7px] text-white/70 sm:text-[9px]">Date</div>
+      {/* Bottom date: text always ABOVE the line */}
+      <div className="absolute bottom-[8.5%] left-[12%] w-[34%] text-center">
+        <div className="font-['Orbitron'] text-[8px] font-bold text-white sm:text-base">
+          {item.date}
+        </div>
+        <div className="mt-1.5 h-px w-full bg-white/80" />
+        <div className="mt-1 text-[7px] text-white/75 sm:text-xs">Date</div>
       </div>
 
-      <div className="absolute bottom-[4.5%] right-[11%] text-right">
-        <div className="font-['Orbitron'] text-sm italic text-white sm:text-xl">J. Johnson</div>
-        <div className="border-t border-white/70 pt-0.5 text-[7px] text-white/80 sm:text-[9px]">Hybrid Funding CEO</div>
+      {/* CEO signature */}
+      <div className="absolute bottom-[8.5%] right-[11%] w-[35%] text-center">
+        <div className="font-['Orbitron'] text-base italic leading-none text-black sm:text-3xl">J. Johnson</div>
+        <div className="mt-1.5 h-px w-full bg-white/80" />
+        <div className="mt-1 text-[7px] text-white/80 sm:text-xs">Hybrid Funding CEO</div>
+      </div>
+
+      {/* Disclosure */}
+      <div className="absolute inset-x-[8%] bottom-[1.8%] text-center text-[4.5px] text-white/55 sm:text-[8px]">
+        Historical replacement certificate — date reconstructed from legacy pass-order records.
       </div>
     </div>
   );
