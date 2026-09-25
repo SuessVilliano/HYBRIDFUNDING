@@ -16,5 +16,5 @@ Click the symbol to expand → select **Info**.
 
 ## Notes
 
-- MatchTrader is not available for Single Session Equities. SSE is on GooeyPro only.
+- MatchTrader is not available for Single Session Equities. SSE is on PropX only.
 - Holidays can affect available trading hours.

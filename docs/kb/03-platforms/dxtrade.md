@@ -16,5 +16,5 @@ Right-click the symbol → select **Instrument Info**.
 
 ## Notes
 
-- DXtrade is not available for Single Session Equities. SSE is on GooeyPro only.
+- DXtrade is not available for Single Session Equities. SSE is on PropX only.
 - Holidays can affect available trading hours.

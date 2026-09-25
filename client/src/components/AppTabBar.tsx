@@ -24,7 +24,7 @@ const PLATFORMS: { name: string; note: string; url: string }[] = [
   { name: "DXtrade Futures", note: "Futures", url: "https://tradefutures.gooeytrade.com/" },
   { name: "Match-Trader", note: "Forex", url: "https://mtr.gooeytrade.com/login" },
   { name: "cTrader", note: "Forex", url: "https://app.gooeytrade.com/" },
-  { name: "GooeyPro", note: "Single Session Equities", url: "https://gooeypro.gooeytrade.com/login" },
+  { name: "PropX", note: "Single Session Equities", url: "https://gooeypro.gooeytrade.com/login" },
   { name: "Volumetrica", note: "Futures — order flow", url: "https://my.deepcharts.com/identity/account/login" },
   { name: "Rithmic", note: "Futures — R Trader Pro", url: "https://rtraderpro.rithmic.com/rtraderpro-web/" },
   { name: "Tradovate", note: "Futures", url: "https://trader.tradovate.com/" },

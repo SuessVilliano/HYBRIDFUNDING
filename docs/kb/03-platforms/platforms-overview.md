@@ -1,7 +1,7 @@
 ---
 title: Trading Platforms Overview
 category: platforms
-tags: [platforms, dxtrade, matchtrader, ctrader, gooeypro]
+tags: [platforms, dxtrade, matchtrader, ctrader, propx]
 last_updated: 2026-05-11
 ---
 
@@ -12,7 +12,7 @@ last_updated: 2026-05-11
 | DXtrade | One-Step, Two-Step, Instant Funding | Forex, CFD Indices, Metals, Cryptocurrencies |
 | MatchTrader | One-Step, Two-Step, Instant Funding | Forex, CFD Indices, Metals, Cryptocurrencies |
 | cTrader | One-Step, Two-Step, Instant Funding | Forex, CFD Indices, Metals, Cryptocurrencies |
-| GooeyPro | Single Session Equities | S&P 100 equities |
+| PropX | Single Session Equities | S&P 100 equities |
 
 ## How to pick a platform
 

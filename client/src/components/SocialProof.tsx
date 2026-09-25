@@ -24,7 +24,7 @@ const stats = [
     icon: Shield,
     label: "Platform Choice",
     value: "Multi",
-    sub: "MatchTrader · DXtrade · cTrader · Volumetrica · GooeyPro · Tickblaze launching",
+    sub: "MatchTrader · DXtrade · cTrader · Volumetrica · PropX · Tickblaze launching",
   },
 ];
 

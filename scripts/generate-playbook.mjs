@@ -220,7 +220,7 @@ const tocRows = [
   ["05", "Forex playbook", "1-Step, 2-Step, 3-Step, Instant Funding, Lite.", "8"],
   ["06", "Crypto playbook", "Programs, leverage, daily cap, weekend rules.", "9"],
   ["07", "Futures 4-Phase playbook", "Phase rules, contract limits, payouts, Tradovate.", "10"],
-  ["08", "Single Session Equities playbook", "GooeyPro, S&P 100, 09:30–15:55 ET.", "11"],
+  ["08", "Single Session Equities playbook", "PropX, S&P 100, 09:30–15:55 ET.", "11"],
   ["09", "Add-on decision tree", "Which 5 add-ons earn back their price.", "12"],
   ["10", "How traders breach (and how not to)", "5 most common breach scenarios with fixes.", "13"],
   ["11", "Why traders pick Hybrid Funding", "Six unfair advantages of trading with us.", "14"],
@@ -282,7 +282,7 @@ table(
     { asset: "Forex", platform: "cTrader · DXTrade · MatchTrader", leverage: "1:50", window: "24/5 (close 3:45pm Fri ET)" },
     { asset: "Crypto", platform: "cTrader · DXTrade · MatchTrader", leverage: "5:1 BTC/ETH · 2:1 alts", window: "24/7" },
     { asset: "Futures", platform: "Rithmic Pro · Tradovate (soon)", leverage: "Per instrument", window: "Close by 15:10 CST" },
-    { asset: "SS Equities", platform: "GooeyPro", leverage: "2:1", window: "09:30 – 15:55 ET only" },
+    { asset: "SS Equities", platform: "PropX", leverage: "2:1", window: "09:30 – 15:55 ET only" },
   ],
 );
 
@@ -531,7 +531,7 @@ pageBreak();
 
 // ============== EQUITIES ==============
 h1("08  ·  Single Session Equities");
-p("Day-trade S&P 100 equity products on GooeyPro. All positions open and close within the same trading session — flat by 15:55 ET, every day. The ONLY equities prop product on the market with this structure.");
+p("Day-trade S&P 100 equity products on PropX. All positions open and close within the same trading session — flat by 15:55 ET, every day. The ONLY equities prop product on the market with this structure.");
 
 h2("Rules at a glance");
 table(
@@ -615,8 +615,8 @@ table(
   ],
   [
     { what: "4 asset classes, 1 firm", why: "Trade Forex, Crypto, Futures, and Single Session Equities under one account ecosystem. No juggling logins across firms." },
-    { what: "Single Session Equities", why: "The only prop firm with day-traded S&P 100 equities on GooeyPro. Direct Nasdaq liquidity, $0.02/share. Built for stock day-traders." },
-    { what: "Modern platform stack", why: "cTrader, DXTrade, MatchTrader, Rithmic Pro, GooeyPro — and Tradovate is coming. We integrate fast and pick platforms traders actually like." },
+    { what: "Single Session Equities", why: "The only prop firm with day-traded S&P 100 equities on PropX. Direct Nasdaq liquidity, $0.02/share. Built for stock day-traders." },
+    { what: "Modern platform stack", why: "cTrader, DXTrade, MatchTrader, Rithmic Pro, PropX — and Tradovate is coming. We integrate fast and pick platforms traders actually like." },
     { what: "Up to 90% profit splits", why: "Industry-leading. The 90% upgrade pays for itself in your first 30 days of consistent trading." },
     { what: "Transparent rules", why: "Full FAQ pages with worked drawdown examples on hybridfunding.co/faq. No 30-page hidden PDFs. We want you to pass." },
     { what: "Real community", why: "TradeHouse Battles tournaments, real prizes including funded accounts. Trade your reps, win real capital." },

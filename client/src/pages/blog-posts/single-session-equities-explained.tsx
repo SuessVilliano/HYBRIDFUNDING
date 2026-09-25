@@ -7,7 +7,7 @@ const Post = () => (
     <h2>What you can trade</h2>
     <ul>
       <li><strong>Universe:</strong> any S&P 100 equity product made available on the platform.</li>
-      <li><strong>Platform:</strong> GooeyPro (the only platform supported for this program).</li>
+      <li><strong>Platform:</strong> PropX (the only platform supported for this program).</li>
       <li><strong>Liquidity:</strong> sourced directly from Nasdaq.</li>
       <li><strong>Leverage:</strong> up to 2:1.</li>
       <li><strong>Commissions:</strong> $0.02 per share per side, with a $0.50 minimum per transaction.</li>

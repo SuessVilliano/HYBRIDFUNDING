@@ -22,7 +22,7 @@ To help us resolve your issue on the first reply, please include:
 
 - The email address tied to your trader dashboard
 - Your account ID (visible on the dashboard)
-- The trading platform you're on (DXtrade, MatchTrader, cTrader, or GooeyPro)
+- The trading platform you're on (DXtrade, MatchTrader, cTrader, or PropX)
 - A short description of the issue and any screenshots that show what you're seeing
 
 ## Common questions
