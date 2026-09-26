@@ -72,7 +72,6 @@ const TradeHouseStudio: React.FC = () => {
   const [sponsorUrl, setSponsorUrl] = useState("");
   const [musicUrl, setMusicUrl] = useState("");
   const [shareAccess, setShareAccess] = useState("");
-  const [shareAccessExpiresAt, setShareAccessExpiresAt] = useState("");
   const [roomId, setRoomId] = useState(() => newRoomId());
   const [quickStatus, setQuickStatus] = useState("");
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
@@ -94,7 +93,6 @@ const TradeHouseStudio: React.FC = () => {
       .then((body) => {
         if (!body?.token) return;
         setShareAccess(body.token);
-        setShareAccessExpiresAt(body.expiresAt || "");
       })
       .catch(() => undefined);
   }, []);
