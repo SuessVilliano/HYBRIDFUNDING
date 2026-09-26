@@ -364,7 +364,10 @@ const LiveControls: React.FC<{
   showStatsEditor: boolean;
   onToggleStatsEditor: () => void;
   onStatsChange: (stats: TraderStats) => void;
-}> = ({ myStats, myName, showStatsEditor, onToggleStatsEditor, onStatsChange }) => {
+  seatId: string;
+  layoutMode: SeatLayoutMode;
+  onLayoutModeChange: (mode: SeatLayoutMode) => void;
+}> = ({ myStats, myName, showStatsEditor, onToggleStatsEditor, onStatsChange, seatId, layoutMode, onLayoutModeChange }) => {
   const call = useCall();
   const {
     useCameraState,
@@ -410,6 +413,13 @@ const LiveControls: React.FC<{
     }
   }, [camera, microphone]);
 
+  const changeLayout = useCallback((mode: SeatLayoutMode) => {
+    onLayoutModeChange(mode);
+    void call?.sendCustomEvent({ type: "seat_layout", seatId, layout: mode }).catch((error: unknown) => {
+      console.error("[tradehouse] seat layout sync failed", error);
+    });
+  }, [call, onLayoutModeChange, seatId]);
+
   const hangUp = useCallback(async () => {
     try {
       await call?.leave();
@@ -434,6 +444,8 @@ const LiveControls: React.FC<{
         showStatsEditor={showStatsEditor}
         onToggleStatsEditor={onToggleStatsEditor}
         onStatsChange={onStatsChange}
+        layoutMode={layoutMode}
+        onLayoutModeChange={changeLayout}
         chatControl={<HouseChat myName={myName} />}
       />
       {(isCameraOff || isMicMuted) && (
