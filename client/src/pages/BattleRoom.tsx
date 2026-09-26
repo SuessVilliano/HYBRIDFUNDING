@@ -324,7 +324,7 @@ const BattleRoom: React.FC = () => {
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-6 rounded-full" style={{ border: "3px solid rgba(255,255,255,0.05)", borderTop: "3px solid #00ff87", animation: "spin 1s linear infinite", boxShadow: "0 0 20px rgba(0,255,135,0.3)" }} />
           <p className="font-['Orbitron'] text-white text-lg font-bold">Entering battle room…</p>
-          <p className="font-mono mt-2" style={{ color: "#ffd700", fontSize: "13px" }}>{config.roomId}</p>
+          <p className="font-mono mt-2" style={{ color: "#00ffff", fontSize: "13px" }}>{config.roomId}</p>
         </div>
       </div>
     );
@@ -354,9 +354,9 @@ const BattleRoom: React.FC = () => {
           style={{ height: "48px", background: "rgba(10,10,15,0.96)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
         >
           <div className="flex items-center gap-3">
-            <span className="px-2 py-0.5 rounded font-['Orbitron'] font-black text-xs" style={{ background: "rgba(255,215,0,0.12)", border: "1px solid rgba(255,215,0,0.25)", color: "#ffd700" }}>{config.mode}</span>
+            <span className="px-2 py-0.5 rounded font-['Orbitron'] font-black text-xs" style={{ background: "rgba(0,255,255,0.12)", border: "1px solid rgba(0,255,255,0.25)", color: "#00ffff" }}>{config.mode}</span>
             <span className="font-mono text-xs" style={{ color: "#333" }}>|</span>
-            <span className="font-mono font-bold text-xs" style={{ color: "#ffd700" }}>{config.roomId}</span>
+            <span className="font-mono font-bold text-xs" style={{ color: "#00ffff" }}>{config.roomId}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#ff3b5c", boxShadow: "0 0 6px #ff3b5c", animation: "pulse 1.2s infinite" }} />

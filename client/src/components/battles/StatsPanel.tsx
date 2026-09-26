@@ -118,7 +118,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elap
           <span className="font-['Orbitron'] font-bold truncate" style={{ color: leftWinning ? "#00ff87" : "#333", fontSize: fs, maxWidth: "40%" }}>
             {leftTeam.name}
           </span>
-          <span className="font-['Orbitron'] font-black text-white flex-shrink-0 mx-1" style={{ fontSize: compact ? "14px" : "16px", color: "#ffd700", textShadow: "0 0 12px rgba(255,215,0,0.5)" }}>
+          <span className="font-['Orbitron'] font-black text-white flex-shrink-0 mx-1" style={{ fontSize: compact ? "14px" : "16px", color: "#00ffff", textShadow: "0 0 12px rgba(0,255,255,0.5)" }}>
             VS
           </span>
           <span className="font-['Orbitron'] font-bold truncate text-right" style={{ color: rightWinning ? "#00ff87" : "#333", fontSize: fs, maxWidth: "40%" }}>
@@ -132,8 +132,8 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elap
             animate={{ opacity: 1, scale: 1 }}
             className="mt-2 flex items-center justify-center gap-1"
           >
-            <Crown className="w-3 h-3" style={{ color: "#ffd700", filter: "drop-shadow(0 0 4px rgba(255,215,0,0.6))" }} />
-            <span className="font-['Orbitron'] font-bold" style={{ color: "#ffd700", fontSize: "9px", textShadow: "0 0 8px rgba(255,215,0,0.4)" }}>
+            <Crown className="w-3 h-3" style={{ color: "#00ffff", filter: "drop-shadow(0 0 4px rgba(0,255,255,0.6))" }} />
+            <span className="font-['Orbitron'] font-bold" style={{ color: "#00ffff", fontSize: "9px", textShadow: "0 0 8px rgba(0,255,255,0.4)" }}>
               {leftWinning ? leftTeam.name : rightTeam.name} LEADING
             </span>
           </motion.div>
