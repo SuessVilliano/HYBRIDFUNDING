@@ -140,6 +140,7 @@ const TradeHouseStudio: React.FC = () => {
       quick: quickEncoded,
       season: seasonName,
       ...(overlay ? { overlay: "1" } : {}),
+      ...experienceParams,
     })}`;
   const quickTvUrl = `${base}/tradehouse/tv?${new URLSearchParams({ quick: quickEncoded, season: seasonName, ...experienceParams })}`;
 
@@ -306,6 +307,92 @@ const TradeHouseStudio: React.FC = () => {
                     onChange={(e) => setSeasonName(e.target.value)}
                     className="mt-2 w-full rounded-xl border border-white/10 bg-[#07101b] px-4 py-3 text-sm text-white outline-none focus:border-cyan-300/60"
                   />
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="font-['Orbitron'] text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">Battle rules</div>
+                      <p className="mt-2 max-w-2xl text-xs leading-relaxed text-slate-500">
+                        Pick the reason the clock exists. Spotlight can run as long as the setups require; Sprint is the scalper clock; Prop ends on the challenge conditions; League follows the season window.
+                      </p>
+                    </div>
+                    <span className="rounded-full border border-cyan-300/15 bg-cyan-300/[0.05] px-3 py-1.5 font-['Orbitron'] text-[9px] font-bold text-cyan-200">
+                      {BATTLE_PRESETS[battleFormat].label}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 grid gap-2 sm:grid-cols-5">
+                    {(["spotlight", "sprint", "target", "prop", "league"] as BattleFormat[]).map((format) => (
+                      <button
+                        key={format}
+                        onClick={() => setBattleFormat(format)}
+                        className="rounded-xl border px-3 py-3 text-left transition-all"
+                        style={{
+                          borderColor: battleFormat === format ? "rgba(34,211,238,.45)" : "rgba(255,255,255,.08)",
+                          background: battleFormat === format ? "rgba(34,211,238,.07)" : "rgba(255,255,255,.02)",
+                        }}
+                      >
+                        <div className={`font-['Orbitron'] text-[9px] font-black uppercase tracking-[0.08em] ${battleFormat === format ? "text-cyan-200" : "text-slate-500"}`}>
+                          {BATTLE_PRESETS[format].label}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {(battleFormat === "sprint") && (
+                      <label className="text-xs text-slate-500">
+                        Duration (minutes)
+                        <input type="number" min={1} value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value) || 1)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      </label>
+                    )}
+                    {(battleFormat === "target") && (
+                      <label className="text-xs text-slate-500">
+                        First to return %
+                        <input type="number" step="0.25" value={targetPct} onChange={(e) => setTargetPct(Number(e.target.value) || 0)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      </label>
+                    )}
+                    {(battleFormat === "prop") && (
+                      <>
+                        <label className="text-xs text-slate-500">
+                          Profit target %
+                          <input type="number" step="0.25" value={profitTargetPct} onChange={(e) => setProfitTargetPct(Number(e.target.value) || 0)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                        </label>
+                        <label className="text-xs text-slate-500">
+                          Max drawdown %
+                          <input type="number" step="0.25" value={maxDDPct} onChange={(e) => setMaxDDPct(Number(e.target.value) || 0)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                        </label>
+                      </>
+                    )}
+                    {(battleFormat === "league") && (
+                      <label className="text-xs text-slate-500 sm:col-span-2">
+                        League closes
+                        <input type="datetime-local" value={leagueEndsAt} onChange={(e) => setLeagueEndsAt(e.target.value)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      </label>
+                    )}
+                    {battleFormat !== "spotlight" && battleFormat !== "sprint" && (
+                      <label className="text-xs text-slate-500">
+                        Same account size
+                        <input type="number" step="1000" value={accountSize} onChange={(e) => setAccountSize(Number(e.target.value) || 0)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      </label>
+                    )}
+                  </div>
+
+                  <div className="mt-5 grid gap-3 lg:grid-cols-3">
+                    <label className="text-xs text-slate-500 lg:col-span-1">
+                      Hybrid promo ribbon
+                      <input value={promoText} onChange={(e) => setPromoText(e.target.value)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                    </label>
+                    <label className="text-xs text-slate-500">
+                      Sponsor name
+                      <input value={sponsorName} onChange={(e) => setSponsorName(e.target.value)} placeholder="Optional" className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                    </label>
+                    <label className="text-xs text-slate-500">
+                      Sponsor URL
+                      <input value={sponsorUrl} onChange={(e) => setSponsorUrl(e.target.value)} placeholder="https://…" className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                    </label>
+                  </div>
                 </div>
 
                 <div className="space-y-3">
