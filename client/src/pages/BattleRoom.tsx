@@ -222,6 +222,8 @@ const BottomBar: React.FC<{
   showStatsEditor: boolean;
   onToggleStatsEditor: () => void;
   onStatsChange: (stats: TraderStats) => void;
+  layoutMode: SeatLayoutMode;
+  onLayoutModeChange: (mode: SeatLayoutMode) => void;
   chatControl?: React.ReactNode;
 }> = ({
   myName,
@@ -236,8 +238,11 @@ const BottomBar: React.FC<{
   showStatsEditor,
   onToggleStatsEditor,
   onStatsChange,
+  layoutMode,
+  onLayoutModeChange,
   chatControl,
 }) => {
+  const [showLayouts, setShowLayouts] = useState(false);
   const pnlPositive = myStats.pnl >= 0;
   const pnlStr = pnlPositive
     ? `+$${myStats.pnl.toLocaleString()}`
@@ -296,6 +301,27 @@ const BottomBar: React.FC<{
         <button onClick={onToggleScreen} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(isSharingScreen)} title={isSharingScreen ? "Stop sharing screen" : "Share screen"}>
           <Monitor className="h-4 w-4" />
         </button>
+        <div className="relative">
+          <button
+            onClick={() => setShowLayouts((value) => !value)}
+            className="flex h-9 w-9 items-center justify-center rounded-full transition-all"
+            style={controlStyle(showLayouts)}
+            title="Change seat layout"
+          >
+            <Columns2 className="h-4 w-4" />
+          </button>
+          <AnimatePresence>
+            {showLayouts && (
+              <SeatLayoutPicker
+                value={layoutMode}
+                onChange={(mode) => {
+                  onLayoutModeChange(mode);
+                  setShowLayouts(false);
+                }}
+              />
+            )}
+          </AnimatePresence>
+        </div>
         {chatControl}
         <button onClick={onHangUp} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(false, true)} title="Leave battle">
           <LogOut className="h-4 w-4" />
