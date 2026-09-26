@@ -52,5 +52,5 @@ export default function ChunkedImage({
     );
   }
 
-  return <img src={src} alt={alt} className={className} loading={loading} decoding="async" />;
+  return <img src={src} alt={alt} className={className} loading={loading} decoding="async" onError={() => setSrc("")} />;
 }
