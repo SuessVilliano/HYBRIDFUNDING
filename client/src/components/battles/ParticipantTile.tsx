@@ -37,6 +37,7 @@ export interface TraderStats {
 
 interface ParticipantTileProps {
   traderName: string;
+  avatarUrl?: string;
   stats: TraderStats;
   cameraTrack?: React.ReactNode | null;
   screenTrack?: React.ReactNode | null;
@@ -58,6 +59,7 @@ const money = (value?: number) =>
 
 const ParticipantTile: React.FC<ParticipantTileProps> = ({
   traderName,
+  avatarUrl,
   stats,
   cameraTrack,
   screenTrack,
@@ -276,7 +278,15 @@ const ParticipantTile: React.FC<ParticipantTileProps> = ({
         className="flex flex-shrink-0 items-center justify-between px-3 py-2"
         style={{ background: "rgba(2,7,15,0.92)", borderBottom: `1px solid ${borderColor}` }}
       >
-        <div className="min-w-0">
+        <div className="flex min-w-0 items-center gap-2">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="" className="h-7 w-7 flex-shrink-0 rounded-lg border border-white/10 object-cover" />
+          ) : (
+            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] font-['Orbitron'] text-[8px] font-black text-slate-500">
+              {traderName.slice(0, 2).toUpperCase()}
+            </div>
+          )}
+          <div className="min-w-0">
           <span
             className="block truncate font-['Orbitron'] font-black uppercase tracking-wider"
             style={{ color: "#fff", fontSize: compact ? "10px" : "13px" }}
@@ -288,6 +298,7 @@ const ParticipantTile: React.FC<ParticipantTileProps> = ({
               {(stats.division || "trading").toUpperCase()} · {(stats.platform || "hybrid").toUpperCase()} · {layoutMode.replace("-", " + ").toUpperCase()}
             </span>
           )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
