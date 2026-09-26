@@ -54,24 +54,32 @@ function safeTextEqual(a: string, b: string) {
   return timingSafeEqual(left, right);
 }
 
-function signBetaToken(ttlSeconds: number) {
+type BetaScope = "admin" | "share";
+
+function signBetaToken(ttlSeconds: number, scope: BetaScope = "admin") {
   const secret = betaSecret();
   if (!secret) return "";
   const expiresAt = Math.floor(Date.now() / 1000) + ttlSeconds;
-  const payload = `v1.${expiresAt}`;
+  const payload = `v2.${scope}.${expiresAt}`;
   const signature = createHmac("sha256", secret).update(payload).digest("base64url");
   return `${payload}.${signature}`;
 }
 
-function verifyBetaToken(token?: string | null) {
-  if (!token || !betaSecret()) return false;
-  const [version, expiresRaw, signature] = token.split(".");
-  if (version !== "v1" || !expiresRaw || !signature) return false;
+function readBetaToken(token?: string | null): { scope: BetaScope; expiresAt: number } | null {
+  if (!token || !betaSecret()) return null;
+  const [version, scopeRaw, expiresRaw, signature] = token.split(".");
+  if (version !== "v2" || (scopeRaw !== "admin" && scopeRaw !== "share") || !expiresRaw || !signature) return null;
   const expiresAt = Number(expiresRaw);
-  if (!Number.isFinite(expiresAt) || expiresAt <= Math.floor(Date.now() / 1000)) return false;
-  const payload = `${version}.${expiresRaw}`;
+  if (!Number.isFinite(expiresAt) || expiresAt <= Math.floor(Date.now() / 1000)) return null;
+  const payload = `${version}.${scopeRaw}.${expiresRaw}`;
   const expected = createHmac("sha256", betaSecret()).update(payload).digest("base64url");
-  return safeTextEqual(signature, expected);
+  if (!safeTextEqual(signature, expected)) return null;
+  return { scope: scopeRaw, expiresAt };
+}
+
+function verifyBetaToken(token?: string | null, requiredScope?: BetaScope) {
+  const parsed = readBetaToken(token);
+  return Boolean(parsed && (!requiredScope || parsed.scope === requiredScope));
 }
 
 function cookieValue(req: Request, name: string) {
@@ -88,8 +96,12 @@ function queryAccess(req: Request) {
   return typeof value === "string" ? value : "";
 }
 
+function hasAdminBetaAccess(req: Request) {
+  return verifyBetaToken(cookieValue(req, TRADEHOUSE_BETA_COOKIE), "admin");
+}
+
 function hasBetaAccess(req: Request) {
-  return verifyBetaToken(cookieValue(req, TRADEHOUSE_BETA_COOKIE)) || verifyBetaToken(queryAccess(req));
+  return hasAdminBetaAccess(req) || verifyBetaToken(queryAccess(req), "share");
 }
 
 function setBetaCookie(res: Response, token: string, maxAgeSeconds: number) {
@@ -118,6 +130,16 @@ function requireTradeHouseBeta(req: Request, res: Response, next: NextFunction) 
   next();
 }
 
+function requireTradeHouseAdmin(req: Request, res: Response, next: NextFunction) {
+  if (!betaConfigured()) {
+    return res.status(503).json({ error: "Private beta access is not configured." });
+  }
+  if (!hasAdminBetaAccess(req)) {
+    return res.status(401).json({ error: "Admin beta session required." });
+  }
+  next();
+}
+
 app.get("/api/tradehouse/beta/status", (req: Request, res: Response) => {
   if (!betaConfigured()) {
     res.setHeader("Cache-Control", "no-store");
@@ -125,13 +147,16 @@ app.get("/api/tradehouse/beta/status", (req: Request, res: Response) => {
   }
 
   const suppliedAccess = queryAccess(req);
-  const authorized = hasBetaAccess(req);
-  if (authorized && verifyBetaToken(suppliedAccess)) {
-    setBetaCookie(res, signBetaToken(TRADEHOUSE_BETA_SESSION_SECONDS), TRADEHOUSE_BETA_SESSION_SECONDS);
-  }
+  const share = readBetaToken(suppliedAccess);
+  const admin = hasAdminBetaAccess(req);
+  const authorized = admin || share?.scope === "share";
 
   res.setHeader("Cache-Control", "no-store");
-  return res.status(200).json({ authorized, configured: true });
+  return res.status(200).json({
+    authorized,
+    configured: true,
+    scope: admin ? "admin" : share?.scope || null,
+  });
 });
 
 app.post("/api/tradehouse/beta/login", async (req: Request, res: Response) => {
@@ -154,7 +179,7 @@ app.post("/api/tradehouse/beta/login", async (req: Request, res: Response) => {
   }
 
   betaAttempts.delete(attempt.key);
-  const token = signBetaToken(TRADEHOUSE_BETA_SESSION_SECONDS);
+  const token = signBetaToken(TRADEHOUSE_BETA_SESSION_SECONDS, "admin");
   setBetaCookie(res, token, TRADEHOUSE_BETA_SESSION_SECONDS);
   res.setHeader("Cache-Control", "no-store");
   return res.status(200).json({ ok: true });
@@ -167,7 +192,7 @@ app.post("/api/tradehouse/beta/logout", (_req: Request, res: Response) => {
 });
 
 app.post("/api/tradehouse/beta/link-token", requireTradeHouseBeta, (_req: Request, res: Response) => {
-  const token = signBetaToken(TRADEHOUSE_SHARE_SECONDS);
+  const token = signBetaToken(TRADEHOUSE_SHARE_SECONDS, "share");
   res.setHeader("Cache-Control", "no-store");
   return res.status(200).json({
     token,
@@ -175,7 +200,11 @@ app.post("/api/tradehouse/beta/link-token", requireTradeHouseBeta, (_req: Reques
   });
 });
 
-// Everything under /api/tradehouse after the beta-auth routes is private.
+// Admin mutations are restricted to the code-authenticated beta session.
+app.use("/api/tradehouse/admin", requireTradeHouseAdmin);
+
+// Non-admin Trade House APIs can be reached by the admin session or a temporary
+// signed share link generated by the producer studio.
 app.use("/api/tradehouse", requireTradeHouseBeta);
 
 
