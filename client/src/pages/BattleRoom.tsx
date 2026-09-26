@@ -383,6 +383,7 @@ const LiveControls: React.FC<{
   const { microphone, isMute: isMicMuted } = useMicrophoneState();
   const { screenShare, status: screenShareStatus } = useScreenShareState();
   const isSharingScreen = screenShareStatus === "enabled";
+  const canScreenShare = typeof navigator !== "undefined" && Boolean(navigator.mediaDevices?.getDisplayMedia);
   const [, navigate] = useLocation();
 
   const toggleMic = useCallback(async () => {
@@ -402,13 +403,14 @@ const LiveControls: React.FC<{
   }, [camera]);
 
   const toggleScreenShare = useCallback(async () => {
+    if (!canScreenShare) return;
     try {
       if (isSharingScreen) await screenShare.disable();
       else await screenShare.enable();
     } catch (error) {
       console.error("[tradehouse] screen share toggle failed", error);
     }
-  }, [isSharingScreen, screenShare]);
+  }, [canScreenShare, isSharingScreen, screenShare]);
 
   const enableCameraAndMic = useCallback(async () => {
     try {
@@ -442,6 +444,7 @@ const LiveControls: React.FC<{
         isMicMuted={isMicMuted}
         isCameraOff={isCameraOff}
         isSharingScreen={isSharingScreen}
+        canScreenShare={canScreenShare}
         onToggleMic={toggleMic}
         onToggleCamera={toggleCamera}
         onToggleScreen={toggleScreenShare}
