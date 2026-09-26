@@ -520,6 +520,7 @@ const ArenaInner: React.FC<{
       return {
         id: seat.id,
         name: seat.name,
+        avatarUrl: seat.avatarUrl,
         stats: seat.stats,
         cameraTrack: cameraStream ? (
           <MediaStreamVideo stream={cameraStream} />
@@ -956,6 +957,7 @@ const BattleRoom: React.FC = () => {
       side: config.producerMode ? undefined : config.side,
       slot: config.producerMode ? undefined : config.slot,
       seatId: ownEntry?.id || config.seatId || userId,
+      avatarUrl: ownEntry?.avatarUrl || "",
       dashboardUrl: ownEntry?.dashboardUrl || "",
       startingBalance: ownEntry?.startingBalance,
       division: ownEntry?.division || "trading",
@@ -974,6 +976,7 @@ const BattleRoom: React.FC = () => {
           id: data.seatId || existing?.id || data.userId,
           name: data.name || existing?.name || "Trader",
           dashboardUrl: data.dashboardUrl || existing?.dashboardUrl || "",
+          avatarUrl: data.avatarUrl || existing?.avatarUrl,
           startingBalance: data.startingBalance ?? existing?.startingBalance,
           division: data.division || existing?.division || "trading",
           platform: data.platform || existing?.platform || "other",
