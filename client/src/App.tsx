@@ -7,6 +7,7 @@ import Layout from "@/components/Layout";
 import AppTabBar from "@/components/AppTabBar";
 import NotFound from "@/pages/not-found";
 import PageTransition, { CyberpunkLoadingScreen } from "@/components/ui/page-transition";
+import BetaAccessGate from "@/components/BetaAccessGate";
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 
@@ -37,6 +38,7 @@ import TradeHouseBroadcast from "@/pages/TradeHouseBroadcast";
 import TradeHouseStage from "@/pages/TradeHouseStage";
 import TradeHybridTV from "@/pages/TradeHybridTV";
 import TradeHouseStudio from "@/pages/TradeHouseStudio";
+import BetaAdmin from "@/pages/BetaAdmin";
 
 function RouteScrollManager() {
   const [location] = useLocation();
@@ -102,12 +104,17 @@ function TraderDnaRedirect() {
 function AppRouter() {
   return (
     <Switch>
-      {/* ── Trader Battles arena routes (no Layout wrapper — full-screen) ── */}
-      <Route path="/battles/lobby" component={() => <BattleLobby />} />
-      <Route path="/battles/room/:roomId" component={() => <BattleRoom />} />
-      <Route path="/tradehouse/stage" component={() => <TradeHouseStage />} />
-      <Route path="/tradehouse/tv" component={() => <TradeHybridTV />} />
-      <Route path="/tradehouse/broadcast/:view" component={() => <TradeHouseBroadcast />} />
+      {/* ── Private beta routes ── */}
+      <Route path="/admin/beta" component={() => <BetaAdmin />} />
+      <Route path="/battles/lobby" component={() => <BetaAccessGate><BattleLobby /></BetaAccessGate>} />
+      <Route path="/battles/room/:roomId" component={() => <BetaAccessGate><BattleRoom /></BetaAccessGate>} />
+      <Route path="/tradehouse/stage" component={() => <BetaAccessGate><TradeHouseStage /></BetaAccessGate>} />
+      <Route path="/tradehouse/tv" component={() => <BetaAccessGate><TradeHybridTV /></BetaAccessGate>} />
+      <Route path="/tradehouse/broadcast/:view" component={() => <BetaAccessGate><TradeHouseBroadcast /></BetaAccessGate>} />
+      <Route path="/battles" component={() => <BetaAccessGate><Layout><Battles /></Layout></BetaAccessGate>} />
+      <Route path="/tradehouse" component={() => <BetaAccessGate><Layout><TradeHouse /></Layout></BetaAccessGate>} />
+      <Route path="/tradehouse/studio" component={() => <BetaAccessGate><Layout><TradeHouseStudio /></Layout></BetaAccessGate>} />
+      <Route path="/live" component={() => <BetaAccessGate><Layout><HybridLive /></Layout></BetaAccessGate>} />
 
       {/* ── Homepage uses the same site shell as every public marketing page ── */}
       <Route path="/" component={() => <Layout><GetFunded /></Layout>} />
@@ -131,10 +138,6 @@ function AppRouter() {
                 <Route path="/terms" component={() => <PageTransition><Terms /></PageTransition>} />
                 <Route path="/thank-you" component={() => <PageTransition><ThankYou /></PageTransition>} />
                 <Route path="/faq" component={() => <PageTransition><FAQ /></PageTransition>} />
-                <Route path="/battles" component={() => <PageTransition><Battles /></PageTransition>} />
-                <Route path="/tradehouse" component={() => <PageTransition><TradeHouse /></PageTransition>} />
-                <Route path="/tradehouse/studio" component={() => <PageTransition><TradeHouseStudio /></PageTransition>} />
-                <Route path="/live" component={() => <PageTransition><HybridLive /></PageTransition>} />
                 <Route path="/dna-test" component={() => <PageTransition><TraderDnaRedirect /></PageTransition>} />
                 <Route path="/webinar" component={() => <PageTransition><Webinar /></PageTransition>} />
                 <Route path="/playbook" component={() => <PageTransition><Playbook /></PageTransition>} />
