@@ -228,6 +228,7 @@ async function ensureTradeHousePersistence() {
         CREATE TABLE IF NOT EXISTS trade_house_entries (
           id serial PRIMARY KEY,
           battle_id integer NOT NULL REFERENCES trade_house_battles(id),
+          external_key text,
           trader_id integer NOT NULL REFERENCES trade_house_traders(id),
           account_id integer REFERENCES trade_house_accounts(id),
           dashboard_url text,
@@ -257,6 +258,7 @@ async function ensureTradeHousePersistence() {
       await sql`ALTER TABLE trade_house_battles ADD COLUMN IF NOT EXISTS promo_text text`;
       await sql`ALTER TABLE trade_house_battles ADD COLUMN IF NOT EXISTS music_url text`;
       await sql`ALTER TABLE trade_house_entries ALTER COLUMN dashboard_url DROP NOT NULL`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS external_key text`;
       await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS account_id integer REFERENCES trade_house_accounts(id)`;
       await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_token_hash text`;
       await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_last_four text`;
@@ -265,6 +267,7 @@ async function ensureTradeHousePersistence() {
       await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS profile_completed_at timestamp`;
       await sql`CREATE INDEX IF NOT EXISTS idx_trade_house_accounts_trader ON trade_house_accounts(trader_id)`;
       await sql`CREATE INDEX IF NOT EXISTS idx_trade_house_entries_invite_hash ON trade_house_entries(invite_token_hash)`;
+      await sql`CREATE UNIQUE INDEX IF NOT EXISTS idx_trade_house_entries_external_key ON trade_house_entries(battle_id, external_key) WHERE external_key IS NOT NULL`;
       await sql`CREATE INDEX IF NOT EXISTS idx_trade_house_battles_created_at ON trade_house_battles(created_at DESC)`;
     })().catch((error) => {
       tradeHouseSchemaReady = null;
