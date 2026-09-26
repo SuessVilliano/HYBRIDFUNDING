@@ -464,6 +464,11 @@ const LiveControls: React.FC<{
           ENABLE CAMERA + MIC
         </button>
       )}
+      {!canScreenShare && (
+        <div className="absolute bottom-[4.35rem] left-2 z-30 rounded-lg border border-violet-400/15 bg-[#040a12]/90 px-2 py-1.5 text-[8px] text-violet-200 sm:hidden">
+          Mobile browser: camera and verified stats work; device screen sharing is unavailable here.
+        </div>
+      )}
     </>
   );
 };
