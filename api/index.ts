@@ -1,4 +1,5 @@
-import express, { type Request, type Response } from "express";
+import express, { type NextFunction, type Request, type Response } from "express";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 
 // Self-contained serverless handler for production /api/* routes.
@@ -8,6 +9,144 @@ import { z } from "zod";
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+const TRADEHOUSE_BETA_COOKIE = "hf_tradehouse_beta";
+const TRADEHOUSE_BETA_SESSION_SECONDS = 60 * 60 * 12;
+const TRADEHOUSE_SHARE_SECONDS = 60 * 60 * 24;
+
+function betaCode() {
+  return process.env.TRADEHOUSE_BETA_CODE?.trim() || "";
+}
+
+function betaSecret() {
+  return process.env.TRADEHOUSE_BETA_SECRET?.trim() || process.env.SESSION_SECRET?.trim() || "";
+}
+
+function betaConfigured() {
+  return Boolean(betaCode() && betaSecret());
+}
+
+function safeTextEqual(a: string, b: string) {
+  const left = createHash("sha256").update(a).digest();
+  const right = createHash("sha256").update(b).digest();
+  return timingSafeEqual(left, right);
+}
+
+function signBetaToken(ttlSeconds: number) {
+  const secret = betaSecret();
+  if (!secret) return "";
+  const expiresAt = Math.floor(Date.now() / 1000) + ttlSeconds;
+  const payload = `v1.${expiresAt}`;
+  const signature = createHmac("sha256", secret).update(payload).digest("base64url");
+  return `${payload}.${signature}`;
+}
+
+function verifyBetaToken(token?: string | null) {
+  if (!token || !betaSecret()) return false;
+  const [version, expiresRaw, signature] = token.split(".");
+  if (version !== "v1" || !expiresRaw || !signature) return false;
+  const expiresAt = Number(expiresRaw);
+  if (!Number.isFinite(expiresAt) || expiresAt <= Math.floor(Date.now() / 1000)) return false;
+  const payload = `${version}.${expiresRaw}`;
+  const expected = createHmac("sha256", betaSecret()).update(payload).digest("base64url");
+  return safeTextEqual(signature, expected);
+}
+
+function cookieValue(req: Request, name: string) {
+  const raw = req.headers.cookie || "";
+  for (const part of raw.split(";")) {
+    const [key, ...rest] = part.trim().split("=");
+    if (key === name) return decodeURIComponent(rest.join("="));
+  }
+  return "";
+}
+
+function queryAccess(req: Request) {
+  const value = req.query?.access;
+  return typeof value === "string" ? value : "";
+}
+
+function hasBetaAccess(req: Request) {
+  return verifyBetaToken(cookieValue(req, TRADEHOUSE_BETA_COOKIE)) || verifyBetaToken(queryAccess(req));
+}
+
+function setBetaCookie(res: Response, token: string, maxAgeSeconds: number) {
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  res.setHeader(
+    "Set-Cookie",
+    `${TRADEHOUSE_BETA_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSeconds}${secure}`,
+  );
+}
+
+function clearBetaCookie(res: Response) {
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  res.setHeader(
+    "Set-Cookie",
+    `${TRADEHOUSE_BETA_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`,
+  );
+}
+
+function requireTradeHouseBeta(req: Request, res: Response, next: NextFunction) {
+  if (!betaConfigured()) {
+    return res.status(503).json({ error: "Private beta access is not configured." });
+  }
+  if (!hasBetaAccess(req)) {
+    return res.status(401).json({ error: "Private beta access required." });
+  }
+  next();
+}
+
+app.get("/api/tradehouse/beta/status", (req: Request, res: Response) => {
+  if (!betaConfigured()) {
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(503).json({ authorized: false, configured: false });
+  }
+
+  const suppliedAccess = queryAccess(req);
+  const authorized = hasBetaAccess(req);
+  if (authorized && verifyBetaToken(suppliedAccess)) {
+    setBetaCookie(res, signBetaToken(TRADEHOUSE_BETA_SESSION_SECONDS), TRADEHOUSE_BETA_SESSION_SECONDS);
+  }
+
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({ authorized, configured: true });
+});
+
+app.post("/api/tradehouse/beta/login", async (req: Request, res: Response) => {
+  if (!betaConfigured()) {
+    return res.status(503).json({ error: "Private beta access is not configured." });
+  }
+
+  const submitted = typeof req.body?.code === "string" ? req.body.code.trim() : "";
+  if (!submitted || !safeTextEqual(submitted, betaCode())) {
+    await new Promise((resolve) => setTimeout(resolve, 450));
+    return res.status(401).json({ error: "Invalid access code." });
+  }
+
+  const token = signBetaToken(TRADEHOUSE_BETA_SESSION_SECONDS);
+  setBetaCookie(res, token, TRADEHOUSE_BETA_SESSION_SECONDS);
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({ ok: true });
+});
+
+app.post("/api/tradehouse/beta/logout", (_req: Request, res: Response) => {
+  clearBetaCookie(res);
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({ ok: true });
+});
+
+app.post("/api/tradehouse/beta/link-token", requireTradeHouseBeta, (_req: Request, res: Response) => {
+  const token = signBetaToken(TRADEHOUSE_SHARE_SECONDS);
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({
+    token,
+    expiresAt: new Date(Date.now() + TRADEHOUSE_SHARE_SECONDS * 1000).toISOString(),
+  });
+});
+
+// Everything under /api/tradehouse after the beta-auth routes is private.
+app.use("/api/tradehouse", requireTradeHouseBeta);
+
 
 const leadSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(80),
