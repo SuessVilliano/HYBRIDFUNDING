@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, Trophy, Users, Zap, Target } from "lucide-react";
+import { Check, Users, Zap, Target } from "lucide-react";
 import SEO from "@/components/SEO";
 import { breadcrumbSchema, organizationSchema } from "@/lib/jsonLd";
 
