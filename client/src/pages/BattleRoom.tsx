@@ -561,6 +561,17 @@ const ArenaInner: React.FC<{
           }}
         />
       )}
+      {!config.obsMode && config.producerMode && (
+        <>
+          <button
+            onClick={() => setShowProducer((value) => !value)}
+            className="absolute right-2 top-2 z-[80] rounded-xl border border-cyan-300/25 bg-cyan-300/[0.08] px-3 py-2 font-['Orbitron'] text-[8px] font-black uppercase tracking-[0.12em] text-cyan-200 sm:right-4 sm:top-3 sm:px-4 sm:text-[9px]"
+          >
+            PRODUCER CONTROL
+          </button>
+          {showProducer && <ProducerConsole musicUrl={config.musicUrl} onClose={() => setShowProducer(false)} />}
+        </>
+      )}
     </>
   );
 };
@@ -595,6 +606,7 @@ const DemoArena: React.FC<{
   const [mediaError, setMediaError] = useState("");
   const streamsRef = useRef<Array<MediaStream | null>>([]);
   const isSharingScreen = Boolean(screenStream);
+  const canScreenShare = typeof navigator !== "undefined" && Boolean(navigator.mediaDevices?.getDisplayMedia);
 
   const enableMicAndCamera = useCallback(async () => {
     try {
@@ -638,6 +650,10 @@ const DemoArena: React.FC<{
   }, [cameraStream, enableMicAndCamera, isCameraOff]);
 
   const toggleScreen = useCallback(async () => {
+    if (!canScreenShare) {
+      setMediaError("This mobile browser cannot share the device screen. Camera + verified Hybrid stats still work.");
+      return;
+    }
     if (screenStream) {
       screenStream.getTracks().forEach((track) => track.stop());
       setScreenStream(null);
@@ -655,7 +671,7 @@ const DemoArena: React.FC<{
           : "Screen sharing is unavailable in this browser.",
       );
     }
-  }, [screenStream]);
+  }, [canScreenShare, screenStream]);
 
   useEffect(() => {
     streamsRef.current = [cameraStream, micStream, screenStream];
@@ -713,6 +729,7 @@ const DemoArena: React.FC<{
             isMicMuted={isMicMuted}
             isCameraOff={isCameraOff}
             isSharingScreen={isSharingScreen}
+            canScreenShare={canScreenShare}
             onToggleMic={toggleMic}
             onToggleCamera={toggleCamera}
             onToggleScreen={toggleScreen}
