@@ -354,7 +354,8 @@ function loadTradeHouseRoster() {
     name,
     dashboardUrl: `https://hybridfundingdashboard.propaccount.com/en/public-overview/${id}`,
   }));
-  const raw = process.env.TRADEHOUSE_ROSTER_JSON || JSON.stringify(defaultRoster);
+  const configuredRoster = process.env.TRADEHOUSE_ROSTER_JSON?.trim();
+  const raw = configuredRoster && configuredRoster !== "[]" ? configuredRoster : JSON.stringify(defaultRoster);
   try {
     const parsed = tradeHouseRosterSchema.safeParse(JSON.parse(raw));
     if (!parsed.success) {
