@@ -82,7 +82,7 @@ export default function HouseChat({ myName }: { myName: string }) {
       </button>
 
       {open && (
-        <div className="absolute bottom-16 right-4 z-[70] flex h-[360px] w-[320px] flex-col overflow-hidden rounded-2xl border border-cyan-300/20 bg-[#07101b]/95 shadow-[0_22px_80px_rgba(0,0,0,.55)] backdrop-blur-xl">
+        <div className="absolute bottom-16 right-4 z-[70] flex h-[360px] w-[calc(100vw-1rem)] max-w-[320px] flex-col overflow-hidden rounded-2xl border border-cyan-300/20 bg-[#07101b]/95 shadow-[0_22px_80px_rgba(0,0,0,.55)] backdrop-blur-xl">
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <div>
               <div className="font-['Orbitron'] text-[10px] font-black uppercase tracking-[0.16em] text-cyan-200">House Chat</div>
