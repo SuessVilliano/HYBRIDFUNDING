@@ -8,7 +8,6 @@
 - **Crypto challenges**: 1-Step, 2-Step, Instant Funding. BTC/ETH at 5:1 leverage, others at 2:1. 24/7 trading. 90% profit split available.
 - **Futures challenges**: 4-Phase Funded Futures Plan. Account sizes $25K–$150K. Trading on Rithmic Pro. Tradovate platform integration coming soon.
 - **Single Session Equities** (new): 1-Step, S&P 100 equities on PropX. Account sizes $5K–$200K, client pricing $48–$1,828. 2:1 leverage. Trading window 09:30–15:55 ET. 10% profit target, 3% trailing max drawdown, 80/20 profit split, 14-day payouts.
-- **TradeHouse Battles**: competitive trading tournaments with live prizes.
 - **Affiliate program**: revenue-share for referring traders.
 
 ## Key pages
@@ -19,7 +18,6 @@
 - [About](https://www.hybridfunding.co/about): company mission, values, supported trading platforms.
 - [Affiliate](https://www.hybridfunding.co/affiliate): commission tier structure for partners.
 - [Trader Portal](https://www.hybridfunding.co/trader-portal): platform access and trader dashboard.
-- [TradeHouse Battles](https://www.hybridfunding.co/battles): trading tournaments.
 - [Blog](https://www.hybridfunding.co/blog): guides, breakdowns, and rules explainers for prop traders.
 - [Contact](https://www.hybridfunding.co/contact): support.
 
