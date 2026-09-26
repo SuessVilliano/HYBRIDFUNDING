@@ -51,11 +51,15 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- GHL Chat Widget -->
-    <script
-      src="https://beta.leadconnectorhq.com/loader.js"
-      data-resources-url="https://beta.leadconnectorhq.com/chat-widget/loader.js"
-      data-widget-id="6a0248d45cec697d9f3df00e"
-    ></script>
+    <!-- Broadcast browser sources must stay free of support widgets. -->
+    <script>
+      if (!/^\/tradehouse\/(stage|broadcast)(\/|$)/.test(location.pathname)) {
+        const chat = document.createElement('script');
+        chat.src = 'https://beta.leadconnectorhq.com/loader.js';
+        chat.dataset.resourcesUrl = 'https://beta.leadconnectorhq.com/chat-widget/loader.js';
+        chat.dataset.widgetId = '6a0248d45cec697d9f3df00e';
+        document.body.appendChild(chat);
+      }
+    </script>
   </body>
 </html>
