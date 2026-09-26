@@ -25,6 +25,7 @@ ALTER TABLE trade_house_battles
 
 ALTER TABLE trade_house_entries
   ALTER COLUMN dashboard_url DROP NOT NULL,
+  ADD COLUMN IF NOT EXISTS external_key text,
   ADD COLUMN IF NOT EXISTS account_id integer REFERENCES trade_house_accounts(id),
   ADD COLUMN IF NOT EXISTS invite_token_hash text,
   ADD COLUMN IF NOT EXISTS invite_last_four text,
@@ -34,4 +35,5 @@ ALTER TABLE trade_house_entries
 
 CREATE INDEX IF NOT EXISTS idx_trade_house_accounts_trader ON trade_house_accounts(trader_id);
 CREATE INDEX IF NOT EXISTS idx_trade_house_entries_invite_hash ON trade_house_entries(invite_token_hash);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_trade_house_entries_external_key ON trade_house_entries(battle_id, external_key) WHERE external_key IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_trade_house_battles_created_at ON trade_house_battles(created_at DESC);
