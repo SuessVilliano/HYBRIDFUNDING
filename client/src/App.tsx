@@ -172,7 +172,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <CyberpunkLoadingScreen isLoading={isInitialLoading && !/^\/tradehouse\/(stage|broadcast)(\/|$)/.test(window.location.pathname)} />
+        <CyberpunkLoadingScreen isLoading={isInitialLoading && !/^\/tradehouse\/(stage|broadcast|tv)(\/|$)/.test(window.location.pathname)} />
         <Router>
           <RouteScrollManager />
           <AppRouter />
