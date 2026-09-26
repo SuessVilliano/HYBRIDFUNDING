@@ -109,12 +109,35 @@ export const tradeHouseTraders = pgTable("trade_house_traders", {
   userId: integer("user_id").references(() => users.id),
   handle: text("handle").notNull().unique(),
   displayName: text("display_name").notNull(),
+  email: text("email"),
+  phone: text("phone"),
   avatarUrl: text("avatar_url"),
   logoUrl: text("logo_url"),
   bio: text("bio"),
   defaultDivision: text("default_division").default("trading").notNull(),
   defaultPlatform: text("default_platform").default("other").notNull(),
   isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+
+// Hybrid-issued demo/challenge/funded accounts assigned to Trade House traders.
+// Platform passwords are intentionally not stored here. Support can record the
+// login/account ID and delivery state while the platform remains the credential authority.
+export const tradeHouseAccounts = pgTable("trade_house_accounts", {
+  id: serial("id").primaryKey(),
+  traderId: integer("trader_id").notNull().references(() => tradeHouseTraders.id),
+  platform: text("platform").default("other").notNull(),
+  accountKind: text("account_kind").default("demo").notNull(),
+  accountSize: integer("account_size"),
+  platformLogin: text("platform_login"),
+  dashboardUrl: text("dashboard_url"),
+  supportStatus: text("support_status").default("requested").notNull(),
+  supportReference: text("support_reference"),
+  credentialsDelivered: boolean("credentials_delivered").default(false).notNull(),
+  issuedAt: timestamp("issued_at"),
+  verifiedAt: timestamp("verified_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -144,6 +167,8 @@ export const tradeHouseBattles = pgTable("trade_house_battles", {
   accountSize: integer("account_size"),
   sponsorName: text("sponsor_name"),
   sponsorUrl: text("sponsor_url"),
+  promoText: text("promo_text"),
+  musicUrl: text("music_url"),
   ruleConfig: text("rule_config"),
   status: text("status").default("scheduled").notNull(),
   startedAt: timestamp("started_at"),
@@ -156,7 +181,13 @@ export const tradeHouseEntries = pgTable("trade_house_entries", {
   id: serial("id").primaryKey(),
   battleId: integer("battle_id").notNull().references(() => tradeHouseBattles.id),
   traderId: integer("trader_id").notNull().references(() => tradeHouseTraders.id),
+  accountId: integer("account_id").references(() => tradeHouseAccounts.id),
   dashboardUrl: text("dashboard_url").notNull(),
+  inviteTokenHash: text("invite_token_hash"),
+  inviteLastFour: text("invite_last_four"),
+  inviteExpiresAt: timestamp("invite_expires_at"),
+  inviteRevokedAt: timestamp("invite_revoked_at"),
+  profileCompletedAt: timestamp("profile_completed_at"),
   side: text("side"),
   slot: integer("slot"),
   startingBalance: decimal("starting_balance", { precision: 14, scale: 2 }),
@@ -218,12 +249,28 @@ export const insertTradeHouseTraderSchema = createInsertSchema(tradeHouseTraders
   userId: true,
   handle: true,
   displayName: true,
+  email: true,
+  phone: true,
   avatarUrl: true,
   logoUrl: true,
   bio: true,
   defaultDivision: true,
   defaultPlatform: true,
   isActive: true,
+});
+
+export const insertTradeHouseAccountSchema = createInsertSchema(tradeHouseAccounts).pick({
+  traderId: true,
+  platform: true,
+  accountKind: true,
+  accountSize: true,
+  platformLogin: true,
+  dashboardUrl: true,
+  supportStatus: true,
+  supportReference: true,
+  credentialsDelivered: true,
+  issuedAt: true,
+  verifiedAt: true,
 });
 
 export const insertTradeHouseSeasonSchema = createInsertSchema(tradeHouseSeasons).pick({
@@ -245,6 +292,8 @@ export const insertTradeHouseBattleSchema = createInsertSchema(tradeHouseBattles
   accountSize: true,
   sponsorName: true,
   sponsorUrl: true,
+  promoText: true,
+  musicUrl: true,
   ruleConfig: true,
   status: true,
   startedAt: true,
@@ -254,7 +303,13 @@ export const insertTradeHouseBattleSchema = createInsertSchema(tradeHouseBattles
 export const insertTradeHouseEntrySchema = createInsertSchema(tradeHouseEntries).pick({
   battleId: true,
   traderId: true,
+  accountId: true,
   dashboardUrl: true,
+  inviteTokenHash: true,
+  inviteLastFour: true,
+  inviteExpiresAt: true,
+  inviteRevokedAt: true,
+  profileCompletedAt: true,
   side: true,
   slot: true,
   startingBalance: true,
@@ -297,6 +352,8 @@ export type AffiliateApplication = typeof affiliateApplications.$inferSelect;
 
 export type InsertTradeHouseTrader = z.infer<typeof insertTradeHouseTraderSchema>;
 export type TradeHouseTrader = typeof tradeHouseTraders.$inferSelect;
+export type InsertTradeHouseAccount = z.infer<typeof insertTradeHouseAccountSchema>;
+export type TradeHouseAccount = typeof tradeHouseAccounts.$inferSelect;
 export type InsertTradeHouseSeason = z.infer<typeof insertTradeHouseSeasonSchema>;
 export type TradeHouseSeason = typeof tradeHouseSeasons.$inferSelect;
 export type InsertTradeHouseBattle = z.infer<typeof insertTradeHouseBattleSchema>;
