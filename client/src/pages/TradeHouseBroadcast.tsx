@@ -1,72 +1,13 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useParams, useSearch } from "wouter";
 import { Crown, Radio, ShieldCheck, Trophy } from "lucide-react";
 
-type Standing = {
-  id: string;
-  name: string;
-  rank: number;
-  dashboardUrl: string;
-  startingBalance: number;
-  balance: number;
-  equity: number;
-  pnl: number;
-  returnPct: number;
-  tradeCount: number;
-  wins: number;
-  losses: number;
-  biggestWin: number;
-  openPositionCount: number;
-  verified: boolean;
-  status: "live" | "flat" | "unavailable";
-};
-
-type LeaderboardPayload = {
-  season: {
-    name: string;
-    status: "forming" | "live" | "complete";
-    accountType: "simulated";
-    refreshSeconds: number;
-    endsAt: string | null;
-  };
-  standings: Standing[];
-  updatedAt: string;
-};
+import { useTradeHouseFeed, type Standing, type LeaderboardPayload } from "@/lib/tradehouse-feed";
 
 const money = (value: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value || 0);
 
 const percent = (value: number) => `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
-
-function useTradeHouseFeed() {
-  const [data, setData] = useState<LeaderboardPayload | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    let timer: number | undefined;
-
-    const load = async () => {
-      try {
-        const res = await fetch("/api/tradehouse/leaderboard", { cache: "no-store" });
-        if (!res.ok) throw new Error("feed unavailable");
-        const next = (await res.json()) as LeaderboardPayload;
-        if (active) setData(next);
-      } catch {
-        // OBS overlays should stay clean rather than throwing an error UI.
-      } finally {
-        if (active) timer = window.setTimeout(load, 5000);
-      }
-    };
-
-    load();
-    return () => {
-      active = false;
-      if (timer) window.clearTimeout(timer);
-    };
-  }, []);
-
-  return data;
-}
 
 const EmptyFeed = () => (
   <div className="flex h-full w-full items-center justify-center">
@@ -138,7 +79,7 @@ const LeaderboardOverlay: React.FC<{ data: LeaderboardPayload }> = ({ data }) =>
             <div className="mt-1 font-['Orbitron'] text-2xl font-black uppercase text-white">{data.season.name}</div>
           </div>
           <div className="flex items-center gap-2 rounded-full border border-red-300/20 bg-red-300/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-red-200">
-            <Radio className="h-3.5 w-3.5" /> Live Board
+            <Radio className="h-3.5 w-3.5" /> {data.season.status === "live" ? "Live Board" : data.season.status}
           </div>
         </div>
         <div>
@@ -171,8 +112,8 @@ const LeaderboardOverlay: React.FC<{ data: LeaderboardPayload }> = ({ data }) =>
 };
 
 const DuelOverlay: React.FC<{ data: LeaderboardPayload; leftId?: string | null; rightId?: string | null }> = ({ data, leftId, rightId }) => {
-  const left = data.standings.find((x) => x.id === leftId) ?? data.standings[0];
-  const right = data.standings.find((x) => x.id === rightId) ?? data.standings[1];
+  const left = leftId ? data.standings.find((x) => x.id === leftId) : data.standings[0];
+  const right = rightId ? data.standings.find((x) => x.id === rightId && x.id !== left?.id) : data.standings.find(x => x.id !== left?.id);
   if (!left || !right) return <EmptyFeed />;
 
   return (
@@ -181,7 +122,7 @@ const DuelOverlay: React.FC<{ data: LeaderboardPayload; leftId?: string | null; 
         <div className="flex items-center gap-3">
           <Trophy className="h-5 w-5 text-amber-300" />
           <div className="font-['Orbitron'] text-sm font-black uppercase tracking-[0.18em] text-white">Trade House · {data.season.name}</div>
-          <span className="rounded-full bg-red-400/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-red-300">Live</span>
+          <span className="rounded-full bg-red-400/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-red-300">{data.season.status}</span>
         </div>
       </div>
       <div className="absolute bottom-8 left-8"><TraderPlate trader={left} side="left" /></div>
@@ -196,7 +137,7 @@ const DuelOverlay: React.FC<{ data: LeaderboardPayload; leftId?: string | null; 
 };
 
 const TraderOverlay: React.FC<{ data: LeaderboardPayload; traderId?: string | null }> = ({ data, traderId }) => {
-  const trader = data.standings.find((x) => x.id === traderId) ?? data.standings[0];
+  const trader = traderId ? data.standings.find((x) => x.id === traderId) : data.standings[0];
   if (!trader) return <EmptyFeed />;
   return (
     <div className="flex h-full w-full items-end justify-start p-10">
@@ -219,7 +160,7 @@ const ScorebugOverlay: React.FC<{ data: LeaderboardPayload }> = ({ data }) => {
         <div className="h-9 w-px bg-white/10" />
         <div className="font-mono text-xl font-black text-emerald-300">{leader.pnl >= 0 ? "+" : ""}{money(leader.pnl)}</div>
         <div className="font-mono text-xs font-bold text-slate-400">{percent(leader.returnPct)}</div>
-        <div className="rounded-full border border-red-300/20 bg-red-300/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.15em] text-red-200">LIVE</div>
+        <div className="rounded-full border border-red-300/20 bg-red-300/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.15em] text-red-200">{data.season.status.toUpperCase()}</div>
       </div>
     </div>
   );
@@ -229,7 +170,7 @@ const TradeHouseBroadcast: React.FC = () => {
   const { view } = useParams<{ view: string }>();
   const search = useSearch();
   const qs = useMemo(() => new URLSearchParams(search), [search]);
-  const data = useTradeHouseFeed();
+  const { data, state } = useTradeHouseFeed();
 
   useEffect(() => {
     const originalBody = document.body.style.background;
@@ -242,12 +183,14 @@ const TradeHouseBroadcast: React.FC = () => {
     };
   }, []);
 
-  if (!data) return <EmptyFeed />;
+  if (!data || state === "stale") return <EmptyFeed />;
+  const safeData = { ...data, standings: data.standings.filter(t => t.verified && t.status !== "unavailable") };
+  if (!safeData.standings.length) return <EmptyFeed />;
 
-  if (view === "leaderboard") return <LeaderboardOverlay data={data} />;
-  if (view === "duel") return <DuelOverlay data={data} leftId={qs.get("left")} rightId={qs.get("right")} />;
-  if (view === "trader") return <TraderOverlay data={data} traderId={qs.get("id")} />;
-  if (view === "scorebug") return <ScorebugOverlay data={data} />;
+  if (view === "leaderboard") return <LeaderboardOverlay data={safeData} />;
+  if (view === "duel") return <DuelOverlay data={safeData} leftId={qs.get("left")} rightId={qs.get("right")} />;
+  if (view === "trader") return <TraderOverlay data={safeData} traderId={qs.get("id")} />;
+  if (view === "scorebug") return <ScorebugOverlay data={safeData} />;
 
   return <EmptyFeed />;
 };

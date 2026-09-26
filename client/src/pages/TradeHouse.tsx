@@ -127,12 +127,12 @@ const TradeHouse: React.FC = () => {
           </div>
 
           <div className="mx-auto mt-12 grid max-w-5xl grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
+            {([
               ["Contestants", totals.traders, Users],
               ["Verified Feeds", totals.verified, ShieldCheck],
               ["Trades Tracked", totals.trades, Activity],
               ["Positions Open", totals.live, Radio],
-            ].map(([label, value, Icon]) => (
+            ] as const).map(([label, value, Icon]) => (
               <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-center backdrop-blur">
                 <Icon className="mx-auto h-5 w-5 text-emerald-300" />
                 <div className="mt-2 font-['Orbitron'] text-2xl font-black text-white">{value as number}</div>
