@@ -22,7 +22,7 @@ export default function ChunkedImage({
     let cancelled = false;
 
     Promise.all(
-      chunks.map(async (path) => {
+      key.split("|").filter(Boolean).map(async (path) => {
         const response = await fetch(path, { cache: "force-cache" });
         if (!response.ok) throw new Error(`Image chunk failed: ${path}`);
         return (await response.text()).trim();
@@ -38,7 +38,7 @@ export default function ChunkedImage({
     return () => {
       cancelled = true;
     };
-  }, [key, chunks]);
+  }, [key]);
 
   if (!src) {
     return (
