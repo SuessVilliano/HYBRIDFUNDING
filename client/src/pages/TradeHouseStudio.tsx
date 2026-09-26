@@ -146,7 +146,7 @@ const TradeHouseStudio: React.FC = () => {
     })}`;
   const quickTvUrl = `${base}/tradehouse/tv?${new URLSearchParams({ quick: quickEncoded, season: seasonName, ...experienceParams })}`;
 
-  const roomMode = readyQuickEntries.length <= 2 ? "1v1" : readyQuickEntries.length <= 4 ? "2v2" : "3v3";
+  const roomMode = readyQuickEntries.length <= 2 ? "1v1" : readyQuickEntries.length <= 4 ? "2v2" : readyQuickEntries.length <= 6 ? "3v3" : "4v4";
   const producerLink = `${base}/battles/room/${roomId}?${new URLSearchParams({
     producer: "1",
     mode: roomMode,
@@ -157,7 +157,7 @@ const TradeHouseStudio: React.FC = () => {
   })}`;
 
   const participantLinks = useMemo(
-    () => readyQuickEntries.slice(0, 6).map((entry, index) => {
+    () => readyQuickEntries.slice(0, 8).map((entry, index) => {
       const side = index % 2 === 0 ? "left" : "right";
       const slot = Math.floor(index / 2);
       const params = new URLSearchParams({
@@ -520,7 +520,7 @@ const TradeHouseStudio: React.FC = () => {
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 font-['Orbitron'] text-xs font-black"><Users className="h-4 w-4 text-cyan-300" /> LIVE ROOM</div>
-                        <p className="mt-2 text-xs leading-relaxed text-slate-500">Send each contestant their personal link. Up to six can use the built-in room; seats 7-8 can use Zoom/OBS while their verified score still appears.</p>
+                        <p className="mt-2 text-xs leading-relaxed text-slate-500">Send each contestant their personal link. All eight seats can use the built-in room. Mobile layouts collapse cleanly, while OBS keeps the full broadcast grid.</p>
                       </div>
                       <button onClick={() => setRoomId(newRoomId())} className="rounded-lg border border-white/10 p-2 text-slate-400" aria-label="Generate new room"><RefreshCw className="h-4 w-4" /></button>
                     </div>
