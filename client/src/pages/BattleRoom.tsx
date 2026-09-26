@@ -40,6 +40,18 @@ interface RoomConfig {
 
 const DEFAULT_STATS: TraderStats = { pnl: 0, wins: 0, losses: 0, biggestWin: 0, tradeCount: 0 };
 
+const LocalVideo: React.FC<{ stream: MediaStream | null }> = ({ stream }) => {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.srcObject = stream;
+    if (stream) void ref.current.play().catch(() => undefined);
+    return () => { if (ref.current) ref.current.srcObject = null; };
+  }, [stream]);
+  if (!stream) return null;
+  return <video ref={ref} autoPlay playsInline muted className="h-full w-full object-contain" />;
+};
+
 async function fetchBattleToken(userId: string, userName: string, roomId: string) {
   const res = await fetch("/api/battle-token", {
     method: "POST",
@@ -165,13 +177,14 @@ const ArenaInner: React.FC<{ config: RoomConfig; myStats: TraderStats; elapsed: 
     const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : 3;
     return Array.from({ length: count }, (_, slot) => {
       if (config.side === side && config.slot === slot && localParticipant) {
-        return { id: localParticipant.sessionId, name: config.myName, stats: myStats, videoTrack: <ParticipantView participant={localParticipant} trackType="screenShareTrack" className="w-full h-full object-contain" />, isMuted: isMicMuted, isScreenSharing: isSharingScreen };
+        return { id: localParticipant.sessionId, name: config.myName, stats: myStats, videoTrack: <ParticipantView participant={localParticipant} trackType={isSharingScreen ? "screenShareTrack" : "videoTrack"} className="w-full h-full object-contain" />, isMuted: isMicMuted, isScreenSharing: isSharingScreen };
       }
       const entry = Object.entries(participantData).find(([, v]) => v.side === side && v.slot === slot);
       if (!entry) return null;
       const [userId, data] = entry;
       const streamP = participants.find((p) => p.userId === userId);
-      return { id: userId, name: data.name, stats: data.stats, videoTrack: streamP ? <ParticipantView participant={streamP} trackType="screenShareTrack" className="w-full h-full object-contain" /> : null, isMuted: !streamP?.isSpeaking, isScreenSharing: !!streamP?.screenShareStream };
+      const remoteScreen = !!streamP?.screenShareStream;
+      return { id: userId, name: data.name, stats: data.stats, videoTrack: streamP ? <ParticipantView participant={streamP} trackType={remoteScreen ? "screenShareTrack" : "videoTrack"} className="w-full h-full object-contain" /> : null, isMuted: !streamP?.isSpeaking, isScreenSharing: remoteScreen };
     }).filter(Boolean) as Trader[];
   };
   const leftTraders = buildTraders("left");
@@ -187,16 +200,57 @@ const ArenaInner: React.FC<{ config: RoomConfig; myStats: TraderStats; elapsed: 
 const DemoArena: React.FC<{ config: RoomConfig; myStats: TraderStats; elapsed: number; showStatsEditor: boolean; onToggleStatsEditor: () => void; onStatsChange: (s: TraderStats) => void }> = ({ config, myStats, elapsed, showStatsEditor, onToggleStatsEditor, onStatsChange }) => {
   const [, navigate] = useLocation();
   const [isMicMuted, setIsMicMuted] = useState(false);
-  const [isSharingScreen, setIsSharingScreen] = useState(false);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [micStream, setMicStream] = useState<MediaStream | null>(null);
+  const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
+  const [mediaError, setMediaError] = useState("");
+  const streamsRef = useRef<Array<MediaStream | null>>([]);
+  const isSharingScreen = Boolean(screenStream);
+  const enableMicAndCamera = useCallback(async () => {
+    try {
+      setMediaError("");
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      setCameraStream(stream);
+      setMicStream(stream);
+      setIsMicMuted(false);
+    } catch (error: any) {
+      setMediaError(error?.name === "NotAllowedError" ? "Camera and microphone permission was blocked. Allow access in the browser, then try again." : "Camera and microphone could not be opened on this device.");
+    }
+  }, []);
+  const toggleMic = useCallback(async () => {
+    if (!micStream) { await enableMicAndCamera(); return; }
+    const nextMuted = !isMicMuted;
+    micStream.getAudioTracks().forEach((track) => { track.enabled = !nextMuted; });
+    setIsMicMuted(nextMuted);
+  }, [enableMicAndCamera, isMicMuted, micStream]);
+  const toggleScreen = useCallback(async () => {
+    if (screenStream) {
+      screenStream.getTracks().forEach((track) => track.stop());
+      setScreenStream(null);
+      return;
+    }
+    try {
+      setMediaError("");
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+      stream.getVideoTracks()[0]?.addEventListener("ended", () => setScreenStream(null), { once: true });
+      setScreenStream(stream);
+    } catch (error: any) {
+      setMediaError(error?.name === "NotAllowedError" ? "Screen sharing was cancelled. Choose a screen or window when prompted." : "Screen sharing is unavailable in this mobile browser; use desktop OBS for this source.");
+    }
+  }, [screenStream]);
+  useEffect(() => { streamsRef.current = [cameraStream, micStream, screenStream]; }, [cameraStream, micStream, screenStream]);
+  useEffect(() => () => {
+    streamsRef.current.forEach((stream) => stream?.getTracks().forEach((track) => track.stop()));
+  }, []);
   const makeDemo = (side: "left" | "right"): Trader[] => {
     const names = side === "left" ? ["Trader A", "Trader B", "Trader C"] : ["Trader X", "Trader Y", "Trader Z"];
     const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : 3;
-    return Array.from({ length: count }, (_, i) => ({ id: `demo-${side}-${i}`, name: config.side === side && config.slot === i ? config.myName : names[i], stats: config.side === side && config.slot === i ? myStats : DEFAULT_STATS, videoTrack: null, isScreenSharing: false }));
+    return Array.from({ length: count }, (_, i) => ({ id: `demo-${side}-${i}`, name: config.side === side && config.slot === i ? config.myName : names[i], stats: config.side === side && config.slot === i ? myStats : DEFAULT_STATS, videoTrack: config.side === side && config.slot === i ? <LocalVideo stream={screenStream || cameraStream} /> : null, isScreenSharing: config.side === side && config.slot === i ? isSharingScreen : false }));
   };
   return (
     <>
       <BattleLayout mode={config.mode} leftTraders={makeDemo("left")} rightTraders={makeDemo("right")} leftTeamName={config.mode === "1v1" ? (makeDemo("left")[0]?.name ?? "TEAM A") : "TEAM A"} rightTeamName={config.mode === "1v1" ? (makeDemo("right")[0]?.name ?? "TEAM B") : "TEAM B"} elapsed={elapsed} obsMode={config.obsMode} />
-      {!config.obsMode && <BottomBar myName={config.myName} myStats={myStats} isMicMuted={isMicMuted} isSharingScreen={isSharingScreen} onToggleMic={() => setIsMicMuted((v) => !v)} onToggleScreen={() => setIsSharingScreen((v) => !v)} onHangUp={() => navigate("/battles/lobby")} showStatsEditor={showStatsEditor} onToggleStatsEditor={onToggleStatsEditor} onStatsChange={onStatsChange} />}
+      {!config.obsMode && <><BottomBar myName={config.myName} myStats={myStats} isMicMuted={isMicMuted} isSharingScreen={isSharingScreen} onToggleMic={toggleMic} onToggleScreen={toggleScreen} onHangUp={() => navigate("/battles/lobby")} showStatsEditor={showStatsEditor} onToggleStatsEditor={onToggleStatsEditor} onStatsChange={onStatsChange} /><div className="absolute bottom-[4.5rem] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2"><button onClick={enableMicAndCamera} className="rounded-lg border border-emerald-300/40 bg-black/80 px-3 py-2 font-['Orbitron'] text-[10px] font-bold tracking-wider text-emerald-200">ENABLE CAMERA + MIC</button>{mediaError && <span className="max-w-xs rounded-lg border border-rose-300/30 bg-black/80 px-3 py-2 text-[10px] text-rose-200">{mediaError}</span>}</div></>}
     </>
   );
 };
