@@ -115,6 +115,9 @@ const TradeHouseStudio: React.FC = () => {
         name: entry.name,
         side,
         slot: String(slot),
+        quick: quickEncoded,
+        seat: entry.id,
+        season: seasonName,
       });
       return { id: entry.id, name: entry.name, url: `${base}/battles/room/${roomId}?${params}` };
     }),

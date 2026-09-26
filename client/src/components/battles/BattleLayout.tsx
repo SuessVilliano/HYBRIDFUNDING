@@ -11,6 +11,7 @@ export interface Trader {
   stats: TraderStats;
   videoTrack?: React.ReactNode | null;
   isMuted?: boolean;
+  isCameraOff?: boolean;
   isScreenSharing?: boolean;
 }
 
@@ -49,7 +50,7 @@ const BattleLayout: React.FC<BattleLayoutProps> = ({ mode, leftTraders, rightTra
           {Array.from({ length: count }, (_, i) => {
             const t = leftTraders[i];
             return t ? (
-              <ParticipantTile key={t.id} traderName={t.name} stats={t.stats} videoTrack={t.videoTrack} isMuted={t.isMuted} isScreenSharing={t.isScreenSharing} side={mode === "1v1" ? "left" : "team-left"} compact={compact} className="flex-1 min-h-0" />
+              <ParticipantTile key={t.id} traderName={t.name} stats={t.stats} videoTrack={t.videoTrack} isMuted={t.isMuted} isCameraOff={t.isCameraOff} isScreenSharing={t.isScreenSharing} side={mode === "1v1" ? "left" : "team-left"} compact={compact} className="flex-1 min-h-0" />
             ) : (
               <EmptySlot key={i} label={mode === "1v1" ? "Trader 1" : `Team A · Trader ${i + 1}`} side="left" compact={compact} />
             );
@@ -60,7 +61,7 @@ const BattleLayout: React.FC<BattleLayoutProps> = ({ mode, leftTraders, rightTra
           {Array.from({ length: count }, (_, i) => {
             const t = rightTraders[i];
             return t ? (
-              <ParticipantTile key={t.id} traderName={t.name} stats={t.stats} videoTrack={t.videoTrack} isMuted={t.isMuted} isScreenSharing={t.isScreenSharing} side={mode === "1v1" ? "right" : "team-right"} compact={compact} className="flex-1 min-h-0" />
+              <ParticipantTile key={t.id} traderName={t.name} stats={t.stats} videoTrack={t.videoTrack} isMuted={t.isMuted} isCameraOff={t.isCameraOff} isScreenSharing={t.isScreenSharing} side={mode === "1v1" ? "right" : "team-right"} compact={compact} className="flex-1 min-h-0" />
             ) : (
               <EmptySlot key={i} label={mode === "1v1" ? "Trader 2" : `Team B · Trader ${i + 1}`} side="right" compact={compact} />
             );
