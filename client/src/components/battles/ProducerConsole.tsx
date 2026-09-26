@@ -52,7 +52,7 @@ export default function ProducerConsole({
   };
 
   return (
-    <div className="absolute right-4 top-14 z-[90] flex max-h-[calc(100vh-9rem)] w-[390px] flex-col overflow-hidden rounded-2xl border border-cyan-300/20 bg-[#07101b]/97 shadow-[0_30px_100px_rgba(0,0,0,.65)] backdrop-blur-xl">
+    <div className="absolute right-4 top-14 z-[90] flex max-h-[calc(100vh-9rem)] w-[calc(100vw-2rem)] max-w-[390px] flex-col overflow-hidden rounded-2xl border border-cyan-300/20 bg-[#07101b]/97 shadow-[0_30px_100px_rgba(0,0,0,.65)] backdrop-blur-xl">
       <audio ref={audioRef} src={musicUrl || undefined} loop onEnded={() => setMusicPlaying(false)} />
       <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
         <div>
