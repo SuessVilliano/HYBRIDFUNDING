@@ -53,7 +53,7 @@
 
     <!-- Broadcast browser sources must stay free of support widgets. -->
     <script>
-      if (!/^\/tradehouse\/(stage|broadcast)(\/|$)/.test(location.pathname)) {
+      if (!/^\/tradehouse\/(stage|broadcast|tv)(\/|$)/.test(location.pathname)) {
         const chat = document.createElement('script');
         chat.src = 'https://beta.leadconnectorhq.com/loader.js';
         chat.dataset.resourcesUrl = 'https://beta.leadconnectorhq.com/chat-widget/loader.js';
