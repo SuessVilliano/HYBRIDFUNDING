@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { decodeQuickRoster, useTradeHouseFeed, type Standing } from "@/lib/tradehouse-feed";
+import { battleObjective, parseBattleRules } from "@/lib/tradehouse-rules";
 import { Radio, ShieldCheck, Trophy, TrendingUp, Zap } from "lucide-react";
 import "./tradehybrid-tv.css";
 
@@ -24,8 +25,8 @@ const eventCards = [
 ];
 const money = (value: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value || 0);
 
-function StageFrame({ children, label, live = true }: { children: React.ReactNode; label: string; live?: boolean }) {
-  return <div className="tv-frame"><div className="tv-frame-top"><div className="tv-logo">TRADE <span>HYBRID</span> TV</div><div className="tv-show-label">{label}</div><div className="tv-live">{live && <i />} {live ? "LIVE FEED" : "RECORDED"}</div></div>{children}<div className="tv-ticker"><span>HYBRID FUNDING</span><b>Trade House battles · verified dashboard feeds · risk first</b><em>TV.TRADEHYBRID.CLUB</em></div></div>;
+function StageFrame({ children, label, live = true, promo, sponsor }: { children: React.ReactNode; label: string; live?: boolean; promo: string; sponsor?: string }) {
+  return <div className="tv-frame"><div className="tv-frame-top"><div className="tv-logo">TRADE <span>HYBRID</span> TV</div><div className="tv-show-label">{label}</div><div className="tv-live">{live && <i />} {live ? "LIVE FEED" : "RECORDED"}</div></div>{children}<div className="tv-ticker"><span>HYBRID FUNDING</span><b>{promo}</b><em>{sponsor ? `PRESENTED BY ${sponsor}` : "TV.TRADEHYBRID.CLUB"}</em></div></div>;
 }
 
 function Board({ traders }: { traders: Standing[] }) {
@@ -41,6 +42,9 @@ function PrizeCard() { return <div className="tv-prize"><Trophy size={58} /><sma
 export default function TradeHybridTV() {
   const params = useMemo(() => new URLSearchParams(typeof window === "undefined" ? "" : window.location.search), []);
   const quickRoster = useMemo(() => decodeQuickRoster(params.get("quick")), [params]);
+  const rule = useMemo(() => parseBattleRules(params), [params]);
+  const promo = params.get("promo") || `Trade House · ${battleObjective(rule)} · verified dashboard feeds`;
+  const sponsor = params.get("sponsor") || "";
   const { data, state } = useTradeHouseFeed(params.get("demo") === "1", quickRoster, params.get("season") || "Quick Battle");
   const [segmentIndex, setSegmentIndex] = useState(0); const [elapsed, setElapsed] = useState(0);
   const [headlineIndex, setHeadlineIndex] = useState(0); const [chartUrl, setChartUrl] = useState("");
@@ -50,5 +54,5 @@ export default function TradeHybridTV() {
   const left = roster[0]; const right = roster.find((t) => t.id !== left?.id) || roster[1];
   const isDemo = state === "demo";
   const content = segment.id === "board" ? <Board traders={roster} /> : segment.id === "battle" ? <Duel left={left} right={right} /> : segment.id === "chart" ? <><MarketDesk />{chartUrl && <iframe className="tv-chart-embed" src={chartUrl} title="TradingView source" />}</> : segment.id === "news" ? <Headlines index={headlineIndex} /> : segment.id === "prize" ? <PrizeCard /> : <Headlines index={0} />;
-  return <main className="tv-canvas"><StageFrame label={segment.label}><div className="tv-progress"><span style={{ width: `${Math.min(100, (elapsed / segment.seconds) * 100)}%` }} /></div><div className="tv-content">{content}</div><div className="tv-lower"><span>{isDemo ? "REHEARSAL MODE · SAMPLE DATA" : state === "stale" ? "DATA FEED INTERRUPTED · SCORES HIDDEN" : "VERIFIED TRADE HOUSE FEEDS"}</span><span>SEGMENT {segmentIndex + 1}/{SEGMENTS.length} · NEXT IN {Math.max(0, segment.seconds - elapsed)}S</span></div></StageFrame></main>;
+  return <main className="tv-canvas"><StageFrame label={`${segment.label} · ${rule.label}`} promo={promo} sponsor={sponsor}><div className="tv-progress"><span style={{ width: `${Math.min(100, (elapsed / segment.seconds) * 100)}%` }} /></div><div className="tv-content">{content}</div><div className="tv-lower"><span>{isDemo ? "REHEARSAL MODE · SAMPLE DATA" : state === "stale" ? "DATA FEED INTERRUPTED · SCORES HIDDEN" : "VERIFIED TRADE HOUSE FEEDS"}</span><span>SEGMENT {segmentIndex + 1}/{SEGMENTS.length} · NEXT IN {Math.max(0, segment.seconds - elapsed)}S</span></div></StageFrame></main>;
 }
