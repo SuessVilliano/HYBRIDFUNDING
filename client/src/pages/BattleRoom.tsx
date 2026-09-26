@@ -218,6 +218,7 @@ const BottomBar: React.FC<{
   isMicMuted: boolean;
   isCameraOff: boolean;
   isSharingScreen: boolean;
+  canScreenShare: boolean;
   onToggleMic: () => void;
   onToggleCamera: () => void;
   onToggleScreen: () => void;
@@ -234,6 +235,7 @@ const BottomBar: React.FC<{
   isMicMuted,
   isCameraOff,
   isSharingScreen,
+  canScreenShare,
   onToggleMic,
   onToggleCamera,
   onToggleScreen,
@@ -267,14 +269,14 @@ const BottomBar: React.FC<{
 
   return (
     <div
-      className="absolute bottom-0 left-0 right-0 z-20 flex h-14 items-center justify-between gap-4 px-5"
+      className="absolute bottom-0 left-0 right-0 z-20 flex h-14 items-center justify-between gap-1 px-2 sm:gap-4 sm:px-5"
       style={{
         background: "rgba(4,10,18,0.96)",
         backdropFilter: "blur(14px)",
         borderTop: "1px solid rgba(103,232,249,0.09)",
       }}
     >
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="hidden min-w-0 items-center gap-3 sm:flex">
         <span className="truncate font-['Orbitron'] text-sm font-black text-white">{myName}</span>
         <span
           className="font-mono text-sm font-bold"
@@ -294,14 +296,14 @@ const BottomBar: React.FC<{
         )}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-1 items-center justify-center gap-1.5 sm:flex-none sm:gap-2">
         <button onClick={onToggleMic} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(!isMicMuted, isMicMuted)} title={isMicMuted ? "Unmute microphone" : "Mute microphone"}>
           {isMicMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
         </button>
         <button onClick={onToggleCamera} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(!isCameraOff)} title={isCameraOff ? "Turn camera on" : "Turn camera off"}>
           {isCameraOff ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
         </button>
-        <button onClick={onToggleScreen} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(isSharingScreen)} title={isSharingScreen ? "Stop sharing screen" : "Share screen"}>
+        <button onClick={onToggleScreen} disabled={!canScreenShare} className="flex h-9 w-9 items-center justify-center rounded-full transition-all disabled:cursor-not-allowed disabled:opacity-30" style={controlStyle(isSharingScreen)} title={canScreenShare ? (isSharingScreen ? "Stop sharing screen" : "Share screen") : "Screen sharing is unavailable in this mobile browser"}>
           <Monitor className="h-4 w-4" />
         </button>
         <div className="relative">
@@ -331,7 +333,7 @@ const BottomBar: React.FC<{
         </button>
       </div>
 
-      <div className="relative flex-shrink-0">
+      <div className="relative hidden flex-shrink-0 sm:block">
         {myStats.dashboardUrl ? (
           <a
             href={myStats.dashboardUrl}
