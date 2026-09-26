@@ -322,7 +322,7 @@ const tradeHouseRosterSchema = z.array(
     name: z.string().trim().min(1).max(40),
     accountId: z.string().trim().min(1).max(160).optional(),
     dashboardUrl: z.string().url().optional(),
-    startingBalance: z.number().positive(),
+    startingBalance: z.number().positive().optional(),
     market: z.string().trim().max(40).optional(),
     country: z.string().trim().max(60).optional(),
   }).refine((value) => Boolean(value.accountId || value.dashboardUrl), {
@@ -342,7 +342,19 @@ const publicPayoutsSchema = z.array(
 ).max(250);
 
 function loadTradeHouseRoster() {
-  const raw = process.env.TRADEHOUSE_ROSTER_JSON || "[]";
+  const defaultRoster = [
+    ["83db3117-30c4-434d-819c-df35d1d3b470", "Test Account 01"],
+    ["36240f5d-bf00-4e91-ab41-f8604e1e8776", "Test Account 02"],
+    ["2e96ce6a-ce74-421f-87cc-d7d5f8efd064", "Test Account 03"],
+    ["db9f368d-ed1f-4626-956a-ce360f33d70a", "Test Account 04"],
+    ["c5197178-3d25-4a8a-8bc0-e5211f4d1908", "Test Account 05"],
+    ["d42a8250-340c-4627-9d49-61aa7d6eca9e", "Test Account 06"],
+  ].map(([id, name], index) => ({
+    id: `test-account-${index + 1}`,
+    name,
+    dashboardUrl: `https://hybridfundingdashboard.propaccount.com/en/public-overview/${id}`,
+  }));
+  const raw = process.env.TRADEHOUSE_ROSTER_JSON || JSON.stringify(defaultRoster);
   try {
     const parsed = tradeHouseRosterSchema.safeParse(JSON.parse(raw));
     if (!parsed.success) {
@@ -368,7 +380,8 @@ function resolvePublicDashboard(entry: any) {
   try {
     const url = new URL(entry.dashboardUrl);
     if (url.hostname !== "hybridfundingdashboard.propaccount.com") return null;
-    const accountId = url.searchParams.get("accountId");
+    const publicOverviewMatch = url.pathname.match(/^\/[^/]+\/public-overview\/([0-9a-f-]{20,})$/i);
+    const accountId = url.searchParams.get("accountId") || publicOverviewMatch?.[1];
     if (!accountId) return null;
     return { accountId, dashboardUrl: url.toString() };
   } catch {
@@ -383,8 +396,8 @@ function firstNumberMatch(html: string, pattern: RegExp): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
-async function fetchTradeHouseDashboard(accountId: string, startingBalance: number) {
-  const dashboardUrl = `https://hybridfundingdashboard.propaccount.com/es/overview?accountId=${encodeURIComponent(accountId)}`;
+async function fetchTradeHouseDashboard(accountId: string, startingBalance: number | undefined, sourceUrl?: string) {
+  const dashboardUrl = sourceUrl || `https://hybridfundingdashboard.propaccount.com/es/overview?accountId=${encodeURIComponent(accountId)}`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 7000);
 
@@ -406,6 +419,17 @@ async function fetchTradeHouseDashboard(accountId: string, startingBalance: numb
   }
 
   const html = await upstream.text();
+  // The current public-overview page is a Next.js streamed document. Its
+  // dehydrated query data is escaped inside self.__next_f.push(...) scripts.
+  // Normalizing escaped quotes lets us read the stable account/statistics keys
+  // without depending on the dashboard's rendered markup or locale.
+  const embedded = html.replaceAll('\\"', '"');
+  const embeddedNumber = (key: string): number | null => {
+    const match = embedded.match(new RegExp(`"${key}"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)`));
+    if (!match) return null;
+    const value = Number(match[1]);
+    return Number.isFinite(value) ? value : null;
+  };
   let balance = firstNumberMatch(html, /Balance[:\s]*\$?([\d,]+\.?\d*)/i) ?? NaN;
   let equity = firstNumberMatch(html, /Equity[:\s]*\$?([\d,]+\.?\d*)/i) ?? balance;
   const profitTarget = firstNumberMatch(html, /Profit\s*Target[:\s]*\$?([\d,]+\.?\d*)/i);
@@ -442,6 +466,16 @@ async function fetchTradeHouseDashboard(accountId: string, startingBalance: numb
     }
   }
 
+  const publicBalance = embeddedNumber("currentBalance") ?? embeddedNumber("accountBalance");
+  const publicEquity = embeddedNumber("currentEquityNumber") ?? embeddedNumber("accountEquity");
+  const accountSize = embeddedNumber("accountSize");
+  const effectiveStartingBalance = startingBalance ?? accountSize ?? 0;
+  if (publicBalance != null) balance = publicBalance;
+  if (publicEquity != null) equity = publicEquity;
+  const publicTradeCount = embeddedNumber("numberOfTrades");
+  const publicWins = embeddedNumber("tradesWon");
+  const publicLosses = embeddedNumber("tradesLost");
+
   // A successful HTTP response may be a login shell, not account data.
   if (!Number.isFinite(balance)) throw new Error("Dashboard balance could not be verified");
   if (!Number.isFinite(equity)) equity = balance;
@@ -452,9 +486,9 @@ async function fetchTradeHouseDashboard(accountId: string, startingBalance: numb
   };
 
   const pnls = trades.map(tradePnl);
-  const pnl = balance - startingBalance;
-  const wins = pnls.filter((value) => value > 0).length;
-  const losses = pnls.filter((value) => value < 0).length;
+  const pnl = balance - effectiveStartingBalance;
+  const wins = publicWins ?? pnls.filter((value) => value > 0).length;
+  const losses = publicLosses ?? pnls.filter((value) => value < 0).length;
   const biggestWin = pnls.length ? Math.max(0, ...pnls) : 0;
 
   const timestampCandidates = trades
@@ -468,11 +502,12 @@ async function fetchTradeHouseDashboard(accountId: string, startingBalance: numb
     balance,
     equity,
     pnl,
-    returnPct: startingBalance > 0 ? (pnl / startingBalance) * 100 : 0,
+    startingBalance: effectiveStartingBalance,
+    returnPct: effectiveStartingBalance > 0 ? (pnl / effectiveStartingBalance) * 100 : 0,
     profitTarget,
     dailyLossLimit,
     maxDrawdownLimit,
-    tradeCount: trades.length,
+    tradeCount: publicTradeCount ?? trades.length,
     wins,
     losses,
     biggestWin,
@@ -512,7 +547,7 @@ app.get("/api/tradehouse/leaderboard", async (_req: Request, res: Response) => {
       }
 
       try {
-        const stats = await fetchTradeHouseDashboard(dashboard.accountId, entry.startingBalance);
+        const stats = await fetchTradeHouseDashboard(dashboard.accountId, entry.startingBalance, dashboard.dashboardUrl);
         return {
           id: entry.id,
           name: entry.name,
