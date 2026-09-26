@@ -112,6 +112,219 @@ const TradeHouseStudio: React.FC = () => {
     { id: "quick-2", name: "Trader B", dashboardUrl: "", division: "trading", platform: "ctrader" },
   ]);
 
+  const refreshSavedBattles = async () => {
+    try {
+      const response = await fetch("/api/tradehouse/admin/battles", {
+        credentials: "include",
+        cache: "no-store",
+      });
+      if (!response.ok) return;
+      const body = await response.json();
+      setSavedBattles(Array.isArray(body?.battles) ? body.battles : []);
+    } catch {
+      // Admin beta may still be configuring its database on first load.
+    }
+  };
+
+  const loadSavedBattle = async (savedRoomId: string) => {
+    setSaveStatus("Loading saved battle…");
+    try {
+      const response = await fetch(`/api/tradehouse/admin/battles/${encodeURIComponent(savedRoomId)}`, {
+        credentials: "include",
+        cache: "no-store",
+      });
+      const body = await response.json();
+      if (!response.ok || !body?.battle) throw new Error(body?.error || "Could not load battle");
+      const battle = body.battle;
+
+      setRoomId(battle.roomId);
+      setSeasonName(battle.name || "Trade House Battle");
+      setBattleFormat((battle.format || "spotlight") as BattleFormat);
+      setAccountSize(Number(battle.accountSize || 25000));
+      setSponsorName(battle.sponsorName || "");
+      setSponsorUrl(battle.sponsorUrl || "");
+      setPromoText(battle.promoText || "Instant Funding · Trade House · Verified Hybrid performance");
+      setMusicUrl(battle.musicUrl || "");
+
+      const rule = battle.ruleConfig || {};
+      if (Number.isFinite(Number(rule.durationSeconds))) setDurationMinutes(Math.max(1, Number(rule.durationSeconds) / 60));
+      if (Number.isFinite(Number(rule.targetReturnPct))) setTargetPct(Number(rule.targetReturnPct));
+      if (Number.isFinite(Number(rule.profitTargetPct))) setProfitTargetPct(Number(rule.profitTargetPct));
+      if (Number.isFinite(Number(rule.maxDrawdownPct))) setMaxDDPct(Number(rule.maxDrawdownPct));
+      if (rule.endsAt) {
+        const date = new Date(rule.endsAt);
+        if (!Number.isNaN(date.getTime())) {
+          date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+          setLeagueEndsAt(date.toISOString().slice(0, 16));
+        }
+      }
+
+      const entries: QuickBattleEntry[] = (battle.entries || []).slice(0, 8).map((entry: any) => ({
+        id: entry.id,
+        name: entry.name,
+        dashboardUrl: entry.dashboardUrl || "",
+        avatarUrl: entry.avatarUrl || undefined,
+        startingBalance: entry.startingBalance ?? undefined,
+        division: entry.division || "trading",
+        platform: entry.platform || "other",
+      }));
+      if (entries.length) setQuickEntries(entries);
+
+      const meta: Record<string, AdminEntryMeta> = {};
+      (battle.entries || []).forEach((entry: any) => {
+        meta[entry.id] = {
+          entryId: entry.entryId,
+          handle: entry.handle || "",
+          email: entry.email || "",
+          phone: entry.phone || "",
+          accountKind: entry.accountKind || "demo",
+          platformLogin: entry.platformLogin || "",
+          supportStatus: entry.supportStatus || "requested",
+          supportReference: entry.supportReference || "",
+          credentialsDelivered: Boolean(entry.credentialsDelivered),
+          inviteLastFour: entry.inviteLastFour || "",
+        };
+      });
+      setAdminMeta(meta);
+      setQuickPreview(null);
+      setQuickStatus("");
+      setSaveStatus(`Loaded ${battle.name} from the Trade House database.`);
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        url.searchParams.set("battle", battle.roomId);
+        window.history.replaceState(null, "", `${url.pathname}?${url.searchParams.toString()}`);
+      }
+    } catch (error) {
+      setSaveStatus(error instanceof Error ? error.message : "Could not load battle.");
+    }
+  };
+
+  const saveBattle = async () => {
+    if (!quickEntries.length) {
+      setSaveStatus("Add at least one contestant before saving.");
+      return;
+    }
+    setSaveStatus("Saving battle, roster, account assignments, and invite state…");
+    const mode = quickEntries.length <= 2 ? "1v1" : quickEntries.length <= 4 ? "2v2" : quickEntries.length <= 6 ? "3v3" : "4v4";
+    const ruleConfig = {
+      format: battleFormat,
+      label: BATTLE_PRESETS[battleFormat].label,
+      durationSeconds: Math.max(60, Math.round(durationMinutes * 60)),
+      targetReturnPct: targetPct,
+      profitTargetPct,
+      maxDrawdownPct: maxDDPct,
+      accountSize,
+      endsAt: battleFormat === "league" && leagueEndsAt ? new Date(leagueEndsAt).toISOString() : null,
+    };
+    try {
+      const response = await fetch("/api/tradehouse/admin/battles", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roomId,
+          name: seasonName,
+          format: battleFormat,
+          mode,
+          accountSize,
+          sponsorName,
+          sponsorUrl,
+          promoText,
+          musicUrl,
+          ruleConfig,
+          status: "forming",
+          entries: quickEntries.slice(0, 8).map((entry) => {
+            const meta = adminMeta[entry.id] || {};
+            return {
+              id: entry.id,
+              name: entry.name,
+              handle: meta.handle || "",
+              email: meta.email || "",
+              phone: meta.phone || "",
+              dashboardUrl: entry.dashboardUrl || "",
+              avatarUrl: entry.avatarUrl || "",
+              startingBalance: entry.startingBalance,
+              division: entry.division || "trading",
+              platform: entry.platform || "other",
+              accountKind: meta.accountKind || "demo",
+              platformLogin: meta.platformLogin || "",
+              supportStatus: meta.supportStatus || "requested",
+              supportReference: meta.supportReference || "",
+              credentialsDelivered: Boolean(meta.credentialsDelivered),
+            };
+          }),
+        }),
+      });
+      const body = await response.json();
+      if (!response.ok || !body?.battle) throw new Error(body?.error || "Battle save failed");
+
+      const nextMeta: Record<string, AdminEntryMeta> = {};
+      (body.battle.entries || []).forEach((entry: any) => {
+        nextMeta[entry.id] = {
+          entryId: entry.entryId,
+          handle: entry.handle || "",
+          email: entry.email || "",
+          phone: entry.phone || "",
+          accountKind: entry.accountKind || "demo",
+          platformLogin: entry.platformLogin || "",
+          supportStatus: entry.supportStatus || "requested",
+          supportReference: entry.supportReference || "",
+          credentialsDelivered: Boolean(entry.credentialsDelivered),
+          inviteLastFour: entry.inviteLastFour || "",
+        };
+      });
+      (body.newInvites || []).forEach((invite: any) => {
+        nextMeta[invite.rosterId] = {
+          ...(nextMeta[invite.rosterId] || {}),
+          entryId: invite.entryId,
+          inviteUrl: invite.inviteUrl,
+          inviteLastFour: invite.lastFour,
+        };
+      });
+      setAdminMeta(nextMeta);
+      setSaveStatus(
+        body.newInvites?.length
+          ? `Saved. ${body.newInvites.length} secure trader invite${body.newInvites.length === 1 ? "" : "s"} created.`
+          : "Saved to the Trade House database. This battle will now survive refreshes and other devices.",
+      );
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        url.searchParams.set("battle", roomId);
+        window.history.replaceState(null, "", `${url.pathname}?${url.searchParams.toString()}`);
+      }
+      await refreshSavedBattles();
+    } catch (error) {
+      setSaveStatus(error instanceof Error ? error.message : "Battle could not be saved.");
+    }
+  };
+
+  const regenerateInvite = async (rosterId: string) => {
+    const meta = adminMeta[rosterId];
+    if (!meta?.entryId) {
+      setSaveStatus("Save this battle first so the trader has a persistent entry.");
+      return;
+    }
+    try {
+      const response = await fetch(`/api/tradehouse/admin/entries/${meta.entryId}/invite`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body?.error || "Invite could not be generated");
+      setAdminMeta((current) => ({
+        ...current,
+        [rosterId]: {
+          ...current[rosterId],
+          inviteUrl: body.inviteUrl,
+          inviteLastFour: body.lastFour,
+        },
+      }));
+      setSaveStatus("A new trader invite was generated. The previous invite is no longer valid.");
+    } catch (error) {
+      setSaveStatus(error instanceof Error ? error.message : "Invite could not be generated.");
+    }
+  };
+
   useEffect(() => {
     fetch("/api/tradehouse/beta/link-token", {
       method: "POST",
