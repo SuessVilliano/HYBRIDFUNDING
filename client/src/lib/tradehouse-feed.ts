@@ -1,15 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
 
-export type QuickBattleEntry =
-  | { source: "hybrid"; id: string; name: string; dashboardUrl: string; startingBalance?: number }
-  | { source: "polymarket"; id: string; name: string; wallet: string; startingBalance?: number };
+export type TradeHouseDivision = "trading" | "prediction" | "hybrid";
+export type TradeHousePlatform = "matchtrader" | "ctrader" | "dxtrade" | "dxfutures" | "tickblaze" | "other";
+
+export type QuickBattleEntry = {
+  id: string;
+  name: string;
+  dashboardUrl: string;
+  startingBalance?: number;
+  division?: TradeHouseDivision;
+  platform?: TradeHousePlatform;
+};
 
 export type Standing = {
   id: string;
   name: string;
   rank: number;
-  source?: "hybrid" | "polymarket";
+  source?: "hybrid";
   sourceLabel?: string;
+  division?: TradeHouseDivision;
+  platform?: TradeHousePlatform;
   accountId?: string;
   dashboardUrl: string;
   startingBalance: number;
@@ -48,7 +58,9 @@ export function rehearsalFeed(): LeaderboardPayload {
       name: `Trader ${String(i + 1).padStart(2, "0")}`,
       rank: i + 1,
       source: "hybrid" as const,
-      sourceLabel: "Rehearsal",
+      sourceLabel: "Hybrid Funding",
+      division: "trading" as const,
+      platform: "other" as const,
       dashboardUrl: "",
       startingBalance: 50000,
       balance: 50000 + pnl,
@@ -90,12 +102,12 @@ export function decodeQuickRoster(encoded: string | null | undefined): QuickBatt
   try {
     const parsed = JSON.parse(fromBase64Url(encoded));
     if (!Array.isArray(parsed)) return [];
-    return parsed.slice(0, 8).filter((entry: any) => {
-      if (!entry || typeof entry.id !== "string" || typeof entry.name !== "string") return false;
-      if (entry.source === "hybrid") return typeof entry.dashboardUrl === "string";
-      if (entry.source === "polymarket") return typeof entry.wallet === "string";
-      return false;
-    });
+    return parsed.slice(0, 8).filter((entry: any) =>
+      entry &&
+      typeof entry.id === "string" &&
+      typeof entry.name === "string" &&
+      typeof entry.dashboardUrl === "string",
+    );
   } catch {
     return [];
   }
