@@ -104,7 +104,7 @@ const TradeHouse: React.FC = () => {
               {data?.season.status === "live" ? "Season Live" : "Season 1 Forming"} · Simulated Accounts
             </div>
             <h1 className="mt-6 font-['Orbitron'] text-4xl font-black uppercase tracking-tight sm:text-5xl lg:text-7xl">
-              TRADE <span className="text-amber-300">HOUSE</span>
+              TRADE <span className="text-cyan-300">HOUSE</span>
             </h1>
             <p className="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-slate-300 sm:text-lg">
               Traders compete on Hybrid-issued demo accounts. Official standings are calculated from each account&apos;s public Hybrid Funding dashboard — not self-reported P&amp;L.
@@ -119,7 +119,7 @@ const TradeHouse: React.FC = () => {
                 <Swords className="mr-2 h-4 w-4" />
                 BROADCAST STUDIO
               </Link>
-              <a href="/#choose-program" className="inline-flex h-12 items-center justify-center rounded-full border border-amber-300/30 bg-amber-300/10 px-6 font-['Orbitron'] text-xs font-black tracking-wider text-amber-200">
+              <a href="/#choose-program" className="inline-flex h-12 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-6 font-['Orbitron'] text-xs font-black tracking-wider text-cyan-200">
                 <Zap className="mr-2 h-4 w-4" />
                 START INSTANT FUNDING
               </a>
@@ -169,8 +169,8 @@ const TradeHouse: React.FC = () => {
                 <p className="mt-2 text-sm text-slate-400">The page will retry automatically.</p>
               </div>
             ) : (data?.standings.length ?? 0) === 0 ? (
-              <div className="rounded-3xl border border-amber-300/20 bg-gradient-to-br from-amber-300/[0.07] to-white/[0.02] p-8 text-center sm:p-12">
-                <Swords className="mx-auto h-10 w-10 text-amber-300" />
+              <div className="rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-cyan-300/[0.07] to-white/[0.02] p-8 text-center sm:p-12">
+                <Swords className="mx-auto h-10 w-10 text-cyan-300" />
                 <h3 className="mt-4 font-['Orbitron'] text-2xl font-black">Season 1 roster is being loaded.</h3>
                 <p className="mx-auto mt-3 max-w-2xl text-slate-400">
                   Each contestant will receive a Hybrid demo account and public dashboard. Once those dashboard links are added to the season roster, their verified stats appear here automatically.
@@ -184,7 +184,7 @@ const TradeHouse: React.FC = () => {
                 {data?.standings.map((trader) => (
                   <div key={trader.id} className="border-b border-white/[0.07] p-5 last:border-b-0 md:grid md:grid-cols-[70px_1.35fr_1fr_1fr_1fr_90px_80px] md:items-center md:gap-3">
                     <div className="mb-3 flex items-center justify-between md:mb-0 md:block">
-                      <span className={`font-['Orbitron'] text-xl font-black ${trader.rank <= 3 ? "text-amber-300" : "text-white"}`}>#{trader.rank}</span>
+                      <span className={`font-['Orbitron'] text-xl font-black ${trader.rank <= 3 ? "text-cyan-300" : "text-white"}`}>#{trader.rank}</span>
                       <span className="rounded-full border border-white/10 px-2 py-1 text-[9px] uppercase tracking-wider text-slate-400 md:hidden">{trader.status}</span>
                     </div>
                     <div>
@@ -225,7 +225,7 @@ const TradeHouse: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <div className="mx-auto mb-10 max-w-3xl text-center">
-              <div className="font-['Orbitron'] text-[10px] uppercase tracking-[0.22em] text-amber-300">Always Open · Quarterly Championship</div>
+              <div className="font-['Orbitron'] text-[10px] uppercase tracking-[0.22em] text-cyan-300">Always Open · Quarterly Championship</div>
               <h2 className="mt-3 font-['Orbitron'] text-3xl font-black sm:text-4xl">Enter the House anytime. Earn your way to the Final.</h2>
               <p className="mt-4 text-slate-400">
                 Any eligible Hybrid-funded trader can enter the open ladder during the quarter. Weekly heats create fresh qualification windows so late entrants still have a path into the championship.
