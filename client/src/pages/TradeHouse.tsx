@@ -225,18 +225,18 @@ const TradeHouse: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <div className="mx-auto mb-10 max-w-3xl text-center">
-              <div className="font-['Orbitron'] text-[10px] uppercase tracking-[0.22em] text-cyan-300">Always Open · Quarterly Championship</div>
-              <h2 className="mt-3 font-['Orbitron'] text-3xl font-black sm:text-4xl">Enter the House anytime. Earn your way to the Final.</h2>
+              <div className="font-['Orbitron'] text-[10px] uppercase tracking-[0.22em] text-cyan-300">Monthly League · Featured Battles · Quarterly Championship</div>
+              <h2 className="mt-3 font-['Orbitron'] text-3xl font-black sm:text-4xl">Trade when your setup is there. The season keeps score.</h2>
               <p className="mt-4 text-slate-400">
-                Any eligible Hybrid-funded trader can enter the open ladder during the quarter. Weekly heats create fresh qualification windows so late entrants still have a path into the championship.
+                The monthly league does not force daily scalping. Eligible Hybrid traders can be ranked from verified account performance across the month, while short Sprint battles and Prop Challenge races remain optional featured events.
               </p>
             </div>
 
             <div className="grid gap-5 md:grid-cols-3">
               {[
-                ["OPEN LADDER", "Join anytime", "Your public Hybrid dashboard becomes the verified scoring feed. Rank is based on performance from your Trade House entry baseline, not self-reported stats."],
-                ["WEEKLY HEATS", "Fresh chances every week", "Short competition windows create content and qualification opportunities without forcing every trader to enter on day one of the quarter."],
-                ["QUARTERLY FINAL", "The main event", "Heat winners and season-point leaders advance into a broadcast final with the largest Hybrid rewards and featured trader profiles."],
+                ["ALL-TIME HALL OF FAME", "Permanent", "The company-wide record book: championships, battle record, monthly Top-10 finishes, passes, verified performance milestones, and long-term Hybrid rank."],
+                ["MONTHLY TOP 10", "Resets monthly", "The main league. Traders compete on normalized verified return and risk discipline across the month. No trade is required just because the show is live."],
+                ["EVENT LEADERBOARDS", "Battle-specific", "Sprint, Target Race, Prop Challenge, creator battles, prediction divisions, and sponsored events each get their own temporary board and rules."],
               ].map(([title, kicker, body]) => (
                 <div key={title} className="rounded-3xl border border-white/10 bg-[#0b111d] p-6">
                   <div className="font-['Orbitron'] text-[10px] font-black uppercase tracking-[0.18em] text-emerald-300">{kicker}</div>
@@ -246,12 +246,41 @@ const TradeHouse: React.FC = () => {
               ))}
             </div>
 
+            <div className="mt-6 rounded-3xl border border-white/10 bg-[#0b111d] p-6 sm:p-8">
+              <div className="font-['Orbitron'] text-[10px] font-black uppercase tracking-[0.18em] text-violet-300">Default 12-week season blueprint</div>
+              <div className="mt-5 grid gap-4 md:grid-cols-4">
+                {[
+                  ["MONTH 1", "Monthly League", "Top 10 earn House Points. Podium earns published Hybrid rewards."],
+                  ["MONTH 2", "Monthly League", "Fresh monthly board; season points continue accumulating."],
+                  ["MONTH 3", "Monthly League", "Final regular-season board locks the championship field."],
+                  ["FINAL", "16 Traders", "Top 12 by season points + 4 featured-battle wildcards advance."],
+                ].map(([kicker, title, body]) => (
+                  <div key={kicker} className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4">
+                    <div className="font-mono text-[10px] font-black text-cyan-300">{kicker}</div>
+                    <div className="mt-2 font-['Orbitron'] text-sm font-black">{title}</div>
+                    <p className="mt-2 text-xs leading-relaxed text-slate-500">{body}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.04] p-5">
+                <div className="font-['Orbitron'] text-xs font-black uppercase tracking-[0.14em] text-cyan-200">Quarterly championship</div>
+                <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                  Official elimination rounds use equal-size Hybrid accounts and published rules. The field moves 16 → 8 → 4 → 2 → Champion. Funded-account reward sizes, credits, sponsor prizes, and any cash component are published in the season terms before traders enter.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {["Monthly Top 10 · House Points", "Monthly Podium · Hybrid rewards", "Monthly #1 · Funded-account reward slot", "Final Four · Funded-account rewards", "Champion · flagship reward + trophy + Hall of Fame"].map((item) => (
+                    <span key={item} className="rounded-full border border-white/10 bg-white/[0.025] px-3 py-2 text-[10px] font-bold text-slate-300">{item}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div className="mt-6 rounded-3xl border border-cyan-300/15 bg-cyan-300/[0.04] p-6 sm:p-8">
               <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div>
-                  <div className="font-['Orbitron'] text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Broadcast-ready by design</div>
+                  <div className="font-['Orbitron'] text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Broadcast + sponsor ready</div>
                   <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
-                    Leaderboards, duel plates, trader lower-thirds, and scorebugs are separate transparent browser sources. Cameras and trading screens can come from Trade House video rooms, Zoom, or standard OBS inputs without changing the scoring layer.
+                    Traders can switch their seat between face, screen, stats, Face + Screen, Screen + Stats, or Face + Stats. Verified mini-stats stay in the center, while Hybrid promotions and sponsor banners travel with the live-room and OBS links.
                   </p>
                 </div>
                 <Link href="/tradehouse/studio" className="inline-flex h-11 items-center justify-center rounded-full bg-cyan-300 px-5 font-['Orbitron'] text-[10px] font-black tracking-wider text-[#071018]">

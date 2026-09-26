@@ -5,6 +5,7 @@ export function buildOBSCollection(
   right: string,
   quick = "",
   season = "Quick Battle",
+  extras: Record<string, string> = {},
 ) {
   const modes = [["01 · Head to head", "duel"], ["02 · Eight traders", "grid"], ["03 · Intermission", "break"]] as const;
   const sources: object[] = [];
@@ -17,6 +18,7 @@ export function buildOBSCollection(
       ...(quick ? { quick, season } : {}),
       left,
       right,
+      ...extras,
     }).toString();
     const sourceName = `${name} · Graphics`;
     sources.push({
@@ -84,9 +86,10 @@ export function downloadOBSCollection(
   right: string,
   quick = "",
   season = "Quick Battle",
+  extras: Record<string, string> = {},
 ) {
   const blob = new Blob(
-    [JSON.stringify(buildOBSCollection(base, demo, left, right, quick, season), null, 2)],
+    [JSON.stringify(buildOBSCollection(base, demo, left, right, quick, season, extras), null, 2)],
     { type: "application/json" },
   );
   const url = URL.createObjectURL(blob);

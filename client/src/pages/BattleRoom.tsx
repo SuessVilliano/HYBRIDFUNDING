@@ -21,6 +21,7 @@ import {
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import {
+  Columns2,
   LogOut,
   Mic,
   MicOff,
@@ -33,15 +34,18 @@ import {
 } from "lucide-react";
 
 import BattleLayout from "@/components/battles/BattleLayout";
+import BrandRibbon from "@/components/battles/BrandRibbon";
 import HouseChat from "@/components/battles/HouseChat";
+import SeatLayoutPicker from "@/components/battles/SeatLayoutPicker";
 import type { Trader } from "@/components/battles/BattleLayout";
-import type { TraderStats } from "@/components/battles/ParticipantTile";
+import type { SeatLayoutMode, TraderStats } from "@/components/battles/ParticipantTile";
 import type { BattleMode } from "@/components/battles/StatsPanel";
 import {
   decodeQuickRoster,
   type QuickBattleEntry,
   type Standing,
 } from "@/lib/tradehouse-feed";
+import { battleClock, parseBattleRules, type BattleRuleConfig } from "@/lib/tradehouse-rules";
 
 interface RoomConfig {
   mode: BattleMode;
@@ -54,6 +58,10 @@ interface RoomConfig {
   quickKey: string;
   seatId: string;
   seasonName: string;
+  rule: BattleRuleConfig;
+  promoText: string;
+  sponsorName: string;
+  sponsorUrl: string;
 }
 
 type SeatState = QuickBattleEntry & {
@@ -214,6 +222,8 @@ const BottomBar: React.FC<{
   showStatsEditor: boolean;
   onToggleStatsEditor: () => void;
   onStatsChange: (stats: TraderStats) => void;
+  layoutMode: SeatLayoutMode;
+  onLayoutModeChange: (mode: SeatLayoutMode) => void;
   chatControl?: React.ReactNode;
 }> = ({
   myName,
@@ -228,8 +238,11 @@ const BottomBar: React.FC<{
   showStatsEditor,
   onToggleStatsEditor,
   onStatsChange,
+  layoutMode,
+  onLayoutModeChange,
   chatControl,
 }) => {
+  const [showLayouts, setShowLayouts] = useState(false);
   const pnlPositive = myStats.pnl >= 0;
   const pnlStr = pnlPositive
     ? `+$${myStats.pnl.toLocaleString()}`
@@ -288,6 +301,27 @@ const BottomBar: React.FC<{
         <button onClick={onToggleScreen} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(isSharingScreen)} title={isSharingScreen ? "Stop sharing screen" : "Share screen"}>
           <Monitor className="h-4 w-4" />
         </button>
+        <div className="relative">
+          <button
+            onClick={() => setShowLayouts((value) => !value)}
+            className="flex h-9 w-9 items-center justify-center rounded-full transition-all"
+            style={controlStyle(showLayouts)}
+            title="Change seat layout"
+          >
+            <Columns2 className="h-4 w-4" />
+          </button>
+          <AnimatePresence>
+            {showLayouts && (
+              <SeatLayoutPicker
+                value={layoutMode}
+                onChange={(mode) => {
+                  onLayoutModeChange(mode);
+                  setShowLayouts(false);
+                }}
+              />
+            )}
+          </AnimatePresence>
+        </div>
         {chatControl}
         <button onClick={onHangUp} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(false, true)} title="Leave battle">
           <LogOut className="h-4 w-4" />
@@ -330,7 +364,10 @@ const LiveControls: React.FC<{
   showStatsEditor: boolean;
   onToggleStatsEditor: () => void;
   onStatsChange: (stats: TraderStats) => void;
-}> = ({ myStats, myName, showStatsEditor, onToggleStatsEditor, onStatsChange }) => {
+  seatId: string;
+  layoutMode: SeatLayoutMode;
+  onLayoutModeChange: (mode: SeatLayoutMode) => void;
+}> = ({ myStats, myName, showStatsEditor, onToggleStatsEditor, onStatsChange, seatId, layoutMode, onLayoutModeChange }) => {
   const call = useCall();
   const {
     useCameraState,
@@ -376,6 +413,13 @@ const LiveControls: React.FC<{
     }
   }, [camera, microphone]);
 
+  const changeLayout = useCallback((mode: SeatLayoutMode) => {
+    onLayoutModeChange(mode);
+    void call?.sendCustomEvent({ type: "seat_layout", seatId, layout: mode }).catch((error: unknown) => {
+      console.error("[tradehouse] seat layout sync failed", error);
+    });
+  }, [call, onLayoutModeChange, seatId]);
+
   const hangUp = useCallback(async () => {
     try {
       await call?.leave();
@@ -400,6 +444,8 @@ const LiveControls: React.FC<{
         showStatsEditor={showStatsEditor}
         onToggleStatsEditor={onToggleStatsEditor}
         onStatsChange={onStatsChange}
+        layoutMode={layoutMode}
+        onLayoutModeChange={changeLayout}
         chatControl={<HouseChat myName={myName} />}
       />
       {(isCameraOff || isMicMuted) && (
@@ -422,6 +468,8 @@ const ArenaInner: React.FC<{
   showStatsEditor: boolean;
   onToggleStatsEditor: () => void;
   onStatsChange: (stats: TraderStats) => void;
+  seatLayouts: Record<string, SeatLayoutMode>;
+  onSeatLayoutChange: (seatId: string, mode: SeatLayoutMode) => void;
 }> = ({
   config,
   seats,
@@ -430,6 +478,8 @@ const ArenaInner: React.FC<{
   showStatsEditor,
   onToggleStatsEditor,
   onStatsChange,
+  seatLayouts,
+  onSeatLayoutChange,
 }) => {
   const { useParticipants, useLocalParticipant } = useCallStateHooks();
   const participants = useParticipants();
@@ -452,15 +502,17 @@ const ArenaInner: React.FC<{
       const isScreenSharing = Boolean(screenStream);
       const isMuted = streamParticipant ? !hasAudio(streamParticipant) : true;
       const isCameraOff = streamParticipant ? !hasVideo(streamParticipant) : true;
-      const activeStream = screenStream || cameraStream;
-
       return {
         id: seat.id,
         name: seat.name,
         stats: seat.stats,
-        videoTrack: activeStream ? (
-          <MediaStreamVideo stream={activeStream} screen={isScreenSharing} />
+        cameraTrack: cameraStream ? (
+          <MediaStreamVideo stream={cameraStream} />
         ) : null,
+        screenTrack: screenStream ? (
+          <MediaStreamVideo stream={screenStream} screen />
+        ) : null,
+        layoutMode: seatLayouts[seat.id] || "screen-stats",
         isMuted,
         isCameraOff,
         isScreenSharing,
@@ -481,6 +533,7 @@ const ArenaInner: React.FC<{
         leftTeamName={config.mode === "1v1" ? (leftTraders[0]?.name ?? "Team A") : "TEAM A"}
         rightTeamName={config.mode === "1v1" ? (rightTraders[0]?.name ?? "Team B") : "TEAM B"}
         elapsed={elapsed}
+        rule={config.rule}
         obsMode={config.obsMode}
       />
       {!config.obsMode && (
@@ -490,6 +543,12 @@ const ArenaInner: React.FC<{
           showStatsEditor={showStatsEditor}
           onToggleStatsEditor={onToggleStatsEditor}
           onStatsChange={onStatsChange}
+          seatId={seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot)}
+          layoutMode={seatLayouts[seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot)] || "screen-stats"}
+          onLayoutModeChange={(mode) => {
+            const id = seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot);
+            onSeatLayoutChange(id, mode);
+          }}
         />
       )}
     </>
@@ -504,6 +563,8 @@ const DemoArena: React.FC<{
   showStatsEditor: boolean;
   onToggleStatsEditor: () => void;
   onStatsChange: (stats: TraderStats) => void;
+  seatLayouts: Record<string, SeatLayoutMode>;
+  onSeatLayoutChange: (seatId: string, mode: SeatLayoutMode) => void;
 }> = ({
   config,
   seats,
@@ -512,6 +573,8 @@ const DemoArena: React.FC<{
   showStatsEditor,
   onToggleStatsEditor,
   onStatsChange,
+  seatLayouts,
+  onSeatLayoutChange,
 }) => {
   const [, navigate] = useLocation();
   const [isMicMuted, setIsMicMuted] = useState(false);
@@ -603,12 +666,13 @@ const DemoArena: React.FC<{
       const seat = seats[seatKey(side, slot)];
       if (!seat) return null;
       const isLocal = config.side === side && config.slot === slot;
-      const stream = isLocal ? (screenStream || (!isCameraOff ? cameraStream : null)) : null;
       return {
         id: seat.id,
         name: seat.name,
         stats: seat.stats,
-        videoTrack: stream ? <MediaStreamVideo stream={stream} screen={Boolean(screenStream)} /> : null,
+        cameraTrack: isLocal && cameraStream ? <MediaStreamVideo stream={cameraStream} /> : null,
+        screenTrack: isLocal && screenStream ? <MediaStreamVideo stream={screenStream} screen /> : null,
+        layoutMode: seatLayouts[seat.id] || "screen-stats",
         isMuted: isLocal ? isMicMuted : true,
         isCameraOff: isLocal ? isCameraOff : true,
         isScreenSharing: isLocal ? isSharingScreen : false,
@@ -628,6 +692,7 @@ const DemoArena: React.FC<{
         leftTeamName={config.mode === "1v1" ? (leftTraders[0]?.name ?? "TEAM A") : "TEAM A"}
         rightTeamName={config.mode === "1v1" ? (rightTraders[0]?.name ?? "TEAM B") : "TEAM B"}
         elapsed={elapsed}
+        rule={config.rule}
         obsMode={config.obsMode}
       />
       {!config.obsMode && (
@@ -645,6 +710,11 @@ const DemoArena: React.FC<{
             showStatsEditor={showStatsEditor}
             onToggleStatsEditor={onToggleStatsEditor}
             onStatsChange={onStatsChange}
+            layoutMode={seatLayouts[seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot)] || "screen-stats"}
+            onLayoutModeChange={(mode) => {
+              const id = seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot);
+              onSeatLayoutChange(id, mode);
+            }}
           />
           {(isCameraOff || isMicMuted) && (
             <div className="absolute bottom-[4.5rem] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2">
@@ -688,6 +758,10 @@ const BattleRoom: React.FC = () => {
       quickKey,
       seatId: qs.get("seat") || "",
       seasonName: qs.get("season") || "Quick Battle",
+      rule: parseBattleRules(qs),
+      promoText: qs.get("promo") || "Instant Funding · Trade House · Verified Hybrid performance",
+      sponsorName: qs.get("sponsor") || "",
+      sponsorUrl: qs.get("sponsorUrl") || "",
     };
   }, [qs, params.roomId]);
 
@@ -699,7 +773,13 @@ const BattleRoom: React.FC = () => {
   const [showStatsEditor, setShowStatsEditor] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [seats, setSeats] = useState<Record<string, SeatState>>({});
+  const [seatLayouts, setSeatLayouts] = useState<Record<string, SeatLayoutMode>>({});
+  const seatLayoutsRef = useRef<Record<string, SeatLayoutMode>>({});
   const startRef = useRef(Date.now());
+
+  useEffect(() => {
+    seatLayoutsRef.current = seatLayouts;
+  }, [seatLayouts]);
 
   const mySeatKey = seatKey(config.side, config.slot);
   const myStats = seats[mySeatKey]?.stats ?? manualStats;
@@ -863,6 +943,7 @@ const BattleRoom: React.FC = () => {
       startingBalance: ownEntry?.startingBalance,
       division: ownEntry?.division || "trading",
       platform: ownEntry?.platform || "other",
+      layout: seatLayoutsRef.current[ownEntry?.id || config.seatId || userId] || "screen-stats",
     };
 
     const writeMeta = (data: any) => {
@@ -880,6 +961,9 @@ const BattleRoom: React.FC = () => {
           division: data.division || existing?.division || "trading",
           platform: data.platform || existing?.platform || "other",
         };
+        if (data.layout && data.seatId) {
+          setSeatLayouts((layouts) => ({ ...layouts, [data.seatId]: data.layout as SeatLayoutMode }));
+        }
         return {
           ...current,
           [key]: {
@@ -915,6 +999,8 @@ const BattleRoom: React.FC = () => {
             writeMeta(custom.data);
           } else if (custom?.type === "participant_meta_request") {
             void sendMeta();
+          } else if (custom?.type === "seat_layout" && custom.seatId && custom.layout) {
+            setSeatLayouts((layouts) => ({ ...layouts, [custom.seatId]: custom.layout as SeatLayoutMode }));
           }
         });
 
@@ -979,6 +1065,9 @@ const BattleRoom: React.FC = () => {
     showStatsEditor,
     onToggleStatsEditor: () => setShowStatsEditor((value) => !value),
     onStatsChange: onManualStatsChange,
+    seatLayouts,
+    onSeatLayoutChange: (seatId: string, mode: SeatLayoutMode) =>
+      setSeatLayouts((layouts) => ({ ...layouts, [seatId]: mode })),
   };
 
   if (status === "connecting") {
@@ -1018,6 +1107,7 @@ const BattleRoom: React.FC = () => {
     );
   }
 
+  const clock = battleClock(config.rule, elapsed);
   const obsStyle: React.CSSProperties = config.obsMode
     ? { width: "1920px", height: "1080px" }
     : {};
@@ -1059,10 +1149,15 @@ const BattleRoom: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <div className="h-1.5 w-1.5 rounded-full bg-rose-400 shadow-[0_0_7px_#fb7185]" />
-            <span className="font-mono text-base font-bold tracking-[0.1em] text-white">
-              {String(Math.floor(elapsed / 60)).padStart(2, "0")}:
-              {String(elapsed % 60).padStart(2, "0")}
-            </span>
+            <div className="text-right">
+              <span className="block font-mono text-base font-bold tracking-[0.1em] text-white">
+                {String(Math.floor(clock.seconds / 60)).padStart(2, "0")}:
+                {String(clock.seconds % 60).padStart(2, "0")}
+              </span>
+              <span className="block font-['Orbitron'] text-[7px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                {clock.label}
+              </span>
+            </div>
           </div>
 
           <button
@@ -1078,7 +1173,7 @@ const BattleRoom: React.FC = () => {
         className="absolute left-0 right-0"
         style={{
           top: config.obsMode ? 0 : "48px",
-          bottom: config.obsMode ? 0 : "56px",
+          bottom: config.obsMode ? "28px" : "80px",
         }}
       >
         {status === "connected" && streamClient && streamCall ? (
@@ -1092,11 +1187,12 @@ const BattleRoom: React.FC = () => {
         )}
       </div>
 
-      {config.obsMode && (
-        <div className="pointer-events-none absolute bottom-3 right-4 opacity-20">
-          <span className="font-['Orbitron'] text-[10px] text-white">battles.hybridfunding.co</span>
-        </div>
-      )}
+      <BrandRibbon
+        promoText={config.promoText}
+        sponsorName={config.sponsorName}
+        sponsorUrl={config.sponsorUrl}
+        obsMode={config.obsMode}
+      />
     </div>
   );
 };

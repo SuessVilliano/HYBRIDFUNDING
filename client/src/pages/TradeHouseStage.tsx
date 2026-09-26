@@ -1,11 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearch } from 'wouter';
 import { decodeQuickRoster, useTradeHouseFeed, type Standing } from '@/lib/tradehouse-feed';
+import { battleObjective, parseBattleRules } from '@/lib/tradehouse-rules';
 import './tradehouse-stage.css';
 const cash=(n:number)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
 export default function TradeHouseStage(){
   const search=useSearch(); const qs=useMemo(()=>new URLSearchParams(search),[search]); const demo=qs.get('demo')==='1';
   const layout=qs.get('layout')||'duel'; const overlay=qs.get('overlay')==='1';
+  const rule=useMemo(()=>parseBattleRules(qs),[search]);
+  const promo=qs.get('promo')||'HYBRID FUNDING · TRADE HOUSE · VERIFIED PERFORMANCE';
+  const sponsor=qs.get('sponsor')||'';
   const quickKey=qs.get('quick'); const quickRoster=useMemo(()=>decodeQuickRoster(quickKey),[quickKey]);
   const {data,state}=useTradeHouseFeed(demo,quickRoster,qs.get('season')||'Quick Battle'); const [size,setSize]=useState({w:window.innerWidth,h:window.innerHeight});
   useEffect(()=>{const resize=()=>setSize({w:window.innerWidth,h:window.innerHeight});window.addEventListener('resize',resize);return()=>window.removeEventListener('resize',resize);},[]);
@@ -20,7 +24,7 @@ export default function TradeHouseStage(){
   const scale=Math.min(size.w/1920,size.h/1080);
   return <main className={`th-stage-shell ${overlay?'th-transparent':''}`} style={{height:size.h}}>
     <div className={`th-stage ${overlay?'th-overlay':''}`} style={{transform:`scale(${scale})`,left:(size.w-1920*scale)/2,top:(size.h-1080*scale)/2}}>
-      <header className="th-mast"><div className="th-brand">HYBRID<span>FUNDING</span></div><div className="th-title">TRADE HOUSE<span>THE TRADING ARENA</span></div><div className={`th-status ${demo?'th-demo':''}`}>{label}</div></header>
+      <header className="th-mast"><div className="th-brand">HYBRID<span>FUNDING</span></div><div className="th-title">TRADE HOUSE<span>{rule.label.toUpperCase()} · {battleObjective(rule).toUpperCase()}</span></div><div className={`th-status ${demo?'th-demo':''}`}>{label}</div></header>
       {layout==='break'?<section className="th-break"><span>HYBRID FUNDING PRESENTS</span><h1>BACK IN<br/><em>THE ARENA SOON.</em></h1><p>Trade House · Simulated competition accounts</p></section>:<>
       <section className={`th-floor ${layout==='grid'?'th-grid':'th-duel'}`}>
         {selected.map((trader,i)=><article key={trader?.id||i} className={`th-seat th-seat-${i%2}`}>
@@ -33,7 +37,7 @@ export default function TradeHouseStage(){
       </section>
       <section className="th-ribbon"><div className="th-ribbon-title">THE HOUSE<br/><strong>STANDINGS</strong></div>{roster.length?roster.map(t=><div className="th-ribbon-trader" key={t.id}><span>{valid(t)?`#${t.rank}`:'—'} {t.name}</span><b className={t.pnl<0?'th-loss':''}>{valid(t)?`${t.returnPct>=0?'+':''}${t.returnPct.toFixed(2)}%`:'—'}</b></div>):<p>Eight seats. Contestant dashboards have not been connected yet.</p>}</section>
       </>}
-      <footer className="th-footer"><span>{demo?'DEMO • NOT REAL TRADES OR RESULTS':'COMPETITION FEEDS • VERIFIED PUBLIC DATA • RANKED BY RETURN'}</span><span>{state==='stale'?'SCORES HIDDEN UNTIL FEED RECOVERS':data?`FEED ${new Date(data.updatedAt).toLocaleTimeString('en-US')}`:'CONNECTING TO SCOREBOARD'}</span><strong>HYBRIDFUNDING.CO</strong></footer>
+      <footer className="th-footer"><span>{demo?'DEMO • NOT REAL TRADES OR RESULTS':promo}</span><span>{sponsor?`PRESENTED BY ${sponsor}`:state==='stale'?'SCORES HIDDEN UNTIL FEED RECOVERS':data?`FEED ${new Date(data.updatedAt).toLocaleTimeString('en-US')}`:'CONNECTING TO SCOREBOARD'}</span><strong>HYBRIDFUNDING.CO</strong></footer>
     </div>
   </main>;
 }

@@ -22,6 +22,7 @@ import {
   type Standing,
 } from "@/lib/tradehouse-feed";
 import SEO from "@/components/SEO";
+import { BATTLE_PRESETS, type BattleFormat } from "@/lib/tradehouse-rules";
 
 type Payload = {
   season: { name: string; status: string };
@@ -30,6 +31,13 @@ type Payload = {
 
 function newRoomId() {
   return Math.random().toString(36).slice(2, 8).toUpperCase();
+}
+
+function defaultLeagueEnd() {
+  const now = new Date();
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
+  end.setMinutes(end.getMinutes() - end.getTimezoneOffset());
+  return end.toISOString().slice(0, 16);
 }
 
 function validEntry(entry: QuickBattleEntry) {
@@ -52,6 +60,16 @@ const TradeHouseStudio: React.FC = () => {
   const [copied, setCopied] = useState("");
 
   const [seasonName, setSeasonName] = useState("Trade House Quick Battle");
+  const [battleFormat, setBattleFormat] = useState<BattleFormat>("spotlight");
+  const [durationMinutes, setDurationMinutes] = useState(60);
+  const [targetPct, setTargetPct] = useState(5);
+  const [profitTargetPct, setProfitTargetPct] = useState(8);
+  const [maxDDPct, setMaxDDPct] = useState(5);
+  const [accountSize, setAccountSize] = useState(25000);
+  const [leagueEndsAt, setLeagueEndsAt] = useState(defaultLeagueEnd);
+  const [promoText, setPromoText] = useState("Instant Funding · Trade House · Verified Hybrid performance");
+  const [sponsorName, setSponsorName] = useState("");
+  const [sponsorUrl, setSponsorUrl] = useState("");
   const [roomId, setRoomId] = useState(() => newRoomId());
   const [quickStatus, setQuickStatus] = useState("");
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
@@ -89,7 +107,27 @@ const TradeHouseStudio: React.FC = () => {
       right,
       ...(demo ? { demo: "1" } : {}),
       ...(overlay ? { overlay: "1" } : {}),
+      ...experienceParams,
     })}`;
+
+  const experienceParams = useMemo(() => {
+    const params: Record<string, string> = {
+      format: battleFormat,
+      ruleLabel: BATTLE_PRESETS[battleFormat].label,
+      duration: String(Math.max(60, Math.round(durationMinutes * 60))),
+      target: String(targetPct),
+      profitTarget: String(profitTargetPct),
+      maxDD: String(maxDDPct),
+      accountSize: String(accountSize),
+      promo: promoText,
+    };
+    if (battleFormat === "league" && leagueEndsAt) {
+      params.endsAt = new Date(leagueEndsAt).toISOString();
+    }
+    if (sponsorName.trim()) params.sponsor = sponsorName.trim();
+    if (sponsorUrl.trim()) params.sponsorUrl = sponsorUrl.trim();
+    return params;
+  }, [battleFormat, durationMinutes, targetPct, profitTargetPct, maxDDPct, accountSize, promoText, sponsorName, sponsorUrl, leagueEndsAt]);
 
   const readyQuickEntries = useMemo(() => quickEntries.filter(validEntry).slice(0, 8), [quickEntries]);
   const quickEncoded = useMemo(
@@ -102,8 +140,9 @@ const TradeHouseStudio: React.FC = () => {
       quick: quickEncoded,
       season: seasonName,
       ...(overlay ? { overlay: "1" } : {}),
+      ...experienceParams,
     })}`;
-  const quickTvUrl = `${base}/tradehouse/tv?${new URLSearchParams({ quick: quickEncoded, season: seasonName })}`;
+  const quickTvUrl = `${base}/tradehouse/tv?${new URLSearchParams({ quick: quickEncoded, season: seasonName, ...experienceParams })}`;
 
   const roomMode = readyQuickEntries.length <= 2 ? "1v1" : readyQuickEntries.length <= 4 ? "2v2" : "3v3";
   const participantLinks = useMemo(
@@ -118,10 +157,11 @@ const TradeHouseStudio: React.FC = () => {
         quick: quickEncoded,
         seat: entry.id,
         season: seasonName,
+        ...experienceParams,
       });
       return { id: entry.id, name: entry.name, url: `${base}/battles/room/${roomId}?${params}` };
     }),
-    [base, readyQuickEntries, roomId, roomMode],
+    [base, readyQuickEntries, roomId, roomMode, quickEncoded, seasonName, experienceParams],
   );
 
   const copy = async (key: string, value: string) => {
@@ -269,6 +309,92 @@ const TradeHouseStudio: React.FC = () => {
                   />
                 </div>
 
+                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="font-['Orbitron'] text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">Battle rules</div>
+                      <p className="mt-2 max-w-2xl text-xs leading-relaxed text-slate-500">
+                        Pick the reason the clock exists. Spotlight can run as long as the setups require; Sprint is the scalper clock; Prop ends on the challenge conditions; League follows the season window.
+                      </p>
+                    </div>
+                    <span className="rounded-full border border-cyan-300/15 bg-cyan-300/[0.05] px-3 py-1.5 font-['Orbitron'] text-[9px] font-bold text-cyan-200">
+                      {BATTLE_PRESETS[battleFormat].label}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 grid gap-2 sm:grid-cols-5">
+                    {(["spotlight", "sprint", "target", "prop", "league"] as BattleFormat[]).map((format) => (
+                      <button
+                        key={format}
+                        onClick={() => setBattleFormat(format)}
+                        className="rounded-xl border px-3 py-3 text-left transition-all"
+                        style={{
+                          borderColor: battleFormat === format ? "rgba(34,211,238,.45)" : "rgba(255,255,255,.08)",
+                          background: battleFormat === format ? "rgba(34,211,238,.07)" : "rgba(255,255,255,.02)",
+                        }}
+                      >
+                        <div className={`font-['Orbitron'] text-[9px] font-black uppercase tracking-[0.08em] ${battleFormat === format ? "text-cyan-200" : "text-slate-500"}`}>
+                          {BATTLE_PRESETS[format].label}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {(battleFormat === "sprint") && (
+                      <label className="text-xs text-slate-500">
+                        Duration (minutes)
+                        <input type="number" min={1} value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value) || 1)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      </label>
+                    )}
+                    {(battleFormat === "target") && (
+                      <label className="text-xs text-slate-500">
+                        First to return %
+                        <input type="number" step="0.25" value={targetPct} onChange={(e) => setTargetPct(Number(e.target.value) || 0)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      </label>
+                    )}
+                    {(battleFormat === "prop") && (
+                      <>
+                        <label className="text-xs text-slate-500">
+                          Profit target %
+                          <input type="number" step="0.25" value={profitTargetPct} onChange={(e) => setProfitTargetPct(Number(e.target.value) || 0)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                        </label>
+                        <label className="text-xs text-slate-500">
+                          Max drawdown %
+                          <input type="number" step="0.25" value={maxDDPct} onChange={(e) => setMaxDDPct(Number(e.target.value) || 0)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                        </label>
+                      </>
+                    )}
+                    {(battleFormat === "league") && (
+                      <label className="text-xs text-slate-500 sm:col-span-2">
+                        League closes
+                        <input type="datetime-local" value={leagueEndsAt} onChange={(e) => setLeagueEndsAt(e.target.value)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      </label>
+                    )}
+                    {battleFormat !== "spotlight" && battleFormat !== "sprint" && (
+                      <label className="text-xs text-slate-500">
+                        Same account size
+                        <input type="number" step="1000" value={accountSize} onChange={(e) => setAccountSize(Number(e.target.value) || 0)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      </label>
+                    )}
+                  </div>
+
+                  <div className="mt-5 grid gap-3 lg:grid-cols-3">
+                    <label className="text-xs text-slate-500 lg:col-span-1">
+                      Hybrid promo ribbon
+                      <input value={promoText} onChange={(e) => setPromoText(e.target.value)} className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                    </label>
+                    <label className="text-xs text-slate-500">
+                      Sponsor name
+                      <input value={sponsorName} onChange={(e) => setSponsorName(e.target.value)} placeholder="Optional" className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                    </label>
+                    <label className="text-xs text-slate-500">
+                      Sponsor URL
+                      <input value={sponsorUrl} onChange={(e) => setSponsorUrl(e.target.value)} placeholder="https://…" className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                    </label>
+                  </div>
+                </div>
+
                 <div className="space-y-3">
                   {quickEntries.map((entry, index) => (
                     <div key={entry.id} className="grid gap-3 rounded-2xl border border-white/10 bg-black/15 p-4 lg:grid-cols-[1fr_150px_2fr_160px_auto] lg:items-end">
@@ -393,7 +519,7 @@ const TradeHouseStudio: React.FC = () => {
                       <a href={quickStageUrl(readyQuickEntries.length > 2 ? "grid" : "duel")} target="_blank" rel="noreferrer" className="rounded-lg bg-cyan-300 px-3 py-2 text-[10px] font-black text-slate-950">OPEN STAGE</a>
                       <a href={quickTvUrl} target="_blank" rel="noreferrer" className="rounded-lg bg-violet-400 px-3 py-2 text-[10px] font-black text-white">OPEN TRADE HYBRID TV</a>
                       <button
-                        onClick={() => downloadOBSCollection(base, false, readyQuickEntries[0]?.id || "", readyQuickEntries[1]?.id || "", quickEncoded, seasonName)}
+                        onClick={() => downloadOBSCollection(base, false, readyQuickEntries[0]?.id || "", readyQuickEntries[1]?.id || "", quickEncoded, seasonName, experienceParams)}
                         className="rounded-lg border border-white/15 px-3 py-2 text-[10px] font-black text-slate-200"
                       >
                         DOWNLOAD OBS COLLECTION

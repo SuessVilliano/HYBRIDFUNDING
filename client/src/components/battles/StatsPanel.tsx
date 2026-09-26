@@ -1,7 +1,8 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crown, Target, BarChart2, Zap, Trophy } from "lucide-react";
+import { Crown, Target, BarChart2, Zap, Trophy, TrendingUp } from "lucide-react";
 import type { TraderStats } from "./ParticipantTile";
+import { battleClock, battleObjective, type BattleRuleConfig } from "@/lib/tradehouse-rules";
 
 export type BattleMode = "1v1" | "2v2" | "3v3";
 
@@ -16,6 +17,7 @@ interface StatsPanelProps {
   leftTeam: TeamStats;
   rightTeam: TeamStats;
   elapsed: number;
+  rule?: BattleRuleConfig;
   compact?: boolean;
 }
 
@@ -63,7 +65,7 @@ const AnimatedNumber: React.FC<{ value: string | number; color?: string }> = ({ 
   </AnimatePresence>
 );
 
-const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elapsed, compact = false }) => {
+const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elapsed, rule = { format: "spotlight", label: "Spotlight Session" }, compact = false }) => {
   const leftAgg = aggregateTeam(leftTeam);
   const rightAgg = aggregateTeam(rightTeam);
 
@@ -81,6 +83,14 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elap
     ? Math.round((rightAgg.wins / (rightAgg.wins + rightAgg.losses)) * 100) : 0;
 
   const fs = compact ? "9px" : "10px";
+  const clock = battleClock(rule, elapsed);
+  const objective = battleObjective(rule);
+  const averageReturn = (team: TeamStats) => {
+    const values = team.traders.map((t) => t.stats.returnPct).filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+    return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+  };
+  const leftReturn = averageReturn(leftTeam);
+  const rightReturn = averageReturn(rightTeam);
 
   return (
     <div
@@ -106,14 +116,20 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elap
           className="font-mono font-black text-white"
           style={{ fontSize: compact ? "18px" : "22px", textShadow: "0 0 20px rgba(255,255,255,0.3)" }}
         >
-          {formatTime(elapsed)}
+          {formatTime(clock.seconds)}
         </motion.div>
-        <div className="font-['Orbitron'] font-bold" style={{ color: "#333", fontSize: "9px", marginTop: "2px" }}>
-          {mode} BATTLE
+        <div className="font-['Orbitron'] font-bold" style={{ color: clock.expired ? "#ff3b5c" : "#58677a", fontSize: "8px", marginTop: "2px", letterSpacing: "0.12em" }}>
+          {clock.expired ? "TIME" : clock.label}
+        </div>
+        <div className="mt-1 font-['Orbitron'] font-bold" style={{ color: "#7c8da3", fontSize: "8px" }}>
+          {rule.label.toUpperCase()} · {mode}
         </div>
       </div>
 
       <div className="px-2 py-2 flex-shrink-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="mb-2 rounded-md border border-cyan-300/10 bg-cyan-300/[0.035] px-2 py-1.5 text-center font-['Orbitron'] text-[7px] font-bold uppercase leading-relaxed tracking-[0.08em] text-cyan-100/70">
+          {objective}
+        </div>
         <div className="flex items-center justify-between">
           <span className="font-['Orbitron'] font-bold truncate" style={{ color: leftWinning ? "#00ff87" : "#333", fontSize: fs, maxWidth: "40%" }}>
             {leftTeam.name}
@@ -178,6 +194,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elap
 
       <div className="flex-1 flex flex-col justify-center">
         {[
+          { label: "RETURN", icon: <TrendingUp style={{ width: 12, height: 12 }} />, leftVal: `${leftReturn >= 0 ? "+" : ""}${leftReturn.toFixed(2)}%`, rightVal: `${rightReturn >= 0 ? "+" : ""}${rightReturn.toFixed(2)}%`, leftBetter: leftReturn !== rightReturn ? leftReturn > rightReturn : undefined },
           { label: "WIN RATE", icon: <Target style={{ width: 12, height: 12 }} />, leftVal: `${leftWinRate}%`, rightVal: `${rightWinRate}%`, leftBetter: leftWinRate !== rightWinRate ? leftWinRate > rightWinRate : undefined },
           { label: "TRADES", icon: <BarChart2 style={{ width: 12, height: 12 }} />, leftVal: leftAgg.tradeCount, rightVal: rightAgg.tradeCount },
           { label: "BEST TRADE", icon: <Zap style={{ width: 12, height: 12 }} />, leftVal: `$${leftAgg.biggestWin.toLocaleString()}`, rightVal: `$${rightAgg.biggestWin.toLocaleString()}`, leftBetter: leftAgg.biggestWin !== rightAgg.biggestWin ? leftAgg.biggestWin > rightAgg.biggestWin : undefined },
