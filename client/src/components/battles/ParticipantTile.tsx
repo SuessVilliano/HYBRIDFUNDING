@@ -108,7 +108,7 @@ const ParticipantTile: React.FC<ParticipantTileProps> = ({
 
   const StatsPanel = ({ full = false }: { full?: boolean }) => (
     <aside
-      className={`${full ? "h-full w-full" : "h-full min-w-[145px]"} border-cyan-300/10 bg-[linear-gradient(180deg,rgba(10,22,38,.98),rgba(5,11,20,.98))] ${compact ? "p-2" : "p-3"}`}
+      className={`${full ? "h-full w-full" : "h-full min-w-0 sm:min-w-[145px]"} border-cyan-300/10 bg-[linear-gradient(180deg,rgba(10,22,38,.98),rgba(5,11,20,.98))] ${compact ? "p-2" : "p-3"}`}
     >
       <div className="flex items-start justify-between gap-2 border-b border-white/[0.07] pb-2">
         <div>
@@ -211,7 +211,7 @@ const ParticipantTile: React.FC<ParticipantTileProps> = ({
         );
       case "face-screen":
         return (
-          <div className="grid h-full min-h-0 grid-cols-2 gap-px bg-cyan-300/10">
+          <div className="grid h-full min-h-0 grid-cols-1 grid-rows-2 gap-px bg-cyan-300/10 sm:grid-cols-2 sm:grid-rows-1">
             <MediaPane
               node={cameraTrack}
               label="Camera is off"
@@ -226,8 +226,8 @@ const ParticipantTile: React.FC<ParticipantTileProps> = ({
         );
       case "face-stats":
         return (
-          <div className="flex h-full min-h-0">
-            <div className="min-w-0 flex-[1.75]">
+          <div className="flex h-full min-h-0 flex-col sm:flex-row">
+            <div className="min-h-[150px] min-w-0 flex-[1.75] sm:min-h-0">
               <MediaPane
                 node={cameraTrack}
                 label="Camera is off"
@@ -235,7 +235,7 @@ const ParticipantTile: React.FC<ParticipantTileProps> = ({
               />
             </div>
             {hasLiveStats && (
-              <div className="w-[34%] border-l border-cyan-300/10">
+              <div className="max-h-[48%] w-full border-t border-cyan-300/10 sm:max-h-none sm:w-[34%] sm:border-l sm:border-t-0">
                 <StatsPanel />
               </div>
             )}
@@ -244,8 +244,8 @@ const ParticipantTile: React.FC<ParticipantTileProps> = ({
       case "screen-stats":
       default:
         return (
-          <div className="flex h-full min-h-0">
-            <div className="min-w-0 flex-[1.9]">
+          <div className="flex h-full min-h-0 flex-col sm:flex-row">
+            <div className="min-h-[150px] min-w-0 flex-[1.9] sm:min-h-0">
               <MediaPane
                 node={screenTrack || cameraTrack}
                 label={screenTrack ? "Waiting for screen share…" : "Waiting for camera or screen share…"}
@@ -253,7 +253,7 @@ const ParticipantTile: React.FC<ParticipantTileProps> = ({
               />
             </div>
             {hasLiveStats && (
-              <div className="w-[32%] border-l border-cyan-300/10">
+              <div className="max-h-[48%] w-full border-t border-cyan-300/10 sm:max-h-none sm:w-[32%] sm:border-l sm:border-t-0">
                 <StatsPanel />
               </div>
             )}
