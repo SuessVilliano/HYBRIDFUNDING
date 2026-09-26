@@ -1,4 +1,4 @@
-import { Switch, Route, Router } from "wouter";
+import { Switch, Route, Router, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -31,6 +31,51 @@ import FAQ from "@/pages/FAQ";
 import Battles from "@/pages/Battles";
 import BattleLobby from "@/pages/BattleLobby";
 import BattleRoom from "@/pages/BattleRoom";
+
+function RouteScrollManager() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    const scrollToTarget = () => {
+      const hash = window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : "";
+      if (hash) {
+        const target = document.getElementById(hash);
+        if (target) {
+          const headerOffset = 112;
+          const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+          window.scrollTo({ top: Math.max(0, top), left: 0, behavior: "smooth" });
+          return;
+        }
+      }
+
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    };
+
+    const frame = window.requestAnimationFrame(scrollToTarget);
+    const timer = window.setTimeout(scrollToTarget, 80);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+    };
+  }, [location]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : "";
+      if (!hash) return;
+      const target = document.getElementById(hash);
+      if (!target) return;
+      const top = target.getBoundingClientRect().top + window.scrollY - 112;
+      window.scrollTo({ top: Math.max(0, top), left: 0, behavior: "smooth" });
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  return null;
+}
 
 function TraderDnaRedirect() {
   useEffect(() => {
@@ -117,6 +162,7 @@ function App() {
       <TooltipProvider>
         <CyberpunkLoadingScreen isLoading={isInitialLoading} />
         <Router>
+          <RouteScrollManager />
           <AppRouter />
           {/* Bottom tab bar — renders only when running as an installed PWA */}
           <AppTabBar />

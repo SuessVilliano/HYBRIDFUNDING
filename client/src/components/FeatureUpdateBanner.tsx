@@ -21,7 +21,7 @@ export default function FeatureUpdateBanner({ compact = false }: FeatureUpdateBa
             New • PropX Launch
           </span>
           <span className="text-sm text-white">
-            GooeyPro is now PropX. October 1–25 launch offers save up to 50%.
+            PropX launch: October 1–25 offers save up to 50% on eligible challenges.
           </span>
           <Link href="/blog/propx-rebrand-october-2026-promotion" className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-primary">
             Read the announcement <ArrowRight className="h-3.5 w-3.5" />
