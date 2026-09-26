@@ -468,6 +468,8 @@ const ArenaInner: React.FC<{
   showStatsEditor: boolean;
   onToggleStatsEditor: () => void;
   onStatsChange: (stats: TraderStats) => void;
+  seatLayouts: Record<string, SeatLayoutMode>;
+  onSeatLayoutChange: (seatId: string, mode: SeatLayoutMode) => void;
 }> = ({
   config,
   seats,
@@ -476,6 +478,8 @@ const ArenaInner: React.FC<{
   showStatsEditor,
   onToggleStatsEditor,
   onStatsChange,
+  seatLayouts,
+  onSeatLayoutChange,
 }) => {
   const { useParticipants, useLocalParticipant } = useCallStateHooks();
   const participants = useParticipants();
@@ -498,15 +502,17 @@ const ArenaInner: React.FC<{
       const isScreenSharing = Boolean(screenStream);
       const isMuted = streamParticipant ? !hasAudio(streamParticipant) : true;
       const isCameraOff = streamParticipant ? !hasVideo(streamParticipant) : true;
-      const activeStream = screenStream || cameraStream;
-
       return {
         id: seat.id,
         name: seat.name,
         stats: seat.stats,
-        videoTrack: activeStream ? (
-          <MediaStreamVideo stream={activeStream} screen={isScreenSharing} />
+        cameraTrack: cameraStream ? (
+          <MediaStreamVideo stream={cameraStream} />
         ) : null,
+        screenTrack: screenStream ? (
+          <MediaStreamVideo stream={screenStream} screen />
+        ) : null,
+        layoutMode: seatLayouts[seat.id] || "screen-stats",
         isMuted,
         isCameraOff,
         isScreenSharing,
@@ -527,6 +533,7 @@ const ArenaInner: React.FC<{
         leftTeamName={config.mode === "1v1" ? (leftTraders[0]?.name ?? "Team A") : "TEAM A"}
         rightTeamName={config.mode === "1v1" ? (rightTraders[0]?.name ?? "Team B") : "TEAM B"}
         elapsed={elapsed}
+        rule={config.rule}
         obsMode={config.obsMode}
       />
       {!config.obsMode && (
@@ -536,6 +543,12 @@ const ArenaInner: React.FC<{
           showStatsEditor={showStatsEditor}
           onToggleStatsEditor={onToggleStatsEditor}
           onStatsChange={onStatsChange}
+          seatId={seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot)}
+          layoutMode={seatLayouts[seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot)] || "screen-stats"}
+          onLayoutModeChange={(mode) => {
+            const id = seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot);
+            onSeatLayoutChange(id, mode);
+          }}
         />
       )}
     </>
