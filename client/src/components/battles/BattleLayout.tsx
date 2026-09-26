@@ -4,6 +4,7 @@ import ParticipantTile from "./ParticipantTile";
 import StatsPanel from "./StatsPanel";
 import type { TraderStats, SeatLayoutMode } from "./ParticipantTile";
 import type { BattleMode } from "./StatsPanel";
+import type { BattleRuleConfig } from "@/lib/tradehouse-rules";
 
 export interface Trader {
   id: string;
@@ -24,6 +25,7 @@ interface BattleLayoutProps {
   leftTeamName: string;
   rightTeamName: string;
   elapsed: number;
+  rule?: BattleRuleConfig;
   obsMode?: boolean;
 }
 
@@ -39,7 +41,7 @@ const EmptySlot: React.FC<{ label: string; side: "left" | "right"; compact?: boo
   </div>
 );
 
-const BattleLayout: React.FC<BattleLayoutProps> = ({ mode, leftTraders, rightTraders, leftTeamName, rightTeamName, elapsed }) => {
+const BattleLayout: React.FC<BattleLayoutProps> = ({ mode, leftTraders, rightTraders, leftTeamName, rightTeamName, elapsed, rule }) => {
   const leftTeam = { name: leftTeamName, traders: leftTraders.map((t) => ({ name: t.name, stats: t.stats })), side: "left" as const };
   const rightTeam = { name: rightTeamName, traders: rightTraders.map((t) => ({ name: t.name, stats: t.stats })), side: "right" as const };
   const compact = mode !== "1v1";
@@ -58,7 +60,7 @@ const BattleLayout: React.FC<BattleLayoutProps> = ({ mode, leftTraders, rightTra
             );
           })}
         </motion.div>
-        <StatsPanel mode={mode} leftTeam={leftTeam} rightTeam={rightTeam} elapsed={elapsed} compact={compact} />
+        <StatsPanel mode={mode} leftTeam={leftTeam} rightTeam={rightTeam} elapsed={elapsed} rule={rule} compact={compact} />
         <motion.div layout className="flex-1 flex flex-col min-w-0" style={{ padding: compact ? "4px" : "6px", gap: compact ? "4px" : "6px" }}>
           {Array.from({ length: count }, (_, i) => {
             const t = rightTraders[i];
