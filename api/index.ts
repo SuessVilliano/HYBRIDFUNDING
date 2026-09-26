@@ -13,6 +13,9 @@ app.use(express.urlencoded({ extended: false }));
 const TRADEHOUSE_BETA_COOKIE = "hf_tradehouse_beta";
 const TRADEHOUSE_BETA_SESSION_SECONDS = 60 * 60 * 12;
 const TRADEHOUSE_SHARE_SECONDS = 60 * 60 * 24;
+const betaAttempts = new Map<string, { count: number; resetAt: number }>();
+const BETA_ATTEMPT_WINDOW_MS = 15 * 60 * 1000;
+const BETA_MAX_ATTEMPTS = 5;
 
 function betaCode() {
   return process.env.TRADEHOUSE_BETA_CODE?.trim() || "";
@@ -24,6 +27,24 @@ function betaSecret() {
 
 function betaConfigured() {
   return Boolean(betaCode() && betaSecret());
+}
+
+function betaAttemptKey(req: Request) {
+  const forwarded = req.headers["x-forwarded-for"];
+  const first = Array.isArray(forwarded) ? forwarded[0] : forwarded?.split(",")[0];
+  return (first || req.ip || "unknown").trim();
+}
+
+function betaAttemptState(req: Request) {
+  const key = betaAttemptKey(req);
+  const now = Date.now();
+  const current = betaAttempts.get(key);
+  if (!current || current.resetAt <= now) {
+    const fresh = { count: 0, resetAt: now + BETA_ATTEMPT_WINDOW_MS };
+    betaAttempts.set(key, fresh);
+    return { key, state: fresh };
+  }
+  return { key, state: current };
 }
 
 function safeTextEqual(a: string, b: string) {
@@ -117,12 +138,21 @@ app.post("/api/tradehouse/beta/login", async (req: Request, res: Response) => {
     return res.status(503).json({ error: "Private beta access is not configured." });
   }
 
+  const attempt = betaAttemptState(req);
+  if (attempt.state.count >= BETA_MAX_ATTEMPTS) {
+    res.setHeader("Retry-After", String(Math.max(1, Math.ceil((attempt.state.resetAt - Date.now()) / 1000))));
+    return res.status(429).json({ error: "Too many attempts. Try again later." });
+  }
+
   const submitted = typeof req.body?.code === "string" ? req.body.code.trim() : "";
   if (!submitted || !safeTextEqual(submitted, betaCode())) {
-    await new Promise((resolve) => setTimeout(resolve, 450));
+    attempt.state.count += 1;
+    betaAttempts.set(attempt.key, attempt.state);
+    await new Promise((resolve) => setTimeout(resolve, 650));
     return res.status(401).json({ error: "Invalid access code." });
   }
 
+  betaAttempts.delete(attempt.key);
   const token = signBetaToken(TRADEHOUSE_BETA_SESSION_SECONDS);
   setBetaCookie(res, token, TRADEHOUSE_BETA_SESSION_SECONDS);
   res.setHeader("Cache-Control", "no-store");
