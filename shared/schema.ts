@@ -180,6 +180,7 @@ export const tradeHouseBattles = pgTable("trade_house_battles", {
 export const tradeHouseEntries = pgTable("trade_house_entries", {
   id: serial("id").primaryKey(),
   battleId: integer("battle_id").notNull().references(() => tradeHouseBattles.id),
+  externalKey: text("external_key"),
   traderId: integer("trader_id").notNull().references(() => tradeHouseTraders.id),
   accountId: integer("account_id").references(() => tradeHouseAccounts.id),
   dashboardUrl: text("dashboard_url"),
@@ -302,6 +303,7 @@ export const insertTradeHouseBattleSchema = createInsertSchema(tradeHouseBattles
 
 export const insertTradeHouseEntrySchema = createInsertSchema(tradeHouseEntries).pick({
   battleId: true,
+  externalKey: true,
   traderId: true,
   accountId: true,
   dashboardUrl: true,
