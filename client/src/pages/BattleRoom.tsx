@@ -563,6 +563,8 @@ const DemoArena: React.FC<{
   showStatsEditor: boolean;
   onToggleStatsEditor: () => void;
   onStatsChange: (stats: TraderStats) => void;
+  seatLayouts: Record<string, SeatLayoutMode>;
+  onSeatLayoutChange: (seatId: string, mode: SeatLayoutMode) => void;
 }> = ({
   config,
   seats,
@@ -571,6 +573,8 @@ const DemoArena: React.FC<{
   showStatsEditor,
   onToggleStatsEditor,
   onStatsChange,
+  seatLayouts,
+  onSeatLayoutChange,
 }) => {
   const [, navigate] = useLocation();
   const [isMicMuted, setIsMicMuted] = useState(false);
@@ -662,12 +666,13 @@ const DemoArena: React.FC<{
       const seat = seats[seatKey(side, slot)];
       if (!seat) return null;
       const isLocal = config.side === side && config.slot === slot;
-      const stream = isLocal ? (screenStream || (!isCameraOff ? cameraStream : null)) : null;
       return {
         id: seat.id,
         name: seat.name,
         stats: seat.stats,
-        videoTrack: stream ? <MediaStreamVideo stream={stream} screen={Boolean(screenStream)} /> : null,
+        cameraTrack: isLocal && cameraStream ? <MediaStreamVideo stream={cameraStream} /> : null,
+        screenTrack: isLocal && screenStream ? <MediaStreamVideo stream={screenStream} screen /> : null,
+        layoutMode: seatLayouts[seat.id] || "screen-stats",
         isMuted: isLocal ? isMicMuted : true,
         isCameraOff: isLocal ? isCameraOff : true,
         isScreenSharing: isLocal ? isSharingScreen : false,
@@ -687,6 +692,7 @@ const DemoArena: React.FC<{
         leftTeamName={config.mode === "1v1" ? (leftTraders[0]?.name ?? "TEAM A") : "TEAM A"}
         rightTeamName={config.mode === "1v1" ? (rightTraders[0]?.name ?? "TEAM B") : "TEAM B"}
         elapsed={elapsed}
+        rule={config.rule}
         obsMode={config.obsMode}
       />
       {!config.obsMode && (
@@ -704,6 +710,11 @@ const DemoArena: React.FC<{
             showStatsEditor={showStatsEditor}
             onToggleStatsEditor={onToggleStatsEditor}
             onStatsChange={onStatsChange}
+            layoutMode={seatLayouts[seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot)] || "screen-stats"}
+            onLayoutModeChange={(mode) => {
+              const id = seats[seatKey(config.side, config.slot)]?.id || config.seatId || seatKey(config.side, config.slot);
+              onSeatLayoutChange(id, mode);
+            }}
           />
           {(isCameraOff || isMicMuted) && (
             <div className="absolute bottom-[4.5rem] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2">
@@ -747,6 +758,10 @@ const BattleRoom: React.FC = () => {
       quickKey,
       seatId: qs.get("seat") || "",
       seasonName: qs.get("season") || "Quick Battle",
+      rule: parseBattleRules(qs),
+      promoText: qs.get("promo") || "Instant Funding · Trade House · Verified Hybrid performance",
+      sponsorName: qs.get("sponsor") || "",
+      sponsorUrl: qs.get("sponsorUrl") || "",
     };
   }, [qs, params.roomId]);
 
@@ -758,7 +773,13 @@ const BattleRoom: React.FC = () => {
   const [showStatsEditor, setShowStatsEditor] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [seats, setSeats] = useState<Record<string, SeatState>>({});
+  const [seatLayouts, setSeatLayouts] = useState<Record<string, SeatLayoutMode>>({});
+  const seatLayoutsRef = useRef<Record<string, SeatLayoutMode>>({});
   const startRef = useRef(Date.now());
+
+  useEffect(() => {
+    seatLayoutsRef.current = seatLayouts;
+  }, [seatLayouts]);
 
   const mySeatKey = seatKey(config.side, config.slot);
   const myStats = seats[mySeatKey]?.stats ?? manualStats;
