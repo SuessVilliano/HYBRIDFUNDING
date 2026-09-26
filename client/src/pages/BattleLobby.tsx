@@ -81,11 +81,11 @@ const BattleLobby: React.FC = () => {
           className="font-['Orbitron'] font-black uppercase tracking-widest"
           style={{
             fontSize: "clamp(2rem, 6vw, 3.75rem)",
-            background: "linear-gradient(135deg, #ffd700 0%, #ffe566 45%, #ffd700 100%)",
+            background: "linear-gradient(135deg, #00ffff 0%, #67e8f9 45%, #00ffff 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
-            filter: "drop-shadow(0 0 24px rgba(255,215,0,0.45))",
+            filter: "drop-shadow(0 0 24px rgba(0,255,255,0.45))",
           }}
         >
           ⚔ TRADER BATTLES
@@ -189,9 +189,9 @@ const BattleLobby: React.FC = () => {
                         style={{
                           background: "#0a0a0f",
                           border: "1px solid rgba(255,255,255,0.07)",
-                          color: roomId ? "#ffd700" : "#2a2a2a",
+                          color: roomId ? "#00ffff" : "#2a2a2a",
                           minHeight: "56px",
-                          textShadow: roomId ? "0 0 20px rgba(255,215,0,0.4)" : "none",
+                          textShadow: roomId ? "0 0 20px rgba(0,255,255,0.4)" : "none",
                         }}
                       >
                         {roomId || (
@@ -220,9 +220,9 @@ const BattleLobby: React.FC = () => {
                     whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
                     onClick={handleGenerateRoom}
                     className="w-full py-3 rounded-lg font-['Orbitron'] font-bold text-sm tracking-[0.15em] uppercase flex items-center justify-center gap-2 transition-all"
-                    style={{ background: "rgba(255,215,0,0.05)", border: "1px solid rgba(255,215,0,0.18)", color: "#ffd700" }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,215,0,0.09)"; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,215,0,0.05)"; }}
+                    style={{ background: "rgba(0,255,255,0.05)", border: "1px solid rgba(0,255,255,0.18)", color: "#00ffff" }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(0,255,255,0.09)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(0,255,255,0.05)"; }}
                   >
                     <Zap className="w-4 h-4" /> Generate Room ID
                   </motion.button>
@@ -233,11 +233,11 @@ const BattleLobby: React.FC = () => {
                   )}
                   {error && <p className="text-sm text-center font-['Orbitron']" style={{ color: "#ff3b5c" }}>{error}</p>}
                   <motion.button
-                    whileHover={{ scale: 1.01, boxShadow: "0 0 40px rgba(255,215,0,0.4)" }}
+                    whileHover={{ scale: 1.01, boxShadow: "0 0 40px rgba(0,255,255,0.4)" }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleCreateBattle}
                     className="w-full py-4 rounded-xl font-['Orbitron'] font-black text-base tracking-[0.2em] uppercase transition-all"
-                    style={{ background: "linear-gradient(135deg, #ffd700 0%, #ffb800 100%)", color: "#0a0a0f", boxShadow: "0 0 30px rgba(255,215,0,0.25), 0 4px 20px rgba(0,0,0,0.5)" }}
+                    style={{ background: "linear-gradient(135deg, #00ffff 0%, #8a2be2 100%)", color: "#0a0a0f", boxShadow: "0 0 30px rgba(0,255,255,0.25), 0 4px 20px rgba(0,0,0,0.5)" }}
                   >
                     ⚔ Enter the Arena
                   </motion.button>
@@ -255,18 +255,18 @@ const BattleLobby: React.FC = () => {
                       placeholder="A B C 1 2 3"
                       maxLength={8}
                       className="w-full rounded-lg px-5 py-3 font-mono text-2xl font-bold tracking-[0.4em] outline-none transition-all"
-                      style={{ background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.07)", color: "#ffd700", caretColor: "#ffd700" }}
-                      onFocus={(e) => { e.target.style.border = "1px solid rgba(255,215,0,0.5)"; e.target.style.boxShadow = "0 0 20px rgba(255,215,0,0.08)"; }}
+                      style={{ background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.07)", color: "#00ffff", caretColor: "#00ffff" }}
+                      onFocus={(e) => { e.target.style.border = "1px solid rgba(0,255,255,0.5)"; e.target.style.boxShadow = "0 0 20px rgba(0,255,255,0.08)"; }}
                       onBlur={(e) => { e.target.style.border = "1px solid rgba(255,255,255,0.07)"; e.target.style.boxShadow = "none"; }}
                     />
                   </div>
                   {error && <p className="text-sm text-center font-['Orbitron']" style={{ color: "#ff3b5c" }}>{error}</p>}
                   <motion.button
-                    whileHover={{ scale: 1.01, boxShadow: "0 0 40px rgba(255,215,0,0.4)" }}
+                    whileHover={{ scale: 1.01, boxShadow: "0 0 40px rgba(0,255,255,0.4)" }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleJoinBattle}
                     className="w-full py-4 rounded-xl font-['Orbitron'] font-black text-base tracking-[0.2em] uppercase transition-all"
-                    style={{ background: "linear-gradient(135deg, #ffd700 0%, #ffb800 100%)", color: "#0a0a0f", boxShadow: "0 0 30px rgba(255,215,0,0.25), 0 4px 20px rgba(0,0,0,0.5)" }}
+                    style={{ background: "linear-gradient(135deg, #00ffff 0%, #8a2be2 100%)", color: "#0a0a0f", boxShadow: "0 0 30px rgba(0,255,255,0.25), 0 4px 20px rgba(0,0,0,0.5)" }}
                   >
                     ⚔ Enter the Arena
                   </motion.button>
@@ -277,7 +277,7 @@ const BattleLobby: React.FC = () => {
         </div>
 
         <p className="text-[10px] text-center font-['Orbitron'] tracking-wider" style={{ color: "#2a2a2a" }}>
-          Append <code className="px-1" style={{ color: "#ffd700" }}>?obs=1</code> to the room URL as Browser Source in OBS for 1920×1080 capture
+          Append <code className="px-1" style={{ color: "#00ffff" }}>?obs=1</code> to the room URL as Browser Source in OBS for 1920×1080 capture
         </p>
       </motion.div>
     </div>
