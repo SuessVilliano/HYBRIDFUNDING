@@ -21,6 +21,7 @@ import {
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import {
+  Columns2,
   LogOut,
   Mic,
   MicOff,
@@ -33,15 +34,18 @@ import {
 } from "lucide-react";
 
 import BattleLayout from "@/components/battles/BattleLayout";
+import BrandRibbon from "@/components/battles/BrandRibbon";
 import HouseChat from "@/components/battles/HouseChat";
+import SeatLayoutPicker from "@/components/battles/SeatLayoutPicker";
 import type { Trader } from "@/components/battles/BattleLayout";
-import type { TraderStats } from "@/components/battles/ParticipantTile";
+import type { SeatLayoutMode, TraderStats } from "@/components/battles/ParticipantTile";
 import type { BattleMode } from "@/components/battles/StatsPanel";
 import {
   decodeQuickRoster,
   type QuickBattleEntry,
   type Standing,
 } from "@/lib/tradehouse-feed";
+import { battleClock, parseBattleRules, type BattleRuleConfig } from "@/lib/tradehouse-rules";
 
 interface RoomConfig {
   mode: BattleMode;
@@ -54,6 +58,10 @@ interface RoomConfig {
   quickKey: string;
   seatId: string;
   seasonName: string;
+  rule: BattleRuleConfig;
+  promoText: string;
+  sponsorName: string;
+  sponsorUrl: string;
 }
 
 type SeatState = QuickBattleEntry & {
