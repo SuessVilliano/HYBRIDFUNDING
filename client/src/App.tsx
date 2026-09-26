@@ -33,6 +33,8 @@ import BattleLobby from "@/pages/BattleLobby";
 import BattleRoom from "@/pages/BattleRoom";
 import TradeHouse from "@/pages/TradeHouse";
 import HybridLive from "@/pages/HybridLive";
+import TradeHouseBroadcast from "@/pages/TradeHouseBroadcast";
+import TradeHouseStudio from "@/pages/TradeHouseStudio";
 
 function RouteScrollManager() {
   const [location] = useLocation();
@@ -101,6 +103,7 @@ function AppRouter() {
       {/* ── Trader Battles arena routes (no Layout wrapper — full-screen) ── */}
       <Route path="/battles/lobby" component={() => <BattleLobby />} />
       <Route path="/battles/room/:roomId" component={() => <BattleRoom />} />
+      <Route path="/tradehouse/broadcast/:view" component={() => <TradeHouseBroadcast />} />
 
       {/* ── Homepage uses the same site shell as every public marketing page ── */}
       <Route path="/" component={() => <Layout><GetFunded /></Layout>} />
@@ -126,6 +129,7 @@ function AppRouter() {
                 <Route path="/faq" component={() => <PageTransition><FAQ /></PageTransition>} />
                 <Route path="/battles" component={() => <PageTransition><Battles /></PageTransition>} />
                 <Route path="/tradehouse" component={() => <PageTransition><TradeHouse /></PageTransition>} />
+                <Route path="/tradehouse/studio" component={() => <PageTransition><TradeHouseStudio /></PageTransition>} />
                 <Route path="/live" component={() => <PageTransition><HybridLive /></PageTransition>} />
                 <Route path="/dna-test" component={() => <PageTransition><TraderDnaRedirect /></PageTransition>} />
                 <Route path="/webinar" component={() => <PageTransition><Webinar /></PageTransition>} />

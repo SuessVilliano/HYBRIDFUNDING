@@ -115,9 +115,9 @@ const TradeHouse: React.FC = () => {
                 <Trophy className="mr-2 h-4 w-4" />
                 VIEW LEADERBOARD
               </a>
-              <Link href="/battles/lobby" className="inline-flex h-12 items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 font-['Orbitron'] text-xs font-black tracking-wider text-white">
+              <Link href="/tradehouse/studio" className="inline-flex h-12 items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 font-['Orbitron'] text-xs font-black tracking-wider text-white">
                 <Swords className="mr-2 h-4 w-4" />
-                OPEN PRACTICE ARENA
+                BROADCAST STUDIO
               </Link>
               <a href="/#choose-program" className="inline-flex h-12 items-center justify-center rounded-full border border-amber-300/30 bg-amber-300/10 px-6 font-['Orbitron'] text-xs font-black tracking-wider text-amber-200">
                 <Zap className="mr-2 h-4 w-4" />
@@ -216,6 +216,48 @@ const TradeHouse: React.FC = () => {
 
             <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.025] p-4 text-xs leading-relaxed text-slate-500">
               <strong className="text-slate-300">Competition disclosure:</strong> Trade House Season accounts are simulated/demo trading accounts unless a specific event states otherwise. Leaderboard data reflects those accounts and is not a representation of customer investment returns.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-white/10 py-14 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="mx-auto mb-10 max-w-3xl text-center">
+              <div className="font-['Orbitron'] text-[10px] uppercase tracking-[0.22em] text-amber-300">Always Open · Quarterly Championship</div>
+              <h2 className="mt-3 font-['Orbitron'] text-3xl font-black sm:text-4xl">Enter the House anytime. Earn your way to the Final.</h2>
+              <p className="mt-4 text-slate-400">
+                Any eligible Hybrid-funded trader can enter the open ladder during the quarter. Weekly heats create fresh qualification windows so late entrants still have a path into the championship.
+              </p>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-3">
+              {[
+                ["OPEN LADDER", "Join anytime", "Your public Hybrid dashboard becomes the verified scoring feed. Rank is based on performance from your Trade House entry baseline, not self-reported stats."],
+                ["WEEKLY HEATS", "Fresh chances every week", "Short competition windows create content and qualification opportunities without forcing every trader to enter on day one of the quarter."],
+                ["QUARTERLY FINAL", "The main event", "Heat winners and season-point leaders advance into a broadcast final with the largest Hybrid rewards and featured trader profiles."],
+              ].map(([title, kicker, body]) => (
+                <div key={title} className="rounded-3xl border border-white/10 bg-[#0b111d] p-6">
+                  <div className="font-['Orbitron'] text-[10px] font-black uppercase tracking-[0.18em] text-emerald-300">{kicker}</div>
+                  <h3 className="mt-3 font-['Orbitron'] text-xl font-black">{title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-400">{body}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 rounded-3xl border border-cyan-300/15 bg-cyan-300/[0.04] p-6 sm:p-8">
+              <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+                <div>
+                  <div className="font-['Orbitron'] text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Broadcast-ready by design</div>
+                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
+                    Leaderboards, duel plates, trader lower-thirds, and scorebugs are separate transparent browser sources. Cameras and trading screens can come from Trade House video rooms, Zoom, or standard OBS inputs without changing the scoring layer.
+                  </p>
+                </div>
+                <Link href="/tradehouse/studio" className="inline-flex h-11 items-center justify-center rounded-full bg-cyan-300 px-5 font-['Orbitron'] text-[10px] font-black tracking-wider text-[#071018]">
+                  OPEN PRODUCER TOOLS
+                </Link>
+              </div>
             </div>
           </div>
         </div>
