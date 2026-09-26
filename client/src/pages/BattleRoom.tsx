@@ -137,7 +137,7 @@ const MediaStreamVideo: React.FC<{
         display: "block",
         width: "100%",
         height: "100%",
-        objectFit: screen ? "fill" : "cover",
+        objectFit: screen ? "contain" : "cover",
         background: "#03070d",
       }}
     />
@@ -459,17 +459,6 @@ const LiveControls: React.FC<{
           ENABLE CAMERA + MIC
         </button>
       )}
-      {!config.obsMode && config.producerMode && (
-        <>
-          <button
-            onClick={() => setShowProducer((value) => !value)}
-            className="absolute right-4 top-3 z-[80] rounded-xl border border-cyan-300/25 bg-cyan-300/[0.08] px-4 py-2 font-['Orbitron'] text-[9px] font-black uppercase tracking-[0.14em] text-cyan-200"
-          >
-            PRODUCER CONTROL
-          </button>
-          {showProducer && <ProducerConsole musicUrl={config.musicUrl} onClose={() => setShowProducer(false)} />}
-        </>
-      )}
     </>
   );
 };
@@ -501,7 +490,7 @@ const ArenaInner: React.FC<{
   const localParticipant = useLocalParticipant();
 
   const buildTraders = (side: "left" | "right"): Trader[] => {
-    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : 3;
+    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : config.mode === "3v3" ? 3 : 4;
 
     return Array.from({ length: count }, (_, slot) => {
       const seat = seats[seatKey(side, slot)];
@@ -677,7 +666,7 @@ const DemoArena: React.FC<{
   );
 
   const makeDemo = (side: "left" | "right"): Trader[] => {
-    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : 3;
+    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : config.mode === "3v3" ? 3 : 4;
     return Array.from({ length: count }, (_, slot) => {
       const seat = seats[seatKey(side, slot)];
       if (!seat) return null;
@@ -807,7 +796,7 @@ const BattleRoom: React.FC = () => {
       const next = { ...current };
 
       if (config.quickRoster.length > 0) {
-        config.quickRoster.slice(0, 6).forEach((entry, index) => {
+        config.quickRoster.slice(0, 8).forEach((entry, index) => {
           const side = index % 2 === 0 ? "left" : "right";
           const slot = Math.floor(index / 2);
           const key = seatKey(side, slot);
