@@ -32,7 +32,7 @@ interface BattleLayoutProps {
 
 const EmptySlot: React.FC<{ label: string; side: "left" | "right"; compact?: boolean }> = ({ label, side, compact }) => (
   <div
-    className="flex-1 rounded-xl flex items-center justify-center"
+    className="flex min-h-[180px] flex-1 items-center justify-center rounded-xl md:min-h-0"
     style={{
       border: `1px dashed ${side === "left" ? "rgba(0,255,135,0.15)" : "rgba(255,59,92,0.15)"}`,
       background: "rgba(10,10,15,0.5)",
