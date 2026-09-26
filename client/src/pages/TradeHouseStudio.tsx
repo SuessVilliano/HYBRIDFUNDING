@@ -554,6 +554,43 @@ const TradeHouseStudio: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-5xl space-y-6">
 
+            <div className="rounded-2xl border border-white/10 bg-[#0d1626] p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 font-['Orbitron'] text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
+                    <Database className="h-4 w-4" /> Saved Trade House
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-500">
+                    Battle setup now lives in the database, not just this browser. Open the same battle from another device and continue where you left off.
+                  </p>
+                </div>
+                <button onClick={() => void refreshSavedBattles()} className="rounded-xl border border-white/10 px-3 py-2 text-[9px] font-bold text-slate-400">
+                  REFRESH
+                </button>
+              </div>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {savedBattles.slice(0, 9).map((battle) => (
+                  <button
+                    key={battle.id}
+                    onClick={() => void loadSavedBattle(battle.roomId)}
+                    className={`rounded-xl border p-3 text-left transition-all ${battle.roomId === roomId ? "border-cyan-300/30 bg-cyan-300/[0.05]" : "border-white/[0.07] bg-black/15 hover:border-white/15"}`}
+                  >
+                    <div className="truncate font-['Orbitron'] text-[10px] font-black text-white">{battle.name}</div>
+                    <div className="mt-1 text-[9px] uppercase tracking-wider text-slate-600">
+                      {battle.mode} · {battle.format} · {battle.entryCount} traders
+                    </div>
+                    <div className="mt-2 font-mono text-[9px] text-violet-300">{battle.roomId}</div>
+                  </button>
+                ))}
+                {!savedBattles.length && (
+                  <div className="rounded-xl border border-dashed border-white/10 p-4 text-xs text-slate-600 sm:col-span-2 lg:col-span-3">
+                    No saved battles yet. Configure the first battle below, then press Save Battle.
+                  </div>
+                )}
+              </div>
+              {saveStatus && <div className="mt-4 rounded-xl border border-cyan-300/15 bg-cyan-300/[0.04] p-3 text-xs text-cyan-100">{saveStatus}</div>}
+            </div>
+
             <div className="overflow-hidden rounded-3xl border border-cyan-300/30 bg-[linear-gradient(145deg,rgba(8,16,28,.98),rgba(12,15,33,.98))] shadow-[0_24px_80px_rgba(0,255,255,.08)]">
               <div className="border-b border-white/10 bg-[radial-gradient(circle_at_10%_0%,rgba(0,255,255,.12),transparent_35%),radial-gradient(circle_at_90%_0%,rgba(138,43,226,.14),transparent_35%)] p-6 sm:p-8">
                 <div className="flex flex-wrap items-start justify-between gap-4">
