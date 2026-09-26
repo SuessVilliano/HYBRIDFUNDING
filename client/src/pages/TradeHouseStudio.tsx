@@ -75,8 +75,8 @@ const TradeHouseStudio: React.FC = () => {
   const [quickStatus, setQuickStatus] = useState("");
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
   const [quickEntries, setQuickEntries] = useState<QuickBattleEntry[]>([
-    { id: "quick-1", name: "Trader A", dashboardUrl: "", avatarUrl: "", division: "trading", platform: "matchtrader" },
-    { id: "quick-2", name: "Trader B", dashboardUrl: "", avatarUrl: "", division: "trading", platform: "ctrader" },
+    { id: "quick-1", name: "Trader A", dashboardUrl: "", division: "trading", platform: "matchtrader" },
+    { id: "quick-2", name: "Trader B", dashboardUrl: "", division: "trading", platform: "ctrader" },
   ]);
 
   useEffect(() => {
@@ -196,7 +196,7 @@ const TradeHouseStudio: React.FC = () => {
     const n = quickEntries.length + 1;
     setQuickEntries((current) => [
       ...current,
-      { id: `quick-${Date.now()}-${n}`, name: `Trader ${n}`, dashboardUrl: "", avatarUrl: "", division: "trading", platform: "other" },
+      { id: `quick-${Date.now()}-${n}`, name: `Trader ${n}`, dashboardUrl: "", division: "trading", platform: "other" },
     ]);
   };
 
@@ -438,7 +438,7 @@ const TradeHouseStudio: React.FC = () => {
                         Avatar / logo URL
                         <input
                           value={entry.avatarUrl || ""}
-                          onChange={(e) => updateQuickEntry(index, { avatarUrl: e.target.value })}
+                          onChange={(e) => updateQuickEntry(index, { avatarUrl: e.target.value.trim() || undefined })}
                           placeholder="https://…"
                           className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-xs text-white outline-none focus:border-cyan-300/60"
                         />
