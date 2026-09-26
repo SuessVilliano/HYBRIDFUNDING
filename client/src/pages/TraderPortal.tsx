@@ -41,7 +41,7 @@ const TraderPortal = () => {
                 <p className="mb-2 font-['Orbitron'] text-[11px] font-semibold tracking-[.18em] text-cyan-300">TRADER PORTAL</p>
                 <h2 className="mb-3 text-2xl font-semibold text-white md:text-3xl">Access your account dashboard</h2>
                 <p className="mb-7 max-w-lg text-sm leading-6 text-slate-400">Already funded or currently in an evaluation? Continue directly to your secure backoffice.</p>
-                <Button variant="neon-filled" size="xl" rounded="md" onClick={handleDashboardAccess} disabled={isLoadingDashboard} className="w-full max-w-sm font-['Orbitron'] font-semibold shadow-[0_0_26px_rgba(6,182,212,.25)]">
+                <Button variant="neon-filled" size="xl" rounded="default" onClick={handleDashboardAccess} disabled={isLoadingDashboard} className="w-full max-w-sm font-['Orbitron'] font-semibold shadow-[0_0_26px_rgba(6,182,212,.25)]">
                   {isLoadingDashboard ? <div className="flex items-center gap-3"><Loading variant="matrix" size="sm" text=""/><span>CONNECTING...</span></div> : <span className="flex items-center gap-2">OPEN TRADER DASHBOARD <ArrowRight className="h-4 w-4"/></span>}
                 </Button>
                 <div className="mt-7 space-y-3 border-t border-white/10 pt-6">

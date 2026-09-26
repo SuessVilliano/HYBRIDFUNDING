@@ -406,7 +406,7 @@ async function fetchTradeHouseDashboard(accountId: string, startingBalance: numb
   }
 
   const html = await upstream.text();
-  let balance = firstNumberMatch(html, /Balance[:\s]*\$?([\d,]+\.?\d*)/i) ?? 0;
+  let balance = firstNumberMatch(html, /Balance[:\s]*\$?([\d,]+\.?\d*)/i) ?? NaN;
   let equity = firstNumberMatch(html, /Equity[:\s]*\$?([\d,]+\.?\d*)/i) ?? balance;
   const profitTarget = firstNumberMatch(html, /Profit\s*Target[:\s]*\$?([\d,]+\.?\d*)/i);
   const dailyLossLimit = firstNumberMatch(html, /Daily\s*Loss\s*Limit[:\s]*\$?([\d,]+\.?\d*)/i);
@@ -435,12 +435,16 @@ async function fetchTradeHouseDashboard(accountId: string, startingBalance: numb
       const account = data?.account;
       const accountBalance = Number(account?.balance);
       const accountEquity = Number(account?.equity);
-      if (Number.isFinite(accountBalance) && accountBalance > 0) balance = accountBalance;
-      if (Number.isFinite(accountEquity) && accountEquity > 0) equity = accountEquity;
+      if (account?.balance != null && Number.isFinite(accountBalance) && accountBalance >= 0) balance = accountBalance;
+      if (account?.equity != null && Number.isFinite(accountEquity) && accountEquity >= 0) equity = accountEquity;
     } catch (error) {
       console.error("[tradehouse] embedded dashboard state parse failed", accountId, error);
     }
   }
+
+  // A successful HTTP response may be a login shell, not account data.
+  if (!Number.isFinite(balance)) throw new Error("Dashboard balance could not be verified");
+  if (!Number.isFinite(equity)) equity = balance;
 
   const tradePnl = (trade: any) => {
     const value = Number(trade?.profit ?? trade?.pnl ?? trade?.netProfit ?? trade?.profitLoss ?? 0);
@@ -448,8 +452,7 @@ async function fetchTradeHouseDashboard(accountId: string, startingBalance: numb
   };
 
   const pnls = trades.map(tradePnl);
-  const realizedPnl = pnls.reduce((sum, value) => sum + value, 0);
-  const pnl = balance > 0 ? balance - startingBalance : realizedPnl;
+  const pnl = balance - startingBalance;
   const wins = pnls.filter((value) => value > 0).length;
   const losses = pnls.filter((value) => value < 0).length;
   const biggestWin = pnls.length ? Math.max(0, ...pnls) : 0;

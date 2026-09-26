@@ -98,12 +98,12 @@ const HybridLive: React.FC = () => {
           </div>
 
           <div className="mx-auto mt-10 grid max-w-5xl grid-cols-2 gap-3 lg:grid-cols-4">
-            {[
+            {([
               ["Community joins · 30D", activity.recentCount ?? 0, Users],
               ["Trade House contestants", tradeStats.contestants, Swords],
               ["Verified battle feeds", tradeStats.verified, ShieldCheck],
               ["Trades monitored", tradeStats.trades, Activity],
-            ].map(([label, value, Icon]) => (
+            ] as const).map(([label, value, Icon]) => (
               <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 text-center">
                 <Icon className="mx-auto h-5 w-5 text-cyan-300" />
                 <div className="mt-2 font-['Orbitron'] text-2xl font-black">{loading ? "…" : value as number}</div>
