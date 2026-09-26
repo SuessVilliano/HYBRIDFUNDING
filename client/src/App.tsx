@@ -31,6 +31,8 @@ import FAQ from "@/pages/FAQ";
 import Battles from "@/pages/Battles";
 import BattleLobby from "@/pages/BattleLobby";
 import BattleRoom from "@/pages/BattleRoom";
+import TradeHouse from "@/pages/TradeHouse";
+import HybridLive from "@/pages/HybridLive";
 
 function RouteScrollManager() {
   const [location] = useLocation();
@@ -123,6 +125,8 @@ function AppRouter() {
                 <Route path="/thank-you" component={() => <PageTransition><ThankYou /></PageTransition>} />
                 <Route path="/faq" component={() => <PageTransition><FAQ /></PageTransition>} />
                 <Route path="/battles" component={() => <PageTransition><Battles /></PageTransition>} />
+                <Route path="/tradehouse" component={() => <PageTransition><TradeHouse /></PageTransition>} />
+                <Route path="/live" component={() => <PageTransition><HybridLive /></PageTransition>} />
                 <Route path="/dna-test" component={() => <PageTransition><TraderDnaRedirect /></PageTransition>} />
                 <Route path="/webinar" component={() => <PageTransition><Webinar /></PageTransition>} />
                 <Route path="/playbook" component={() => <PageTransition><Playbook /></PageTransition>} />

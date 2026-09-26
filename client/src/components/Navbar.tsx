@@ -16,7 +16,9 @@ const primaryLinks: NavItem[] = [
 
 const moreLinks: NavItem[] = [
   { name: "AI Radar", path: "/market-radar", isNew: true },
-  { name: "Battles", path: "/battles" },
+  { name: "Trade House", path: "/tradehouse", isNew: true },
+  { name: "Hybrid Live", path: "/live", isNew: true },
+  { name: "Practice Battles", path: "/battles" },
   { name: "Trader DNA", path: "/dna-test", hardNavigate: true },
   { name: "Free Training", path: "/webinar" },
   { name: "About", path: "/about" },

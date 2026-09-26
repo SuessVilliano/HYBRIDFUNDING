@@ -8,7 +8,7 @@
           "value": "battles.hybridfunding.co"
         }
       ],
-      "destination": "/battles/lobby",
+      "destination": "/tradehouse",
       "permanent": false
     }
   ],

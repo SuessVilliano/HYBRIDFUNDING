@@ -233,7 +233,7 @@ app.get("/api/activity", async (_req: Request, res: Response) => {
   const token = process.env.GHL_PIT_TOKEN;
   const locationId = process.env.GHL_LOCATION_ID || "wAgobr9TOihDZxQ2G3a5";
 
-  if (!token) return res.status(200).json({ events: [], regions: [] });
+  if (!token) return res.status(200).json({ events: [], regions: [], recentCount: 0 });
 
   try {
     const upstream = await fetch(
@@ -249,7 +249,7 @@ app.get("/api/activity", async (_req: Request, res: Response) => {
 
     if (!upstream.ok) {
       console.error("[activity] GHL error", upstream.status, await upstream.text());
-      return res.status(200).json({ events: [], regions: [] });
+      return res.status(200).json({ events: [], regions: [], recentCount: 0 });
     }
 
     const body: any = await upstream.json();
@@ -299,16 +299,302 @@ app.get("/api/activity", async (_req: Request, res: Response) => {
       .map(([state, count]) => ({ state, count }));
 
     res.setHeader("Cache-Control", "public, max-age=60, s-maxage=120");
-    return res.status(200).json({ events, regions });
+    return res.status(200).json({ events, regions, recentCount: recent.length });
   } catch (err) {
     console.error("[activity] error", err);
-    return res.status(200).json({ events: [], regions: [] });
+    return res.status(200).json({ events: [], regions: [], recentCount: 0 });
   }
 });
 
 // Health check
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
+});
+
+
+// ─── Trade House verified public leaderboard ──────────────────────────────────
+// Official standings are read from Hybrid Funding's public PropAccount dashboard
+// links. The roster is server-side allowlisted so this endpoint cannot be used as
+// an open proxy for arbitrary account IDs.
+const tradeHouseRosterSchema = z.array(
+  z.object({
+    id: z.string().trim().min(1).max(64),
+    name: z.string().trim().min(1).max(40),
+    accountId: z.string().trim().min(1).max(160).optional(),
+    dashboardUrl: z.string().url().optional(),
+    startingBalance: z.number().positive(),
+    market: z.string().trim().max(40).optional(),
+    country: z.string().trim().max(60).optional(),
+  }).refine((value) => Boolean(value.accountId || value.dashboardUrl), {
+    message: "accountId or dashboardUrl is required",
+  }),
+).max(32);
+
+const publicPayoutsSchema = z.array(
+  z.object({
+    id: z.string().trim().min(1).max(80),
+    displayName: z.string().trim().min(1).max(60),
+    amount: z.number().nonnegative(),
+    paidAt: z.string().trim().min(4).max(64),
+    program: z.string().trim().min(1).max(80),
+    proofUrl: z.string().url().optional(),
+  }),
+).max(250);
+
+function loadTradeHouseRoster() {
+  const raw = process.env.TRADEHOUSE_ROSTER_JSON || "[]";
+  try {
+    const parsed = tradeHouseRosterSchema.safeParse(JSON.parse(raw));
+    if (!parsed.success) {
+      console.error("[tradehouse] invalid TRADEHOUSE_ROSTER_JSON", parsed.error.flatten());
+      return [];
+    }
+    return parsed.data;
+  } catch (error) {
+    console.error("[tradehouse] unable to parse TRADEHOUSE_ROSTER_JSON", error);
+    return [];
+  }
+}
+
+function resolvePublicDashboard(entry: any) {
+  if (entry.accountId) {
+    const accountId = String(entry.accountId).trim();
+    return {
+      accountId,
+      dashboardUrl: `https://hybridfundingdashboard.propaccount.com/es/overview?accountId=${encodeURIComponent(accountId)}`,
+    };
+  }
+
+  try {
+    const url = new URL(entry.dashboardUrl);
+    if (url.hostname !== "hybridfundingdashboard.propaccount.com") return null;
+    const accountId = url.searchParams.get("accountId");
+    if (!accountId) return null;
+    return { accountId, dashboardUrl: url.toString() };
+  } catch {
+    return null;
+  }
+}
+
+function firstNumberMatch(html: string, pattern: RegExp): number | null {
+  const match = html.match(pattern);
+  if (!match) return null;
+  const value = Number.parseFloat(match[1].replace(/,/g, ""));
+  return Number.isFinite(value) ? value : null;
+}
+
+async function fetchTradeHouseDashboard(accountId: string, startingBalance: number) {
+  const dashboardUrl = `https://hybridfundingdashboard.propaccount.com/es/overview?accountId=${encodeURIComponent(accountId)}`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 7000);
+
+  let upstream: Response;
+  try {
+    upstream = await fetch(dashboardUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; HybridFundingTradeHouse/1.0)",
+        Accept: "text/html,application/xhtml+xml",
+      },
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if (!upstream.ok) {
+    throw new Error(`dashboard returned ${upstream.status}`);
+  }
+
+  const html = await upstream.text();
+  let balance = firstNumberMatch(html, /Balance[:\s]*\$?([\d,]+\.?\d*)/i) ?? 0;
+  let equity = firstNumberMatch(html, /Equity[:\s]*\$?([\d,]+\.?\d*)/i) ?? balance;
+  const profitTarget = firstNumberMatch(html, /Profit\s*Target[:\s]*\$?([\d,]+\.?\d*)/i);
+  const dailyLossLimit = firstNumberMatch(html, /Daily\s*Loss\s*Limit[:\s]*\$?([\d,]+\.?\d*)/i);
+  const maxDrawdownLimit = firstNumberMatch(html, /Max\s*Draw\s*down[:\s]*\$?([\d,]+\.?\d*)/i);
+
+  let trades: any[] = [];
+  let openPositions: any[] = [];
+  const jsonDataMatch = html.match(/window\.__INITIAL_STATE__\s*=\s*({[\s\S]*?});/);
+
+  if (jsonDataMatch) {
+    try {
+      const data = JSON.parse(jsonDataMatch[1]);
+      trades = Array.isArray(data?.trades)
+        ? data.trades
+        : Array.isArray(data?.account?.trades)
+          ? data.account.trades
+          : [];
+      openPositions = Array.isArray(data?.positions)
+        ? data.positions
+        : Array.isArray(data?.openPositions)
+          ? data.openPositions
+          : Array.isArray(data?.account?.openPositions)
+            ? data.account.openPositions
+            : [];
+
+      const account = data?.account;
+      const accountBalance = Number(account?.balance);
+      const accountEquity = Number(account?.equity);
+      if (Number.isFinite(accountBalance) && accountBalance > 0) balance = accountBalance;
+      if (Number.isFinite(accountEquity) && accountEquity > 0) equity = accountEquity;
+    } catch (error) {
+      console.error("[tradehouse] embedded dashboard state parse failed", accountId, error);
+    }
+  }
+
+  const tradePnl = (trade: any) => {
+    const value = Number(trade?.profit ?? trade?.pnl ?? trade?.netProfit ?? trade?.profitLoss ?? 0);
+    return Number.isFinite(value) ? value : 0;
+  };
+
+  const pnls = trades.map(tradePnl);
+  const realizedPnl = pnls.reduce((sum, value) => sum + value, 0);
+  const pnl = balance > 0 ? balance - startingBalance : realizedPnl;
+  const wins = pnls.filter((value) => value > 0).length;
+  const losses = pnls.filter((value) => value < 0).length;
+  const biggestWin = pnls.length ? Math.max(0, ...pnls) : 0;
+
+  const timestampCandidates = trades
+    .map((trade: any) => trade?.closeTime ?? trade?.closedAt ?? trade?.updatedAt ?? trade?.createdAt ?? trade?.openTime ?? null)
+    .filter(Boolean)
+    .map((value: any) => new Date(value))
+    .filter((value: Date) => Number.isFinite(value.getTime()))
+    .sort((a: Date, b: Date) => b.getTime() - a.getTime());
+
+  return {
+    balance,
+    equity,
+    pnl,
+    returnPct: startingBalance > 0 ? (pnl / startingBalance) * 100 : 0,
+    profitTarget,
+    dailyLossLimit,
+    maxDrawdownLimit,
+    tradeCount: trades.length,
+    wins,
+    losses,
+    biggestWin,
+    openPositionCount: openPositions.length,
+    lastTradeAt: timestampCandidates[0]?.toISOString() ?? null,
+    fetchedAt: new Date().toISOString(),
+  };
+}
+
+app.get("/api/tradehouse/leaderboard", async (_req: Request, res: Response) => {
+  const roster = loadTradeHouseRoster();
+  const rows = await Promise.all(
+    roster.map(async (entry) => {
+      const dashboard = resolvePublicDashboard(entry);
+      if (!dashboard) {
+        return {
+          id: entry.id,
+          name: entry.name,
+          rank: 0,
+          accountId: "",
+          dashboardUrl: entry.dashboardUrl || "",
+          startingBalance: entry.startingBalance,
+          balance: 0,
+          equity: 0,
+          pnl: 0,
+          returnPct: 0,
+          tradeCount: 0,
+          wins: 0,
+          losses: 0,
+          biggestWin: 0,
+          openPositionCount: 0,
+          lastTradeAt: null,
+          fetchedAt: null,
+          verified: false,
+          status: "unavailable" as const,
+        };
+      }
+
+      try {
+        const stats = await fetchTradeHouseDashboard(dashboard.accountId, entry.startingBalance);
+        return {
+          id: entry.id,
+          name: entry.name,
+          rank: 0,
+          accountId: dashboard.accountId,
+          dashboardUrl: dashboard.dashboardUrl,
+          startingBalance: entry.startingBalance,
+          ...stats,
+          verified: true,
+          status: stats.openPositionCount > 0 ? "live" as const : "flat" as const,
+        };
+      } catch (error) {
+        console.error("[tradehouse] dashboard fetch failed", entry.id, error);
+        return {
+          id: entry.id,
+          name: entry.name,
+          rank: 0,
+          accountId: dashboard.accountId,
+          dashboardUrl: dashboard.dashboardUrl,
+          startingBalance: entry.startingBalance,
+          balance: 0,
+          equity: 0,
+          pnl: 0,
+          returnPct: 0,
+          tradeCount: 0,
+          wins: 0,
+          losses: 0,
+          biggestWin: 0,
+          openPositionCount: 0,
+          lastTradeAt: null,
+          fetchedAt: null,
+          verified: false,
+          status: "unavailable" as const,
+        };
+      }
+    }),
+  );
+
+  rows.sort((a, b) => {
+    if (a.verified !== b.verified) return a.verified ? -1 : 1;
+    if (b.returnPct !== a.returnPct) return b.returnPct - a.returnPct;
+    if (b.pnl !== a.pnl) return b.pnl - a.pnl;
+    return a.name.localeCompare(b.name);
+  });
+
+  const standings = rows.map((row, index) => ({ ...row, rank: index + 1 }));
+  const configuredStatus = process.env.TRADEHOUSE_SEASON_STATUS;
+  const status = configuredStatus === "live" || configuredStatus === "complete" || configuredStatus === "forming"
+    ? configuredStatus
+    : "forming";
+
+  res.setHeader("Cache-Control", "public, max-age=5, s-maxage=10, stale-while-revalidate=20");
+  return res.status(200).json({
+    season: {
+      name: process.env.TRADEHOUSE_SEASON_NAME || "Season 1",
+      status,
+      accountType: "simulated",
+      refreshSeconds: 15,
+      endsAt: process.env.TRADEHOUSE_SEASON_ENDS_AT || null,
+      dataPolicy: "Official standings are computed from allowlisted Hybrid Funding public dashboard feeds.",
+    },
+    standings,
+    updatedAt: new Date().toISOString(),
+  });
+});
+
+app.get("/api/public-payouts", (_req: Request, res: Response) => {
+  let payouts: z.infer<typeof publicPayoutsSchema> = [];
+  try {
+    const parsed = publicPayoutsSchema.safeParse(JSON.parse(process.env.HYBRID_PUBLIC_PAYOUTS_JSON || "[]"));
+    if (parsed.success) payouts = parsed.data;
+    else console.error("[public-payouts] invalid HYBRID_PUBLIC_PAYOUTS_JSON", parsed.error.flatten());
+  } catch (error) {
+    console.error("[public-payouts] unable to parse payout feed", error);
+  }
+
+  payouts = payouts.slice().sort((a, b) => new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime());
+  const total = payouts.reduce((sum, payout) => sum + payout.amount, 0);
+  res.setHeader("Cache-Control", "public, max-age=30, s-maxage=60, stale-while-revalidate=120");
+  return res.status(200).json({
+    payouts,
+    count: payouts.length,
+    total,
+    updatedAt: new Date().toISOString(),
+  });
 });
 
 // Prop-firm account status endpoint.
