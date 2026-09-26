@@ -34,15 +34,12 @@ function newRoomId() {
 
 function validEntry(entry: QuickBattleEntry) {
   if (!entry.name.trim()) return false;
-  if (entry.source === "hybrid") {
-    try {
-      const url = new URL(entry.dashboardUrl);
-      return url.hostname === "hybridfundingdashboard.propaccount.com" && /\/public-overview\//i.test(url.pathname);
-    } catch {
-      return false;
-    }
+  try {
+    const url = new URL(entry.dashboardUrl);
+    return url.hostname === "hybridfundingdashboard.propaccount.com" && /\/public-overview\//i.test(url.pathname);
+  } catch {
+    return false;
   }
-  return /^0x[a-fA-F0-9]{40}$/.test(entry.wallet.trim());
 }
 
 const TradeHouseStudio: React.FC = () => {
@@ -59,8 +56,8 @@ const TradeHouseStudio: React.FC = () => {
   const [quickStatus, setQuickStatus] = useState("");
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
   const [quickEntries, setQuickEntries] = useState<QuickBattleEntry[]>([
-    { source: "hybrid", id: "quick-1", name: "Trader A", dashboardUrl: "" },
-    { source: "hybrid", id: "quick-2", name: "Trader B", dashboardUrl: "" },
+    { id: "quick-1", name: "Trader A", dashboardUrl: "", division: "trading", platform: "matchtrader" },
+    { id: "quick-2", name: "Trader B", dashboardUrl: "", division: "trading", platform: "ctrader" },
   ]);
 
   useEffect(() => {
@@ -140,28 +137,18 @@ const TradeHouseStudio: React.FC = () => {
     setQuickEntries((current) => current.map((entry, i) => i === index ? ({ ...entry, ...patch } as QuickBattleEntry) : entry));
   };
 
-  const changeSource = (index: number, source: "hybrid" | "polymarket") => {
-    setQuickEntries((current) => current.map((entry, i) => {
-      if (i !== index) return entry;
-      const baseEntry = { id: entry.id, name: entry.name };
-      return source === "hybrid"
-        ? { ...baseEntry, source, dashboardUrl: "" }
-        : { ...baseEntry, source, wallet: "" };
-    }));
-  };
-
   const addQuickEntry = () => {
     if (quickEntries.length >= 8) return;
     const n = quickEntries.length + 1;
     setQuickEntries((current) => [
       ...current,
-      { source: "hybrid", id: `quick-${Date.now()}-${n}`, name: `Trader ${n}`, dashboardUrl: "" },
+      { id: `quick-${Date.now()}-${n}`, name: `Trader ${n}`, dashboardUrl: "", division: "trading", platform: "other" },
     ]);
   };
 
   const verifyAndSnapshot = async () => {
     if (!readyQuickEntries.length) {
-      setQuickStatus("Add at least one valid Hybrid public dashboard or Polymarket wallet.");
+      setQuickStatus("Add at least one valid Hybrid Funding public dashboard.");
       return;
     }
     setQuickStatus("Verifying public feeds and taking the battle-start snapshot…");
@@ -245,7 +232,7 @@ const TradeHouseStudio: React.FC = () => {
                     <div className="font-['Orbitron'] text-[10px] font-black uppercase tracking-[0.22em] text-cyan-300">Go Live Today</div>
                     <h2 className="mt-2 font-['Orbitron'] text-2xl font-black sm:text-3xl">CONNECT → SNAPSHOT → ROOM → OBS</h2>
                     <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
-                      Paste public Hybrid dashboards or Polymarket wallets. Trade House verifies the feed, snapshots the starting value, and packages the roster directly into the broadcast URL.
+                      Paste the Hybrid Funding public dashboard for each contestant. The dashboard is the normalized scoring layer whether the account trades through MatchTrader, cTrader, DXtrade, DX Futures, Tickblaze, or another supported Hybrid platform.
                     </p>
                   </div>
                   <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-4 py-2 font-['Orbitron'] text-[10px] font-black tracking-wider text-violet-200">
@@ -257,7 +244,7 @@ const TradeHouseStudio: React.FC = () => {
               <div className="space-y-6 p-6 sm:p-8">
                 <div className="grid gap-3 sm:grid-cols-4">
                   {[
-                    ["01", "CONNECT", "Public dashboard / wallet"],
+                    ["01", "CONNECT", "Hybrid public dashboard"],
                     ["02", "SNAPSHOT", "Lock battle baseline"],
                     ["03", "ROOM", "Camera + mic + screen"],
                     ["04", "OBS", "One live browser source"],
@@ -281,7 +268,7 @@ const TradeHouseStudio: React.FC = () => {
 
                 <div className="space-y-3">
                   {quickEntries.map((entry, index) => (
-                    <div key={entry.id} className="grid gap-3 rounded-2xl border border-white/10 bg-black/15 p-4 lg:grid-cols-[1fr_150px_2fr_auto] lg:items-end">
+                    <div key={entry.id} className="grid gap-3 rounded-2xl border border-white/10 bg-black/15 p-4 lg:grid-cols-[1fr_150px_2fr_160px_auto] lg:items-end">
                       <label className="text-xs text-slate-500">
                         Trader
                         <input
@@ -291,37 +278,41 @@ const TradeHouseStudio: React.FC = () => {
                         />
                       </label>
                       <label className="text-xs text-slate-500">
-                        Feed
+                        Division
                         <select
-                          value={entry.source}
-                          onChange={(e) => changeSource(index, e.target.value as "hybrid" | "polymarket")}
+                          value={entry.division || "trading"}
+                          onChange={(e) => updateQuickEntry(index, { division: e.target.value })}
                           className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
                         >
+                          <option value="trading">Trading</option>
+                          <option value="prediction">Prediction</option>
                           <option value="hybrid">Hybrid</option>
-                          <option value="polymarket">Polymarket</option>
                         </select>
                       </label>
-                      {entry.source === "hybrid" ? (
-                        <label className="text-xs text-slate-500">
-                          Public Hybrid dashboard
-                          <input
-                            value={entry.dashboardUrl}
-                            onChange={(e) => updateQuickEntry(index, { dashboardUrl: e.target.value, startingBalance: undefined })}
-                            placeholder="https://hybridfundingdashboard.propaccount.com/en/public-overview/..."
-                            className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 font-mono text-xs text-white outline-none focus:border-cyan-300/60"
-                          />
-                        </label>
-                      ) : (
-                        <label className="text-xs text-slate-500">
-                          Polymarket wallet
-                          <input
-                            value={entry.wallet}
-                            onChange={(e) => updateQuickEntry(index, { wallet: e.target.value, startingBalance: undefined })}
-                            placeholder="0x..."
-                            className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 font-mono text-xs text-white outline-none focus:border-violet-400/60"
-                          />
-                        </label>
-                      )}
+                      <label className="text-xs text-slate-500">
+                        Hybrid public dashboard
+                        <input
+                          value={entry.dashboardUrl}
+                          onChange={(e) => updateQuickEntry(index, { dashboardUrl: e.target.value, startingBalance: undefined })}
+                          placeholder="https://hybridfundingdashboard.propaccount.com/en/public-overview/..."
+                          className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 font-mono text-xs text-white outline-none focus:border-cyan-300/60"
+                        />
+                      </label>
+                      <label className="text-xs text-slate-500">
+                        Platform
+                        <select
+                          value={entry.platform || "other"}
+                          onChange={(e) => updateQuickEntry(index, { platform: e.target.value })}
+                          className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                        >
+                          <option value="matchtrader">MatchTrader</option>
+                          <option value="ctrader">cTrader</option>
+                          <option value="dxtrade">DXtrade</option>
+                          <option value="dxfutures">DX Futures</option>
+                          <option value="tickblaze">Tickblaze</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </label>
                       <button
                         onClick={() => setQuickEntries((current) => current.filter((_, i) => i !== index))}
                         disabled={quickEntries.length <= 1}
@@ -362,7 +353,7 @@ const TradeHouseStudio: React.FC = () => {
                           <span className="truncate font-['Orbitron'] text-xs font-black">{row.name}</span>
                           <span className={row.verified ? "text-cyan-300" : "text-rose-300"}>{row.verified ? "✓" : "!"}</span>
                         </div>
-                        <div className="mt-2 text-xs text-slate-500">{row.sourceLabel || "Hybrid Funding"}</div>
+                        <div className="mt-2 text-xs text-slate-500">{row.sourceLabel || "Hybrid Funding"} · {(row.division || "trading").toUpperCase()} · {(row.platform || "other").toUpperCase()}</div>
                         <div className="mt-2 font-mono text-lg font-black text-white">${row.balance.toLocaleString()}</div>
                         <div className="text-[10px] uppercase tracking-wider text-slate-600">snapshot value</div>
                       </div>
@@ -413,7 +404,7 @@ const TradeHouseStudio: React.FC = () => {
                 </div>
 
                 <p className="text-xs leading-relaxed text-slate-600">
-                  Polymarket support uses public wallet/profile data only. Kalshi portfolio data is account-authenticated, so Trade House does not request or store a trader&apos;s Kalshi login credentials.
+                  Every division uses the Hybrid Funding public dashboard as the scoring feed. Prediction-market activity can live inside a Hybrid account and appear on the same dashboard, while the underlying execution platform remains metadata for display and filtering.
                 </p>
               </div>
             </div>
@@ -497,7 +488,7 @@ const TradeHouseStudio: React.FC = () => {
               {[
                 ["CAMERA", "Use Trade House's room, Zoom, or any OBS camera source."],
                 ["TRADING SCREEN", "Capture the trader's platform/window as its own OBS source. Keep credentials hidden."],
-                ["VERIFIED DATA", "Scoring stays independent from camera/screen capture and comes from the verified public feed."],
+                ["VERIFIED DATA", "Scoring stays independent from camera/screen capture and always comes from the Hybrid Funding public dashboard."],
               ].map(([title, body]) => (
                 <div key={title} className="rounded-2xl border border-white/10 bg-[#0d1626] p-5">
                   <ShieldCheck className="h-5 w-5 text-cyan-300" />
