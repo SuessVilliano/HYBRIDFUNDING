@@ -97,8 +97,8 @@ const TradeHouseStudio: React.FC = () => {
               Permanent transparent browser sources for OBS. Cameras and screen shares stay independent; these URLs handle the verified competition graphics automatically.
             </p>
 
-            <div className="mt-8 rounded-2xl border border-amber-300/15 bg-amber-300/[0.05] p-5 text-sm text-slate-300">
-              <strong className="text-amber-200">OBS setup:</strong> Browser Source · 1920×1080 · 30 FPS · custom frame rate enabled · keep source active between scenes. Keep the browser source above camera/chart layers.
+            <div className="mt-8 rounded-2xl border border-violet-400/15 bg-violet-400/[0.05] p-5 text-sm text-slate-300">
+              <strong className="text-violet-300">OBS setup:</strong> Browser Source · 1920×1080 · 30 FPS · custom frame rate enabled · keep source active between scenes. Keep the browser source above camera/chart layers.
             </div>
           </div>
         </div>
@@ -109,7 +109,7 @@ const TradeHouseStudio: React.FC = () => {
           <div className="mx-auto max-w-5xl space-y-6">
             <div className="rounded-2xl border border-cyan-300/30 bg-[#0d1626] p-6 space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-4"><h2 className="text-2xl font-black">Battle stage</h2>
-                <label className="flex items-center gap-3 text-sm text-amber-200"><input type="checkbox" checked={demo} onChange={e => { setDemo(e.target.checked); setLeft(""); setRight(""); }} /> Rehearsal · sample data</label></div>
+                <label className="flex items-center gap-3 text-sm text-violet-300"><input type="checkbox" checked={demo} onChange={e => { setDemo(e.target.checked); setLeft(""); setRight(""); }} /> Rehearsal · sample data</label></div>
               <p className="text-slate-300">Pick the two contestants below, then open a stage or download all three OBS scenes. Rehearsal never changes official standings.</p>
               <div className="flex flex-wrap gap-3">{[["duel", "Head to head"], ["grid", "Eight-trader wall"], ["break", "Intermission"]].map(([mode, title]) => <a key={mode} href={stageUrl(mode)} target="_blank" rel="noreferrer" className="rounded-lg bg-cyan-300 px-4 py-3 font-bold text-slate-950">{title}</a>)}</div>
               <button onClick={() => downloadOBSCollection(base, demo, left, right)} className="rounded-lg border border-cyan-300/50 px-5 py-3 font-bold text-cyan-200">Download OBS scene collection</button>
@@ -122,14 +122,14 @@ const TradeHouseStudio: React.FC = () => {
               </div></details>
               <div className="break-all rounded-lg bg-black/30 p-3 text-sm font-mono">{stageUrl("duel", true)}</div>
               <button onClick={() => copy("stage", stageUrl("duel", true))} className="text-sm font-bold text-cyan-200">{copied === "stage" ? "Copied" : "Copy transparent duel source"}</button>
-              {copyError && <p role="alert" className="text-amber-200">{copyError}</p>}
+              {copyError && <p role="alert" className="text-violet-300">{copyError}</p>}
             </div>
             <SourceCard id="leaderboard" title="Live Leaderboard" description="Top-eight broadcast board. Ideal as a full-screen standings scene or a side panel beside commentary." url={urls.leaderboard} icon={Trophy} />
             <SourceCard id="scorebug" title="Leader Scorebug" description="Compact top-of-screen bug showing the current leader, verified P&L, return, and live status." url={urls.scorebug} icon={Radio} />
 
             <div className="rounded-2xl border border-white/10 bg-[#0d1626] p-6">
               <div className="flex items-center gap-3">
-                <Swords className="h-6 w-6 text-amber-300" />
+                <Swords className="h-6 w-6 text-violet-400" />
                 <h3 className="font-['Orbitron'] text-base font-black">Duel Scene</h3>
               </div>
               <p className="mt-2 text-sm text-slate-400">Choose any two verified contestants. OBS can place their cameras/screens in the center while this source renders the two competing score plates.</p>
@@ -145,7 +145,7 @@ const TradeHouseStudio: React.FC = () => {
               </div>
               <div className="mt-4 rounded-xl border border-white/[0.07] bg-black/20 p-3 font-mono text-xs text-slate-400 break-all">{urls.duel}</div>
               <div className="mt-3 flex gap-2">
-                <button onClick={() => copy("duel", urls.duel)} className="inline-flex items-center gap-2 rounded-full bg-amber-300 px-4 py-2 font-['Orbitron'] text-[10px] font-black tracking-wider text-[#141007]">
+                <button onClick={() => copy("duel", urls.duel)} className="inline-flex items-center gap-2 rounded-full bg-violet-400 px-4 py-2 font-['Orbitron'] text-[10px] font-black tracking-wider text-[#141007]">
                   {copied === "duel" ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />} {copied === "duel" ? "COPIED" : "COPY SOURCE"}
                 </button>
                 <a href={urls.duel} target="_blank" rel="noreferrer" className="rounded-full border border-white/10 px-4 py-2 font-['Orbitron'] text-[10px] font-black tracking-wider text-slate-300">PREVIEW</a>
