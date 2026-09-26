@@ -7,6 +7,8 @@ import {
   Plus,
   Radio,
   RefreshCw,
+  Save,
+  Database,
   ShieldCheck,
   Swords,
   Trash2,
@@ -28,6 +30,33 @@ type Payload = {
   season: { name: string; status: string };
   standings: Standing[];
 };
+
+type AdminEntryMeta = {
+  entryId?: number;
+  handle?: string;
+  email?: string;
+  phone?: string;
+  accountKind?: "demo" | "challenge" | "funded";
+  platformLogin?: string;
+  supportStatus?: "requested" | "created" | "delivered" | "verified";
+  supportReference?: string;
+  credentialsDelivered?: boolean;
+  inviteLastFour?: string;
+  inviteUrl?: string;
+};
+
+type SavedBattleSummary = {
+  id: number;
+  roomId: string;
+  name: string;
+  format: BattleFormat;
+  mode: string;
+  status: string;
+  accountSize?: number | null;
+  entryCount: number;
+  createdAt: string;
+};
+
 
 function newRoomId() {
   return Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -74,6 +103,9 @@ const TradeHouseStudio: React.FC = () => {
   const [shareAccess, setShareAccess] = useState("");
   const [roomId, setRoomId] = useState(() => newRoomId());
   const [quickStatus, setQuickStatus] = useState("");
+  const [saveStatus, setSaveStatus] = useState("");
+  const [savedBattles, setSavedBattles] = useState<SavedBattleSummary[]>([]);
+  const [adminMeta, setAdminMeta] = useState<Record<string, AdminEntryMeta>>({});
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
   const [quickEntries, setQuickEntries] = useState<QuickBattleEntry[]>([
     { id: "quick-1", name: "Trader A", dashboardUrl: "", division: "trading", platform: "matchtrader" },
