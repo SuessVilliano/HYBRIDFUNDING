@@ -323,6 +323,8 @@ const tradeHouseRosterSchema = z.array(
     accountId: z.string().trim().min(1).max(160).optional(),
     dashboardUrl: z.string().url().optional(),
     startingBalance: z.number().positive().optional(),
+    division: z.enum(["trading", "prediction", "hybrid"]).default("trading"),
+    platform: z.enum(["matchtrader", "ctrader", "dxtrade", "dxfutures", "tickblaze", "other"]).optional(),
     market: z.string().trim().max(40).optional(),
     country: z.string().trim().max(60).optional(),
   }).refine((value) => Boolean(value.accountId || value.dashboardUrl), {
@@ -342,22 +344,14 @@ const publicPayoutsSchema = z.array(
 ).max(250);
 
 
-const quickBattleEntrySchema = z.discriminatedUnion("source", [
-  z.object({
-    source: z.literal("hybrid"),
-    id: z.string().trim().min(1).max(64),
-    name: z.string().trim().min(1).max(40),
-    dashboardUrl: z.string().url(),
-    startingBalance: z.number().nonnegative().optional(),
-  }),
-  z.object({
-    source: z.literal("polymarket"),
-    id: z.string().trim().min(1).max(64),
-    name: z.string().trim().min(1).max(40),
-    wallet: z.string().regex(/^0x[a-fA-F0-9]{40}$/),
-    startingBalance: z.number().nonnegative().optional(),
-  }),
-]);
+const quickBattleEntrySchema = z.object({
+  id: z.string().trim().min(1).max(64),
+  name: z.string().trim().min(1).max(40),
+  dashboardUrl: z.string().url(),
+  startingBalance: z.number().nonnegative().optional(),
+  division: z.enum(["trading", "prediction", "hybrid"]).default("trading"),
+  platform: z.enum(["matchtrader", "ctrader", "dxtrade", "dxfutures", "tickblaze", "other"]).optional(),
+});
 
 const quickBattleSchema = z.object({
   entries: z.array(quickBattleEntrySchema).min(1).max(8),
@@ -542,71 +536,6 @@ async function fetchTradeHouseDashboard(accountId: string, startingBalance: numb
 }
 
 
-async function fetchPolymarketProfile(wallet: string, startingBalance?: number) {
-  const encoded = encodeURIComponent(wallet.toLowerCase());
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 7000);
-  try {
-    const [statsRes, valueRes] = await Promise.all([
-      fetch(`https://data-api.polymarket.com/v2/user-stats?user=${encoded}`, {
-        headers: { Accept: "application/json", "User-Agent": "HybridFundingTradeHouse/1.0" },
-        signal: controller.signal,
-      }),
-      fetch(`https://data-api.polymarket.com/v2/value?user=${encoded}`, {
-        headers: { Accept: "application/json", "User-Agent": "HybridFundingTradeHouse/1.0" },
-        signal: controller.signal,
-      }),
-    ]);
-
-    if (!statsRes.ok) throw new Error(`Polymarket stats returned ${statsRes.status}`);
-    if (!valueRes.ok) throw new Error(`Polymarket portfolio returned ${valueRes.status}`);
-
-    const statsBody: any = await statsRes.json();
-    const valueBody: any = await valueRes.json();
-    const stats = statsBody?.data ?? statsBody ?? {};
-    const valueData = valueBody?.data ?? valueBody ?? {};
-
-    const numeric = (...values: any[]) => {
-      for (const value of values) {
-        const n = Number(value);
-        if (Number.isFinite(n)) return n;
-      }
-      return 0;
-    };
-
-    const portfolioValue = numeric(
-      valueData?.value,
-      valueData?.portfolio_value,
-      valueData?.portfolioValue,
-      typeof valueData === "number" ? valueData : undefined,
-    );
-    const allTimePnl = numeric(stats?.all_time_pnl, stats?.allTimePnl);
-    const tradeCount = numeric(stats?.trades, stats?.trade_count, stats?.tradeCount);
-    const biggestWin = numeric(stats?.biggest_win, stats?.biggestWin);
-    const effectiveStartingBalance = startingBalance ?? portfolioValue;
-    const pnl = portfolioValue - effectiveStartingBalance;
-
-    return {
-      dashboardUrl: `https://polymarket.com/profile/${wallet}`,
-      startingBalance: effectiveStartingBalance,
-      balance: portfolioValue,
-      equity: portfolioValue,
-      pnl,
-      returnPct: effectiveStartingBalance > 0 ? (pnl / effectiveStartingBalance) * 100 : 0,
-      tradeCount,
-      wins: 0,
-      losses: 0,
-      biggestWin,
-      openPositionCount: 0,
-      lastTradeAt: null,
-      fetchedAt: new Date().toISOString(),
-      allTimePnl,
-    };
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
 app.post("/api/tradehouse/quick-leaderboard", async (req: Request, res: Response) => {
   const parsed = quickBattleSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -616,35 +545,22 @@ app.post("/api/tradehouse/quick-leaderboard", async (req: Request, res: Response
   const rows = await Promise.all(
     parsed.data.entries.map(async (entry) => {
       try {
-        if (entry.source === "hybrid") {
-          const dashboard = resolvePublicDashboard({ dashboardUrl: entry.dashboardUrl });
-          if (!dashboard) throw new Error("Unsupported Hybrid public dashboard URL");
-          const stats = await fetchTradeHouseDashboard(dashboard.accountId, entry.startingBalance, dashboard.dashboardUrl);
-          return {
-            id: entry.id,
-            name: entry.name,
-            rank: 0,
-            source: "hybrid" as const,
-            sourceLabel: "Hybrid Funding",
-            accountId: dashboard.accountId,
-            dashboardUrl: dashboard.dashboardUrl,
-            ...stats,
-            verified: true,
-            status: stats.openPositionCount > 0 ? "live" as const : "flat" as const,
-          };
-        }
-
-        const stats = await fetchPolymarketProfile(entry.wallet, entry.startingBalance);
+        const dashboard = resolvePublicDashboard({ dashboardUrl: entry.dashboardUrl });
+        if (!dashboard) throw new Error("Unsupported Hybrid public dashboard URL");
+        const stats = await fetchTradeHouseDashboard(dashboard.accountId, entry.startingBalance, dashboard.dashboardUrl);
         return {
           id: entry.id,
           name: entry.name,
           rank: 0,
-          source: "polymarket" as const,
-          sourceLabel: "Polymarket",
-          accountId: entry.wallet,
+          source: "hybrid" as const,
+          sourceLabel: "Hybrid Funding",
+          division: entry.division,
+          platform: entry.platform ?? "other",
+          accountId: dashboard.accountId,
+          dashboardUrl: dashboard.dashboardUrl,
           ...stats,
           verified: true,
-          status: "flat" as const,
+          status: stats.openPositionCount > 0 ? "live" as const : "flat" as const,
         };
       } catch (error) {
         console.error("[tradehouse/quick] feed failed", entry.id, error);
@@ -652,10 +568,12 @@ app.post("/api/tradehouse/quick-leaderboard", async (req: Request, res: Response
           id: entry.id,
           name: entry.name,
           rank: 0,
-          source: entry.source,
-          sourceLabel: entry.source === "hybrid" ? "Hybrid Funding" : "Polymarket",
-          accountId: entry.source === "polymarket" ? entry.wallet : "",
-          dashboardUrl: entry.source === "hybrid" ? entry.dashboardUrl : `https://polymarket.com/profile/${entry.wallet}`,
+          source: "hybrid" as const,
+          sourceLabel: "Hybrid Funding",
+          division: entry.division,
+          platform: entry.platform ?? "other",
+          accountId: "",
+          dashboardUrl: entry.dashboardUrl,
           startingBalance: entry.startingBalance ?? 0,
           balance: 0,
           equity: 0,
@@ -691,7 +609,7 @@ app.post("/api/tradehouse/quick-leaderboard", async (req: Request, res: Response
       accountType: "simulated",
       refreshSeconds: 15,
       endsAt: null,
-      dataPolicy: "Quick Battle standings use verified public Hybrid dashboards or public Polymarket profile data.",
+      dataPolicy: "All Quick Battle standings are read from verified public Hybrid Funding dashboards. The underlying execution platform is metadata only.",
     },
     standings,
     updatedAt: new Date().toISOString(),
@@ -711,6 +629,8 @@ app.get("/api/tradehouse/leaderboard", async (_req: Request, res: Response) => {
           accountId: "",
           dashboardUrl: entry.dashboardUrl || "",
           startingBalance: entry.startingBalance,
+          division: entry.division,
+          platform: entry.platform ?? "other",
           balance: 0,
           equity: 0,
           pnl: 0,
@@ -736,6 +656,8 @@ app.get("/api/tradehouse/leaderboard", async (_req: Request, res: Response) => {
           accountId: dashboard.accountId,
           dashboardUrl: dashboard.dashboardUrl,
           startingBalance: entry.startingBalance,
+          division: entry.division,
+          platform: entry.platform ?? "other",
           ...stats,
           verified: true,
           status: stats.openPositionCount > 0 ? "live" as const : "flat" as const,
@@ -749,6 +671,8 @@ app.get("/api/tradehouse/leaderboard", async (_req: Request, res: Response) => {
           accountId: dashboard.accountId,
           dashboardUrl: dashboard.dashboardUrl,
           startingBalance: entry.startingBalance,
+          division: entry.division,
+          platform: entry.platform ?? "other",
           balance: 0,
           equity: 0,
           pnl: 0,

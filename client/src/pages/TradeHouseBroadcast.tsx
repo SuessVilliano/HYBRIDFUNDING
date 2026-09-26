@@ -39,7 +39,7 @@ const TraderPlate: React.FC<{ trader: Standing; side?: "left" | "right"; large?:
               {trader.status === "live" ? "● POSITION OPEN" : "● FLAT"}
             </span>
             <span>·</span>
-            <span>{trader.sourceLabel || "HYBRID FUNDING"}</span>
+            <span>{(trader.division || "trading").toUpperCase()} · {(trader.platform || "other").toUpperCase()}</span>
           </div>
         </div>
         <div className="text-right">
@@ -103,7 +103,7 @@ const LeaderboardOverlay: React.FC<{ data: LeaderboardPayload }> = ({ data }) =>
           ))}
         </div>
         <div className="flex items-center justify-between border-t border-white/10 px-6 py-3 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-600">
-          <span>Verified Hybrid + prediction-market feeds</span>
+          <span>Verified Hybrid Funding dashboard feeds</span>
           <span>Simulated competition accounts</span>
         </div>
       </div>
