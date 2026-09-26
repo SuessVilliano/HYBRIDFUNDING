@@ -1,5 +1,6 @@
 import express, { type NextFunction, type Request, type Response } from "express";
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { neon } from "@neondatabase/serverless";
 import { z } from "zod";
 
 // Self-contained serverless handler for production /api/* routes.
