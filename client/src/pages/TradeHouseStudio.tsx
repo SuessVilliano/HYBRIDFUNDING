@@ -70,6 +70,7 @@ const TradeHouseStudio: React.FC = () => {
   const [promoText, setPromoText] = useState("Instant Funding · Trade House · Verified Hybrid performance");
   const [sponsorName, setSponsorName] = useState("");
   const [sponsorUrl, setSponsorUrl] = useState("");
+  const [musicUrl, setMusicUrl] = useState("");
   const [roomId, setRoomId] = useState(() => newRoomId());
   const [quickStatus, setQuickStatus] = useState("");
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
@@ -126,8 +127,9 @@ const TradeHouseStudio: React.FC = () => {
     }
     if (sponsorName.trim()) params.sponsor = sponsorName.trim();
     if (sponsorUrl.trim()) params.sponsorUrl = sponsorUrl.trim();
+    if (musicUrl.trim()) params.music = musicUrl.trim();
     return params;
-  }, [battleFormat, durationMinutes, targetPct, profitTargetPct, maxDDPct, accountSize, promoText, sponsorName, sponsorUrl, leagueEndsAt]);
+  }, [battleFormat, durationMinutes, targetPct, profitTargetPct, maxDDPct, accountSize, promoText, sponsorName, sponsorUrl, musicUrl, leagueEndsAt]);
 
   const readyQuickEntries = useMemo(() => quickEntries.filter(validEntry).slice(0, 8), [quickEntries]);
   const quickEncoded = useMemo(
@@ -145,6 +147,15 @@ const TradeHouseStudio: React.FC = () => {
   const quickTvUrl = `${base}/tradehouse/tv?${new URLSearchParams({ quick: quickEncoded, season: seasonName, ...experienceParams })}`;
 
   const roomMode = readyQuickEntries.length <= 2 ? "1v1" : readyQuickEntries.length <= 4 ? "2v2" : "3v3";
+  const producerLink = `${base}/battles/room/${roomId}?${new URLSearchParams({
+    producer: "1",
+    mode: roomMode,
+    name: "Producer",
+    quick: quickEncoded,
+    season: seasonName,
+    ...experienceParams,
+  })}`;
+
   const participantLinks = useMemo(
     () => readyQuickEntries.slice(0, 6).map((entry, index) => {
       const side = index % 2 === 0 ? "left" : "right";
@@ -392,6 +403,11 @@ const TradeHouseStudio: React.FC = () => {
                       Sponsor URL
                       <input value={sponsorUrl} onChange={(e) => setSponsorUrl(e.target.value)} placeholder="https://…" className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
                     </label>
+                    <label className="text-xs text-slate-500 lg:col-span-3">
+                      House music URL
+                      <input value={musicUrl} onChange={(e) => setMusicUrl(e.target.value)} placeholder="Direct audio URL for producer/OBS playback" className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      <span className="mt-1 block text-[9px] text-slate-600">Use music you have rights to broadcast. It plays in the producer browser, not through trader microphones.</span>
+                    </label>
                   </div>
                 </div>
 
@@ -500,6 +516,14 @@ const TradeHouseStudio: React.FC = () => {
                       <button onClick={() => setRoomId(newRoomId())} className="rounded-lg border border-white/10 p-2 text-slate-400" aria-label="Generate new room"><RefreshCw className="h-4 w-4" /></button>
                     </div>
                     <div className="mt-4 rounded-xl border border-white/10 bg-black/25 p-3 font-mono text-sm font-black tracking-[0.2em] text-violet-300">ROOM {roomId} · {roomMode.toUpperCase()}</div>
+                    <div className="mt-3 rounded-lg border border-violet-400/15 bg-violet-400/[0.05] p-2">
+                      <div className="flex items-center gap-2">
+                        <span className="min-w-0 flex-1 truncate text-xs font-bold text-violet-200">Producer / host controls</span>
+                        <button onClick={() => copy("producer-room", producerLink)} className="rounded-lg border border-violet-400/20 px-3 py-1.5 text-[10px] font-bold text-violet-200">
+                          {copied === "producer-room" ? "COPIED" : "COPY PRODUCER LINK"}
+                        </button>
+                      </div>
+                    </div>
                     <div className="mt-3 space-y-2">
                       {participantLinks.map((participant, index) => (
                         <div key={participant.id} className="flex items-center gap-2 rounded-lg border border-white/[0.07] bg-black/15 p-2">
