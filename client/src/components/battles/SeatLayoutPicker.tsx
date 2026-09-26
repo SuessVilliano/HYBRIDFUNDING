@@ -19,7 +19,7 @@ export default function SeatLayoutPicker({
   onChange: (value: SeatLayoutMode) => void;
 }) {
   return (
-    <div className="absolute bottom-12 left-1/2 z-[75] w-[330px] -translate-x-1/2 rounded-2xl border border-cyan-300/20 bg-[#07101b]/95 p-3 shadow-[0_22px_80px_rgba(0,0,0,.55)] backdrop-blur-xl">
+    <div className="absolute bottom-12 left-1/2 z-[75] w-[calc(100vw-1rem)] max-w-[330px] -translate-x-1/2 rounded-2xl border border-cyan-300/20 bg-[#07101b]/95 p-3 shadow-[0_22px_80px_rgba(0,0,0,.55)] backdrop-blur-xl">
       <div className="mb-2 px-1 font-['Orbitron'] text-[9px] font-black uppercase tracking-[0.15em] text-cyan-200">
         Seat layout
       </div>

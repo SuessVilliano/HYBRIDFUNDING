@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, Trophy, Users, Zap, Target } from "lucide-react";
+import { Check, Users, Zap, Target } from "lucide-react";
 import SEO from "@/components/SEO";
 import { breadcrumbSchema, organizationSchema } from "@/lib/jsonLd";
 
@@ -24,11 +24,6 @@ const About = () => {
   ];
 
   const innovations = [
-    { 
-      icon: Trophy, 
-      title: "TradeHouse Battles", 
-      description: "Revolutionary competitive trading arena where traders battle in real-time tournaments for exclusive rewards and funded accounts."
-    },
     { 
       icon: Target, 
       title: "Multi-Asset Challenges", 
@@ -93,10 +88,6 @@ const About = () => {
               <div className="w-full md:w-2/3 space-y-6">
                 <p className="text-[#B8B8D0] leading-relaxed">
                   Hybrid Funding is a next-generation proprietary trading firm that revolutionizes how traders access capital and compete in global markets. Based in Delaware and focused on HUBZone and underserved community development, we combine traditional funding programs with innovative competitive trading experiences.
-                </p>
-                
-                <p className="text-[#B8B8D0] leading-relaxed">
-                  We've pioneered the integration of competitive gaming elements into professional trading through our TradeHouse Battles arena, where traders compete in real-time tournaments for exclusive rewards including funded accounts worth up to $100,000+. This gamification approach makes skill development engaging while maintaining professional trading standards.
                 </p>
                 
                 <p className="text-[#B8B8D0] leading-relaxed">

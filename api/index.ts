@@ -1,4 +1,6 @@
-import express, { type Request, type Response } from "express";
+import express, { type NextFunction, type Request, type Response } from "express";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { neon } from "@neondatabase/serverless";
 import { z } from "zod";
 
 // Self-contained serverless handler for production /api/* routes.
@@ -8,6 +10,1102 @@ import { z } from "zod";
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+const TRADEHOUSE_BETA_COOKIE = "hf_tradehouse_beta";
+const TRADEHOUSE_BETA_SESSION_SECONDS = 60 * 60 * 12;
+const TRADEHOUSE_SHARE_SECONDS = 60 * 60 * 24;
+const betaAttempts = new Map<string, { count: number; resetAt: number }>();
+const BETA_ATTEMPT_WINDOW_MS = 15 * 60 * 1000;
+const BETA_MAX_ATTEMPTS = 5;
+
+function betaCode() {
+  return process.env.TRADEHOUSE_BETA_CODE?.trim() || "";
+}
+
+function betaSecret() {
+  return process.env.TRADEHOUSE_BETA_SECRET?.trim() || process.env.SESSION_SECRET?.trim() || "";
+}
+
+function betaConfigured() {
+  return Boolean(betaCode() && betaSecret());
+}
+
+function betaAttemptKey(req: Request) {
+  const forwarded = req.headers["x-forwarded-for"];
+  const first = Array.isArray(forwarded) ? forwarded[0] : forwarded?.split(",")[0];
+  return (first || req.ip || "unknown").trim();
+}
+
+function betaAttemptState(req: Request) {
+  const key = betaAttemptKey(req);
+  const now = Date.now();
+  const current = betaAttempts.get(key);
+  if (!current || current.resetAt <= now) {
+    const fresh = { count: 0, resetAt: now + BETA_ATTEMPT_WINDOW_MS };
+    betaAttempts.set(key, fresh);
+    return { key, state: fresh };
+  }
+  return { key, state: current };
+}
+
+function safeTextEqual(a: string, b: string) {
+  const left = createHash("sha256").update(a).digest();
+  const right = createHash("sha256").update(b).digest();
+  return timingSafeEqual(left, right);
+}
+
+type BetaScope = "admin" | "share";
+
+function signBetaToken(ttlSeconds: number, scope: BetaScope = "admin") {
+  const secret = betaSecret();
+  if (!secret) return "";
+  const expiresAt = Math.floor(Date.now() / 1000) + ttlSeconds;
+  const payload = `v2.${scope}.${expiresAt}`;
+  const signature = createHmac("sha256", secret).update(payload).digest("base64url");
+  return `${payload}.${signature}`;
+}
+
+function readBetaToken(token?: string | null): { scope: BetaScope; expiresAt: number } | null {
+  if (!token || !betaSecret()) return null;
+  const [version, scopeRaw, expiresRaw, signature] = token.split(".");
+  if (version !== "v2" || (scopeRaw !== "admin" && scopeRaw !== "share") || !expiresRaw || !signature) return null;
+  const expiresAt = Number(expiresRaw);
+  if (!Number.isFinite(expiresAt) || expiresAt <= Math.floor(Date.now() / 1000)) return null;
+  const payload = `${version}.${scopeRaw}.${expiresRaw}`;
+  const expected = createHmac("sha256", betaSecret()).update(payload).digest("base64url");
+  if (!safeTextEqual(signature, expected)) return null;
+  return { scope: scopeRaw, expiresAt };
+}
+
+function verifyBetaToken(token?: string | null, requiredScope?: BetaScope) {
+  const parsed = readBetaToken(token);
+  return Boolean(parsed && (!requiredScope || parsed.scope === requiredScope));
+}
+
+function cookieValue(req: Request, name: string) {
+  const raw = req.headers.cookie || "";
+  for (const part of raw.split(";")) {
+    const [key, ...rest] = part.trim().split("=");
+    if (key === name) return decodeURIComponent(rest.join("="));
+  }
+  return "";
+}
+
+function queryAccess(req: Request) {
+  const value = req.query?.access;
+  return typeof value === "string" ? value : "";
+}
+
+function hasAdminBetaAccess(req: Request) {
+  return verifyBetaToken(cookieValue(req, TRADEHOUSE_BETA_COOKIE), "admin");
+}
+
+function hasBetaAccess(req: Request) {
+  return hasAdminBetaAccess(req) || verifyBetaToken(queryAccess(req), "share");
+}
+
+function setBetaCookie(res: Response, token: string, maxAgeSeconds: number) {
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  res.setHeader(
+    "Set-Cookie",
+    `${TRADEHOUSE_BETA_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSeconds}${secure}`,
+  );
+}
+
+function clearBetaCookie(res: Response) {
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  res.setHeader(
+    "Set-Cookie",
+    `${TRADEHOUSE_BETA_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`,
+  );
+}
+
+function requireTradeHouseBeta(req: Request, res: Response, next: NextFunction) {
+  if (!betaConfigured()) {
+    return res.status(503).json({ error: "Private beta access is not configured." });
+  }
+  if (!hasBetaAccess(req)) {
+    return res.status(401).json({ error: "Private beta access required." });
+  }
+  next();
+}
+
+function requireTradeHouseAdmin(req: Request, res: Response, next: NextFunction) {
+  if (!betaConfigured()) {
+    return res.status(503).json({ error: "Private beta access is not configured." });
+  }
+  if (!hasAdminBetaAccess(req)) {
+    return res.status(401).json({ error: "Admin beta session required." });
+  }
+  next();
+}
+
+type TradeHouseSql = ReturnType<typeof neon>;
+let tradeHouseSchemaReady: Promise<void> | null = null;
+
+function tradeHouseSql(): TradeHouseSql | null {
+  const url = process.env.DATABASE_URL?.trim();
+  return url ? neon(url) : null;
+}
+
+async function ensureTradeHousePersistence() {
+  const sql = tradeHouseSql();
+  if (!sql) throw new Error("DATABASE_URL is not configured.");
+
+  if (!tradeHouseSchemaReady) {
+    tradeHouseSchemaReady = (async () => {
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_traders (
+          id serial PRIMARY KEY,
+          user_id integer REFERENCES users(id),
+          handle text NOT NULL UNIQUE,
+          display_name text NOT NULL,
+          email text,
+          phone text,
+          avatar_url text,
+          logo_url text,
+          bio text,
+          default_division text NOT NULL DEFAULT 'trading',
+          default_platform text NOT NULL DEFAULT 'other',
+          is_active boolean NOT NULL DEFAULT true,
+          created_at timestamp NOT NULL DEFAULT now(),
+          updated_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_seasons (
+          id serial PRIMARY KEY,
+          slug text NOT NULL UNIQUE,
+          name text NOT NULL,
+          format text NOT NULL DEFAULT 'league',
+          status text NOT NULL DEFAULT 'forming',
+          starts_at timestamp,
+          ends_at timestamp,
+          rule_config text,
+          created_at timestamp NOT NULL DEFAULT now(),
+          updated_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_battles (
+          id serial PRIMARY KEY,
+          season_id integer REFERENCES trade_house_seasons(id),
+          room_id text NOT NULL UNIQUE,
+          name text NOT NULL,
+          format text NOT NULL,
+          mode text NOT NULL,
+          account_size integer,
+          sponsor_name text,
+          sponsor_url text,
+          promo_text text,
+          music_url text,
+          rule_config text,
+          status text NOT NULL DEFAULT 'scheduled',
+          started_at timestamp,
+          ended_at timestamp,
+          created_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_accounts (
+          id serial PRIMARY KEY,
+          trader_id integer NOT NULL REFERENCES trade_house_traders(id),
+          platform text NOT NULL DEFAULT 'other',
+          account_kind text NOT NULL DEFAULT 'demo',
+          account_size integer,
+          platform_login text,
+          dashboard_url text,
+          support_status text NOT NULL DEFAULT 'requested',
+          support_reference text,
+          credentials_delivered boolean NOT NULL DEFAULT false,
+          issued_at timestamp,
+          verified_at timestamp,
+          created_at timestamp NOT NULL DEFAULT now(),
+          updated_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_entries (
+          id serial PRIMARY KEY,
+          battle_id integer NOT NULL REFERENCES trade_house_battles(id),
+          external_key text,
+          trader_id integer NOT NULL REFERENCES trade_house_traders(id),
+          account_id integer REFERENCES trade_house_accounts(id),
+          dashboard_url text,
+          invite_token_hash text,
+          invite_last_four text,
+          invite_expires_at timestamp,
+          invite_revoked_at timestamp,
+          profile_completed_at timestamp,
+          side text,
+          slot integer,
+          starting_balance numeric(14,2),
+          ending_balance numeric(14,2),
+          pnl numeric(14,2),
+          return_pct numeric(8,4),
+          max_drawdown_pct numeric(8,4),
+          placement integer,
+          season_points integer NOT NULL DEFAULT 0,
+          result text NOT NULL DEFAULT 'active',
+          verified boolean NOT NULL DEFAULT false,
+          started_at timestamp,
+          finished_at timestamp,
+          created_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`ALTER TABLE trade_house_traders ADD COLUMN IF NOT EXISTS email text`;
+      await sql`ALTER TABLE trade_house_traders ADD COLUMN IF NOT EXISTS phone text`;
+      await sql`ALTER TABLE trade_house_battles ADD COLUMN IF NOT EXISTS promo_text text`;
+      await sql`ALTER TABLE trade_house_battles ADD COLUMN IF NOT EXISTS music_url text`;
+      await sql`ALTER TABLE trade_house_entries ALTER COLUMN dashboard_url DROP NOT NULL`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS external_key text`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS account_id integer REFERENCES trade_house_accounts(id)`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_token_hash text`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_last_four text`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_expires_at timestamp`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_revoked_at timestamp`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS profile_completed_at timestamp`;
+      await sql`CREATE INDEX IF NOT EXISTS idx_trade_house_accounts_trader ON trade_house_accounts(trader_id)`;
+      await sql`CREATE INDEX IF NOT EXISTS idx_trade_house_entries_invite_hash ON trade_house_entries(invite_token_hash)`;
+      await sql`CREATE UNIQUE INDEX IF NOT EXISTS idx_trade_house_entries_external_key ON trade_house_entries(battle_id, external_key) WHERE external_key IS NOT NULL`;
+      await sql`CREATE INDEX IF NOT EXISTS idx_trade_house_battles_created_at ON trade_house_battles(created_at DESC)`;
+    })().catch((error) => {
+      tradeHouseSchemaReady = null;
+      throw error;
+    });
+  }
+
+  await tradeHouseSchemaReady;
+  return sql;
+}
+
+function tradeHouseInviteToken() {
+  const token = randomBytes(24).toString("base64url");
+  return {
+    token,
+    hash: createHash("sha256").update(token).digest("hex"),
+    lastFour: token.slice(-4),
+  };
+}
+
+function safeHandle(value: string, fallback: string) {
+  const cleaned = value
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 36);
+  return cleaned || fallback;
+}
+
+function requestOrigin(req: Request) {
+  const forwardedProto = req.headers["x-forwarded-proto"];
+  const proto = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto || req.protocol || "https";
+  const host = req.headers["x-forwarded-host"] || req.headers.host || "www.hybridfunding.co";
+  return `${proto}://${Array.isArray(host) ? host[0] : host}`;
+}
+
+app.get("/api/tradehouse/beta/status", (req: Request, res: Response) => {
+  if (!betaConfigured()) {
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(503).json({ authorized: false, configured: false });
+  }
+
+  const suppliedAccess = queryAccess(req);
+  const share = readBetaToken(suppliedAccess);
+  const admin = hasAdminBetaAccess(req);
+  const authorized = admin || share?.scope === "share";
+
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({
+    authorized,
+    configured: true,
+    scope: admin ? "admin" : share?.scope || null,
+  });
+});
+
+app.post("/api/tradehouse/beta/login", async (req: Request, res: Response) => {
+  if (!betaConfigured()) {
+    return res.status(503).json({ error: "Private beta access is not configured." });
+  }
+
+  const attempt = betaAttemptState(req);
+  if (attempt.state.count >= BETA_MAX_ATTEMPTS) {
+    res.setHeader("Retry-After", String(Math.max(1, Math.ceil((attempt.state.resetAt - Date.now()) / 1000))));
+    return res.status(429).json({ error: "Too many attempts. Try again later." });
+  }
+
+  const submitted = typeof req.body?.code === "string" ? req.body.code.trim() : "";
+  if (!submitted || !safeTextEqual(submitted, betaCode())) {
+    attempt.state.count += 1;
+    betaAttempts.set(attempt.key, attempt.state);
+    await new Promise((resolve) => setTimeout(resolve, 650));
+    return res.status(401).json({ error: "Invalid access code." });
+  }
+
+  betaAttempts.delete(attempt.key);
+  const token = signBetaToken(TRADEHOUSE_BETA_SESSION_SECONDS, "admin");
+  setBetaCookie(res, token, TRADEHOUSE_BETA_SESSION_SECONDS);
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({ ok: true });
+});
+
+app.post("/api/tradehouse/beta/logout", (_req: Request, res: Response) => {
+  clearBetaCookie(res);
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({ ok: true });
+});
+
+app.post("/api/tradehouse/beta/link-token", requireTradeHouseBeta, (_req: Request, res: Response) => {
+  const token = signBetaToken(TRADEHOUSE_SHARE_SECONDS, "share");
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({
+    token,
+    expiresAt: new Date(Date.now() + TRADEHOUSE_SHARE_SECONDS * 1000).toISOString(),
+  });
+});
+
+const traderProfileSchema = z.object({
+  displayName: z.string().trim().min(1).max(80).optional(),
+  handle: z.string().trim().min(2).max(40).optional(),
+  email: z.string().trim().toLowerCase().email().optional(),
+  phone: z.string().trim().max(30).optional(),
+  avatarUrl: z.string().trim().url().optional().or(z.literal("")),
+  logoUrl: z.string().trim().url().optional().or(z.literal("")),
+  dashboardUrl: z.string().trim().url().optional().or(z.literal("")),
+  platformLogin: z.string().trim().max(120).optional(),
+});
+
+async function findTradeHouseInvite(token: string) {
+  const sql = await ensureTradeHousePersistence();
+  const hash = createHash("sha256").update(token).digest("hex");
+  const rows = await sql`
+    SELECT
+      e.id AS entry_id,
+      e.battle_id,
+      e.trader_id,
+      e.account_id,
+      e.dashboard_url AS entry_dashboard_url,
+      e.side,
+      e.slot,
+      e.starting_balance,
+      e.verified,
+      e.invite_last_four,
+      e.profile_completed_at,
+      t.handle,
+      t.display_name,
+      t.email,
+      t.phone,
+      t.avatar_url,
+      t.logo_url,
+      t.default_division,
+      t.default_platform,
+      a.platform AS account_platform,
+      a.account_kind,
+      a.account_size AS assigned_account_size,
+      a.platform_login,
+      a.dashboard_url AS account_dashboard_url,
+      a.support_status,
+      a.support_reference,
+      a.credentials_delivered,
+      a.issued_at,
+      a.verified_at,
+      b.room_id,
+      b.name AS battle_name,
+      b.format AS battle_format,
+      b.mode AS battle_mode,
+      b.account_size AS battle_account_size,
+      b.status AS battle_status,
+      b.rule_config
+    FROM trade_house_entries e
+    JOIN trade_house_traders t ON t.id = e.trader_id
+    JOIN trade_house_battles b ON b.id = e.battle_id
+    LEFT JOIN trade_house_accounts a ON a.id = e.account_id
+    WHERE e.invite_token_hash = ${hash}
+      AND e.invite_revoked_at IS NULL
+      AND (e.invite_expires_at IS NULL OR e.invite_expires_at > now())
+    LIMIT 1
+  `;
+  return rows[0] || null;
+}
+
+app.get("/api/tradehouse/invite/:token", async (req: Request, res: Response) => {
+  try {
+    const token = String(req.params.token || "").trim();
+    if (token.length < 20) return res.status(404).json({ error: "Invite not found." });
+    const row: any = await findTradeHouseInvite(token);
+    if (!row) return res.status(404).json({ error: "Invite expired or revoked." });
+
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).json({
+      battle: {
+        roomId: row.room_id,
+        name: row.battle_name,
+        format: row.battle_format,
+        mode: row.battle_mode,
+        accountSize: row.battle_account_size,
+        status: row.battle_status,
+        ruleConfig: row.rule_config ? JSON.parse(row.rule_config) : null,
+      },
+      trader: {
+        id: row.trader_id,
+        handle: row.handle,
+        displayName: row.display_name,
+        email: row.email,
+        phone: row.phone,
+        avatarUrl: row.avatar_url,
+        logoUrl: row.logo_url,
+        division: row.default_division,
+        platform: row.default_platform,
+      },
+      account: {
+        id: row.account_id,
+        platform: row.account_platform || row.default_platform,
+        accountKind: row.account_kind || "demo",
+        accountSize: row.assigned_account_size || row.battle_account_size,
+        platformLogin: row.platform_login,
+        dashboardUrl: row.account_dashboard_url || row.entry_dashboard_url,
+        supportStatus: row.support_status || "requested",
+        supportReference: row.support_reference,
+        credentialsDelivered: Boolean(row.credentials_delivered),
+        issuedAt: row.issued_at,
+        verifiedAt: row.verified_at,
+      },
+      entry: {
+        id: row.entry_id,
+        side: row.side,
+        slot: row.slot,
+        startingBalance: row.starting_balance == null ? null : Number(row.starting_balance),
+        verified: Boolean(row.verified),
+        profileCompletedAt: row.profile_completed_at,
+      },
+      roomUrl: `${requestOrigin(req)}/battles/room/${encodeURIComponent(row.room_id)}?invite=${encodeURIComponent(token)}&name=${encodeURIComponent(row.display_name)}&side=${encodeURIComponent(row.side || "left")}&slot=${encodeURIComponent(String(row.slot || 0))}&mode=${encodeURIComponent(row.battle_mode || "1v1")}`,
+    });
+  } catch (error) {
+    console.error("[tradehouse/invite] lookup failed", error);
+    return res.status(500).json({ error: "Invite service unavailable." });
+  }
+});
+
+app.patch("/api/tradehouse/invite/:token", async (req: Request, res: Response) => {
+  try {
+    const parsed = traderProfileSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Invalid trader profile", details: parsed.error.flatten() });
+    }
+    const token = String(req.params.token || "").trim();
+    const row: any = await findTradeHouseInvite(token);
+    if (!row) return res.status(404).json({ error: "Invite expired or revoked." });
+
+    const data = parsed.data;
+    const sql = await ensureTradeHousePersistence();
+    let dashboardUrl = data.dashboardUrl?.trim() || null;
+    if (dashboardUrl) {
+      const dashboard = resolvePublicDashboard({ dashboardUrl });
+      if (!dashboard) return res.status(400).json({ error: "Use a valid Hybrid Funding public dashboard URL." });
+      dashboardUrl = dashboard.dashboardUrl;
+    }
+
+    const nextHandle = data.handle ? safeHandle(data.handle, `trader-${row.trader_id}`) : row.handle;
+    const duplicate = await sql`
+      SELECT id FROM trade_house_traders WHERE handle = ${nextHandle} AND id <> ${row.trader_id} LIMIT 1
+    `;
+    if (duplicate.length) return res.status(409).json({ error: "That trader handle is already in use." });
+
+    await sql`
+      UPDATE trade_house_traders
+      SET
+        display_name = COALESCE(${data.displayName || null}, display_name),
+        handle = ${nextHandle},
+        email = COALESCE(${data.email || null}, email),
+        phone = COALESCE(${data.phone || null}, phone),
+        avatar_url = CASE WHEN ${data.avatarUrl === ""} THEN NULL ELSE COALESCE(${data.avatarUrl || null}, avatar_url) END,
+        logo_url = CASE WHEN ${data.logoUrl === ""} THEN NULL ELSE COALESCE(${data.logoUrl || null}, logo_url) END,
+        updated_at = now()
+      WHERE id = ${row.trader_id}
+    `;
+
+    let accountId = row.account_id ? Number(row.account_id) : null;
+    if (!accountId) {
+      const accounts = await sql`
+        INSERT INTO trade_house_accounts (
+          trader_id, platform, account_kind, account_size, platform_login, dashboard_url, support_status
+        ) VALUES (
+          ${row.trader_id},
+          ${row.default_platform || "other"},
+          'demo',
+          ${row.battle_account_size || null},
+          ${data.platformLogin || null},
+          ${dashboardUrl},
+          'requested'
+        )
+        RETURNING id
+      `;
+      accountId = Number(accounts[0]?.id);
+      await sql`UPDATE trade_house_entries SET account_id = ${accountId} WHERE id = ${row.entry_id}`;
+    } else {
+      await sql`
+        UPDATE trade_house_accounts
+        SET
+          platform_login = COALESCE(${data.platformLogin || null}, platform_login),
+          dashboard_url = COALESCE(${dashboardUrl}, dashboard_url),
+          updated_at = now()
+        WHERE id = ${accountId}
+      `;
+    }
+
+    await sql`
+      UPDATE trade_house_entries
+      SET
+        dashboard_url = COALESCE(${dashboardUrl}, dashboard_url),
+        profile_completed_at = CASE
+          WHEN ${Boolean(data.displayName || row.display_name) && Boolean(data.email || row.email)} THEN COALESCE(profile_completed_at, now())
+          ELSE profile_completed_at
+        END
+      WHERE id = ${row.entry_id}
+    `;
+
+    const refreshed: any = await findTradeHouseInvite(token);
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).json({
+      ok: true,
+      trader: {
+        handle: refreshed.handle,
+        displayName: refreshed.display_name,
+        email: refreshed.email,
+        phone: refreshed.phone,
+        avatarUrl: refreshed.avatar_url,
+        logoUrl: refreshed.logo_url,
+      },
+      account: {
+        platform: refreshed.account_platform || refreshed.default_platform,
+        platformLogin: refreshed.platform_login,
+        dashboardUrl: refreshed.account_dashboard_url || refreshed.entry_dashboard_url,
+        supportStatus: refreshed.support_status || "requested",
+        credentialsDelivered: Boolean(refreshed.credentials_delivered),
+      },
+    });
+  } catch (error) {
+    console.error("[tradehouse/invite] update failed", error);
+    return res.status(500).json({ error: "Trader profile could not be saved." });
+  }
+});
+
+// Admin mutations are restricted to the code-authenticated beta session.
+app.use("/api/tradehouse/admin", requireTradeHouseAdmin);
+
+// Non-admin Trade House APIs can be reached by the admin session or a temporary
+// signed share link generated by the producer studio.
+app.use("/api/tradehouse", requireTradeHouseBeta);
+
+const savedBattleEntrySchema = z.object({
+  id: z.string().trim().min(1).max(80),
+  name: z.string().trim().min(1).max(80),
+  handle: z.string().trim().max(40).optional().or(z.literal("")),
+  email: z.string().trim().toLowerCase().email().optional().or(z.literal("")),
+  phone: z.string().trim().max(30).optional().or(z.literal("")),
+  dashboardUrl: z.string().trim().url().optional().or(z.literal("")),
+  avatarUrl: z.string().trim().url().optional().or(z.literal("")),
+  startingBalance: z.number().nonnegative().optional(),
+  division: z.enum(["trading", "prediction", "hybrid"]).default("trading"),
+  platform: z.enum(["matchtrader", "ctrader", "dxtrade", "dxfutures", "tickblaze", "other"]).default("other"),
+  accountKind: z.enum(["demo", "challenge", "funded"]).default("demo"),
+  platformLogin: z.string().trim().max(120).optional().or(z.literal("")),
+  supportStatus: z.enum(["requested", "created", "delivered", "verified"]).default("requested"),
+  supportReference: z.string().trim().max(160).optional().or(z.literal("")),
+  credentialsDelivered: z.boolean().default(false),
+});
+
+const savedBattleSchema = z.object({
+  roomId: z.string().trim().min(3).max(80),
+  name: z.string().trim().min(1).max(120),
+  format: z.enum(["spotlight", "sprint", "target", "prop", "league"]),
+  mode: z.enum(["1v1", "2v2", "3v3", "4v4"]),
+  accountSize: z.number().int().positive().optional(),
+  sponsorName: z.string().trim().max(120).optional().or(z.literal("")),
+  sponsorUrl: z.string().trim().url().optional().or(z.literal("")),
+  promoText: z.string().trim().max(240).optional().or(z.literal("")),
+  musicUrl: z.string().trim().url().optional().or(z.literal("")),
+  ruleConfig: z.record(z.any()).default({}),
+  status: z.enum(["scheduled", "forming", "live", "complete", "cancelled"]).default("forming"),
+  entries: z.array(savedBattleEntrySchema).min(1).max(8),
+});
+
+async function savedBattlePayload(sql: TradeHouseSql, roomId: string) {
+  const battles = await sql`
+    SELECT
+      id, room_id, name, format, mode, account_size, sponsor_name, sponsor_url,
+      promo_text, music_url, rule_config, status, started_at, ended_at, created_at
+    FROM trade_house_battles
+    WHERE room_id = ${roomId}
+    LIMIT 1
+  `;
+  const battle: any = battles[0];
+  if (!battle) return null;
+
+  const entries = await sql`
+    SELECT
+      e.id AS entry_id,
+      e.external_key,
+      e.trader_id,
+      e.account_id,
+      e.dashboard_url,
+      e.side,
+      e.slot,
+      e.starting_balance,
+      e.ending_balance,
+      e.pnl,
+      e.return_pct,
+      e.max_drawdown_pct,
+      e.placement,
+      e.season_points,
+      e.result,
+      e.verified,
+      e.invite_last_four,
+      e.invite_expires_at,
+      e.invite_revoked_at,
+      e.profile_completed_at,
+      t.handle,
+      t.display_name,
+      t.email,
+      t.phone,
+      t.avatar_url,
+      t.logo_url,
+      t.default_division,
+      t.default_platform,
+      a.account_kind,
+      a.account_size AS assigned_account_size,
+      a.platform_login,
+      a.dashboard_url AS account_dashboard_url,
+      a.support_status,
+      a.support_reference,
+      a.credentials_delivered,
+      a.issued_at,
+      a.verified_at
+    FROM trade_house_entries e
+    JOIN trade_house_traders t ON t.id = e.trader_id
+    LEFT JOIN trade_house_accounts a ON a.id = e.account_id
+    WHERE e.battle_id = ${battle.id}
+      AND e.result <> 'removed'
+    ORDER BY COALESCE(e.slot, 99), e.id
+  `;
+
+  return {
+    id: Number(battle.id),
+    roomId: battle.room_id,
+    name: battle.name,
+    format: battle.format,
+    mode: battle.mode,
+    accountSize: battle.account_size == null ? null : Number(battle.account_size),
+    sponsorName: battle.sponsor_name,
+    sponsorUrl: battle.sponsor_url,
+    promoText: battle.promo_text,
+    musicUrl: battle.music_url,
+    ruleConfig: battle.rule_config ? JSON.parse(battle.rule_config) : {},
+    status: battle.status,
+    startedAt: battle.started_at,
+    endedAt: battle.ended_at,
+    createdAt: battle.created_at,
+    entries: entries.map((row: any) => ({
+      entryId: Number(row.entry_id),
+      id: row.external_key || `entry-${row.entry_id}`,
+      traderId: Number(row.trader_id),
+      accountId: row.account_id == null ? null : Number(row.account_id),
+      name: row.display_name,
+      handle: row.handle,
+      email: row.email,
+      phone: row.phone,
+      avatarUrl: row.avatar_url,
+      logoUrl: row.logo_url,
+      dashboardUrl: row.account_dashboard_url || row.dashboard_url || "",
+      division: row.default_division,
+      platform: row.default_platform,
+      accountKind: row.account_kind || "demo",
+      accountSize: row.assigned_account_size == null ? null : Number(row.assigned_account_size),
+      platformLogin: row.platform_login,
+      supportStatus: row.support_status || "requested",
+      supportReference: row.support_reference,
+      credentialsDelivered: Boolean(row.credentials_delivered),
+      issuedAt: row.issued_at,
+      verifiedAt: row.verified_at,
+      side: row.side,
+      slot: row.slot == null ? null : Number(row.slot),
+      startingBalance: row.starting_balance == null ? null : Number(row.starting_balance),
+      endingBalance: row.ending_balance == null ? null : Number(row.ending_balance),
+      pnl: row.pnl == null ? null : Number(row.pnl),
+      returnPct: row.return_pct == null ? null : Number(row.return_pct),
+      maxDrawdownPct: row.max_drawdown_pct == null ? null : Number(row.max_drawdown_pct),
+      placement: row.placement == null ? null : Number(row.placement),
+      seasonPoints: Number(row.season_points || 0),
+      result: row.result,
+      verified: Boolean(row.verified),
+      inviteLastFour: row.invite_last_four,
+      inviteExpiresAt: row.invite_expires_at,
+      inviteRevokedAt: row.invite_revoked_at,
+      profileCompletedAt: row.profile_completed_at,
+    })),
+  };
+}
+
+app.get("/api/tradehouse/admin/battles", async (_req: Request, res: Response) => {
+  try {
+    const sql = await ensureTradeHousePersistence();
+    const rows = await sql`
+      SELECT
+        b.id, b.room_id, b.name, b.format, b.mode, b.status, b.account_size,
+        b.created_at, b.started_at, b.ended_at,
+        COUNT(e.id) FILTER (WHERE e.result <> 'removed')::int AS entry_count
+      FROM trade_house_battles b
+      LEFT JOIN trade_house_entries e ON e.battle_id = b.id
+      GROUP BY b.id
+      ORDER BY b.created_at DESC
+      LIMIT 50
+    `;
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).json({
+      battles: rows.map((row: any) => ({
+        id: Number(row.id),
+        roomId: row.room_id,
+        name: row.name,
+        format: row.format,
+        mode: row.mode,
+        status: row.status,
+        accountSize: row.account_size == null ? null : Number(row.account_size),
+        entryCount: Number(row.entry_count || 0),
+        createdAt: row.created_at,
+        startedAt: row.started_at,
+        endedAt: row.ended_at,
+      })),
+    });
+  } catch (error) {
+    console.error("[tradehouse/admin] list battles failed", error);
+    return res.status(500).json({ error: "Saved battles are unavailable." });
+  }
+});
+
+app.get("/api/tradehouse/admin/battles/:roomId", async (req: Request, res: Response) => {
+  try {
+    const sql = await ensureTradeHousePersistence();
+    const battle = await savedBattlePayload(sql, String(req.params.roomId || ""));
+    if (!battle) return res.status(404).json({ error: "Battle not found." });
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).json({ battle });
+  } catch (error) {
+    console.error("[tradehouse/admin] load battle failed", error);
+    return res.status(500).json({ error: "Battle could not be loaded." });
+  }
+});
+
+app.post("/api/tradehouse/admin/battles", async (req: Request, res: Response) => {
+  try {
+    const parsed = savedBattleSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Invalid battle", details: parsed.error.flatten() });
+    }
+    const data = parsed.data;
+    const sql = await ensureTradeHousePersistence();
+    const battles = await sql`
+      INSERT INTO trade_house_battles (
+        room_id, name, format, mode, account_size, sponsor_name, sponsor_url,
+        promo_text, music_url, rule_config, status
+      ) VALUES (
+        ${data.roomId}, ${data.name}, ${data.format}, ${data.mode}, ${data.accountSize || null},
+        ${data.sponsorName || null}, ${data.sponsorUrl || null}, ${data.promoText || null},
+        ${data.musicUrl || null}, ${JSON.stringify(data.ruleConfig || {})}, ${data.status}
+      )
+      ON CONFLICT (room_id) DO UPDATE SET
+        name = EXCLUDED.name,
+        format = EXCLUDED.format,
+        mode = EXCLUDED.mode,
+        account_size = EXCLUDED.account_size,
+        sponsor_name = EXCLUDED.sponsor_name,
+        sponsor_url = EXCLUDED.sponsor_url,
+        promo_text = EXCLUDED.promo_text,
+        music_url = EXCLUDED.music_url,
+        rule_config = EXCLUDED.rule_config,
+        status = EXCLUDED.status
+      RETURNING id
+    `;
+    const battleId = Number(battles[0]?.id);
+    const activeKeys = new Set(data.entries.map((entry) => entry.id));
+    const inviteUrls: Array<{ entryId: number; rosterId: string; name: string; inviteUrl: string; lastFour: string }> = [];
+
+    for (let index = 0; index < data.entries.length; index += 1) {
+      const entry = data.entries[index];
+      const side = index % 2 === 0 ? "left" : "right";
+      const slot = Math.floor(index / 2);
+
+      let dashboardUrl: string | null = null;
+      if (entry.dashboardUrl) {
+        const dashboard = resolvePublicDashboard({ dashboardUrl: entry.dashboardUrl });
+        if (!dashboard) return res.status(400).json({ error: `Invalid Hybrid public dashboard for ${entry.name}.` });
+        dashboardUrl = dashboard.dashboardUrl;
+      }
+
+      const existingRows = await sql`
+        SELECT id, trader_id, account_id, invite_token_hash
+        FROM trade_house_entries
+        WHERE battle_id = ${battleId} AND external_key = ${entry.id}
+        LIMIT 1
+      `;
+      const existing: any = existingRows[0];
+
+      let traderId: number;
+      let accountId: number | null;
+      if (existing) {
+        traderId = Number(existing.trader_id);
+        accountId = existing.account_id == null ? null : Number(existing.account_id);
+      } else {
+        let traderRows: any[] = [];
+        if (entry.email) {
+          traderRows = await sql`
+            SELECT id FROM trade_house_traders WHERE lower(email) = lower(${entry.email}) LIMIT 1
+          `;
+        }
+
+        if (traderRows.length) {
+          traderId = Number(traderRows[0].id);
+        } else {
+          const baseHandle = safeHandle(entry.handle || entry.name, `trader-${entry.id.slice(-6)}`);
+          let handle = baseHandle;
+          const collision = await sql`SELECT id FROM trade_house_traders WHERE handle = ${handle} LIMIT 1`;
+          if (collision.length) handle = `${baseHandle.slice(0, 30)}-${randomBytes(3).toString("hex")}`;
+          traderRows = await sql`
+            INSERT INTO trade_house_traders (
+              handle, display_name, email, phone, avatar_url, default_division, default_platform
+            ) VALUES (
+              ${handle}, ${entry.name}, ${entry.email || null}, ${entry.phone || null},
+              ${entry.avatarUrl || null}, ${entry.division}, ${entry.platform}
+            )
+            RETURNING id
+          `;
+          traderId = Number(traderRows[0].id);
+        }
+        accountId = null;
+      }
+
+      await sql`
+        UPDATE trade_house_traders
+        SET
+          display_name = ${entry.name},
+          email = COALESCE(${entry.email || null}, email),
+          phone = COALESCE(${entry.phone || null}, phone),
+          avatar_url = COALESCE(${entry.avatarUrl || null}, avatar_url),
+          default_division = ${entry.division},
+          default_platform = ${entry.platform},
+          updated_at = now()
+        WHERE id = ${traderId}
+      `;
+
+      if (accountId) {
+        await sql`
+          UPDATE trade_house_accounts
+          SET
+            platform = ${entry.platform},
+            account_kind = ${entry.accountKind},
+            account_size = COALESCE(${data.accountSize || null}, account_size),
+            platform_login = COALESCE(${entry.platformLogin || null}, platform_login),
+            dashboard_url = COALESCE(${dashboardUrl}, dashboard_url),
+            support_status = ${entry.supportStatus},
+            support_reference = COALESCE(${entry.supportReference || null}, support_reference),
+            credentials_delivered = ${entry.credentialsDelivered},
+            issued_at = CASE WHEN ${entry.supportStatus !== "requested"} THEN COALESCE(issued_at, now()) ELSE issued_at END,
+            verified_at = CASE WHEN ${entry.supportStatus === "verified"} THEN COALESCE(verified_at, now()) ELSE verified_at END,
+            updated_at = now()
+          WHERE id = ${accountId}
+        `;
+      } else {
+        const accounts = await sql`
+          INSERT INTO trade_house_accounts (
+            trader_id, platform, account_kind, account_size, platform_login, dashboard_url,
+            support_status, support_reference, credentials_delivered, issued_at, verified_at
+          ) VALUES (
+            ${traderId}, ${entry.platform}, ${entry.accountKind}, ${data.accountSize || null},
+            ${entry.platformLogin || null}, ${dashboardUrl}, ${entry.supportStatus},
+            ${entry.supportReference || null}, ${entry.credentialsDelivered},
+            CASE WHEN ${entry.supportStatus !== "requested"} THEN now() ELSE NULL END,
+            CASE WHEN ${entry.supportStatus === "verified"} THEN now() ELSE NULL END
+          )
+          RETURNING id
+        `;
+        accountId = Number(accounts[0].id);
+      }
+
+      if (existing) {
+        await sql`
+          UPDATE trade_house_entries
+          SET
+            trader_id = ${traderId},
+            account_id = ${accountId},
+            dashboard_url = COALESCE(${dashboardUrl}, dashboard_url),
+            side = ${side},
+            slot = ${slot},
+            starting_balance = COALESCE(${entry.startingBalance ?? null}, starting_balance),
+            result = CASE WHEN result = 'removed' THEN 'active' ELSE result END
+          WHERE id = ${existing.id}
+        `;
+      } else {
+        const invite = tradeHouseInviteToken();
+        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        const entryRows = await sql`
+          INSERT INTO trade_house_entries (
+            battle_id, external_key, trader_id, account_id, dashboard_url,
+            invite_token_hash, invite_last_four, invite_expires_at,
+            side, slot, starting_balance, result, verified
+          ) VALUES (
+            ${battleId}, ${entry.id}, ${traderId}, ${accountId}, ${dashboardUrl},
+            ${invite.hash}, ${invite.lastFour}, ${expiresAt},
+            ${side}, ${slot}, ${entry.startingBalance ?? null}, 'active', false
+          )
+          RETURNING id
+        `;
+        const entryId = Number(entryRows[0].id);
+        inviteUrls.push({
+          entryId,
+          rosterId: entry.id,
+          name: entry.name,
+          inviteUrl: `${requestOrigin(req)}/tradehouse/join/${invite.token}`,
+          lastFour: invite.lastFour,
+        });
+      }
+    }
+
+    const currentEntries = await sql`
+      SELECT id, external_key FROM trade_house_entries WHERE battle_id = ${battleId} AND result <> 'removed'
+    `;
+    for (const row of currentEntries as any[]) {
+      if (row.external_key && !activeKeys.has(String(row.external_key))) {
+        await sql`UPDATE trade_house_entries SET result = 'removed' WHERE id = ${row.id}`;
+      }
+    }
+
+    const battle = await savedBattlePayload(sql, data.roomId);
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).json({ ok: true, battle, newInvites: inviteUrls });
+  } catch (error) {
+    console.error("[tradehouse/admin] save battle failed", error);
+    return res.status(500).json({ error: "Battle could not be saved." });
+  }
+});
+
+app.post("/api/tradehouse/admin/entries/:entryId/invite", async (req: Request, res: Response) => {
+  try {
+    const entryId = Number(req.params.entryId);
+    if (!Number.isFinite(entryId)) return res.status(400).json({ error: "Invalid entry." });
+    const sql = await ensureTradeHousePersistence();
+    const rows = await sql`
+      SELECT e.id, t.display_name
+      FROM trade_house_entries e
+      JOIN trade_house_traders t ON t.id = e.trader_id
+      WHERE e.id = ${entryId}
+      LIMIT 1
+    `;
+    if (!rows.length) return res.status(404).json({ error: "Entry not found." });
+    const invite = tradeHouseInviteToken();
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    await sql`
+      UPDATE trade_house_entries
+      SET
+        invite_token_hash = ${invite.hash},
+        invite_last_four = ${invite.lastFour},
+        invite_expires_at = ${expiresAt},
+        invite_revoked_at = NULL
+      WHERE id = ${entryId}
+    `;
+    return res.status(200).json({
+      ok: true,
+      inviteUrl: `${requestOrigin(req)}/tradehouse/join/${invite.token}`,
+      lastFour: invite.lastFour,
+      expiresAt,
+    });
+  } catch (error) {
+    console.error("[tradehouse/admin] invite generation failed", error);
+    return res.status(500).json({ error: "Invite could not be generated." });
+  }
+});
+
+const accountAdminSchema = z.object({
+  platform: z.enum(["matchtrader", "ctrader", "dxtrade", "dxfutures", "tickblaze", "other"]).optional(),
+  accountKind: z.enum(["demo", "challenge", "funded"]).optional(),
+  accountSize: z.number().int().positive().optional(),
+  platformLogin: z.string().trim().max(120).optional().or(z.literal("")),
+  dashboardUrl: z.string().trim().url().optional().or(z.literal("")),
+  supportStatus: z.enum(["requested", "created", "delivered", "verified"]).optional(),
+  supportReference: z.string().trim().max(160).optional().or(z.literal("")),
+  credentialsDelivered: z.boolean().optional(),
+});
+
+app.patch("/api/tradehouse/admin/entries/:entryId/account", async (req: Request, res: Response) => {
+  try {
+    const entryId = Number(req.params.entryId);
+    if (!Number.isFinite(entryId)) return res.status(400).json({ error: "Invalid entry." });
+    const parsed = accountAdminSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: "Invalid account update", details: parsed.error.flatten() });
+    const data = parsed.data;
+    const sql = await ensureTradeHousePersistence();
+    const rows = await sql`
+      SELECT e.id, e.account_id, e.trader_id, e.dashboard_url, t.default_platform
+      FROM trade_house_entries e
+      JOIN trade_house_traders t ON t.id = e.trader_id
+      WHERE e.id = ${entryId}
+      LIMIT 1
+    `;
+    const row: any = rows[0];
+    if (!row) return res.status(404).json({ error: "Entry not found." });
+
+    let dashboardUrl: string | null = null;
+    if (data.dashboardUrl) {
+      const dashboard = resolvePublicDashboard({ dashboardUrl: data.dashboardUrl });
+      if (!dashboard) return res.status(400).json({ error: "Use a valid Hybrid Funding public dashboard URL." });
+      dashboardUrl = dashboard.dashboardUrl;
+    }
+
+    let accountId = row.account_id == null ? null : Number(row.account_id);
+    if (!accountId) {
+      const created = await sql`
+        INSERT INTO trade_house_accounts (
+          trader_id, platform, account_kind, account_size, platform_login, dashboard_url,
+          support_status, support_reference, credentials_delivered, issued_at, verified_at
+        ) VALUES (
+          ${row.trader_id}, ${data.platform || row.default_platform || "other"}, ${data.accountKind || "demo"},
+          ${data.accountSize || null}, ${data.platformLogin || null}, ${dashboardUrl},
+          ${data.supportStatus || "requested"}, ${data.supportReference || null}, ${Boolean(data.credentialsDelivered)},
+          CASE WHEN ${Boolean(data.supportStatus && data.supportStatus !== "requested")} THEN now() ELSE NULL END,
+          CASE WHEN ${data.supportStatus === "verified"} THEN now() ELSE NULL END
+        )
+        RETURNING id
+      `;
+      accountId = Number(created[0].id);
+      await sql`UPDATE trade_house_entries SET account_id = ${accountId} WHERE id = ${entryId}`;
+    } else {
+      await sql`
+        UPDATE trade_house_accounts
+        SET
+          platform = COALESCE(${data.platform || null}, platform),
+          account_kind = COALESCE(${data.accountKind || null}, account_kind),
+          account_size = COALESCE(${data.accountSize || null}, account_size),
+          platform_login = CASE WHEN ${data.platformLogin === ""} THEN NULL ELSE COALESCE(${data.platformLogin || null}, platform_login) END,
+          dashboard_url = COALESCE(${dashboardUrl}, dashboard_url),
+          support_status = COALESCE(${data.supportStatus || null}, support_status),
+          support_reference = CASE WHEN ${data.supportReference === ""} THEN NULL ELSE COALESCE(${data.supportReference || null}, support_reference) END,
+          credentials_delivered = COALESCE(${data.credentialsDelivered ?? null}, credentials_delivered),
+          issued_at = CASE WHEN ${Boolean(data.supportStatus && data.supportStatus !== "requested")} THEN COALESCE(issued_at, now()) ELSE issued_at END,
+          verified_at = CASE WHEN ${data.supportStatus === "verified"} THEN COALESCE(verified_at, now()) ELSE verified_at END,
+          updated_at = now()
+        WHERE id = ${accountId}
+      `;
+    }
+
+    if (dashboardUrl) {
+      await sql`UPDATE trade_house_entries SET dashboard_url = ${dashboardUrl} WHERE id = ${entryId}`;
+    }
+
+    return res.status(200).json({ ok: true, accountId });
+  } catch (error) {
+    console.error("[tradehouse/admin] account update failed", error);
+    return res.status(500).json({ error: "Account assignment could not be saved." });
+  }
+});
+
 
 const leadSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(80),
@@ -322,6 +1420,7 @@ const tradeHouseRosterSchema = z.array(
     name: z.string().trim().min(1).max(40),
     accountId: z.string().trim().min(1).max(160).optional(),
     dashboardUrl: z.string().url().optional(),
+    avatarUrl: z.string().url().optional(),
     startingBalance: z.number().positive().optional(),
     division: z.enum(["trading", "prediction", "hybrid"]).default("trading"),
     platform: z.enum(["matchtrader", "ctrader", "dxtrade", "dxfutures", "tickblaze", "other"]).optional(),
@@ -348,6 +1447,7 @@ const quickBattleEntrySchema = z.object({
   id: z.string().trim().min(1).max(64),
   name: z.string().trim().min(1).max(40),
   dashboardUrl: z.string().url(),
+  avatarUrl: z.string().url().optional(),
   startingBalance: z.number().nonnegative().optional(),
   division: z.enum(["trading", "prediction", "hybrid"]).default("trading"),
   platform: z.enum(["matchtrader", "ctrader", "dxtrade", "dxfutures", "tickblaze", "other"]).optional(),
@@ -558,6 +1658,7 @@ app.post("/api/tradehouse/quick-leaderboard", async (req: Request, res: Response
           platform: entry.platform ?? "other",
           accountId: dashboard.accountId,
           dashboardUrl: dashboard.dashboardUrl,
+          avatarUrl: entry.avatarUrl,
           ...stats,
           verified: true,
           status: stats.openPositionCount > 0 ? "live" as const : "flat" as const,
@@ -574,6 +1675,7 @@ app.post("/api/tradehouse/quick-leaderboard", async (req: Request, res: Response
           platform: entry.platform ?? "other",
           accountId: "",
           dashboardUrl: entry.dashboardUrl,
+          avatarUrl: entry.avatarUrl,
           startingBalance: entry.startingBalance ?? 0,
           balance: 0,
           equity: 0,
@@ -628,6 +1730,7 @@ app.get("/api/tradehouse/leaderboard", async (_req: Request, res: Response) => {
           rank: 0,
           accountId: "",
           dashboardUrl: entry.dashboardUrl || "",
+          avatarUrl: entry.avatarUrl,
           startingBalance: entry.startingBalance,
           division: entry.division,
           platform: entry.platform ?? "other",
@@ -655,6 +1758,7 @@ app.get("/api/tradehouse/leaderboard", async (_req: Request, res: Response) => {
           rank: 0,
           accountId: dashboard.accountId,
           dashboardUrl: dashboard.dashboardUrl,
+          avatarUrl: entry.avatarUrl,
           startingBalance: entry.startingBalance,
           division: entry.division,
           platform: entry.platform ?? "other",

@@ -7,6 +7,8 @@ import {
   Plus,
   Radio,
   RefreshCw,
+  Save,
+  Database,
   ShieldCheck,
   Swords,
   Trash2,
@@ -28,6 +30,33 @@ type Payload = {
   season: { name: string; status: string };
   standings: Standing[];
 };
+
+type AdminEntryMeta = {
+  entryId?: number;
+  handle?: string;
+  email?: string;
+  phone?: string;
+  accountKind?: "demo" | "challenge" | "funded";
+  platformLogin?: string;
+  supportStatus?: "requested" | "created" | "delivered" | "verified";
+  supportReference?: string;
+  credentialsDelivered?: boolean;
+  inviteLastFour?: string;
+  inviteUrl?: string;
+};
+
+type SavedBattleSummary = {
+  id: number;
+  roomId: string;
+  name: string;
+  format: BattleFormat;
+  mode: string;
+  status: string;
+  accountSize?: number | null;
+  entryCount: number;
+  createdAt: string;
+};
+
 
 function newRoomId() {
   return Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -70,13 +99,256 @@ const TradeHouseStudio: React.FC = () => {
   const [promoText, setPromoText] = useState("Instant Funding · Trade House · Verified Hybrid performance");
   const [sponsorName, setSponsorName] = useState("");
   const [sponsorUrl, setSponsorUrl] = useState("");
+  const [musicUrl, setMusicUrl] = useState("");
+  const [shareAccess, setShareAccess] = useState("");
   const [roomId, setRoomId] = useState(() => newRoomId());
   const [quickStatus, setQuickStatus] = useState("");
+  const [saveStatus, setSaveStatus] = useState("");
+  const [savedBattles, setSavedBattles] = useState<SavedBattleSummary[]>([]);
+  const [adminMeta, setAdminMeta] = useState<Record<string, AdminEntryMeta>>({});
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
   const [quickEntries, setQuickEntries] = useState<QuickBattleEntry[]>([
     { id: "quick-1", name: "Trader A", dashboardUrl: "", division: "trading", platform: "matchtrader" },
     { id: "quick-2", name: "Trader B", dashboardUrl: "", division: "trading", platform: "ctrader" },
   ]);
+
+  const refreshSavedBattles = async () => {
+    try {
+      const response = await fetch("/api/tradehouse/admin/battles", {
+        credentials: "include",
+        cache: "no-store",
+      });
+      if (!response.ok) return;
+      const body = await response.json();
+      setSavedBattles(Array.isArray(body?.battles) ? body.battles : []);
+    } catch {
+      // Admin beta may still be configuring its database on first load.
+    }
+  };
+
+  const loadSavedBattle = async (savedRoomId: string) => {
+    setSaveStatus("Loading saved battle…");
+    try {
+      const response = await fetch(`/api/tradehouse/admin/battles/${encodeURIComponent(savedRoomId)}`, {
+        credentials: "include",
+        cache: "no-store",
+      });
+      const body = await response.json();
+      if (!response.ok || !body?.battle) throw new Error(body?.error || "Could not load battle");
+      const battle = body.battle;
+
+      setRoomId(battle.roomId);
+      setSeasonName(battle.name || "Trade House Battle");
+      setBattleFormat((battle.format || "spotlight") as BattleFormat);
+      setAccountSize(Number(battle.accountSize || 25000));
+      setSponsorName(battle.sponsorName || "");
+      setSponsorUrl(battle.sponsorUrl || "");
+      setPromoText(battle.promoText || "Instant Funding · Trade House · Verified Hybrid performance");
+      setMusicUrl(battle.musicUrl || "");
+
+      const rule = battle.ruleConfig || {};
+      if (Number.isFinite(Number(rule.durationSeconds))) setDurationMinutes(Math.max(1, Number(rule.durationSeconds) / 60));
+      if (Number.isFinite(Number(rule.targetReturnPct))) setTargetPct(Number(rule.targetReturnPct));
+      if (Number.isFinite(Number(rule.profitTargetPct))) setProfitTargetPct(Number(rule.profitTargetPct));
+      if (Number.isFinite(Number(rule.maxDrawdownPct))) setMaxDDPct(Number(rule.maxDrawdownPct));
+      if (rule.endsAt) {
+        const date = new Date(rule.endsAt);
+        if (!Number.isNaN(date.getTime())) {
+          date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+          setLeagueEndsAt(date.toISOString().slice(0, 16));
+        }
+      }
+
+      const entries: QuickBattleEntry[] = (battle.entries || []).slice(0, 8).map((entry: any) => ({
+        id: entry.id,
+        name: entry.name,
+        dashboardUrl: entry.dashboardUrl || "",
+        avatarUrl: entry.avatarUrl || undefined,
+        startingBalance: entry.startingBalance ?? undefined,
+        division: entry.division || "trading",
+        platform: entry.platform || "other",
+      }));
+      if (entries.length) setQuickEntries(entries);
+
+      const meta: Record<string, AdminEntryMeta> = {};
+      (battle.entries || []).forEach((entry: any) => {
+        meta[entry.id] = {
+          entryId: entry.entryId,
+          handle: entry.handle || "",
+          email: entry.email || "",
+          phone: entry.phone || "",
+          accountKind: entry.accountKind || "demo",
+          platformLogin: entry.platformLogin || "",
+          supportStatus: entry.supportStatus || "requested",
+          supportReference: entry.supportReference || "",
+          credentialsDelivered: Boolean(entry.credentialsDelivered),
+          inviteLastFour: entry.inviteLastFour || "",
+        };
+      });
+      setAdminMeta(meta);
+      setQuickPreview(null);
+      setQuickStatus("");
+      setSaveStatus(`Loaded ${battle.name} from the Trade House database.`);
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        url.searchParams.set("battle", battle.roomId);
+        window.history.replaceState(null, "", `${url.pathname}?${url.searchParams.toString()}`);
+      }
+    } catch (error) {
+      setSaveStatus(error instanceof Error ? error.message : "Could not load battle.");
+    }
+  };
+
+  const saveBattle = async () => {
+    if (!quickEntries.length) {
+      setSaveStatus("Add at least one contestant before saving.");
+      return;
+    }
+    setSaveStatus("Saving battle, roster, account assignments, and invite state…");
+    const mode = quickEntries.length <= 2 ? "1v1" : quickEntries.length <= 4 ? "2v2" : quickEntries.length <= 6 ? "3v3" : "4v4";
+    const ruleConfig = {
+      format: battleFormat,
+      label: BATTLE_PRESETS[battleFormat].label,
+      durationSeconds: Math.max(60, Math.round(durationMinutes * 60)),
+      targetReturnPct: targetPct,
+      profitTargetPct,
+      maxDrawdownPct: maxDDPct,
+      accountSize,
+      endsAt: battleFormat === "league" && leagueEndsAt ? new Date(leagueEndsAt).toISOString() : null,
+    };
+    try {
+      const response = await fetch("/api/tradehouse/admin/battles", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roomId,
+          name: seasonName,
+          format: battleFormat,
+          mode,
+          accountSize,
+          sponsorName,
+          sponsorUrl,
+          promoText,
+          musicUrl,
+          ruleConfig,
+          status: "forming",
+          entries: quickEntries.slice(0, 8).map((entry) => {
+            const meta = adminMeta[entry.id] || {};
+            return {
+              id: entry.id,
+              name: entry.name,
+              handle: meta.handle || "",
+              email: meta.email || "",
+              phone: meta.phone || "",
+              dashboardUrl: entry.dashboardUrl || "",
+              avatarUrl: entry.avatarUrl || "",
+              startingBalance: entry.startingBalance,
+              division: entry.division || "trading",
+              platform: entry.platform || "other",
+              accountKind: meta.accountKind || "demo",
+              platformLogin: meta.platformLogin || "",
+              supportStatus: meta.supportStatus || "requested",
+              supportReference: meta.supportReference || "",
+              credentialsDelivered: Boolean(meta.credentialsDelivered),
+            };
+          }),
+        }),
+      });
+      const body = await response.json();
+      if (!response.ok || !body?.battle) throw new Error(body?.error || "Battle save failed");
+
+      const nextMeta: Record<string, AdminEntryMeta> = {};
+      (body.battle.entries || []).forEach((entry: any) => {
+        nextMeta[entry.id] = {
+          entryId: entry.entryId,
+          handle: entry.handle || "",
+          email: entry.email || "",
+          phone: entry.phone || "",
+          accountKind: entry.accountKind || "demo",
+          platformLogin: entry.platformLogin || "",
+          supportStatus: entry.supportStatus || "requested",
+          supportReference: entry.supportReference || "",
+          credentialsDelivered: Boolean(entry.credentialsDelivered),
+          inviteLastFour: entry.inviteLastFour || "",
+        };
+      });
+      (body.newInvites || []).forEach((invite: any) => {
+        nextMeta[invite.rosterId] = {
+          ...(nextMeta[invite.rosterId] || {}),
+          entryId: invite.entryId,
+          inviteUrl: invite.inviteUrl,
+          inviteLastFour: invite.lastFour,
+        };
+      });
+      setAdminMeta(nextMeta);
+      setSaveStatus(
+        body.newInvites?.length
+          ? `Saved. ${body.newInvites.length} secure trader invite${body.newInvites.length === 1 ? "" : "s"} created.`
+          : "Saved to the Trade House database. This battle will now survive refreshes and other devices.",
+      );
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        url.searchParams.set("battle", roomId);
+        window.history.replaceState(null, "", `${url.pathname}?${url.searchParams.toString()}`);
+      }
+      await refreshSavedBattles();
+    } catch (error) {
+      setSaveStatus(error instanceof Error ? error.message : "Battle could not be saved.");
+    }
+  };
+
+  const regenerateInvite = async (rosterId: string) => {
+    const meta = adminMeta[rosterId];
+    if (!meta?.entryId) {
+      setSaveStatus("Save this battle first so the trader has a persistent entry.");
+      return;
+    }
+    try {
+      const response = await fetch(`/api/tradehouse/admin/entries/${meta.entryId}/invite`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body?.error || "Invite could not be generated");
+      setAdminMeta((current) => ({
+        ...current,
+        [rosterId]: {
+          ...current[rosterId],
+          inviteUrl: body.inviteUrl,
+          inviteLastFour: body.lastFour,
+        },
+      }));
+      setSaveStatus("A new trader invite was generated. The previous invite is no longer valid.");
+    } catch (error) {
+      setSaveStatus(error instanceof Error ? error.message : "Invite could not be generated.");
+    }
+  };
+
+  useEffect(() => {
+    void refreshSavedBattles();
+    if (typeof window !== "undefined") {
+      const savedRoomId = new URLSearchParams(window.location.search).get("battle");
+      if (savedRoomId) void loadSavedBattle(savedRoomId);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/tradehouse/beta/link-token", {
+      method: "POST",
+      credentials: "include",
+      cache: "no-store",
+    })
+      .then(async (response) => {
+        if (!response.ok) return null;
+        return response.json();
+      })
+      .then((body) => {
+        if (!body?.token) return;
+        setShareAccess(body.token);
+      })
+      .catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     fetch("/api/tradehouse/leaderboard", { cache: "no-store" })
@@ -92,12 +364,15 @@ const TradeHouseStudio: React.FC = () => {
   }, []);
 
   const base = typeof window !== "undefined" ? window.location.origin : "";
-  const urls = useMemo(() => ({
-    leaderboard: `${base}/tradehouse/broadcast/leaderboard`,
-    scorebug: `${base}/tradehouse/broadcast/scorebug`,
-    duel: `${base}/tradehouse/broadcast/duel?left=${encodeURIComponent(left)}&right=${encodeURIComponent(right)}`,
-    trader: `${base}/tradehouse/broadcast/trader?id=${encodeURIComponent(solo)}`,
-  }), [base, left, right, solo]);
+  const urls = useMemo(() => {
+    const access = shareAccess ? { access: shareAccess } : {};
+    return {
+      leaderboard: `${base}/tradehouse/broadcast/leaderboard?${new URLSearchParams(access)}`,
+      scorebug: `${base}/tradehouse/broadcast/scorebug?${new URLSearchParams(access)}`,
+      duel: `${base}/tradehouse/broadcast/duel?${new URLSearchParams({ left, right, ...access })}`,
+      trader: `${base}/tradehouse/broadcast/trader?${new URLSearchParams({ id: solo, ...access })}`,
+    };
+  }, [base, left, right, solo, shareAccess]);
 
   const roster = demo ? rehearsalFeed().standings : feed?.standings ?? [];
   const stageUrl = (layout: string, overlay = false) =>
@@ -126,8 +401,10 @@ const TradeHouseStudio: React.FC = () => {
     }
     if (sponsorName.trim()) params.sponsor = sponsorName.trim();
     if (sponsorUrl.trim()) params.sponsorUrl = sponsorUrl.trim();
+    if (musicUrl.trim()) params.music = musicUrl.trim();
+    if (shareAccess) params.access = shareAccess;
     return params;
-  }, [battleFormat, durationMinutes, targetPct, profitTargetPct, maxDDPct, accountSize, promoText, sponsorName, sponsorUrl, leagueEndsAt]);
+  }, [battleFormat, durationMinutes, targetPct, profitTargetPct, maxDDPct, accountSize, promoText, sponsorName, sponsorUrl, musicUrl, leagueEndsAt, shareAccess]);
 
   const readyQuickEntries = useMemo(() => quickEntries.filter(validEntry).slice(0, 8), [quickEntries]);
   const quickEncoded = useMemo(
@@ -144,9 +421,18 @@ const TradeHouseStudio: React.FC = () => {
     })}`;
   const quickTvUrl = `${base}/tradehouse/tv?${new URLSearchParams({ quick: quickEncoded, season: seasonName, ...experienceParams })}`;
 
-  const roomMode = readyQuickEntries.length <= 2 ? "1v1" : readyQuickEntries.length <= 4 ? "2v2" : "3v3";
+  const roomMode = quickEntries.length <= 2 ? "1v1" : quickEntries.length <= 4 ? "2v2" : quickEntries.length <= 6 ? "3v3" : "4v4";
+  const producerLink = `${base}/battles/room/${roomId}?${new URLSearchParams({
+    producer: "1",
+    mode: roomMode,
+    name: "Producer",
+    quick: quickEncoded,
+    season: seasonName,
+    ...experienceParams,
+  })}`;
+
   const participantLinks = useMemo(
-    () => readyQuickEntries.slice(0, 6).map((entry, index) => {
+    () => readyQuickEntries.slice(0, 8).map((entry, index) => {
       const side = index % 2 === 0 ? "left" : "right";
       const slot = Math.floor(index / 2);
       const params = new URLSearchParams({
@@ -267,6 +553,43 @@ const TradeHouseStudio: React.FC = () => {
       <section className="py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-5xl space-y-6">
+
+            <div className="rounded-2xl border border-white/10 bg-[#0d1626] p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 font-['Orbitron'] text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
+                    <Database className="h-4 w-4" /> Saved Trade House
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-500">
+                    Battle setup now lives in the database, not just this browser. Open the same battle from another device and continue where you left off.
+                  </p>
+                </div>
+                <button onClick={() => void refreshSavedBattles()} className="rounded-xl border border-white/10 px-3 py-2 text-[9px] font-bold text-slate-400">
+                  REFRESH
+                </button>
+              </div>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {savedBattles.slice(0, 9).map((battle) => (
+                  <button
+                    key={battle.id}
+                    onClick={() => void loadSavedBattle(battle.roomId)}
+                    className={`rounded-xl border p-3 text-left transition-all ${battle.roomId === roomId ? "border-cyan-300/30 bg-cyan-300/[0.05]" : "border-white/[0.07] bg-black/15 hover:border-white/15"}`}
+                  >
+                    <div className="truncate font-['Orbitron'] text-[10px] font-black text-white">{battle.name}</div>
+                    <div className="mt-1 text-[9px] uppercase tracking-wider text-slate-600">
+                      {battle.mode} · {battle.format} · {battle.entryCount} traders
+                    </div>
+                    <div className="mt-2 font-mono text-[9px] text-violet-300">{battle.roomId}</div>
+                  </button>
+                ))}
+                {!savedBattles.length && (
+                  <div className="rounded-xl border border-dashed border-white/10 p-4 text-xs text-slate-600 sm:col-span-2 lg:col-span-3">
+                    No saved battles yet. Configure the first battle below, then press Save Battle.
+                  </div>
+                )}
+              </div>
+              {saveStatus && <div className="mt-4 rounded-xl border border-cyan-300/15 bg-cyan-300/[0.04] p-3 text-xs text-cyan-100">{saveStatus}</div>}
+            </div>
 
             <div className="overflow-hidden rounded-3xl border border-cyan-300/30 bg-[linear-gradient(145deg,rgba(8,16,28,.98),rgba(12,15,33,.98))] shadow-[0_24px_80px_rgba(0,255,255,.08)]">
               <div className="border-b border-white/10 bg-[radial-gradient(circle_at_10%_0%,rgba(0,255,255,.12),transparent_35%),radial-gradient(circle_at_90%_0%,rgba(138,43,226,.14),transparent_35%)] p-6 sm:p-8">
@@ -392,12 +715,17 @@ const TradeHouseStudio: React.FC = () => {
                       Sponsor URL
                       <input value={sponsorUrl} onChange={(e) => setSponsorUrl(e.target.value)} placeholder="https://…" className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
                     </label>
+                    <label className="text-xs text-slate-500 lg:col-span-3">
+                      House music URL
+                      <input value={musicUrl} onChange={(e) => setMusicUrl(e.target.value)} placeholder="Direct audio URL for producer/OBS playback" className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white" />
+                      <span className="mt-1 block text-[9px] text-slate-600">Use music you have rights to broadcast. It plays in the producer browser, not through trader microphones.</span>
+                    </label>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   {quickEntries.map((entry, index) => (
-                    <div key={entry.id} className="grid gap-3 rounded-2xl border border-white/10 bg-black/15 p-4 lg:grid-cols-[1fr_150px_2fr_160px_auto] lg:items-end">
+                    <div key={entry.id} className="grid gap-3 rounded-2xl border border-white/10 bg-black/15 p-4 lg:grid-cols-[1fr_150px_1.2fr_2fr_160px_auto] lg:items-end">
                       <label className="text-xs text-slate-500">
                         Trader
                         <input
@@ -417,6 +745,15 @@ const TradeHouseStudio: React.FC = () => {
                           <option value="prediction">Prediction</option>
                           <option value="hybrid">Hybrid</option>
                         </select>
+                      </label>
+                      <label className="text-xs text-slate-500">
+                        Avatar / logo URL
+                        <input
+                          value={entry.avatarUrl || ""}
+                          onChange={(e) => updateQuickEntry(index, { avatarUrl: e.target.value.trim() || undefined })}
+                          placeholder="https://…"
+                          className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-xs text-white outline-none focus:border-cyan-300/60"
+                        />
                       </label>
                       <label className="text-xs text-slate-500">
                         Hybrid public dashboard
@@ -450,6 +787,87 @@ const TradeHouseStudio: React.FC = () => {
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
+
+                      <details className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-3 lg:col-span-6">
+                        <summary className="cursor-pointer font-['Orbitron'] text-[9px] font-black uppercase tracking-[0.12em] text-violet-300">
+                          Admin account + contact details
+                        </summary>
+                        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                          <label className="text-xs text-slate-500">
+                            Email
+                            <input
+                              type="email"
+                              value={adminMeta[entry.id]?.email || ""}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], email: e.target.value } }))}
+                              placeholder="Trader email"
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            />
+                          </label>
+                          <label className="text-xs text-slate-500">
+                            Phone
+                            <input
+                              value={adminMeta[entry.id]?.phone || ""}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], phone: e.target.value } }))}
+                              placeholder="Optional"
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            />
+                          </label>
+                          <label className="text-xs text-slate-500">
+                            Account type
+                            <select
+                              value={adminMeta[entry.id]?.accountKind || "demo"}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], accountKind: e.target.value as AdminEntryMeta["accountKind"] } }))}
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            >
+                              <option value="demo">Demo</option>
+                              <option value="challenge">Challenge</option>
+                              <option value="funded">Funded</option>
+                            </select>
+                          </label>
+                          <label className="text-xs text-slate-500">
+                            Platform login / account ID
+                            <input
+                              value={adminMeta[entry.id]?.platformLogin || ""}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], platformLogin: e.target.value } }))}
+                              placeholder="No password stored"
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 font-mono text-sm text-white"
+                            />
+                          </label>
+                          <label className="text-xs text-slate-500">
+                            Support status
+                            <select
+                              value={adminMeta[entry.id]?.supportStatus || "requested"}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], supportStatus: e.target.value as AdminEntryMeta["supportStatus"] } }))}
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            >
+                              <option value="requested">Requested</option>
+                              <option value="created">Created</option>
+                              <option value="delivered">Delivered</option>
+                              <option value="verified">Verified</option>
+                            </select>
+                          </label>
+                          <label className="text-xs text-slate-500 sm:col-span-2">
+                            Support reference / note
+                            <input
+                              value={adminMeta[entry.id]?.supportReference || ""}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], supportReference: e.target.value } }))}
+                              placeholder="Ticket, confirmation, or account-creation note"
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            />
+                          </label>
+                          <label className="flex items-end gap-2 pb-2 text-xs text-slate-500">
+                            <input
+                              type="checkbox"
+                              checked={Boolean(adminMeta[entry.id]?.credentialsDelivered)}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], credentialsDelivered: e.target.checked } }))}
+                            />
+                            Credentials delivered by support
+                          </label>
+                        </div>
+                        <p className="mt-3 text-[9px] leading-relaxed text-slate-600">
+                          Trade House stores the issued account/login ID and delivery state. Platform passwords are not kept in this normal admin record.
+                        </p>
+                      </details>
                     </div>
                   ))}
                 </div>
@@ -495,11 +913,19 @@ const TradeHouseStudio: React.FC = () => {
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 font-['Orbitron'] text-xs font-black"><Users className="h-4 w-4 text-cyan-300" /> LIVE ROOM</div>
-                        <p className="mt-2 text-xs leading-relaxed text-slate-500">Send each contestant their personal link. Up to six can use the built-in room; seats 7-8 can use Zoom/OBS while their verified score still appears.</p>
+                        <p className="mt-2 text-xs leading-relaxed text-slate-500">Send each contestant their personal link. All eight seats can use the built-in room. Mobile layouts collapse cleanly, while OBS keeps the full broadcast grid.</p>
                       </div>
                       <button onClick={() => setRoomId(newRoomId())} className="rounded-lg border border-white/10 p-2 text-slate-400" aria-label="Generate new room"><RefreshCw className="h-4 w-4" /></button>
                     </div>
                     <div className="mt-4 rounded-xl border border-white/10 bg-black/25 p-3 font-mono text-sm font-black tracking-[0.2em] text-violet-300">ROOM {roomId} · {roomMode.toUpperCase()}</div>
+                    <div className="mt-3 rounded-lg border border-violet-400/15 bg-violet-400/[0.05] p-2">
+                      <div className="flex items-center gap-2">
+                        <span className="min-w-0 flex-1 truncate text-xs font-bold text-violet-200">Producer / host controls</span>
+                        <button onClick={() => copy("producer-room", producerLink)} className="rounded-lg border border-violet-400/20 px-3 py-1.5 text-[10px] font-bold text-violet-200">
+                          {copied === "producer-room" ? "COPIED" : "COPY PRODUCER LINK"}
+                        </button>
+                      </div>
+                    </div>
                     <div className="mt-3 space-y-2">
                       {participantLinks.map((participant, index) => (
                         <div key={participant.id} className="flex items-center gap-2 rounded-lg border border-white/[0.07] bg-black/15 p-2">

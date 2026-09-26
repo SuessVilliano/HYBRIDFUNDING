@@ -7,6 +7,7 @@ export type QuickBattleEntry = {
   id: string;
   name: string;
   dashboardUrl: string;
+  avatarUrl?: string;
   startingBalance?: number;
   division?: TradeHouseDivision;
   platform?: TradeHousePlatform;
@@ -22,6 +23,7 @@ export type Standing = {
   platform?: TradeHousePlatform;
   accountId?: string;
   dashboardUrl: string;
+  avatarUrl?: string;
   startingBalance: number;
   balance: number;
   equity: number;

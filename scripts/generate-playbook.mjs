@@ -299,8 +299,7 @@ const tocRows = [
   ["13", "The first 30 days roadmap", "Week-by-week execution plan.", "17"],
   ["14", "The compounding math of payouts", "Worked payout scaling example.", "18"],
   ["15", "Get paid to refer traders", "Affiliate tiers and workflow.", "19"],
-  ["16", "Join TradeHouse Battles", "Competitive trading and prizes.", "20"],
-  ["17", "Your next move", "Resources and links to take action.", "21"],
+  ["16", "Your next move", "Resources and links to take action.", "20"],
 ]
 table(
   [
@@ -756,7 +755,6 @@ table(
     { what: "Modern platform stack", why: "cTrader, DXTrade, MatchTrader, Rithmic Pro, PropX — and Tradovate is coming. We integrate fast and pick platforms traders actually like." },
     { what: "Up to 90% profit splits", why: "Industry-leading. The 90% upgrade pays for itself in your first 30 days of consistent trading." },
     { what: "Transparent rules", why: "Full FAQ pages with worked drawdown examples on hybridfunding.co/faq. No 30-page hidden PDFs. We want you to pass." },
-    { what: "Real community", why: "TradeHouse Battles tournaments, real prizes including funded accounts. Trade your reps, win real capital." },
   ],
   { rowH: 36 }
 );
@@ -851,27 +849,10 @@ bullet("Weekly automatic payouts — no chasing.");
 bigCTA("Start the affiliate program in 30 seconds", "Tier 4 traders earn $24K+/year referring traders to programs they were going to use anyway.", "https://www.hybridfunding.co/affiliate");
 pageBreak();
 
-// ============== BATTLES ==============
-h1("16  ·  Join the TradeHouse Battles arena");
-eyebrow("Trade live, win funded accounts");
-p("TradeHouse Battles is the competitive trading arena built for serious traders. Real-time tournaments. Live leaderboards. Prizes including funded accounts worth $100,000+. Free to enter many events.");
-
-h2("What you can win");
-bullet("Funded accounts ($25K – $100K+) directly from the leaderboard.");
-bullet("Cash prizes paid weekly.");
-bullet("Free upgrades to higher-tier programs.");
-bullet("Custom merch and trading tool credits.");
-
-h2("Why traders love Battles");
-bullet("It's live and public — you build a track record other traders can verify.");
-bullet("Tournament discipline is identical to passing an Eval. Reps for both.");
-bullet("Network with other competitive traders. Trading is a lonely game; Battles fixes that.");
-
-bigCTA("Enter the next Battle", "New tournaments every week. Free events monthly.", "https://www.hybridfunding.co/battles");
-pageBreak();
+// Trade House is in private beta and is intentionally omitted from the public playbook.
 
 // ============== NEXT MOVE ==============
-h1("17  ·  Your next move");
+h1("16  ·  Your next move");
 p("Choose your next move. Hybrid Funding now supports five market paths: Forex, Crypto, Futures, Single Session Equities, and Predictive Markets.");
 
 h2("1. Pick your challenge tier");
@@ -886,11 +867,7 @@ h2("3. Earn from referrals");
 pSoft("5–20% commissions on every referral. Weekly payouts.");
 bigCTA("Become an affiliate", "Most active affiliates clear $5K–$20K/month.", "https://www.hybridfunding.co/affiliate");
 
-h2("4. Compete in TradeHouse Battles");
-pSoft("Win funded accounts on the leaderboard.");
-bigCTA("Enter the arena", "Free entry events every month. Funded accounts on the line.", "https://www.hybridfunding.co/battles");
-
-h2("5. Read the blog");
+h2("4. Read the blog");
 pSoft("Strategy guides, rule explainers, and asset-class deep dives. New posts weekly.");
 bigCTA("Read the blog", "Free, no email required.", "https://www.hybridfunding.co/blog");
 

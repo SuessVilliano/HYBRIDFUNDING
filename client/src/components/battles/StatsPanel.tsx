@@ -4,7 +4,7 @@ import { Crown, Target, BarChart2, Zap, Trophy, TrendingUp } from "lucide-react"
 import type { TraderStats } from "./ParticipantTile";
 import { battleClock, battleObjective, type BattleRuleConfig } from "@/lib/tradehouse-rules";
 
-export type BattleMode = "1v1" | "2v2" | "3v3";
+export type BattleMode = "1v1" | "2v2" | "3v3" | "4v4";
 
 export interface TeamStats {
   name: string;
@@ -92,9 +92,29 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elap
   const leftReturn = averageReturn(leftTeam);
   const rightReturn = averageReturn(rightTeam);
 
+  const mobileStrip = (
+    <div className="sticky top-0 z-20 flex w-full items-center justify-between gap-2 border-y border-white/[0.07] bg-[#070b12]/95 px-3 py-2 backdrop-blur-xl md:hidden">
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-['Orbitron'] text-[8px] font-black uppercase tracking-[0.1em] text-cyan-200">{leftTeam.name}</div>
+        <div className="mt-0.5 font-mono text-xs font-black" style={{ color: leftAgg.pnl >= 0 ? "#00ff87" : "#ff3b5c" }}>{shortPnl(leftAgg.pnl)} · {leftReturn >= 0 ? "+" : ""}{leftReturn.toFixed(2)}%</div>
+      </div>
+      <div className="flex-shrink-0 text-center">
+        <div className="font-mono text-sm font-black text-white">{formatTime(clock.seconds)}</div>
+        <div className="font-['Orbitron'] text-[6px] font-black uppercase tracking-[0.12em] text-slate-500">{clock.label}</div>
+        <div className="mt-0.5 font-['Orbitron'] text-[7px] font-black text-violet-300">VS</div>
+      </div>
+      <div className="min-w-0 flex-1 text-right">
+        <div className="truncate font-['Orbitron'] text-[8px] font-black uppercase tracking-[0.1em] text-violet-200">{rightTeam.name}</div>
+        <div className="mt-0.5 font-mono text-xs font-black" style={{ color: rightAgg.pnl >= 0 ? "#00ff87" : "#ff3b5c" }}>{shortPnl(rightAgg.pnl)} · {rightReturn >= 0 ? "+" : ""}{rightReturn.toFixed(2)}%</div>
+      </div>
+    </div>
+  );
+
   return (
+    <>
+      {mobileStrip}
     <div
-      className="flex flex-col relative"
+      className="relative hidden flex-col md:flex"
       style={{
         width: compact ? "140px" : "164px",
         flexShrink: 0,
@@ -215,6 +235,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ mode, leftTeam, rightTeam, elap
         ))}
       </div>
     </div>
+    </>
   );
 };
 

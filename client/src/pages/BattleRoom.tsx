@@ -36,6 +36,7 @@ import {
 import BattleLayout from "@/components/battles/BattleLayout";
 import BrandRibbon from "@/components/battles/BrandRibbon";
 import HouseChat from "@/components/battles/HouseChat";
+import ProducerConsole from "@/components/battles/ProducerConsole";
 import SeatLayoutPicker from "@/components/battles/SeatLayoutPicker";
 import type { Trader } from "@/components/battles/BattleLayout";
 import type { SeatLayoutMode, TraderStats } from "@/components/battles/ParticipantTile";
@@ -62,6 +63,8 @@ interface RoomConfig {
   promoText: string;
   sponsorName: string;
   sponsorUrl: string;
+  musicUrl: string;
+  producerMode: boolean;
 }
 
 type SeatState = QuickBattleEntry & {
@@ -134,7 +137,7 @@ const MediaStreamVideo: React.FC<{
         display: "block",
         width: "100%",
         height: "100%",
-        objectFit: screen ? "fill" : "cover",
+        objectFit: screen ? "contain" : "cover",
         background: "#03070d",
       }}
     />
@@ -215,6 +218,7 @@ const BottomBar: React.FC<{
   isMicMuted: boolean;
   isCameraOff: boolean;
   isSharingScreen: boolean;
+  canScreenShare: boolean;
   onToggleMic: () => void;
   onToggleCamera: () => void;
   onToggleScreen: () => void;
@@ -231,6 +235,7 @@ const BottomBar: React.FC<{
   isMicMuted,
   isCameraOff,
   isSharingScreen,
+  canScreenShare,
   onToggleMic,
   onToggleCamera,
   onToggleScreen,
@@ -264,14 +269,14 @@ const BottomBar: React.FC<{
 
   return (
     <div
-      className="absolute bottom-0 left-0 right-0 z-20 flex h-14 items-center justify-between gap-4 px-5"
+      className="absolute bottom-0 left-0 right-0 z-20 flex h-14 items-center justify-between gap-1 px-2 sm:gap-4 sm:px-5"
       style={{
         background: "rgba(4,10,18,0.96)",
         backdropFilter: "blur(14px)",
         borderTop: "1px solid rgba(103,232,249,0.09)",
       }}
     >
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="hidden min-w-0 items-center gap-3 sm:flex">
         <span className="truncate font-['Orbitron'] text-sm font-black text-white">{myName}</span>
         <span
           className="font-mono text-sm font-bold"
@@ -291,14 +296,14 @@ const BottomBar: React.FC<{
         )}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-1 items-center justify-center gap-1.5 sm:flex-none sm:gap-2">
         <button onClick={onToggleMic} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(!isMicMuted, isMicMuted)} title={isMicMuted ? "Unmute microphone" : "Mute microphone"}>
           {isMicMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
         </button>
         <button onClick={onToggleCamera} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(!isCameraOff)} title={isCameraOff ? "Turn camera on" : "Turn camera off"}>
           {isCameraOff ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
         </button>
-        <button onClick={onToggleScreen} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(isSharingScreen)} title={isSharingScreen ? "Stop sharing screen" : "Share screen"}>
+        <button onClick={onToggleScreen} disabled={!canScreenShare} className="flex h-9 w-9 items-center justify-center rounded-full transition-all disabled:cursor-not-allowed disabled:opacity-30" style={controlStyle(isSharingScreen)} title={canScreenShare ? (isSharingScreen ? "Stop sharing screen" : "Share screen") : "Screen sharing is unavailable in this mobile browser"}>
           <Monitor className="h-4 w-4" />
         </button>
         <div className="relative">
@@ -328,7 +333,7 @@ const BottomBar: React.FC<{
         </button>
       </div>
 
-      <div className="relative flex-shrink-0">
+      <div className="relative hidden flex-shrink-0 sm:block">
         {myStats.dashboardUrl ? (
           <a
             href={myStats.dashboardUrl}
@@ -378,6 +383,7 @@ const LiveControls: React.FC<{
   const { microphone, isMute: isMicMuted } = useMicrophoneState();
   const { screenShare, status: screenShareStatus } = useScreenShareState();
   const isSharingScreen = screenShareStatus === "enabled";
+  const canScreenShare = typeof navigator !== "undefined" && Boolean(navigator.mediaDevices?.getDisplayMedia);
   const [, navigate] = useLocation();
 
   const toggleMic = useCallback(async () => {
@@ -397,13 +403,14 @@ const LiveControls: React.FC<{
   }, [camera]);
 
   const toggleScreenShare = useCallback(async () => {
+    if (!canScreenShare) return;
     try {
       if (isSharingScreen) await screenShare.disable();
       else await screenShare.enable();
     } catch (error) {
       console.error("[tradehouse] screen share toggle failed", error);
     }
-  }, [isSharingScreen, screenShare]);
+  }, [canScreenShare, isSharingScreen, screenShare]);
 
   const enableCameraAndMic = useCallback(async () => {
     try {
@@ -437,6 +444,7 @@ const LiveControls: React.FC<{
         isMicMuted={isMicMuted}
         isCameraOff={isCameraOff}
         isSharingScreen={isSharingScreen}
+        canScreenShare={canScreenShare}
         onToggleMic={toggleMic}
         onToggleCamera={toggleCamera}
         onToggleScreen={toggleScreenShare}
@@ -455,6 +463,11 @@ const LiveControls: React.FC<{
         >
           ENABLE CAMERA + MIC
         </button>
+      )}
+      {!canScreenShare && (
+        <div className="absolute bottom-[4.35rem] left-2 z-30 rounded-lg border border-violet-400/15 bg-[#040a12]/90 px-2 py-1.5 text-[8px] text-violet-200 sm:hidden">
+          Mobile browser: camera and verified stats work; device screen sharing is unavailable here.
+        </div>
       )}
     </>
   );
@@ -482,17 +495,18 @@ const ArenaInner: React.FC<{
   onSeatLayoutChange,
 }) => {
   const { useParticipants, useLocalParticipant } = useCallStateHooks();
+  const [showProducer, setShowProducer] = useState(false);
   const participants = useParticipants();
   const localParticipant = useLocalParticipant();
 
   const buildTraders = (side: "left" | "right"): Trader[] => {
-    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : 3;
+    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : config.mode === "3v3" ? 3 : 4;
 
     return Array.from({ length: count }, (_, slot) => {
       const seat = seats[seatKey(side, slot)];
       if (!seat) return null;
 
-      const isLocal = config.side === side && config.slot === slot && Boolean(localParticipant);
+      const isLocal = !config.producerMode && config.side === side && config.slot === slot && Boolean(localParticipant);
       const streamParticipant = isLocal
         ? localParticipant
         : participants.find((participant) => participant.userId === seat.userId);
@@ -505,6 +519,7 @@ const ArenaInner: React.FC<{
       return {
         id: seat.id,
         name: seat.name,
+        avatarUrl: seat.avatarUrl,
         stats: seat.stats,
         cameraTrack: cameraStream ? (
           <MediaStreamVideo stream={cameraStream} />
@@ -536,7 +551,7 @@ const ArenaInner: React.FC<{
         rule={config.rule}
         obsMode={config.obsMode}
       />
-      {!config.obsMode && (
+      {!config.obsMode && !config.producerMode && (
         <LiveControls
           myStats={myStats}
           myName={config.myName}
@@ -550,6 +565,17 @@ const ArenaInner: React.FC<{
             onSeatLayoutChange(id, mode);
           }}
         />
+      )}
+      {!config.obsMode && config.producerMode && (
+        <>
+          <button
+            onClick={() => setShowProducer((value) => !value)}
+            className="absolute right-2 top-2 z-[80] rounded-xl border border-cyan-300/25 bg-cyan-300/[0.08] px-3 py-2 font-['Orbitron'] text-[8px] font-black uppercase tracking-[0.12em] text-cyan-200 sm:right-4 sm:top-3 sm:px-4 sm:text-[9px]"
+          >
+            PRODUCER CONTROL
+          </button>
+          {showProducer && <ProducerConsole musicUrl={config.musicUrl} onClose={() => setShowProducer(false)} />}
+        </>
       )}
     </>
   );
@@ -585,6 +611,7 @@ const DemoArena: React.FC<{
   const [mediaError, setMediaError] = useState("");
   const streamsRef = useRef<Array<MediaStream | null>>([]);
   const isSharingScreen = Boolean(screenStream);
+  const canScreenShare = typeof navigator !== "undefined" && Boolean(navigator.mediaDevices?.getDisplayMedia);
 
   const enableMicAndCamera = useCallback(async () => {
     try {
@@ -628,6 +655,10 @@ const DemoArena: React.FC<{
   }, [cameraStream, enableMicAndCamera, isCameraOff]);
 
   const toggleScreen = useCallback(async () => {
+    if (!canScreenShare) {
+      setMediaError("This mobile browser cannot share the device screen. Camera + verified Hybrid stats still work.");
+      return;
+    }
     if (screenStream) {
       screenStream.getTracks().forEach((track) => track.stop());
       setScreenStream(null);
@@ -645,7 +676,7 @@ const DemoArena: React.FC<{
           : "Screen sharing is unavailable in this browser.",
       );
     }
-  }, [screenStream]);
+  }, [canScreenShare, screenStream]);
 
   useEffect(() => {
     streamsRef.current = [cameraStream, micStream, screenStream];
@@ -661,7 +692,7 @@ const DemoArena: React.FC<{
   );
 
   const makeDemo = (side: "left" | "right"): Trader[] => {
-    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : 3;
+    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : config.mode === "3v3" ? 3 : 4;
     return Array.from({ length: count }, (_, slot) => {
       const seat = seats[seatKey(side, slot)];
       if (!seat) return null;
@@ -703,6 +734,7 @@ const DemoArena: React.FC<{
             isMicMuted={isMicMuted}
             isCameraOff={isCameraOff}
             isSharingScreen={isSharingScreen}
+            canScreenShare={canScreenShare}
             onToggleMic={toggleMic}
             onToggleCamera={toggleCamera}
             onToggleScreen={toggleScreen}
@@ -762,6 +794,8 @@ const BattleRoom: React.FC = () => {
       promoText: qs.get("promo") || "Instant Funding · Trade House · Verified Hybrid performance",
       sponsorName: qs.get("sponsor") || "",
       sponsorUrl: qs.get("sponsorUrl") || "",
+      musicUrl: qs.get("music") || "",
+      producerMode: qs.get("producer") === "1",
     };
   }, [qs, params.roomId]);
 
@@ -789,7 +823,7 @@ const BattleRoom: React.FC = () => {
       const next = { ...current };
 
       if (config.quickRoster.length > 0) {
-        config.quickRoster.slice(0, 6).forEach((entry, index) => {
+        config.quickRoster.slice(0, 8).forEach((entry, index) => {
           const side = index % 2 === 0 ? "left" : "right";
           const slot = Math.floor(index / 2);
           const key = seatKey(side, slot);
@@ -936,9 +970,10 @@ const BattleRoom: React.FC = () => {
     const meta = {
       userId,
       name: config.myName,
-      side: config.side,
-      slot: config.slot,
+      side: config.producerMode ? undefined : config.side,
+      slot: config.producerMode ? undefined : config.slot,
       seatId: ownEntry?.id || config.seatId || userId,
+      avatarUrl: ownEntry?.avatarUrl || "",
       dashboardUrl: ownEntry?.dashboardUrl || "",
       startingBalance: ownEntry?.startingBalance,
       division: ownEntry?.division || "trading",
@@ -957,6 +992,7 @@ const BattleRoom: React.FC = () => {
           id: data.seatId || existing?.id || data.userId,
           name: data.name || existing?.name || "Trader",
           dashboardUrl: data.dashboardUrl || existing?.dashboardUrl || "",
+          avatarUrl: data.avatarUrl || existing?.avatarUrl,
           startingBalance: data.startingBalance ?? existing?.startingBalance,
           division: data.division || existing?.division || "trading",
           platform: data.platform || existing?.platform || "other",
@@ -1034,6 +1070,7 @@ const BattleRoom: React.FC = () => {
     config.slot,
     config.seatId,
     config.quickKey,
+    config.producerMode,
   ]);
 
   const onManualStatsChange = (stats: TraderStats) => {
@@ -1136,7 +1173,7 @@ const BattleRoom: React.FC = () => {
         >
           <div className="flex items-center gap-3">
             <span className="rounded border border-cyan-300/25 bg-cyan-300/10 px-2 py-0.5 font-['Orbitron'] text-xs font-black text-cyan-200">
-              {config.mode}
+              {config.producerMode ? "PRODUCER" : config.mode}
             </span>
             <span className="font-mono text-xs text-slate-800">|</span>
             <span className="font-mono text-xs font-bold text-cyan-300">{config.roomId}</span>

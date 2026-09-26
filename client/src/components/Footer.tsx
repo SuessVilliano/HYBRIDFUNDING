@@ -219,6 +219,15 @@ const Footer = () => {
             <TrustpilotWidget />
           </div>
           <p className="text-center text-[#B8B8D0]">&copy; {new Date().getFullYear()} Hybrid Funding LLC. All rights reserved.</p>
+          <div className="mt-3 text-center">
+            <Link
+              href="/admin/beta"
+              className="text-[10px] uppercase tracking-[0.18em] text-[#51516b] transition-colors hover:text-accent"
+              aria-label="Open private beta admin"
+            >
+              Admin / Beta
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
