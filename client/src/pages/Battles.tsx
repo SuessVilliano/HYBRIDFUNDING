@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Crown, Gauge, Medal, Swords, Trophy, Users, Zap } from "lucide-react";
 import SEO from "@/components/SEO";
+import ChunkedImage from "@/components/ChunkedImage";
 import { breadcrumbSchema } from "@/lib/jsonLd";
 
 const Battles: React.FC = () => {
@@ -21,10 +22,15 @@ const Battles: React.FC = () => {
 
       <section id="battles-top" className="scroll-mt-28 relative overflow-hidden border-b border-white/5">
         <div className="relative min-h-[68vh] lg:min-h-[78vh]">
-          <img
-            src="/assets/tradehouse-battles-arena.webp"
+          <ChunkedImage
+            chunks={[
+              "/assets/generated/battles-tiny.0.b64",
+              "/assets/generated/battles-tiny.1.b64",
+              "/assets/generated/battles-tiny.2.b64",
+            ]}
             alt="TradeHouse Battles head-to-head trader competition arena"
             className="absolute inset-0 h-full w-full object-cover object-center"
+            loading="eager"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#050814]/10 via-[#050814]/15 to-[#050814]/95" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#050814]/20 via-transparent to-[#050814]/20" />
@@ -158,10 +164,14 @@ const Battles: React.FC = () => {
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-accent/25 bg-[#0B1426] shadow-2xl">
-                <img
-                  src="/assets/tradehouse-battles-arena.webp"
+                <ChunkedImage
+                  chunks={[
+                    "/assets/generated/battles-tiny.0.b64",
+                    "/assets/generated/battles-tiny.1.b64",
+                    "/assets/generated/battles-tiny.2.b64",
+                  ]}
                   alt="TradeHouse Battles arena preview with two competing traders and live performance boards"
-                  className="aspect-video w-full object-cover"
+                  className="h-[220px] w-full object-cover sm:h-auto sm:aspect-video"
                 />
                 <div className="grid grid-cols-3 border-t border-white/10">
                   <div className="p-4 text-center">

@@ -12,6 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import SEO from "@/components/SEO";
+import ChunkedImage from "@/components/ChunkedImage";
 import { breadcrumbSchema } from "@/lib/jsonLd";
 
 const commissionTiers = [
@@ -125,12 +126,16 @@ const Affiliate = () => {
             >
               <div className="absolute -inset-3 rounded-[28px] bg-gradient-to-r from-accent/20 to-primary/20 blur-2xl" />
               <div className="relative overflow-hidden rounded-2xl border border-accent/30 bg-[#101829] shadow-2xl">
-                <img
-                  src="/assets/affiliate-partner-story.webp"
+                <ChunkedImage
+                  chunks={[
+                    "/assets/generated/affiliate-tiny.0.b64",
+                    "/assets/generated/affiliate-tiny.1.b64",
+                  ]}
                   alt="Hybrid Funding affiliate partner building content and reviewing referral performance"
-                  className="aspect-[4/3] w-full object-cover"
+                  className="h-[240px] w-full object-cover sm:h-auto sm:aspect-[4/3]"
+                  loading="eager"
                 />
-                <div className="border-t border-white/10 bg-[#0B1426]/95 p-5 sm:p-6">
+                <div className="border-t border-white/10 bg-[#0B1426]/95 p-4 sm:p-6">
                   <div className="flex items-start gap-3">
                     <BarChart3 className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
                     <div>
