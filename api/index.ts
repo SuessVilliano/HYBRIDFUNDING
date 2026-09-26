@@ -140,6 +140,167 @@ function requireTradeHouseAdmin(req: Request, res: Response, next: NextFunction)
   next();
 }
 
+type TradeHouseSql = ReturnType<typeof neon>;
+let tradeHouseSchemaReady: Promise<void> | null = null;
+
+function tradeHouseSql(): TradeHouseSql | null {
+  const url = process.env.DATABASE_URL?.trim();
+  return url ? neon(url) : null;
+}
+
+async function ensureTradeHousePersistence() {
+  const sql = tradeHouseSql();
+  if (!sql) throw new Error("DATABASE_URL is not configured.");
+
+  if (!tradeHouseSchemaReady) {
+    tradeHouseSchemaReady = (async () => {
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_traders (
+          id serial PRIMARY KEY,
+          user_id integer REFERENCES users(id),
+          handle text NOT NULL UNIQUE,
+          display_name text NOT NULL,
+          email text,
+          phone text,
+          avatar_url text,
+          logo_url text,
+          bio text,
+          default_division text NOT NULL DEFAULT 'trading',
+          default_platform text NOT NULL DEFAULT 'other',
+          is_active boolean NOT NULL DEFAULT true,
+          created_at timestamp NOT NULL DEFAULT now(),
+          updated_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_seasons (
+          id serial PRIMARY KEY,
+          slug text NOT NULL UNIQUE,
+          name text NOT NULL,
+          format text NOT NULL DEFAULT 'league',
+          status text NOT NULL DEFAULT 'forming',
+          starts_at timestamp,
+          ends_at timestamp,
+          rule_config text,
+          created_at timestamp NOT NULL DEFAULT now(),
+          updated_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_battles (
+          id serial PRIMARY KEY,
+          season_id integer REFERENCES trade_house_seasons(id),
+          room_id text NOT NULL UNIQUE,
+          name text NOT NULL,
+          format text NOT NULL,
+          mode text NOT NULL,
+          account_size integer,
+          sponsor_name text,
+          sponsor_url text,
+          promo_text text,
+          music_url text,
+          rule_config text,
+          status text NOT NULL DEFAULT 'scheduled',
+          started_at timestamp,
+          ended_at timestamp,
+          created_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_accounts (
+          id serial PRIMARY KEY,
+          trader_id integer NOT NULL REFERENCES trade_house_traders(id),
+          platform text NOT NULL DEFAULT 'other',
+          account_kind text NOT NULL DEFAULT 'demo',
+          account_size integer,
+          platform_login text,
+          dashboard_url text,
+          support_status text NOT NULL DEFAULT 'requested',
+          support_reference text,
+          credentials_delivered boolean NOT NULL DEFAULT false,
+          issued_at timestamp,
+          verified_at timestamp,
+          created_at timestamp NOT NULL DEFAULT now(),
+          updated_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`
+        CREATE TABLE IF NOT EXISTS trade_house_entries (
+          id serial PRIMARY KEY,
+          battle_id integer NOT NULL REFERENCES trade_house_battles(id),
+          trader_id integer NOT NULL REFERENCES trade_house_traders(id),
+          account_id integer REFERENCES trade_house_accounts(id),
+          dashboard_url text,
+          invite_token_hash text,
+          invite_last_four text,
+          invite_expires_at timestamp,
+          invite_revoked_at timestamp,
+          profile_completed_at timestamp,
+          side text,
+          slot integer,
+          starting_balance numeric(14,2),
+          ending_balance numeric(14,2),
+          pnl numeric(14,2),
+          return_pct numeric(8,4),
+          max_drawdown_pct numeric(8,4),
+          placement integer,
+          season_points integer NOT NULL DEFAULT 0,
+          result text NOT NULL DEFAULT 'active',
+          verified boolean NOT NULL DEFAULT false,
+          started_at timestamp,
+          finished_at timestamp,
+          created_at timestamp NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`ALTER TABLE trade_house_traders ADD COLUMN IF NOT EXISTS email text`;
+      await sql`ALTER TABLE trade_house_traders ADD COLUMN IF NOT EXISTS phone text`;
+      await sql`ALTER TABLE trade_house_battles ADD COLUMN IF NOT EXISTS promo_text text`;
+      await sql`ALTER TABLE trade_house_battles ADD COLUMN IF NOT EXISTS music_url text`;
+      await sql`ALTER TABLE trade_house_entries ALTER COLUMN dashboard_url DROP NOT NULL`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS account_id integer REFERENCES trade_house_accounts(id)`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_token_hash text`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_last_four text`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_expires_at timestamp`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS invite_revoked_at timestamp`;
+      await sql`ALTER TABLE trade_house_entries ADD COLUMN IF NOT EXISTS profile_completed_at timestamp`;
+      await sql`CREATE INDEX IF NOT EXISTS idx_trade_house_accounts_trader ON trade_house_accounts(trader_id)`;
+      await sql`CREATE INDEX IF NOT EXISTS idx_trade_house_entries_invite_hash ON trade_house_entries(invite_token_hash)`;
+      await sql`CREATE INDEX IF NOT EXISTS idx_trade_house_battles_created_at ON trade_house_battles(created_at DESC)`;
+    })().catch((error) => {
+      tradeHouseSchemaReady = null;
+      throw error;
+    });
+  }
+
+  await tradeHouseSchemaReady;
+  return sql;
+}
+
+function tradeHouseInviteToken() {
+  const token = randomBytes(24).toString("base64url");
+  return {
+    token,
+    hash: createHash("sha256").update(token).digest("hex"),
+    lastFour: token.slice(-4),
+  };
+}
+
+function safeHandle(value: string, fallback: string) {
+  const cleaned = value
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 36);
+  return cleaned || fallback;
+}
+
+function requestOrigin(req: Request) {
+  const forwardedProto = req.headers["x-forwarded-proto"];
+  const proto = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto || req.protocol || "https";
+  const host = req.headers["x-forwarded-host"] || req.headers.host || "www.hybridfunding.co";
+  return `${proto}://${Array.isArray(host) ? host[0] : host}`;
+}
+
 app.get("/api/tradehouse/beta/status", (req: Request, res: Response) => {
   if (!betaConfigured()) {
     res.setHeader("Cache-Control", "no-store");
