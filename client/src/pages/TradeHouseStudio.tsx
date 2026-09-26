@@ -75,8 +75,8 @@ const TradeHouseStudio: React.FC = () => {
   const [quickStatus, setQuickStatus] = useState("");
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
   const [quickEntries, setQuickEntries] = useState<QuickBattleEntry[]>([
-    { id: "quick-1", name: "Trader A", dashboardUrl: "", division: "trading", platform: "matchtrader" },
-    { id: "quick-2", name: "Trader B", dashboardUrl: "", division: "trading", platform: "ctrader" },
+    { id: "quick-1", name: "Trader A", dashboardUrl: "", avatarUrl: "", division: "trading", platform: "matchtrader" },
+    { id: "quick-2", name: "Trader B", dashboardUrl: "", avatarUrl: "", division: "trading", platform: "ctrader" },
   ]);
 
   useEffect(() => {
@@ -196,7 +196,7 @@ const TradeHouseStudio: React.FC = () => {
     const n = quickEntries.length + 1;
     setQuickEntries((current) => [
       ...current,
-      { id: `quick-${Date.now()}-${n}`, name: `Trader ${n}`, dashboardUrl: "", division: "trading", platform: "other" },
+      { id: `quick-${Date.now()}-${n}`, name: `Trader ${n}`, dashboardUrl: "", avatarUrl: "", division: "trading", platform: "other" },
     ]);
   };
 
@@ -413,7 +413,7 @@ const TradeHouseStudio: React.FC = () => {
 
                 <div className="space-y-3">
                   {quickEntries.map((entry, index) => (
-                    <div key={entry.id} className="grid gap-3 rounded-2xl border border-white/10 bg-black/15 p-4 lg:grid-cols-[1fr_150px_2fr_160px_auto] lg:items-end">
+                    <div key={entry.id} className="grid gap-3 rounded-2xl border border-white/10 bg-black/15 p-4 lg:grid-cols-[1fr_150px_1.2fr_2fr_160px_auto] lg:items-end">
                       <label className="text-xs text-slate-500">
                         Trader
                         <input
@@ -433,6 +433,15 @@ const TradeHouseStudio: React.FC = () => {
                           <option value="prediction">Prediction</option>
                           <option value="hybrid">Hybrid</option>
                         </select>
+                      </label>
+                      <label className="text-xs text-slate-500">
+                        Avatar / logo URL
+                        <input
+                          value={entry.avatarUrl || ""}
+                          onChange={(e) => updateQuickEntry(index, { avatarUrl: e.target.value })}
+                          placeholder="https://…"
+                          className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-xs text-white outline-none focus:border-cyan-300/60"
+                        />
                       </label>
                       <label className="text-xs text-slate-500">
                         Hybrid public dashboard
