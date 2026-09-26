@@ -36,6 +36,7 @@ import {
 import BattleLayout from "@/components/battles/BattleLayout";
 import BrandRibbon from "@/components/battles/BrandRibbon";
 import HouseChat from "@/components/battles/HouseChat";
+import ProducerConsole from "@/components/battles/ProducerConsole";
 import SeatLayoutPicker from "@/components/battles/SeatLayoutPicker";
 import type { Trader } from "@/components/battles/BattleLayout";
 import type { SeatLayoutMode, TraderStats } from "@/components/battles/ParticipantTile";
@@ -62,6 +63,8 @@ interface RoomConfig {
   promoText: string;
   sponsorName: string;
   sponsorUrl: string;
+  musicUrl: string;
+  producerMode: boolean;
 }
 
 type SeatState = QuickBattleEntry & {
@@ -456,6 +459,17 @@ const LiveControls: React.FC<{
           ENABLE CAMERA + MIC
         </button>
       )}
+      {!config.obsMode && config.producerMode && (
+        <>
+          <button
+            onClick={() => setShowProducer((value) => !value)}
+            className="absolute right-4 top-3 z-[80] rounded-xl border border-cyan-300/25 bg-cyan-300/[0.08] px-4 py-2 font-['Orbitron'] text-[9px] font-black uppercase tracking-[0.14em] text-cyan-200"
+          >
+            PRODUCER CONTROL
+          </button>
+          {showProducer && <ProducerConsole musicUrl={config.musicUrl} onClose={() => setShowProducer(false)} />}
+        </>
+      )}
     </>
   );
 };
@@ -482,6 +496,7 @@ const ArenaInner: React.FC<{
   onSeatLayoutChange,
 }) => {
   const { useParticipants, useLocalParticipant } = useCallStateHooks();
+  const [showProducer, setShowProducer] = useState(false);
   const participants = useParticipants();
   const localParticipant = useLocalParticipant();
 
@@ -492,7 +507,7 @@ const ArenaInner: React.FC<{
       const seat = seats[seatKey(side, slot)];
       if (!seat) return null;
 
-      const isLocal = config.side === side && config.slot === slot && Boolean(localParticipant);
+      const isLocal = !config.producerMode && config.side === side && config.slot === slot && Boolean(localParticipant);
       const streamParticipant = isLocal
         ? localParticipant
         : participants.find((participant) => participant.userId === seat.userId);
@@ -536,7 +551,7 @@ const ArenaInner: React.FC<{
         rule={config.rule}
         obsMode={config.obsMode}
       />
-      {!config.obsMode && (
+      {!config.obsMode && !config.producerMode && (
         <LiveControls
           myStats={myStats}
           myName={config.myName}
@@ -762,6 +777,8 @@ const BattleRoom: React.FC = () => {
       promoText: qs.get("promo") || "Instant Funding · Trade House · Verified Hybrid performance",
       sponsorName: qs.get("sponsor") || "",
       sponsorUrl: qs.get("sponsorUrl") || "",
+      musicUrl: qs.get("music") || "",
+      producerMode: qs.get("producer") === "1",
     };
   }, [qs, params.roomId]);
 
@@ -936,8 +953,8 @@ const BattleRoom: React.FC = () => {
     const meta = {
       userId,
       name: config.myName,
-      side: config.side,
-      slot: config.slot,
+      side: config.producerMode ? undefined : config.side,
+      slot: config.producerMode ? undefined : config.slot,
       seatId: ownEntry?.id || config.seatId || userId,
       dashboardUrl: ownEntry?.dashboardUrl || "",
       startingBalance: ownEntry?.startingBalance,
@@ -1034,6 +1051,7 @@ const BattleRoom: React.FC = () => {
     config.slot,
     config.seatId,
     config.quickKey,
+    config.producerMode,
   ]);
 
   const onManualStatsChange = (stats: TraderStats) => {
@@ -1136,7 +1154,7 @@ const BattleRoom: React.FC = () => {
         >
           <div className="flex items-center gap-3">
             <span className="rounded border border-cyan-300/25 bg-cyan-300/10 px-2 py-0.5 font-['Orbitron'] text-xs font-black text-cyan-200">
-              {config.mode}
+              {config.producerMode ? "PRODUCER" : config.mode}
             </span>
             <span className="font-mono text-xs text-slate-800">|</span>
             <span className="font-mono text-xs font-bold text-cyan-300">{config.roomId}</span>
