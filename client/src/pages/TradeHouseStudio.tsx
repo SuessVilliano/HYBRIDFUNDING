@@ -326,6 +326,14 @@ const TradeHouseStudio: React.FC = () => {
   };
 
   useEffect(() => {
+    void refreshSavedBattles();
+    if (typeof window !== "undefined") {
+      const savedRoomId = new URLSearchParams(window.location.search).get("battle");
+      if (savedRoomId) void loadSavedBattle(savedRoomId);
+    }
+  }, []);
+
+  useEffect(() => {
     fetch("/api/tradehouse/beta/link-token", {
       method: "POST",
       credentials: "include",
@@ -413,7 +421,7 @@ const TradeHouseStudio: React.FC = () => {
     })}`;
   const quickTvUrl = `${base}/tradehouse/tv?${new URLSearchParams({ quick: quickEncoded, season: seasonName, ...experienceParams })}`;
 
-  const roomMode = readyQuickEntries.length <= 2 ? "1v1" : readyQuickEntries.length <= 4 ? "2v2" : readyQuickEntries.length <= 6 ? "3v3" : "4v4";
+  const roomMode = quickEntries.length <= 2 ? "1v1" : quickEntries.length <= 4 ? "2v2" : quickEntries.length <= 6 ? "3v3" : "4v4";
   const producerLink = `${base}/battles/room/${roomId}?${new URLSearchParams({
     producer: "1",
     mode: roomMode,
