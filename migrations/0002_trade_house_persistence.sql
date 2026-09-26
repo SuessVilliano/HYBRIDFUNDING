@@ -24,6 +24,7 @@ ALTER TABLE trade_house_battles
   ADD COLUMN IF NOT EXISTS music_url text;
 
 ALTER TABLE trade_house_entries
+  ALTER COLUMN dashboard_url DROP NOT NULL,
   ADD COLUMN IF NOT EXISTS account_id integer REFERENCES trade_house_accounts(id),
   ADD COLUMN IF NOT EXISTS invite_token_hash text,
   ADD COLUMN IF NOT EXISTS invite_last_four text,
