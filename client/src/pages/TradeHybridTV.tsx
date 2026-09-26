@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useTradeHouseFeed, type Standing } from "@/lib/tradehouse-feed";
+import { decodeQuickRoster, useTradeHouseFeed, type Standing } from "@/lib/tradehouse-feed";
 import { Radio, ShieldCheck, Trophy, TrendingUp, Zap } from "lucide-react";
 import "./tradehybrid-tv.css";
 
@@ -39,7 +39,9 @@ function Headlines({ index }: { index: number }) { const card = headlines[index 
 function PrizeCard() { return <div className="tv-prize"><Trophy size={58} /><small>TRADE HOUSE BATTLE PRIZE</small><h1>TRADE FOR THE<br /><em>HOUSE.</em></h1><p>Funded-account rewards, public performance, and a track record people can follow.</p><div className="tv-prize-pill">NEXT HEAT · WEDNESDAY · HYBRIDFUNDING.CO/BATTLES</div></div> }
 
 export default function TradeHybridTV() {
-  const { data, state } = useTradeHouseFeed(new URLSearchParams(typeof window === "undefined" ? "" : window.location.search).get("demo") === "1");
+  const params = useMemo(() => new URLSearchParams(typeof window === "undefined" ? "" : window.location.search), []);
+  const quickRoster = useMemo(() => decodeQuickRoster(params.get("quick")), [params]);
+  const { data, state } = useTradeHouseFeed(params.get("demo") === "1", quickRoster, params.get("season") || "Quick Battle");
   const [segmentIndex, setSegmentIndex] = useState(0); const [elapsed, setElapsed] = useState(0);
   const [headlineIndex, setHeadlineIndex] = useState(0); const [chartUrl, setChartUrl] = useState("");
   const roster = data?.standings || []; const segment = SEGMENTS[segmentIndex];
@@ -48,5 +50,5 @@ export default function TradeHybridTV() {
   const left = roster[0]; const right = roster.find((t) => t.id !== left?.id) || roster[1];
   const isDemo = state === "demo";
   const content = segment.id === "board" ? <Board traders={roster} /> : segment.id === "battle" ? <Duel left={left} right={right} /> : segment.id === "chart" ? <><MarketDesk />{chartUrl && <iframe className="tv-chart-embed" src={chartUrl} title="TradingView source" />}</> : segment.id === "news" ? <Headlines index={headlineIndex} /> : segment.id === "prize" ? <PrizeCard /> : <Headlines index={0} />;
-  return <main className="tv-canvas"><StageFrame label={segment.label}><div className="tv-progress"><span style={{ width: `${Math.min(100, (elapsed / segment.seconds) * 100)}%` }} /></div><div className="tv-content">{content}</div><div className="tv-lower"><span>{isDemo ? "REHEARSAL MODE · SAMPLE DATA" : state === "stale" ? "DATA FEED INTERRUPTED · SCORES HIDDEN" : "OFFICIAL HYBRID FUNDING FEEDS"}</span><span>SEGMENT {segmentIndex + 1}/{SEGMENTS.length} · NEXT IN {Math.max(0, segment.seconds - elapsed)}S</span></div></StageFrame></main>;
+  return <main className="tv-canvas"><StageFrame label={segment.label}><div className="tv-progress"><span style={{ width: `${Math.min(100, (elapsed / segment.seconds) * 100)}%` }} /></div><div className="tv-content">{content}</div><div className="tv-lower"><span>{isDemo ? "REHEARSAL MODE · SAMPLE DATA" : state === "stale" ? "DATA FEED INTERRUPTED · SCORES HIDDEN" : "VERIFIED TRADE HOUSE FEEDS"}</span><span>SEGMENT {segmentIndex + 1}/{SEGMENTS.length} · NEXT IN {Math.max(0, segment.seconds - elapsed)}S</span></div></StageFrame></main>;
 }
