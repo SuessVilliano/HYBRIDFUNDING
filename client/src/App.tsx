@@ -35,6 +35,7 @@ import TradeHouse from "@/pages/TradeHouse";
 import HybridLive from "@/pages/HybridLive";
 import TradeHouseBroadcast from "@/pages/TradeHouseBroadcast";
 import TradeHouseStage from "@/pages/TradeHouseStage";
+import TradeHybridTV from "@/pages/TradeHybridTV";
 import TradeHouseStudio from "@/pages/TradeHouseStudio";
 
 function RouteScrollManager() {
@@ -105,6 +106,7 @@ function AppRouter() {
       <Route path="/battles/lobby" component={() => <BattleLobby />} />
       <Route path="/battles/room/:roomId" component={() => <BattleRoom />} />
       <Route path="/tradehouse/stage" component={() => <TradeHouseStage />} />
+      <Route path="/tradehouse/tv" component={() => <TradeHybridTV />} />
       <Route path="/tradehouse/broadcast/:view" component={() => <TradeHouseBroadcast />} />
 
       {/* ── Homepage uses the same site shell as every public marketing page ── */}
