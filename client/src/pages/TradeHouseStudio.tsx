@@ -71,6 +71,8 @@ const TradeHouseStudio: React.FC = () => {
   const [sponsorName, setSponsorName] = useState("");
   const [sponsorUrl, setSponsorUrl] = useState("");
   const [musicUrl, setMusicUrl] = useState("");
+  const [shareAccess, setShareAccess] = useState("");
+  const [shareAccessExpiresAt, setShareAccessExpiresAt] = useState("");
   const [roomId, setRoomId] = useState(() => newRoomId());
   const [quickStatus, setQuickStatus] = useState("");
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
@@ -78,6 +80,24 @@ const TradeHouseStudio: React.FC = () => {
     { id: "quick-1", name: "Trader A", dashboardUrl: "", division: "trading", platform: "matchtrader" },
     { id: "quick-2", name: "Trader B", dashboardUrl: "", division: "trading", platform: "ctrader" },
   ]);
+
+  useEffect(() => {
+    fetch("/api/tradehouse/beta/link-token", {
+      method: "POST",
+      credentials: "include",
+      cache: "no-store",
+    })
+      .then(async (response) => {
+        if (!response.ok) return null;
+        return response.json();
+      })
+      .then((body) => {
+        if (!body?.token) return;
+        setShareAccess(body.token);
+        setShareAccessExpiresAt(body.expiresAt || "");
+      })
+      .catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     fetch("/api/tradehouse/leaderboard", { cache: "no-store" })
@@ -93,12 +113,15 @@ const TradeHouseStudio: React.FC = () => {
   }, []);
 
   const base = typeof window !== "undefined" ? window.location.origin : "";
-  const urls = useMemo(() => ({
-    leaderboard: `${base}/tradehouse/broadcast/leaderboard`,
-    scorebug: `${base}/tradehouse/broadcast/scorebug`,
-    duel: `${base}/tradehouse/broadcast/duel?left=${encodeURIComponent(left)}&right=${encodeURIComponent(right)}`,
-    trader: `${base}/tradehouse/broadcast/trader?id=${encodeURIComponent(solo)}`,
-  }), [base, left, right, solo]);
+  const urls = useMemo(() => {
+    const access = shareAccess ? { access: shareAccess } : {};
+    return {
+      leaderboard: `${base}/tradehouse/broadcast/leaderboard?${new URLSearchParams(access)}`,
+      scorebug: `${base}/tradehouse/broadcast/scorebug?${new URLSearchParams(access)}`,
+      duel: `${base}/tradehouse/broadcast/duel?${new URLSearchParams({ left, right, ...access })}`,
+      trader: `${base}/tradehouse/broadcast/trader?${new URLSearchParams({ id: solo, ...access })}`,
+    };
+  }, [base, left, right, solo, shareAccess]);
 
   const roster = demo ? rehearsalFeed().standings : feed?.standings ?? [];
   const stageUrl = (layout: string, overlay = false) =>
@@ -128,8 +151,9 @@ const TradeHouseStudio: React.FC = () => {
     if (sponsorName.trim()) params.sponsor = sponsorName.trim();
     if (sponsorUrl.trim()) params.sponsorUrl = sponsorUrl.trim();
     if (musicUrl.trim()) params.music = musicUrl.trim();
+    if (shareAccess) params.access = shareAccess;
     return params;
-  }, [battleFormat, durationMinutes, targetPct, profitTargetPct, maxDDPct, accountSize, promoText, sponsorName, sponsorUrl, musicUrl, leagueEndsAt]);
+  }, [battleFormat, durationMinutes, targetPct, profitTargetPct, maxDDPct, accountSize, promoText, sponsorName, sponsorUrl, musicUrl, leagueEndsAt, shareAccess]);
 
   const readyQuickEntries = useMemo(() => quickEntries.filter(validEntry).slice(0, 8), [quickEntries]);
   const quickEncoded = useMemo(
