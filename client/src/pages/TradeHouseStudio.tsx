@@ -22,6 +22,7 @@ import {
   type Standing,
 } from "@/lib/tradehouse-feed";
 import SEO from "@/components/SEO";
+import { BATTLE_PRESETS, type BattleFormat } from "@/lib/tradehouse-rules";
 
 type Payload = {
   season: { name: string; status: string };
@@ -30,6 +31,13 @@ type Payload = {
 
 function newRoomId() {
   return Math.random().toString(36).slice(2, 8).toUpperCase();
+}
+
+function defaultLeagueEnd() {
+  const now = new Date();
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
+  end.setMinutes(end.getMinutes() - end.getTimezoneOffset());
+  return end.toISOString().slice(0, 16);
 }
 
 function validEntry(entry: QuickBattleEntry) {
@@ -52,6 +60,16 @@ const TradeHouseStudio: React.FC = () => {
   const [copied, setCopied] = useState("");
 
   const [seasonName, setSeasonName] = useState("Trade House Quick Battle");
+  const [battleFormat, setBattleFormat] = useState<BattleFormat>("spotlight");
+  const [durationMinutes, setDurationMinutes] = useState(60);
+  const [targetPct, setTargetPct] = useState(5);
+  const [profitTargetPct, setProfitTargetPct] = useState(8);
+  const [maxDDPct, setMaxDDPct] = useState(5);
+  const [accountSize, setAccountSize] = useState(25000);
+  const [leagueEndsAt, setLeagueEndsAt] = useState(defaultLeagueEnd);
+  const [promoText, setPromoText] = useState("Instant Funding · Trade House · Verified Hybrid performance");
+  const [sponsorName, setSponsorName] = useState("");
+  const [sponsorUrl, setSponsorUrl] = useState("");
   const [roomId, setRoomId] = useState(() => newRoomId());
   const [quickStatus, setQuickStatus] = useState("");
   const [quickPreview, setQuickPreview] = useState<Payload | null>(null);
@@ -89,7 +107,27 @@ const TradeHouseStudio: React.FC = () => {
       right,
       ...(demo ? { demo: "1" } : {}),
       ...(overlay ? { overlay: "1" } : {}),
+      ...experienceParams,
     })}`;
+
+  const experienceParams = useMemo(() => {
+    const params: Record<string, string> = {
+      format: battleFormat,
+      ruleLabel: BATTLE_PRESETS[battleFormat].label,
+      duration: String(Math.max(60, Math.round(durationMinutes * 60))),
+      target: String(targetPct),
+      profitTarget: String(profitTargetPct),
+      maxDD: String(maxDDPct),
+      accountSize: String(accountSize),
+      promo: promoText,
+    };
+    if (battleFormat === "league" && leagueEndsAt) {
+      params.endsAt = new Date(leagueEndsAt).toISOString();
+    }
+    if (sponsorName.trim()) params.sponsor = sponsorName.trim();
+    if (sponsorUrl.trim()) params.sponsorUrl = sponsorUrl.trim();
+    return params;
+  }, [battleFormat, durationMinutes, targetPct, profitTargetPct, maxDDPct, accountSize, promoText, sponsorName, sponsorUrl, leagueEndsAt]);
 
   const readyQuickEntries = useMemo(() => quickEntries.filter(validEntry).slice(0, 8), [quickEntries]);
   const quickEncoded = useMemo(
@@ -103,7 +141,7 @@ const TradeHouseStudio: React.FC = () => {
       season: seasonName,
       ...(overlay ? { overlay: "1" } : {}),
     })}`;
-  const quickTvUrl = `${base}/tradehouse/tv?${new URLSearchParams({ quick: quickEncoded, season: seasonName })}`;
+  const quickTvUrl = `${base}/tradehouse/tv?${new URLSearchParams({ quick: quickEncoded, season: seasonName, ...experienceParams })}`;
 
   const roomMode = readyQuickEntries.length <= 2 ? "1v1" : readyQuickEntries.length <= 4 ? "2v2" : "3v3";
   const participantLinks = useMemo(
@@ -118,10 +156,11 @@ const TradeHouseStudio: React.FC = () => {
         quick: quickEncoded,
         seat: entry.id,
         season: seasonName,
+        ...experienceParams,
       });
       return { id: entry.id, name: entry.name, url: `${base}/battles/room/${roomId}?${params}` };
     }),
-    [base, readyQuickEntries, roomId, roomMode],
+    [base, readyQuickEntries, roomId, roomMode, quickEncoded, seasonName, experienceParams],
   );
 
   const copy = async (key: string, value: string) => {
@@ -393,7 +432,7 @@ const TradeHouseStudio: React.FC = () => {
                       <a href={quickStageUrl(readyQuickEntries.length > 2 ? "grid" : "duel")} target="_blank" rel="noreferrer" className="rounded-lg bg-cyan-300 px-3 py-2 text-[10px] font-black text-slate-950">OPEN STAGE</a>
                       <a href={quickTvUrl} target="_blank" rel="noreferrer" className="rounded-lg bg-violet-400 px-3 py-2 text-[10px] font-black text-white">OPEN TRADE HYBRID TV</a>
                       <button
-                        onClick={() => downloadOBSCollection(base, false, readyQuickEntries[0]?.id || "", readyQuickEntries[1]?.id || "", quickEncoded, seasonName)}
+                        onClick={() => downloadOBSCollection(base, false, readyQuickEntries[0]?.id || "", readyQuickEntries[1]?.id || "", quickEncoded, seasonName, experienceParams)}
                         className="rounded-lg border border-white/15 px-3 py-2 text-[10px] font-black text-slate-200"
                       >
                         DOWNLOAD OBS COLLECTION
