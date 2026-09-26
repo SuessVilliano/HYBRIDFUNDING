@@ -1,33 +1,47 @@
 /**
- * BattleRoom — the live Trader Battles arena.
+ * BattleRoom — live Trade House arena.
  *
- * URL: /battles/room/:roomId
- * Query params:
- *   mode    "1v1" | "2v2" | "3v3"   (creator sets this)
- *   name    trader display name
- *   side    "left" | "right"
- *   slot    0-2  (position within the team)
- *   join    "1"  (set when joining an existing room)
- *   obs     "1"  (OBS Browser Source — hides chrome, fixed 1920x1080)
+ * Quick Battle room links carry the same verified Hybrid roster/baselines used
+ * by the OBS stage. That lets account stats populate before a trader turns on
+ * camera or screen share.
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearch, useLocation } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
+import { useLocation, useParams, useSearch } from "wouter";
+import { AnimatePresence, motion } from "framer-motion";
 import {
+  ParticipantsAudio,
+  StreamCall,
   StreamVideo,
   StreamVideoClient,
-  StreamCall,
+  hasAudio,
+  hasVideo,
   useCall,
   useCallStateHooks,
-  ParticipantView,
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
-import { Monitor, Mic, MicOff, TrendingUp, X, LogOut } from "lucide-react";
+import {
+  LogOut,
+  Mic,
+  MicOff,
+  Monitor,
+  ShieldCheck,
+  TrendingUp,
+  Video,
+  VideoOff,
+  X,
+} from "lucide-react";
+
 import BattleLayout from "@/components/battles/BattleLayout";
+import HouseChat from "@/components/battles/HouseChat";
 import type { Trader } from "@/components/battles/BattleLayout";
 import type { TraderStats } from "@/components/battles/ParticipantTile";
 import type { BattleMode } from "@/components/battles/StatsPanel";
+import {
+  decodeQuickRoster,
+  type QuickBattleEntry,
+  type Standing,
+} from "@/lib/tradehouse-feed";
 
 interface RoomConfig {
   mode: BattleMode;
@@ -36,20 +50,87 @@ interface RoomConfig {
   slot: number;
   obsMode: boolean;
   roomId: string;
+  quickRoster: QuickBattleEntry[];
+  quickKey: string;
+  seatId: string;
+  seasonName: string;
 }
 
-const DEFAULT_STATS: TraderStats = { pnl: 0, wins: 0, losses: 0, biggestWin: 0, tradeCount: 0 };
+type SeatState = QuickBattleEntry & {
+  side: "left" | "right";
+  slot: number;
+  userId?: string;
+  stats: TraderStats;
+};
 
-const LocalVideo: React.FC<{ stream: MediaStream | null }> = ({ stream }) => {
+type ManualStatField = "pnl" | "wins" | "losses" | "biggestWin" | "tradeCount";
+
+const DEFAULT_STATS: TraderStats = {
+  pnl: 0,
+  wins: 0,
+  losses: 0,
+  biggestWin: 0,
+  tradeCount: 0,
+};
+
+const seatKey = (side: "left" | "right", slot: number) => `${side}:${slot}`;
+
+const entryStats = (entry?: QuickBattleEntry): TraderStats => ({
+  ...DEFAULT_STATS,
+  dashboardUrl: entry?.dashboardUrl,
+  division: entry?.division,
+  platform: entry?.platform,
+});
+
+const standingToStats = (standing: Standing): TraderStats => ({
+  pnl: standing.pnl,
+  wins: standing.wins,
+  losses: standing.losses,
+  biggestWin: standing.biggestWin,
+  tradeCount: standing.tradeCount,
+  balance: standing.balance,
+  equity: standing.equity,
+  returnPct: standing.returnPct,
+  openPositionCount: standing.openPositionCount,
+  verified: standing.verified,
+  dashboardUrl: standing.dashboardUrl,
+  division: standing.division,
+  platform: standing.platform,
+});
+
+const MediaStreamVideo: React.FC<{
+  stream: MediaStream | null | undefined;
+  screen?: boolean;
+}> = ({ stream, screen = false }) => {
   const ref = useRef<HTMLVideoElement>(null);
+
   useEffect(() => {
     if (!ref.current) return;
-    ref.current.srcObject = stream;
+    ref.current.srcObject = stream ?? null;
     if (stream) void ref.current.play().catch(() => undefined);
-    return () => { if (ref.current) ref.current.srcObject = null; };
+    return () => {
+      if (ref.current) ref.current.srcObject = null;
+    };
   }, [stream]);
+
   if (!stream) return null;
-  return <video ref={ref} autoPlay playsInline muted className="h-full w-full object-contain" />;
+
+  return (
+    <video
+      ref={ref}
+      autoPlay
+      playsInline
+      muted
+      className="h-full w-full"
+      style={{
+        display: "block",
+        width: "100%",
+        height: "100%",
+        objectFit: screen ? "fill" : "cover",
+        background: "#03070d",
+      }}
+    />
+  );
 };
 
 async function fetchBattleToken(userId: string, userName: string, roomId: string) {
@@ -62,31 +143,43 @@ async function fetchBattleToken(userId: string, userName: string, roomId: string
   return res.json() as Promise<{ token: string; apiKey: string }>;
 }
 
-const StatsEditor: React.FC<{ stats: TraderStats; onChange: (s: TraderStats) => void; onClose: () => void }> = ({ stats, onChange, onClose }) => {
+const StatsEditor: React.FC<{
+  stats: TraderStats;
+  onChange: (stats: TraderStats) => void;
+  onClose: () => void;
+}> = ({ stats, onChange, onClose }) => {
   const [draft, setDraft] = useState(stats);
-  const Field = ({ label, field }: { label: string; field: keyof TraderStats }) => (
+
+  const Field = ({ label, field }: { label: string; field: ManualStatField }) => (
     <label className="flex flex-col gap-1">
-      <span className="font-['Orbitron'] text-[9px] font-bold tracking-widest uppercase" style={{ color: "#555" }}>{label}</span>
+      <span className="font-['Orbitron'] text-[9px] font-bold uppercase tracking-widest text-slate-500">{label}</span>
       <input
         type="number"
-        value={draft[field]}
-        onChange={(e) => setDraft((d) => ({ ...d, [field]: parseFloat(e.target.value) || 0 }))}
-        className="rounded-lg px-3 py-2 font-mono text-white outline-none transition-all"
-        style={{ background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.08)", fontSize: "14px" }}
-        onFocus={(e) => { e.target.style.border = "1px solid #00ff87"; e.target.style.boxShadow = "0 0 10px rgba(0,255,135,0.1)"; }}
-        onBlur={(e) => { e.target.style.border = "1px solid rgba(255,255,255,0.08)"; e.target.style.boxShadow = "none"; }}
+        value={draft[field] ?? 0}
+        onChange={(event) =>
+          setDraft((current) => ({
+            ...current,
+            [field]: Number.parseFloat(event.target.value) || 0,
+          }))
+        }
+        className="rounded-lg border border-white/10 bg-[#07101b] px-3 py-2 font-mono text-white outline-none focus:border-cyan-300/40"
       />
     </label>
   );
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.96 }}
-      className="absolute bottom-16 right-0 z-50 w-56 rounded-xl p-4 shadow-2xl"
-      style={{ background: "#111118", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 40px rgba(0,0,0,0.8)" }}
+      initial={{ opacity: 0, y: 12, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 12, scale: 0.96 }}
+      className="absolute bottom-16 right-0 z-50 w-60 rounded-xl border border-white/10 bg-[#0b1320]/95 p-4 shadow-2xl backdrop-blur-xl"
     >
-      <div className="flex items-center justify-between mb-4">
-        <span className="font-['Orbitron'] font-black text-white text-xs tracking-wider">MY STATS</span>
-        <button onClick={onClose} style={{ color: "#444" }} className="hover:text-white transition-colors"><X className="w-4 h-4" /></button>
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <span className="font-['Orbitron'] text-xs font-black tracking-wider text-white">MANUAL FALLBACK</span>
+          <div className="mt-1 text-[9px] text-slate-600">Only used when no Hybrid dashboard is attached.</div>
+        </div>
+        <button onClick={onClose} className="text-slate-600 hover:text-white"><X className="h-4 w-4" /></button>
       </div>
       <div className="space-y-3">
         <Field label="Net P&L ($)" field="pnl" />
@@ -96,116 +189,340 @@ const StatsEditor: React.FC<{ stats: TraderStats; onChange: (s: TraderStats) => 
         <Field label="Trade Count" field="tradeCount" />
       </div>
       <button
-        onClick={() => { onChange(draft); onClose(); }}
-        className="mt-4 w-full py-2 rounded-lg font-['Orbitron'] font-black text-sm tracking-widest uppercase transition-all"
-        style={{ background: "#00ff87", color: "#0a0a0f", boxShadow: "0 0 20px rgba(0,255,135,0.3)" }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 0 30px rgba(0,255,135,0.5)"; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 0 20px rgba(0,255,135,0.3)"; }}
+        onClick={() => {
+          onChange(draft);
+          onClose();
+        }}
+        className="mt-4 w-full rounded-lg bg-cyan-300 py-2 font-['Orbitron'] text-xs font-black uppercase tracking-widest text-slate-950"
       >
-        Save Stats
+        Save fallback stats
       </button>
     </motion.div>
   );
 };
 
 const BottomBar: React.FC<{
-  myName: string; myStats: TraderStats; isMicMuted: boolean; isSharingScreen: boolean;
-  onToggleMic: () => void; onToggleScreen: () => void; onHangUp: () => void;
-  showStatsEditor: boolean; onToggleStatsEditor: () => void; onStatsChange: (s: TraderStats) => void;
-}> = ({ myName, myStats, isMicMuted, isSharingScreen, onToggleMic, onToggleScreen, onHangUp, showStatsEditor, onToggleStatsEditor, onStatsChange }) => {
+  myName: string;
+  myStats: TraderStats;
+  isMicMuted: boolean;
+  isCameraOff: boolean;
+  isSharingScreen: boolean;
+  onToggleMic: () => void;
+  onToggleCamera: () => void;
+  onToggleScreen: () => void;
+  onHangUp: () => void;
+  showStatsEditor: boolean;
+  onToggleStatsEditor: () => void;
+  onStatsChange: (stats: TraderStats) => void;
+  chatControl?: React.ReactNode;
+}> = ({
+  myName,
+  myStats,
+  isMicMuted,
+  isCameraOff,
+  isSharingScreen,
+  onToggleMic,
+  onToggleCamera,
+  onToggleScreen,
+  onHangUp,
+  showStatsEditor,
+  onToggleStatsEditor,
+  onStatsChange,
+  chatControl,
+}) => {
   const pnlPositive = myStats.pnl >= 0;
-  const pnlStr = pnlPositive ? `+$${myStats.pnl.toLocaleString()}` : `-$${Math.abs(myStats.pnl).toLocaleString()}`;
+  const pnlStr = pnlPositive
+    ? `+$${myStats.pnl.toLocaleString()}`
+    : `-$${Math.abs(myStats.pnl).toLocaleString()}`;
+
+  const controlStyle = (active: boolean, danger = false) => ({
+    background: danger
+      ? "rgba(255,59,92,0.16)"
+      : active
+        ? "rgba(0,255,255,0.12)"
+        : "rgba(255,255,255,0.05)",
+    border: danger
+      ? "1px solid rgba(255,59,92,0.45)"
+      : active
+        ? "1px solid rgba(0,255,255,0.42)"
+        : "1px solid rgba(255,255,255,0.1)",
+    color: danger ? "#ff3b5c" : active ? "#67e8f9" : "#64748b",
+  });
+
   return (
-    <div className="absolute bottom-0 left-0 right-0 z-20 h-14 flex items-center justify-between px-5 gap-4"
-      style={{ background: "rgba(10,10,15,0.95)", backdropFilter: "blur(12px)", borderTop: "1px solid rgba(255,255,255,0.06)" }}
+    <div
+      className="absolute bottom-0 left-0 right-0 z-20 flex h-14 items-center justify-between gap-4 px-5"
+      style={{
+        background: "rgba(4,10,18,0.96)",
+        backdropFilter: "blur(14px)",
+        borderTop: "1px solid rgba(103,232,249,0.09)",
+      }}
     >
-      <div className="flex items-center gap-3 min-w-0">
-        <span className="font-['Orbitron'] font-black text-white truncate text-sm">{myName}</span>
-        <span className="font-mono font-bold text-sm" style={{ color: pnlPositive ? "#00ff87" : "#ff3b5c", textShadow: pnlPositive ? "0 0 8px rgba(0,255,135,0.4)" : "0 0 8px rgba(255,59,92,0.4)" }}>{pnlStr}</span>
+      <div className="flex min-w-0 items-center gap-3">
+        <span className="truncate font-['Orbitron'] text-sm font-black text-white">{myName}</span>
+        <span
+          className="font-mono text-sm font-bold"
+          style={{
+            color: pnlPositive ? "#00ff87" : "#ff3b5c",
+            textShadow: pnlPositive
+              ? "0 0 8px rgba(0,255,135,0.35)"
+              : "0 0 8px rgba(255,59,92,0.35)",
+          }}
+        >
+          {pnlStr}
+        </span>
+        {myStats.verified && (
+          <span className="hidden items-center gap-1 rounded-full border border-cyan-300/15 bg-cyan-300/[0.05] px-2 py-1 text-[8px] font-bold uppercase tracking-wider text-cyan-200 sm:flex">
+            <ShieldCheck className="h-3 w-3" /> verified
+          </span>
+        )}
       </div>
-      <div className="flex items-center gap-3">
-        <button onClick={onToggleMic} className="w-9 h-9 rounded-full flex items-center justify-center transition-all"
-          style={{ background: isMicMuted ? "rgba(255,59,92,0.15)" : "rgba(255,255,255,0.06)", border: isMicMuted ? "1px solid rgba(255,59,92,0.5)" : "1px solid rgba(255,255,255,0.1)", color: isMicMuted ? "#ff3b5c" : "#666" }}>
-          {isMicMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+
+      <div className="flex items-center gap-2">
+        <button onClick={onToggleMic} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(!isMicMuted, isMicMuted)} title={isMicMuted ? "Unmute microphone" : "Mute microphone"}>
+          {isMicMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
         </button>
-        <button onClick={onToggleScreen} className="w-9 h-9 rounded-full flex items-center justify-center transition-all"
-          style={{ background: isSharingScreen ? "rgba(0,255,135,0.15)" : "rgba(255,255,255,0.06)", border: isSharingScreen ? "1px solid rgba(0,255,135,0.5)" : "1px solid rgba(255,255,255,0.1)", color: isSharingScreen ? "#00ff87" : "#666" }}>
-          <Monitor className="w-4 h-4" />
+        <button onClick={onToggleCamera} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(!isCameraOff)} title={isCameraOff ? "Turn camera on" : "Turn camera off"}>
+          {isCameraOff ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
         </button>
-        <button onClick={onHangUp} className="w-9 h-9 rounded-full flex items-center justify-center transition-all"
-          style={{ background: "rgba(255,59,92,0.2)", border: "1px solid rgba(255,59,92,0.5)", color: "#ff3b5c" }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,59,92,0.35)"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,59,92,0.2)"; }}>
-          <LogOut className="w-4 h-4" />
+        <button onClick={onToggleScreen} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(isSharingScreen)} title={isSharingScreen ? "Stop sharing screen" : "Share screen"}>
+          <Monitor className="h-4 w-4" />
+        </button>
+        {chatControl}
+        <button onClick={onHangUp} className="flex h-9 w-9 items-center justify-center rounded-full transition-all" style={controlStyle(false, true)} title="Leave battle">
+          <LogOut className="h-4 w-4" />
         </button>
       </div>
+
       <div className="relative flex-shrink-0">
-        <button onClick={onToggleStatsEditor}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-['Orbitron'] font-bold tracking-wider uppercase transition-all"
-          style={{ background: showStatsEditor ? "rgba(0,255,135,0.1)" : "rgba(255,255,255,0.04)", border: showStatsEditor ? "1px solid rgba(0,255,135,0.4)" : "1px solid rgba(255,255,255,0.08)", color: showStatsEditor ? "#00ff87" : "#555" }}>
-          <TrendingUp className="w-3.5 h-3.5" /> Stats
-        </button>
-        <AnimatePresence>
-          {showStatsEditor && <StatsEditor stats={myStats} onChange={onStatsChange} onClose={onToggleStatsEditor} />}
-        </AnimatePresence>
+        {myStats.dashboardUrl ? (
+          <a
+            href={myStats.dashboardUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 rounded-lg border border-cyan-300/20 bg-cyan-300/[0.05] px-3 py-1.5 font-['Orbitron'] text-[9px] font-bold uppercase tracking-wider text-cyan-200"
+          >
+            <ShieldCheck className="h-3.5 w-3.5" /> Public stats
+          </a>
+        ) : (
+          <>
+            <button
+              onClick={onToggleStatsEditor}
+              className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 font-['Orbitron'] text-[9px] font-bold uppercase tracking-wider text-slate-500"
+            >
+              <TrendingUp className="h-3.5 w-3.5" /> Fallback stats
+            </button>
+            <AnimatePresence>
+              {showStatsEditor && (
+                <StatsEditor stats={myStats} onChange={onStatsChange} onClose={onToggleStatsEditor} />
+              )}
+            </AnimatePresence>
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-const LiveControls: React.FC<{ myStats: TraderStats; myName: string; showStatsEditor: boolean; onToggleStatsEditor: () => void; onStatsChange: (s: TraderStats) => void }> = ({ myStats, myName, showStatsEditor, onToggleStatsEditor, onStatsChange }) => {
+const LiveControls: React.FC<{
+  myStats: TraderStats;
+  myName: string;
+  showStatsEditor: boolean;
+  onToggleStatsEditor: () => void;
+  onStatsChange: (stats: TraderStats) => void;
+}> = ({ myStats, myName, showStatsEditor, onToggleStatsEditor, onStatsChange }) => {
   const call = useCall();
-  const { useMicrophoneState, useScreenShareState } = useCallStateHooks();
+  const {
+    useCameraState,
+    useMicrophoneState,
+    useScreenShareState,
+  } = useCallStateHooks();
+  const { camera, isMute: isCameraOff } = useCameraState();
   const { microphone, isMute: isMicMuted } = useMicrophoneState();
   const { screenShare, status: screenShareStatus } = useScreenShareState();
   const isSharingScreen = screenShareStatus === "enabled";
   const [, navigate] = useLocation();
-  const toggleMic = useCallback(async () => { try { if (isMicMuted) await microphone.enable(); else await microphone.disable(); } catch (e) { console.error(e); } }, [isMicMuted, microphone]);
-  const toggleScreenShare = useCallback(async () => { try { if (isSharingScreen) await screenShare.disable(); else await screenShare.enable(); } catch (e) { console.error(e); } }, [isSharingScreen, screenShare]);
-  const hangUp = useCallback(async () => { try { await call?.leave(); } catch (e) { console.error(e); } navigate("/battles/lobby"); }, [call, navigate]);
-  return <BottomBar myName={myName} myStats={myStats} isMicMuted={isMicMuted} isSharingScreen={isSharingScreen} onToggleMic={toggleMic} onToggleScreen={toggleScreenShare} onHangUp={hangUp} showStatsEditor={showStatsEditor} onToggleStatsEditor={onToggleStatsEditor} onStatsChange={onStatsChange} />;
-};
 
-const ArenaInner: React.FC<{ config: RoomConfig; myStats: TraderStats; elapsed: number; participantData: Record<string, { name: string; stats: TraderStats; side: "left" | "right"; slot: number }>; showStatsEditor: boolean; onToggleStatsEditor: () => void; onStatsChange: (s: TraderStats) => void }> = ({ config, myStats, elapsed, participantData, showStatsEditor, onToggleStatsEditor, onStatsChange }) => {
-  const { useParticipants, useLocalParticipant, useMicrophoneState, useScreenShareState } = useCallStateHooks();
-  const participants = useParticipants();
-  const localParticipant = useLocalParticipant();
-  const { isMute: isMicMuted } = useMicrophoneState();
-  const { status: screenShareStatus } = useScreenShareState();
-  const isSharingScreen = screenShareStatus === "enabled";
-  const buildTraders = (side: "left" | "right"): Trader[] => {
-    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : 3;
-    return Array.from({ length: count }, (_, slot) => {
-      if (config.side === side && config.slot === slot && localParticipant) {
-        return { id: localParticipant.sessionId, name: config.myName, stats: myStats, videoTrack: <ParticipantView participant={localParticipant} trackType={isSharingScreen ? "screenShareTrack" : "videoTrack"} className="w-full h-full object-contain" />, isMuted: isMicMuted, isScreenSharing: isSharingScreen };
-      }
-      const entry = Object.entries(participantData).find(([, v]) => v.side === side && v.slot === slot);
-      if (!entry) return null;
-      const [userId, data] = entry;
-      const streamP = participants.find((p) => p.userId === userId);
-      const remoteScreen = !!streamP?.screenShareStream;
-      return { id: userId, name: data.name, stats: data.stats, videoTrack: streamP ? <ParticipantView participant={streamP} trackType={remoteScreen ? "screenShareTrack" : "videoTrack"} className="w-full h-full object-contain" /> : null, isMuted: !streamP?.isSpeaking, isScreenSharing: remoteScreen };
-    }).filter(Boolean) as Trader[];
-  };
-  const leftTraders = buildTraders("left");
-  const rightTraders = buildTraders("right");
+  const toggleMic = useCallback(async () => {
+    try {
+      await microphone.toggle();
+    } catch (error) {
+      console.error("[tradehouse] microphone toggle failed", error);
+    }
+  }, [microphone]);
+
+  const toggleCamera = useCallback(async () => {
+    try {
+      await camera.toggle();
+    } catch (error) {
+      console.error("[tradehouse] camera toggle failed", error);
+    }
+  }, [camera]);
+
+  const toggleScreenShare = useCallback(async () => {
+    try {
+      if (isSharingScreen) await screenShare.disable();
+      else await screenShare.enable();
+    } catch (error) {
+      console.error("[tradehouse] screen share toggle failed", error);
+    }
+  }, [isSharingScreen, screenShare]);
+
+  const enableCameraAndMic = useCallback(async () => {
+    try {
+      await Promise.all([camera.enable(), microphone.enable()]);
+    } catch (error) {
+      console.error("[tradehouse] camera/mic enable failed", error);
+    }
+  }, [camera, microphone]);
+
+  const hangUp = useCallback(async () => {
+    try {
+      await call?.leave();
+    } catch (error) {
+      console.error("[tradehouse] leave failed", error);
+    }
+    navigate("/battles/lobby");
+  }, [call, navigate]);
+
   return (
     <>
-      <BattleLayout mode={config.mode} leftTraders={leftTraders} rightTraders={rightTraders} leftTeamName={config.mode === "1v1" ? (leftTraders[0]?.name ?? "Team A") : "TEAM A"} rightTeamName={config.mode === "1v1" ? (rightTraders[0]?.name ?? "Team B") : "TEAM B"} elapsed={elapsed} obsMode={config.obsMode} />
-      {!config.obsMode && <LiveControls myStats={myStats} myName={config.myName} showStatsEditor={showStatsEditor} onToggleStatsEditor={onToggleStatsEditor} onStatsChange={onStatsChange} />}
+      <BottomBar
+        myName={myName}
+        myStats={myStats}
+        isMicMuted={isMicMuted}
+        isCameraOff={isCameraOff}
+        isSharingScreen={isSharingScreen}
+        onToggleMic={toggleMic}
+        onToggleCamera={toggleCamera}
+        onToggleScreen={toggleScreenShare}
+        onHangUp={hangUp}
+        showStatsEditor={showStatsEditor}
+        onToggleStatsEditor={onToggleStatsEditor}
+        onStatsChange={onStatsChange}
+        chatControl={<HouseChat myName={myName} />}
+      />
+      {(isCameraOff || isMicMuted) && (
+        <button
+          onClick={enableCameraAndMic}
+          className="absolute bottom-[4.5rem] left-1/2 z-30 -translate-x-1/2 rounded-lg border border-cyan-300/35 bg-[#040a12]/90 px-3 py-2 font-['Orbitron'] text-[9px] font-bold tracking-wider text-cyan-200"
+        >
+          ENABLE CAMERA + MIC
+        </button>
+      )}
     </>
   );
 };
 
-const DemoArena: React.FC<{ config: RoomConfig; myStats: TraderStats; elapsed: number; showStatsEditor: boolean; onToggleStatsEditor: () => void; onStatsChange: (s: TraderStats) => void }> = ({ config, myStats, elapsed, showStatsEditor, onToggleStatsEditor, onStatsChange }) => {
+const ArenaInner: React.FC<{
+  config: RoomConfig;
+  seats: Record<string, SeatState>;
+  myStats: TraderStats;
+  elapsed: number;
+  showStatsEditor: boolean;
+  onToggleStatsEditor: () => void;
+  onStatsChange: (stats: TraderStats) => void;
+}> = ({
+  config,
+  seats,
+  myStats,
+  elapsed,
+  showStatsEditor,
+  onToggleStatsEditor,
+  onStatsChange,
+}) => {
+  const { useParticipants, useLocalParticipant } = useCallStateHooks();
+  const participants = useParticipants();
+  const localParticipant = useLocalParticipant();
+
+  const buildTraders = (side: "left" | "right"): Trader[] => {
+    const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : 3;
+
+    return Array.from({ length: count }, (_, slot) => {
+      const seat = seats[seatKey(side, slot)];
+      if (!seat) return null;
+
+      const isLocal = config.side === side && config.slot === slot && Boolean(localParticipant);
+      const streamParticipant = isLocal
+        ? localParticipant
+        : participants.find((participant) => participant.userId === seat.userId);
+
+      const screenStream = streamParticipant?.screenShareStream;
+      const cameraStream = streamParticipant?.videoStream;
+      const isScreenSharing = Boolean(screenStream);
+      const isMuted = streamParticipant ? !hasAudio(streamParticipant) : true;
+      const isCameraOff = streamParticipant ? !hasVideo(streamParticipant) : true;
+      const activeStream = screenStream || cameraStream;
+
+      return {
+        id: seat.id,
+        name: seat.name,
+        stats: seat.stats,
+        videoTrack: activeStream ? (
+          <MediaStreamVideo stream={activeStream} screen={isScreenSharing} />
+        ) : null,
+        isMuted,
+        isCameraOff,
+        isScreenSharing,
+      };
+    }).filter(Boolean) as Trader[];
+  };
+
+  const leftTraders = buildTraders("left");
+  const rightTraders = buildTraders("right");
+
+  return (
+    <>
+      <ParticipantsAudio />
+      <BattleLayout
+        mode={config.mode}
+        leftTraders={leftTraders}
+        rightTraders={rightTraders}
+        leftTeamName={config.mode === "1v1" ? (leftTraders[0]?.name ?? "Team A") : "TEAM A"}
+        rightTeamName={config.mode === "1v1" ? (rightTraders[0]?.name ?? "Team B") : "TEAM B"}
+        elapsed={elapsed}
+        obsMode={config.obsMode}
+      />
+      {!config.obsMode && (
+        <LiveControls
+          myStats={myStats}
+          myName={config.myName}
+          showStatsEditor={showStatsEditor}
+          onToggleStatsEditor={onToggleStatsEditor}
+          onStatsChange={onStatsChange}
+        />
+      )}
+    </>
+  );
+};
+
+const DemoArena: React.FC<{
+  config: RoomConfig;
+  seats: Record<string, SeatState>;
+  myStats: TraderStats;
+  elapsed: number;
+  showStatsEditor: boolean;
+  onToggleStatsEditor: () => void;
+  onStatsChange: (stats: TraderStats) => void;
+}> = ({
+  config,
+  seats,
+  myStats,
+  elapsed,
+  showStatsEditor,
+  onToggleStatsEditor,
+  onStatsChange,
+}) => {
   const [, navigate] = useLocation();
   const [isMicMuted, setIsMicMuted] = useState(false);
+  const [isCameraOff, setIsCameraOff] = useState(true);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [micStream, setMicStream] = useState<MediaStream | null>(null);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [mediaError, setMediaError] = useState("");
   const streamsRef = useRef<Array<MediaStream | null>>([]);
   const isSharingScreen = Boolean(screenStream);
+
   const enableMicAndCamera = useCallback(async () => {
     try {
       setMediaError("");
@@ -213,16 +530,40 @@ const DemoArena: React.FC<{ config: RoomConfig; myStats: TraderStats; elapsed: n
       setCameraStream(stream);
       setMicStream(stream);
       setIsMicMuted(false);
+      setIsCameraOff(false);
     } catch (error: any) {
-      setMediaError(error?.name === "NotAllowedError" ? "Camera and microphone permission was blocked. Allow access in the browser, then try again." : "Camera and microphone could not be opened on this device.");
+      setMediaError(
+        error?.name === "NotAllowedError"
+          ? "Camera and microphone permission was blocked. Allow access in the browser, then try again."
+          : "Camera and microphone could not be opened on this device.",
+      );
     }
   }, []);
+
   const toggleMic = useCallback(async () => {
-    if (!micStream) { await enableMicAndCamera(); return; }
+    if (!micStream) {
+      await enableMicAndCamera();
+      return;
+    }
     const nextMuted = !isMicMuted;
-    micStream.getAudioTracks().forEach((track) => { track.enabled = !nextMuted; });
+    micStream.getAudioTracks().forEach((track) => {
+      track.enabled = !nextMuted;
+    });
     setIsMicMuted(nextMuted);
   }, [enableMicAndCamera, isMicMuted, micStream]);
+
+  const toggleCamera = useCallback(async () => {
+    if (!cameraStream) {
+      await enableMicAndCamera();
+      return;
+    }
+    const nextOff = !isCameraOff;
+    cameraStream.getVideoTracks().forEach((track) => {
+      track.enabled = !nextOff;
+    });
+    setIsCameraOff(nextOff);
+  }, [cameraStream, enableMicAndCamera, isCameraOff]);
+
   const toggleScreen = useCallback(async () => {
     if (screenStream) {
       screenStream.getTracks().forEach((track) => track.stop());
@@ -235,22 +576,93 @@ const DemoArena: React.FC<{ config: RoomConfig; myStats: TraderStats; elapsed: n
       stream.getVideoTracks()[0]?.addEventListener("ended", () => setScreenStream(null), { once: true });
       setScreenStream(stream);
     } catch (error: any) {
-      setMediaError(error?.name === "NotAllowedError" ? "Screen sharing was cancelled. Choose a screen or window when prompted." : "Screen sharing is unavailable in this mobile browser; use desktop OBS for this source.");
+      setMediaError(
+        error?.name === "NotAllowedError"
+          ? "Screen sharing was cancelled. Choose a screen or window when prompted."
+          : "Screen sharing is unavailable in this browser.",
+      );
     }
   }, [screenStream]);
-  useEffect(() => { streamsRef.current = [cameraStream, micStream, screenStream]; }, [cameraStream, micStream, screenStream]);
-  useEffect(() => () => {
-    streamsRef.current.forEach((stream) => stream?.getTracks().forEach((track) => track.stop()));
-  }, []);
+
+  useEffect(() => {
+    streamsRef.current = [cameraStream, micStream, screenStream];
+  }, [cameraStream, micStream, screenStream]);
+
+  useEffect(
+    () => () => {
+      streamsRef.current.forEach((stream) =>
+        stream?.getTracks().forEach((track) => track.stop()),
+      );
+    },
+    [],
+  );
+
   const makeDemo = (side: "left" | "right"): Trader[] => {
-    const names = side === "left" ? ["Trader A", "Trader B", "Trader C"] : ["Trader X", "Trader Y", "Trader Z"];
     const count = config.mode === "1v1" ? 1 : config.mode === "2v2" ? 2 : 3;
-    return Array.from({ length: count }, (_, i) => ({ id: `demo-${side}-${i}`, name: config.side === side && config.slot === i ? config.myName : names[i], stats: config.side === side && config.slot === i ? myStats : DEFAULT_STATS, videoTrack: config.side === side && config.slot === i ? <LocalVideo stream={screenStream || cameraStream} /> : null, isScreenSharing: config.side === side && config.slot === i ? isSharingScreen : false }));
+    return Array.from({ length: count }, (_, slot) => {
+      const seat = seats[seatKey(side, slot)];
+      if (!seat) return null;
+      const isLocal = config.side === side && config.slot === slot;
+      const stream = isLocal ? (screenStream || (!isCameraOff ? cameraStream : null)) : null;
+      return {
+        id: seat.id,
+        name: seat.name,
+        stats: seat.stats,
+        videoTrack: stream ? <MediaStreamVideo stream={stream} screen={Boolean(screenStream)} /> : null,
+        isMuted: isLocal ? isMicMuted : true,
+        isCameraOff: isLocal ? isCameraOff : true,
+        isScreenSharing: isLocal ? isSharingScreen : false,
+      };
+    }).filter(Boolean) as Trader[];
   };
+
+  const leftTraders = makeDemo("left");
+  const rightTraders = makeDemo("right");
+
   return (
     <>
-      <BattleLayout mode={config.mode} leftTraders={makeDemo("left")} rightTraders={makeDemo("right")} leftTeamName={config.mode === "1v1" ? (makeDemo("left")[0]?.name ?? "TEAM A") : "TEAM A"} rightTeamName={config.mode === "1v1" ? (makeDemo("right")[0]?.name ?? "TEAM B") : "TEAM B"} elapsed={elapsed} obsMode={config.obsMode} />
-      {!config.obsMode && <><BottomBar myName={config.myName} myStats={myStats} isMicMuted={isMicMuted} isSharingScreen={isSharingScreen} onToggleMic={toggleMic} onToggleScreen={toggleScreen} onHangUp={() => navigate("/battles/lobby")} showStatsEditor={showStatsEditor} onToggleStatsEditor={onToggleStatsEditor} onStatsChange={onStatsChange} /><div className="absolute bottom-[4.5rem] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2"><button onClick={enableMicAndCamera} className="rounded-lg border border-emerald-300/40 bg-black/80 px-3 py-2 font-['Orbitron'] text-[10px] font-bold tracking-wider text-emerald-200">ENABLE CAMERA + MIC</button>{mediaError && <span className="max-w-xs rounded-lg border border-rose-300/30 bg-black/80 px-3 py-2 text-[10px] text-rose-200">{mediaError}</span>}</div></>}
+      <BattleLayout
+        mode={config.mode}
+        leftTraders={leftTraders}
+        rightTraders={rightTraders}
+        leftTeamName={config.mode === "1v1" ? (leftTraders[0]?.name ?? "TEAM A") : "TEAM A"}
+        rightTeamName={config.mode === "1v1" ? (rightTraders[0]?.name ?? "TEAM B") : "TEAM B"}
+        elapsed={elapsed}
+        obsMode={config.obsMode}
+      />
+      {!config.obsMode && (
+        <>
+          <BottomBar
+            myName={config.myName}
+            myStats={myStats}
+            isMicMuted={isMicMuted}
+            isCameraOff={isCameraOff}
+            isSharingScreen={isSharingScreen}
+            onToggleMic={toggleMic}
+            onToggleCamera={toggleCamera}
+            onToggleScreen={toggleScreen}
+            onHangUp={() => navigate("/battles/lobby")}
+            showStatsEditor={showStatsEditor}
+            onToggleStatsEditor={onToggleStatsEditor}
+            onStatsChange={onStatsChange}
+          />
+          {(isCameraOff || isMicMuted) && (
+            <div className="absolute bottom-[4.5rem] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2">
+              <button
+                onClick={enableMicAndCamera}
+                className="rounded-lg border border-cyan-300/35 bg-black/80 px-3 py-2 font-['Orbitron'] text-[9px] font-bold tracking-wider text-cyan-200"
+              >
+                ENABLE CAMERA + MIC
+              </button>
+              {mediaError && (
+                <span className="max-w-xs rounded-lg border border-rose-300/30 bg-black/80 px-3 py-2 text-[9px] text-rose-200">
+                  {mediaError}
+                </span>
+              )}
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 };
@@ -260,71 +672,330 @@ const BattleRoom: React.FC = () => {
   const search = useSearch();
   const [, navigate] = useLocation();
   const qs = useMemo(() => new URLSearchParams(search), [search]);
-  const config: RoomConfig = useMemo(() => ({
-    mode: (qs.get("mode") as BattleMode) || "1v1",
-    myName: qs.get("name") || "Trader",
-    side: (qs.get("side") as "left" | "right") || (qs.get("join") === "1" ? "right" : "left"),
-    slot: parseInt(qs.get("slot") || "0", 10),
-    obsMode: qs.get("obs") === "1",
-    roomId: params.roomId || "default",
-  }), [qs, params.roomId]);
+
+  const config: RoomConfig = useMemo(() => {
+    const quickKey = qs.get("quick") || "";
+    return {
+      mode: (qs.get("mode") as BattleMode) || "1v1",
+      myName: qs.get("name") || "Trader",
+      side:
+        (qs.get("side") as "left" | "right") ||
+        (qs.get("join") === "1" ? "right" : "left"),
+      slot: Number.parseInt(qs.get("slot") || "0", 10),
+      obsMode: qs.get("obs") === "1",
+      roomId: params.roomId || "default",
+      quickRoster: decodeQuickRoster(quickKey),
+      quickKey,
+      seatId: qs.get("seat") || "",
+      seasonName: qs.get("season") || "Quick Battle",
+    };
+  }, [qs, params.roomId]);
 
   const [streamClient, setStreamClient] = useState<StreamVideoClient | null>(null);
   const [streamCall, setStreamCall] = useState<any | null>(null);
   const [status, setStatus] = useState<"connecting" | "connected" | "demo" | "error">("connecting");
   const [errorMsg, setErrorMsg] = useState("");
-  const [myStats, setMyStats] = useState<TraderStats>(DEFAULT_STATS);
+  const [manualStats, setManualStats] = useState<TraderStats>(DEFAULT_STATS);
   const [showStatsEditor, setShowStatsEditor] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const [seats, setSeats] = useState<Record<string, SeatState>>({});
   const startRef = useRef(Date.now());
-  const [participantData, setParticipantData] = useState<Record<string, { name: string; stats: TraderStats; side: "left" | "right"; slot: number }>>({});
+
+  const mySeatKey = seatKey(config.side, config.slot);
+  const myStats = seats[mySeatKey]?.stats ?? manualStats;
 
   useEffect(() => {
-    const id = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
-    return () => clearInterval(id);
+    setSeats((current) => {
+      const next = { ...current };
+
+      if (config.quickRoster.length > 0) {
+        config.quickRoster.slice(0, 6).forEach((entry, index) => {
+          const side = index % 2 === 0 ? "left" : "right";
+          const slot = Math.floor(index / 2);
+          const key = seatKey(side, slot);
+          const existing = next[key];
+          next[key] = {
+            ...entry,
+            side,
+            slot,
+            userId: existing?.userId,
+            stats:
+              existing?.id === entry.id
+                ? existing.stats
+                : entryStats(entry),
+          };
+        });
+      } else if (!next[mySeatKey]) {
+        const fallbackEntry: QuickBattleEntry = {
+          id: config.seatId || `seat-${config.side}-${config.slot}`,
+          name: config.myName,
+          dashboardUrl: "",
+          division: "trading",
+          platform: "other",
+        };
+        next[mySeatKey] = {
+          ...fallbackEntry,
+          side: config.side,
+          slot: config.slot,
+          stats: entryStats(fallbackEntry),
+        };
+      }
+
+      return next;
+    });
+  }, [
+    config.quickKey,
+    config.myName,
+    config.side,
+    config.slot,
+    config.seatId,
+    mySeatKey,
+  ]);
+
+  const scoringKey = useMemo(
+    () =>
+      JSON.stringify(
+        Object.values(seats)
+          .filter((seat) => seat.dashboardUrl)
+          .map((seat) => ({
+            id: seat.id,
+            name: seat.name,
+            dashboardUrl: seat.dashboardUrl,
+            startingBalance: seat.startingBalance,
+            division: seat.division,
+            platform: seat.platform,
+          })),
+      ),
+    [seats],
+  );
+
+  useEffect(() => {
+    if (!scoringKey || scoringKey === "[]") return;
+
+    const entries = JSON.parse(scoringKey) as QuickBattleEntry[];
+    let active = true;
+    let timer: number | undefined;
+
+    const load = async () => {
+      try {
+        const response = await fetch("/api/tradehouse/quick-leaderboard", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ entries, seasonName: config.seasonName }),
+          cache: "no-store",
+        });
+        if (!response.ok) throw new Error("Verified room feed unavailable");
+        const payload = await response.json();
+        const standings = (payload.standings || []) as Standing[];
+
+        if (active) {
+          setSeats((current) => {
+            const next = { ...current };
+            for (const standing of standings) {
+              const key = Object.keys(next).find((candidate) => next[candidate]?.id === standing.id);
+              if (!key) continue;
+              next[key] = {
+                ...next[key],
+                stats: standingToStats(standing),
+              };
+            }
+            return next;
+          });
+        }
+      } catch (error) {
+        console.error("[tradehouse/room] verified stats refresh failed", error);
+      } finally {
+        if (active) timer = window.setTimeout(load, 15000);
+      }
+    };
+
+    void load();
+    return () => {
+      active = false;
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [scoringKey, config.seasonName]);
+
+  useEffect(() => {
+    const id = window.setInterval(
+      () => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)),
+      1000,
+    );
+    return () => window.clearInterval(id);
   }, []);
 
   useEffect(() => {
-    if (config.obsMode) { document.body.style.overflow = "hidden"; document.body.style.background = "#0a0a0f"; }
-    return () => { document.body.style.overflow = ""; document.body.style.background = ""; };
+    if (config.obsMode) {
+      document.body.style.overflow = "hidden";
+      document.body.style.background = "#03070d";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.background = "";
+    };
   }, [config.obsMode]);
 
   useEffect(() => {
     let cancelled = false;
-    const userId = `${config.myName.replace(/\s+/g, "_")}_${Date.now()}`;
+    let unsubscribe: (() => void) | undefined;
+    let joinedCall: any;
+    let client: StreamVideoClient | undefined;
+
+    const ownEntry =
+      config.quickRoster.find((entry) => entry.id === config.seatId) ||
+      config.quickRoster.find((entry) => entry.name === config.myName);
+
+    const userId = `${(config.seatId || config.myName).replace(/\s+/g, "_")}_${Math.random().toString(36).slice(2, 8)}`;
     const apiKey = (import.meta as any).env?.VITE_STREAM_KEY as string | undefined;
-    if (!apiKey) { setStatus("demo"); return; }
-    (async () => {
+
+    if (!apiKey) {
+      setStatus("demo");
+      return;
+    }
+
+    const meta = {
+      userId,
+      name: config.myName,
+      side: config.side,
+      slot: config.slot,
+      seatId: ownEntry?.id || config.seatId || userId,
+      dashboardUrl: ownEntry?.dashboardUrl || "",
+      startingBalance: ownEntry?.startingBalance,
+      division: ownEntry?.division || "trading",
+      platform: ownEntry?.platform || "other",
+    };
+
+    const writeMeta = (data: any) => {
+      if (!data?.side || data?.slot === undefined) return;
+      const side = data.side as "left" | "right";
+      const slot = Number(data.slot);
+      const key = seatKey(side, slot);
+      setSeats((current) => {
+        const existing = current[key];
+        const entry: QuickBattleEntry = {
+          id: data.seatId || existing?.id || data.userId,
+          name: data.name || existing?.name || "Trader",
+          dashboardUrl: data.dashboardUrl || existing?.dashboardUrl || "",
+          startingBalance: data.startingBalance ?? existing?.startingBalance,
+          division: data.division || existing?.division || "trading",
+          platform: data.platform || existing?.platform || "other",
+        };
+        return {
+          ...current,
+          [key]: {
+            ...entry,
+            side,
+            slot,
+            userId: data.userId || existing?.userId,
+            stats: existing?.stats || entryStats(entry),
+          },
+        };
+      });
+    };
+
+    void (async () => {
       try {
         const { token } = await fetchBattleToken(userId, config.myName, config.roomId);
-        const c = new StreamVideoClient({ apiKey, user: { id: userId, name: config.myName }, token });
-        const theCall = c.call("default", config.roomId);
-        await theCall.join({ create: true });
-        await theCall.sendCustomEvent({ type: "participant_meta", data: { userId, name: config.myName, side: config.side, slot: config.slot, stats: myStats } });
-        theCall.on("custom", (event: any) => {
-          if (event.custom?.type === "participant_meta") {
-            const d = event.custom.data;
-            setParticipantData((prev) => ({ ...prev, [d.userId]: { name: d.name, side: d.side, slot: d.slot, stats: d.stats } }));
+        client = new StreamVideoClient({
+          apiKey,
+          user: { id: userId, name: config.myName },
+          token,
+        });
+        const call = client.call("default", config.roomId);
+        joinedCall = call;
+        await call.join({ create: true });
+
+        const sendMeta = async () => {
+          await call.sendCustomEvent({ type: "participant_meta", data: meta });
+        };
+
+        unsubscribe = call.on("custom", (event: any) => {
+          const custom = event.custom;
+          if (custom?.type === "participant_meta") {
+            writeMeta(custom.data);
+          } else if (custom?.type === "participant_meta_request") {
+            void sendMeta();
           }
         });
-        if (!cancelled) { setStreamClient(c); setStreamCall(theCall); setStatus("connected"); setParticipantData((prev) => ({ ...prev, [userId]: { name: config.myName, side: config.side, slot: config.slot, stats: myStats } })); }
-      } catch (err: any) {
-        if (!cancelled) { setErrorMsg(err?.message || "Failed to connect."); setStatus("error"); }
+
+        writeMeta(meta);
+        await sendMeta();
+        await call.sendCustomEvent({ type: "participant_meta_request" });
+
+        if (!cancelled) {
+          setStreamClient(client);
+          setStreamCall(call);
+          setStatus("connected");
+        }
+      } catch (error: any) {
+        if (!cancelled) {
+          setErrorMsg(error?.message || "Failed to connect.");
+          setStatus("error");
+        }
       }
     })();
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.roomId]);
 
-  const commonProps = { config, myStats, elapsed, showStatsEditor, onToggleStatsEditor: () => setShowStatsEditor((v) => !v), onStatsChange: setMyStats };
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+      if (joinedCall) void joinedCall.leave().catch(() => undefined);
+      if (client) void client.disconnectUser().catch(() => undefined);
+    };
+  }, [
+    config.roomId,
+    config.myName,
+    config.side,
+    config.slot,
+    config.seatId,
+    config.quickKey,
+  ]);
+
+  const onManualStatsChange = (stats: TraderStats) => {
+    setManualStats(stats);
+    if (!seats[mySeatKey]?.dashboardUrl) {
+      setSeats((current) => ({
+        ...current,
+        [mySeatKey]: {
+          ...(current[mySeatKey] || {
+            id: config.seatId || mySeatKey,
+            name: config.myName,
+            dashboardUrl: "",
+            division: "trading",
+            platform: "other",
+            side: config.side,
+            slot: config.slot,
+          }),
+          stats,
+        } as SeatState,
+      }));
+    }
+  };
+
+  const commonProps = {
+    config,
+    seats,
+    myStats,
+    elapsed,
+    showStatsEditor,
+    onToggleStatsEditor: () => setShowStatsEditor((value) => !value),
+    onStatsChange: onManualStatsChange,
+  };
 
   if (status === "connecting") {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#0a0a0f" }}>
+      <div className="flex min-h-screen items-center justify-center bg-[#03070d]">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full" style={{ border: "3px solid rgba(255,255,255,0.05)", borderTop: "3px solid #00ff87", animation: "spin 1s linear infinite", boxShadow: "0 0 20px rgba(0,255,135,0.3)" }} />
-          <p className="font-['Orbitron'] text-white text-lg font-bold">Entering battle room…</p>
-          <p className="font-mono mt-2" style={{ color: "#00ffff", fontSize: "13px" }}>{config.roomId}</p>
+          <div
+            className="mx-auto mb-6 h-16 w-16 rounded-full"
+            style={{
+              border: "3px solid rgba(255,255,255,0.05)",
+              borderTop: "3px solid #22d3ee",
+              animation: "spin 1s linear infinite",
+              boxShadow: "0 0 24px rgba(34,211,238,0.25)",
+            }}
+          />
+          <p className="font-['Orbitron'] text-lg font-bold text-white">Entering Trade House…</p>
+          <p className="mt-2 font-mono text-[13px] text-cyan-300">{config.roomId}</p>
         </div>
       </div>
     );
@@ -332,61 +1003,97 @@ const BattleRoom: React.FC = () => {
 
   if (status === "error") {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "#0a0a0f" }}>
-        <div className="text-center max-w-md">
-          <p className="font-['Orbitron'] font-black text-xl mb-4" style={{ color: "#ff3b5c" }}>Connection Failed</p>
-          <p className="mb-6 font-mono" style={{ color: "#555", fontSize: "13px" }}>{errorMsg}</p>
-          <button onClick={() => navigate("/battles/lobby")} className="px-6 py-3 rounded-xl font-['Orbitron'] font-black text-sm tracking-wider uppercase" style={{ background: "#ff3b5c", color: "#fff", boxShadow: "0 0 20px rgba(255,59,92,0.3)" }}>← Back to Lobby</button>
+      <div className="flex min-h-screen items-center justify-center bg-[#03070d] px-4">
+        <div className="max-w-md text-center">
+          <p className="mb-4 font-['Orbitron'] text-xl font-black text-rose-400">Connection failed</p>
+          <p className="mb-6 font-mono text-[13px] text-slate-500">{errorMsg}</p>
+          <button
+            onClick={() => navigate("/battles/lobby")}
+            className="rounded-xl bg-rose-500/20 px-6 py-3 font-['Orbitron'] text-sm font-black uppercase tracking-wider text-rose-300"
+          >
+            ← Back to lobby
+          </button>
         </div>
       </div>
     );
   }
 
-  const obsStyle: React.CSSProperties = config.obsMode ? { width: "1920px", height: "1080px" } : {};
+  const obsStyle: React.CSSProperties = config.obsMode
+    ? { width: "1920px", height: "1080px" }
+    : {};
 
   return (
-    <div className={config.obsMode ? "relative overflow-hidden" : "relative w-screen h-screen overflow-hidden"} style={{ background: "#0a0a0f", color: "white", ...obsStyle }}>
+    <div
+      className={config.obsMode ? "relative overflow-hidden" : "relative h-screen w-screen overflow-hidden"}
+      style={{ background: "#03070d", color: "white", ...obsStyle }}
+    >
       {config.obsMode && (
-        <div className="absolute inset-0 pointer-events-none z-50" style={{ boxShadow: "inset 0 0 80px rgba(0,0,0,0.6), inset 0 0 200px rgba(0,0,0,0.3)" }} />
+        <div
+          className="pointer-events-none absolute inset-0 z-50"
+          style={{ boxShadow: "inset 0 0 100px rgba(0,0,0,.55)" }}
+        />
       )}
+
       {!config.obsMode && (
-        <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-5"
-          style={{ height: "48px", background: "rgba(10,10,15,0.96)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+        <div
+          className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between px-5"
+          style={{
+            height: "48px",
+            background: "rgba(3,7,13,0.97)",
+            backdropFilter: "blur(14px)",
+            borderBottom: "1px solid rgba(103,232,249,0.08)",
+          }}
         >
           <div className="flex items-center gap-3">
-            <span className="px-2 py-0.5 rounded font-['Orbitron'] font-black text-xs" style={{ background: "rgba(0,255,255,0.12)", border: "1px solid rgba(0,255,255,0.25)", color: "#00ffff" }}>{config.mode}</span>
-            <span className="font-mono text-xs" style={{ color: "#333" }}>|</span>
-            <span className="font-mono font-bold text-xs" style={{ color: "#00ffff" }}>{config.roomId}</span>
+            <span className="rounded border border-cyan-300/25 bg-cyan-300/10 px-2 py-0.5 font-['Orbitron'] text-xs font-black text-cyan-200">
+              {config.mode}
+            </span>
+            <span className="font-mono text-xs text-slate-800">|</span>
+            <span className="font-mono text-xs font-bold text-cyan-300">{config.roomId}</span>
+            {config.quickRoster.length > 0 && (
+              <span className="hidden rounded-full border border-violet-400/15 bg-violet-400/[0.05] px-2 py-1 text-[8px] font-bold uppercase tracking-wider text-violet-300 md:inline-flex">
+                {config.quickRoster.length} verified seats
+              </span>
+            )}
           </div>
+
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#ff3b5c", boxShadow: "0 0 6px #ff3b5c", animation: "pulse 1.2s infinite" }} />
-            <span className="font-mono font-bold text-white" style={{ fontSize: "16px", letterSpacing: "0.1em" }}>
-              {String(Math.floor(elapsed / 60)).padStart(2, "0")}:{String(elapsed % 60).padStart(2, "0")}
+            <div className="h-1.5 w-1.5 rounded-full bg-rose-400 shadow-[0_0_7px_#fb7185]" />
+            <span className="font-mono text-base font-bold tracking-[0.1em] text-white">
+              {String(Math.floor(elapsed / 60)).padStart(2, "0")}:
+              {String(elapsed % 60).padStart(2, "0")}
             </span>
           </div>
-          <button onClick={() => navigate("/battles/lobby")}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg font-['Orbitron'] font-black text-xs tracking-wider uppercase transition-all"
-            style={{ background: "rgba(255,59,92,0.12)", border: "1px solid rgba(255,59,92,0.3)", color: "#ff3b5c" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,59,92,0.22)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,59,92,0.12)"; }}
+
+          <button
+            onClick={() => navigate("/battles/lobby")}
+            className="flex items-center gap-2 rounded-lg border border-rose-400/30 bg-rose-400/[0.08] px-3 py-1.5 font-['Orbitron'] text-xs font-black uppercase tracking-wider text-rose-300"
           >
-            <LogOut className="w-3.5 h-3.5" /> End Battle
+            <LogOut className="h-3.5 w-3.5" /> End battle
           </button>
         </div>
       )}
-      <div className="absolute left-0 right-0" style={{ top: config.obsMode ? 0 : "48px", bottom: config.obsMode ? 0 : "56px" }}>
+
+      <div
+        className="absolute left-0 right-0"
+        style={{
+          top: config.obsMode ? 0 : "48px",
+          bottom: config.obsMode ? 0 : "56px",
+        }}
+      >
         {status === "connected" && streamClient && streamCall ? (
           <StreamVideo client={streamClient}>
             <StreamCall call={streamCall}>
-              <ArenaInner {...commonProps} participantData={participantData} />
+              <ArenaInner {...commonProps} />
             </StreamCall>
           </StreamVideo>
         ) : (
           <DemoArena {...commonProps} />
         )}
       </div>
+
       {config.obsMode && (
-        <div className="absolute bottom-3 right-4 pointer-events-none" style={{ opacity: 0.2 }}>
+        <div className="pointer-events-none absolute bottom-3 right-4 opacity-20">
           <span className="font-['Orbitron'] text-[10px] text-white">battles.hybridfunding.co</span>
         </div>
       )}
