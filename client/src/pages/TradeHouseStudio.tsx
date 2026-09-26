@@ -787,6 +787,87 @@ const TradeHouseStudio: React.FC = () => {
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
+
+                      <details className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-3 lg:col-span-6">
+                        <summary className="cursor-pointer font-['Orbitron'] text-[9px] font-black uppercase tracking-[0.12em] text-violet-300">
+                          Admin account + contact details
+                        </summary>
+                        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                          <label className="text-xs text-slate-500">
+                            Email
+                            <input
+                              type="email"
+                              value={adminMeta[entry.id]?.email || ""}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], email: e.target.value } }))}
+                              placeholder="Trader email"
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            />
+                          </label>
+                          <label className="text-xs text-slate-500">
+                            Phone
+                            <input
+                              value={adminMeta[entry.id]?.phone || ""}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], phone: e.target.value } }))}
+                              placeholder="Optional"
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            />
+                          </label>
+                          <label className="text-xs text-slate-500">
+                            Account type
+                            <select
+                              value={adminMeta[entry.id]?.accountKind || "demo"}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], accountKind: e.target.value as AdminEntryMeta["accountKind"] } }))}
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            >
+                              <option value="demo">Demo</option>
+                              <option value="challenge">Challenge</option>
+                              <option value="funded">Funded</option>
+                            </select>
+                          </label>
+                          <label className="text-xs text-slate-500">
+                            Platform login / account ID
+                            <input
+                              value={adminMeta[entry.id]?.platformLogin || ""}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], platformLogin: e.target.value } }))}
+                              placeholder="No password stored"
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 font-mono text-sm text-white"
+                            />
+                          </label>
+                          <label className="text-xs text-slate-500">
+                            Support status
+                            <select
+                              value={adminMeta[entry.id]?.supportStatus || "requested"}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], supportStatus: e.target.value as AdminEntryMeta["supportStatus"] } }))}
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            >
+                              <option value="requested">Requested</option>
+                              <option value="created">Created</option>
+                              <option value="delivered">Delivered</option>
+                              <option value="verified">Verified</option>
+                            </select>
+                          </label>
+                          <label className="text-xs text-slate-500 sm:col-span-2">
+                            Support reference / note
+                            <input
+                              value={adminMeta[entry.id]?.supportReference || ""}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], supportReference: e.target.value } }))}
+                              placeholder="Ticket, confirmation, or account-creation note"
+                              className="mt-1 w-full rounded-lg border border-white/10 bg-[#07101b] px-3 py-2.5 text-sm text-white"
+                            />
+                          </label>
+                          <label className="flex items-end gap-2 pb-2 text-xs text-slate-500">
+                            <input
+                              type="checkbox"
+                              checked={Boolean(adminMeta[entry.id]?.credentialsDelivered)}
+                              onChange={(e) => setAdminMeta((current) => ({ ...current, [entry.id]: { ...current[entry.id], credentialsDelivered: e.target.checked } }))}
+                            />
+                            Credentials delivered by support
+                          </label>
+                        </div>
+                        <p className="mt-3 text-[9px] leading-relaxed text-slate-600">
+                          Trade House stores the issued account/login ID and delivery state. Platform passwords are not kept in this normal admin record.
+                        </p>
+                      </details>
                     </div>
                   ))}
                 </div>
