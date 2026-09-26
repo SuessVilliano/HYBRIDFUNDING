@@ -182,7 +182,7 @@ export const tradeHouseEntries = pgTable("trade_house_entries", {
   battleId: integer("battle_id").notNull().references(() => tradeHouseBattles.id),
   traderId: integer("trader_id").notNull().references(() => tradeHouseTraders.id),
   accountId: integer("account_id").references(() => tradeHouseAccounts.id),
-  dashboardUrl: text("dashboard_url").notNull(),
+  dashboardUrl: text("dashboard_url"),
   inviteTokenHash: text("invite_token_hash"),
   inviteLastFour: text("invite_last_four"),
   inviteExpiresAt: timestamp("invite_expires_at"),
