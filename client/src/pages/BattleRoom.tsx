@@ -943,6 +943,7 @@ const BattleRoom: React.FC = () => {
       startingBalance: ownEntry?.startingBalance,
       division: ownEntry?.division || "trading",
       platform: ownEntry?.platform || "other",
+      layout: seatLayoutsRef.current[ownEntry?.id || config.seatId || userId] || "screen-stats",
     };
 
     const writeMeta = (data: any) => {
@@ -960,6 +961,9 @@ const BattleRoom: React.FC = () => {
           division: data.division || existing?.division || "trading",
           platform: data.platform || existing?.platform || "other",
         };
+        if (data.layout && data.seatId) {
+          setSeatLayouts((layouts) => ({ ...layouts, [data.seatId]: data.layout as SeatLayoutMode }));
+        }
         return {
           ...current,
           [key]: {
@@ -995,6 +999,8 @@ const BattleRoom: React.FC = () => {
             writeMeta(custom.data);
           } else if (custom?.type === "participant_meta_request") {
             void sendMeta();
+          } else if (custom?.type === "seat_layout" && custom.seatId && custom.layout) {
+            setSeatLayouts((layouts) => ({ ...layouts, [custom.seatId]: custom.layout as SeatLayoutMode }));
           }
         });
 
@@ -1059,6 +1065,9 @@ const BattleRoom: React.FC = () => {
     showStatsEditor,
     onToggleStatsEditor: () => setShowStatsEditor((value) => !value),
     onStatsChange: onManualStatsChange,
+    seatLayouts,
+    onSeatLayoutChange: (seatId: string, mode: SeatLayoutMode) =>
+      setSeatLayouts((layouts) => ({ ...layouts, [seatId]: mode })),
   };
 
   if (status === "connecting") {
@@ -1098,6 +1107,7 @@ const BattleRoom: React.FC = () => {
     );
   }
 
+  const clock = battleClock(config.rule, elapsed);
   const obsStyle: React.CSSProperties = config.obsMode
     ? { width: "1920px", height: "1080px" }
     : {};
@@ -1139,10 +1149,15 @@ const BattleRoom: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <div className="h-1.5 w-1.5 rounded-full bg-rose-400 shadow-[0_0_7px_#fb7185]" />
-            <span className="font-mono text-base font-bold tracking-[0.1em] text-white">
-              {String(Math.floor(elapsed / 60)).padStart(2, "0")}:
-              {String(elapsed % 60).padStart(2, "0")}
-            </span>
+            <div className="text-right">
+              <span className="block font-mono text-base font-bold tracking-[0.1em] text-white">
+                {String(Math.floor(clock.seconds / 60)).padStart(2, "0")}:
+                {String(clock.seconds % 60).padStart(2, "0")}
+              </span>
+              <span className="block font-['Orbitron'] text-[7px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                {clock.label}
+              </span>
+            </div>
           </div>
 
           <button
@@ -1158,7 +1173,7 @@ const BattleRoom: React.FC = () => {
         className="absolute left-0 right-0"
         style={{
           top: config.obsMode ? 0 : "48px",
-          bottom: config.obsMode ? 0 : "56px",
+          bottom: config.obsMode ? "28px" : "80px",
         }}
       >
         {status === "connected" && streamClient && streamCall ? (
@@ -1172,11 +1187,12 @@ const BattleRoom: React.FC = () => {
         )}
       </div>
 
-      {config.obsMode && (
-        <div className="pointer-events-none absolute bottom-3 right-4 opacity-20">
-          <span className="font-['Orbitron'] text-[10px] text-white">battles.hybridfunding.co</span>
-        </div>
-      )}
+      <BrandRibbon
+        promoText={config.promoText}
+        sponsorName={config.sponsorName}
+        sponsorUrl={config.sponsorUrl}
+        obsMode={config.obsMode}
+      />
     </div>
   );
 };
