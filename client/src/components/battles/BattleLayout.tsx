@@ -46,27 +46,27 @@ const BattleLayout: React.FC<BattleLayoutProps> = ({ mode, leftTraders, rightTra
   const leftTeam = { name: leftTeamName, traders: leftTraders.map((t) => ({ name: t.name, stats: t.stats })), side: "left" as const };
   const rightTeam = { name: rightTeamName, traders: rightTraders.map((t) => ({ name: t.name, stats: t.stats })), side: "right" as const };
   const compact = mode !== "1v1";
-  const count = mode === "1v1" ? 1 : mode === "2v2" ? 2 : 3;
+  const count = mode === "1v1" ? 1 : mode === "2v2" ? 2 : mode === "3v3" ? 3 : 4;
 
   return (
     <LayoutGroup>
-      <motion.div layout className="flex h-full w-full" style={{ gap: 0 }}>
-        <motion.div layout className="flex-1 flex flex-col min-w-0" style={{ padding: compact ? "4px" : "6px", gap: compact ? "4px" : "6px" }}>
+      <motion.div layout className="flex h-full w-full flex-col overflow-y-auto overscroll-contain md:flex-row md:overflow-hidden" style={{ gap: 0 }}>
+        <motion.div layout className="flex min-w-0 flex-none flex-col md:flex-1" style={{ padding: compact ? "4px" : "6px", gap: compact ? "4px" : "6px" }}>
           {Array.from({ length: count }, (_, i) => {
             const t = leftTraders[i];
             return t ? (
-              <ParticipantTile key={t.id} traderName={t.name} avatarUrl={t.avatarUrl} stats={t.stats} cameraTrack={t.cameraTrack} screenTrack={t.screenTrack} layoutMode={t.layoutMode} isMuted={t.isMuted} isCameraOff={t.isCameraOff} isScreenSharing={t.isScreenSharing} side={mode === "1v1" ? "left" : "team-left"} compact={compact} className="flex-1 min-h-0" />
+              <ParticipantTile key={t.id} traderName={t.name} avatarUrl={t.avatarUrl} stats={t.stats} cameraTrack={t.cameraTrack} screenTrack={t.screenTrack} layoutMode={t.layoutMode} isMuted={t.isMuted} isCameraOff={t.isCameraOff} isScreenSharing={t.isScreenSharing} side={mode === "1v1" ? "left" : "team-left"} compact={compact} className="min-h-[260px] flex-1 sm:min-h-[320px] md:min-h-0" />
             ) : (
               <EmptySlot key={i} label={mode === "1v1" ? "Trader 1" : `Team A · Trader ${i + 1}`} side="left" compact={compact} />
             );
           })}
         </motion.div>
-        <StatsPanel mode={mode} leftTeam={leftTeam} rightTeam={rightTeam} elapsed={elapsed} rule={rule} compact={compact} />
-        <motion.div layout className="flex-1 flex flex-col min-w-0" style={{ padding: compact ? "4px" : "6px", gap: compact ? "4px" : "6px" }}>
+        <div className="order-first w-full md:order-none md:w-auto"><StatsPanel mode={mode} leftTeam={leftTeam} rightTeam={rightTeam} elapsed={elapsed} rule={rule} compact={compact} /></div>
+        <motion.div layout className="flex min-w-0 flex-none flex-col md:flex-1" style={{ padding: compact ? "4px" : "6px", gap: compact ? "4px" : "6px" }}>
           {Array.from({ length: count }, (_, i) => {
             const t = rightTraders[i];
             return t ? (
-              <ParticipantTile key={t.id} traderName={t.name} avatarUrl={t.avatarUrl} stats={t.stats} cameraTrack={t.cameraTrack} screenTrack={t.screenTrack} layoutMode={t.layoutMode} isMuted={t.isMuted} isCameraOff={t.isCameraOff} isScreenSharing={t.isScreenSharing} side={mode === "1v1" ? "right" : "team-right"} compact={compact} className="flex-1 min-h-0" />
+              <ParticipantTile key={t.id} traderName={t.name} avatarUrl={t.avatarUrl} stats={t.stats} cameraTrack={t.cameraTrack} screenTrack={t.screenTrack} layoutMode={t.layoutMode} isMuted={t.isMuted} isCameraOff={t.isCameraOff} isScreenSharing={t.isScreenSharing} side={mode === "1v1" ? "right" : "team-right"} compact={compact} className="min-h-[260px] flex-1 sm:min-h-[320px] md:min-h-0" />
             ) : (
               <EmptySlot key={i} label={mode === "1v1" ? "Trader 2" : `Team B · Trader ${i + 1}`} side="right" compact={compact} />
             );
